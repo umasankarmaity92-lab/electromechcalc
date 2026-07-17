@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<title>Common Transformer Sizing Mistakes | ElectroMechCalc</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<meta name="description"
+content="Learn the most common transformer sizing mistakes, power factor errors, future expansion issues, motor starting considerations, and best practices for selecting the correct transformer size.">
+
+<meta name="keywords"
+content="transformer sizing mistakes, transformer calculation, transformer selection, kVA sizing, power factor, transformer load calculation">
+
+<link rel="canonical"
+href="https://www.electromechcalc.com/common-transformer-sizing-mistakes.html">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        brandDark:'#0B1220',
+        brandPanel:'#111c2e',
+        brandLine:'#1f2f47',
+        brandBlue:'#0ea5e9',
+        brandAmber:'#f59e0b'
+      },
+      fontFamily: {
+        display: ['"Space Grotesk"', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace']
+      }
+    }
+  }
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  
+  .nav-icon-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:24px;
+    height:24px;
+    border-radius:9999px;
+    flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block;
+    padding:8px 12px;
+    border-radius:8px;
+    font-size:13px;
+    color:#0B1220;
+  }
+  .nav-dropdown-link:hover{
+    background:rgba(14,165,233,.10);
+    color:#0ea5e9;
+  }
+
+  .mobile-sublink{
+    display:block;
+    padding:6px 10px;
+    border-radius:6px;
+    font-size:13px;
+    color:#e2e8f0;
+    opacity:0.85;
+  }
+  .mobile-sublink:hover{
+    background:rgba(14,165,233,.12);
+    color:#0ea5e9;
+    opacity:1;
+  }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+.nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .formula-block{
+    background:#0b1220;
+    border:1px solid #1f2f47;
+    border-radius:10px;
+    padding:16px 18px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    color:#a7f3d0;
+    white-space:pre-line;
+    line-height:1.7;
+  }
+
+  .blog-prose h2{
+    font-size:1.5rem;
+    font-weight:700;
+    color:#0B1220;
+    margin-top:2rem;
+    margin-bottom:0.75rem;
+  }
+  .blog-prose p{
+    color:#374151;
+    line-height:1.75;
+    margin-bottom:1rem;
+  }
+  .blog-prose strong{ color:#0B1220; }
+  .blog-prose ul{
+    margin:0 0 1rem 1.25rem;
+    color:#374151;
+    line-height:1.75;
+  }
+  .blog-prose li{ margin-bottom:0.4rem; }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  /* search bar */
+  .search-wrap{ position:relative; }
+  .search-input{
+    background:rgba(255,255,255,0.06);
+    border:1px solid #1f2f47;
+    color:#e2e8f0;
+    border-radius:8px;
+    padding:8px 12px 8px 34px;
+    font-size:13px;
+    width:190px;
+    outline:none;
+    transition:.15s ease;
+  }
+  .search-input::placeholder{ color:#64748b; }
+  .search-input:focus{
+    width:230px;
+    border-color:#0ea5e9;
+    background:rgba(255,255,255,0.1);
+  }
+  .search-icon{
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#64748b;
+    pointer-events:none;
+  }
+  .search-results{
+    position:absolute;
+    top:calc(100% + 8px);
+    right:0;
+    width:280px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    box-shadow:0 14px 30px rgba(11,18,32,0.25);
+    overflow:hidden;
+    z-index:60;
+  }
+  .search-results.hidden{ display:none; }
+.search-results a{
+    display:block;
+    padding:10px 14px;
+    font-size:13px;
+    color:#0B1220;
+    border-bottom:1px solid #f1f5f9;
+  }
+  .search-results a:last-child{ border-bottom:none; }
+  .search-results a:hover{ background:#f0f9ff; }
+  .search-empty{
+    padding:12px 14px;
+    font-size:12.5px;
+    color:#94a3b8;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== HERO ===================== -->
+<section class="bg-brandDark border-b border-brandLine">
+  <div class="max-w-4xl mx-auto px-6 py-16 text-center">
+
+    <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1.5 rounded-full mb-5">
+      <span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+      Transformer Guide
+    </span>
+
+    <h1 class="text-3xl md:text-5xl font-display font-bold text-white leading-tight mb-5">
+      Common Transformer Sizing Mistakes and How to Avoid Them
+    </h1>
+
+    <p class="text-gray-400 max-w-2xl mx-auto">
+      Avoid costly transformer selection errors by understanding demand load, power factor, future expansion, motor starting current, harmonics, and voltage drop considerations.
+    </p>
+
+  </div>
+</section>
+
+<!-- AD SPACE (DISABLED until AdSense approval) =====================
+<div class="max-w-4xl mx-auto px-6 py-8">
+  <div class="h-[90px] border border-dashed border-gray-300 rounded-md flex items-center justify-center text-gray-400 font-mono text-[11px] uppercase tracking-wide">
+    Ad Space — Leaderboard 728×90
+  </div>
+</div>
+===================== END AD SPACE -->
+
+<!-- ===================== ARTICLE BODY ===================== -->
+
+<!-- ===================== ARTICLE BODY ===================== -->
+<article class="max-w-3xl mx-auto px-6 py-12 bg-white blog-prose">
+
+  <p>
+    Selecting the correct transformer size is one of those decisions that looks simple on paper — add up the load, pick a kVA rating, done — but in practice it's one of the most consistently mis-calculated steps in electrical design. A transformer that's undersized runs hot, trips on overload, sags in voltage under starting loads, and shortens its own insulation life year after year. A transformer that's grossly oversized wastes capital, occupies more space and civil work than necessary, and runs inefficiently at light load for most of its service life. Between those two extremes sits the correct answer, and getting there means avoiding a specific, repeatable set of mistakes that show up again and again across industrial, commercial, and residential installations.
+  </p>
+  <p>
+    This guide walks through the most common transformer sizing errors engineers, technicians, and facility owners make, why each one causes real-world problems, and what to check instead. It closes with a practical step-by-step sizing approach and a set of frequently asked questions covering the details that don't always fit neatly into a single mistake.
+  </p>
+
+  <h2>Why Transformer Sizing Mistakes Are So Costly</h2>
+  <p>
+    A transformer isn't a component you resize easily after installation. Civil work, cable sizing, protection coordination, and switchgear ratings are all designed around the transformer's kVA rating, so a sizing error discovered after commissioning usually means either accepting reduced performance and life expectancy, or a costly retrofit. Undersizing shows up as nuisance tripping, overheating, and premature insulation breakdown; oversizing shows up as wasted capital and, less obviously, as poor efficiency — transformers are least efficient at very light loads relative to their rating, so an oversized unit can actually cost more to run over its lifetime despite the extra margin. Both failure modes trace back to the same handful of avoidable mistakes.
+  </p>
+
+  <h2>1. Ignoring Power Factor</h2>
+  <p>
+    One of the most common mistakes is sizing a transformer based only on real power (kW) without converting to apparent power (kVA) using the load's power factor. Transformers are rated in kVA, not kW, because a transformer has to supply both the real power that does useful work and the reactive power that magnetic loads like motors and inductive equipment demand. Comparing a kW figure directly against a kVA nameplate rating understates the actual apparent power the transformer must deliver.
+  </p>
+  <div class="formula-block">kVA = kW ÷ Power Factor</div>
+  <p>
+    For example, a 400 kW load operating at a power factor of 0.8 actually requires 500 kVA of transformer capacity — not 400 kVA. Skip the conversion and you'll select a transformer that looks adequate on paper but is genuinely undersized in the field. This mistake is especially common on sites with a large proportion of motor load, where power factor commonly sits between 0.75 and 0.85 without power factor correction equipment in place. Always confirm whether the load figure you've been given is already expressed in kVA or still needs the power-factor conversion applied.
+  </p>
+
+  <h2>2. Using Connected Load Instead of Demand Load</h2>
+  <p>
+    Many designers simply add up the nameplate ratings of every piece of connected equipment and size the transformer against that total. In reality, not everything runs at the same time or at full nameplate rating simultaneously — a facility's actual demand is almost always lower than its total connected load. Demand factors (the ratio of maximum demand to connected load for one type of equipment) and diversity factors (accounting for the fact that different loads peak at different times) both need to be applied to arrive at a realistic figure.
+  </p>
+  <p>
+    Skipping this step usually leads to unnecessary oversizing, which drives up transformer and switchgear cost without a corresponding benefit. It can occasionally lead in the other direction too — if a facility genuinely does run most of its connected load simultaneously (some continuous-process plants do), assuming a generic diversity factor that doesn't apply to that specific site can undersize the system. The correct demand load figure comes from actual load studies, historical demand data, or, where neither is available, published demand factor tables for the specific equipment category and industry type — not from a blanket percentage applied without justification.
+  </p>
+
+  <h2>3. Not Allowing for Future Expansion</h2>
+  <p>
+    Industrial and commercial facilities rarely stay static. Production lines get added, new HVAC equipment goes in, EV charging infrastructure gets retrofitted, and floor space gets repurposed — all of which add electrical load after the transformer has already been installed and the civil work poured around it. A transformer sized tightly for today's measured load can become the bottleneck that blocks or delays a future expansion, or worse, gets quietly overloaded because nobody wants to pay for a transformer replacement mid-project.
+  </p>
+  <p>
+    A spare capacity margin of roughly 20% to 30% above the calculated demand load is a common rule of thumb precisely because it absorbs a reasonable amount of future growth without requiring a full re-size. The right margin for a specific project depends on how likely and how large future expansion is — a leased commercial building with a fixed tenant mix needs less margin than an owner-occupied manufacturing plant with an active expansion roadmap. Whatever margin is chosen, it should be a deliberate decision documented in the sizing calculation, not an afterthought applied inconsistently from project to project.
+  </p>
+
+  <h2>4. Ignoring Motor Starting Current</h2>
+  <p>
+    Large induction motors typically draw five to eight times their full-load running current for the first few seconds during direct-on-line starting. If a sizing calculation only accounts for steady-state running current, the transformer can appear correctly sized on paper while still causing severe voltage dips every time a large motor starts. That voltage dip doesn't just affect the motor being started — it propagates across the entire bus, potentially dimming lighting, tripping sensitive electronic equipment, or causing contactors on other circuits to drop out momentarily.
+  </p>
+  <p>
+    The severity of the starting-current problem depends on the ratio between the motor's starting kVA and the transformer's kVA rating, as well as the transformer's percentage impedance — a higher-impedance transformer will show a larger voltage dip for the same starting event. For facilities with large motors relative to transformer size, soft starters, variable frequency drives, or star-delta starting can reduce the starting current spike substantially, but the transformer sizing calculation still needs to account for whichever starting method is actually specified, not assume the mildest case by default.
+  </p>
+
+  <h2>5. Overlooking Harmonic Loads</h2>
+  <p>
+    Modern facilities run a growing share of nonlinear load: variable frequency drives, UPS systems, LED lighting drivers, server power supplies, and other switch-mode electronics. These loads draw current in non-sinusoidal pulses rather than smooth sine waves, injecting harmonic currents back into the supply. Harmonics cause additional heating in a transformer beyond what the fundamental-frequency current alone would produce — eddy current losses and stray losses both increase disproportionately with harmonic content, and standard-design transformers aren't rated to dissipate that extra heat without a capacity de-rating.
+  </p>
+  <p>
+    Where a significant share of the connected load is nonlinear — a rule of thumb some engineers use is above roughly 15% to 20% of total load — a standard transformer may need to be either de-rated below its nameplate kVA rating for that application, or replaced with a K-rated transformer specifically designed with the extra winding and core capacity to handle harmonic heating. Ignoring this factor doesn't cause an immediate failure the way a badly undersized transformer might; instead it shows up gradually as reduced insulation life and unexplained overheating that's hard to trace back to its root cause months or years later.
+  </p>
+
+  <h2>6. Choosing the Exact Calculated Size</h2>
+  <p>
+    Another common mistake is selecting a transformer with a rating exactly equal to the calculated demand load, with zero margin at all. Real electrical systems rarely operate under the exact, static conditions used in a sizing calculation — load varies through the day and across seasons, ambient temperature swings, equipment gets added, and metering and estimation always carry some error. Selecting the next standard transformer rating above the calculated requirement, rather than the exact figure, absorbs this normal variability without immediately pushing the transformer into an overloaded condition.
+  </p>
+  <p>
+    Standard transformer kVA ratings follow a defined series (for example 100, 160, 200, 250, 315, 400, 500, 630, 750, 1000 kVA and so on for distribution transformers), so in practice this mistake usually means rounding down to the nearest standard size below the calculated load to save cost, rather than rounding up. That decision might save money on the transformer itself, but it removes any operating margin and turns ordinary load variability into an overload condition.
+  </p>
+
+  <h2>7. Ignoring Ambient Temperature</h2>
+  <p>
+    Transformer nameplate ratings are based on a standard reference ambient temperature (commonly 40°C for oil-filled distribution transformers, or a stated design ambient for dry-type units). In hot climates or poorly ventilated plant rooms, actual ambient temperature routinely exceeds that reference value, and the transformer's effective cooling capacity — and therefore its safe loading — drops accordingly. A transformer that's correctly rated for the calculated demand load at 40°C ambient can be genuinely overloaded at the same demand if it's actually operating in a 50°C plant room with poor airflow.
+  </p>
+  <p>
+    High-ambient installations may need either a transformer de-rated below nameplate for the specific site conditions, or a larger unit selected up front to absorb the temperature penalty, along with attention to ventilation and enclosure design. This is a particularly common oversight in enclosed substations and rooftop plant rooms in tropical and subtropical climates, where solar heat gain on an enclosure roof can push internal ambient well above outdoor air temperature.
+  </p>
+
+  <h2>8. Overlooking Cooling Type and Loading Curves</h2>
+  <p>
+    Oil-filled transformers are commonly available in multiple cooling configurations — ONAN (oil natural, air natural) as the base rating, with ONAF (oil natural, air forced, using fans) offering a higher rating on the same core and tank by improving heat dissipation. Treating every transformer as a fixed, single kVA number without checking which cooling stage that number corresponds to can lead to a mismatch between the assumed capacity and what's actually available under normal (fan-off) operating conditions. A transformer's ONAF rating typically isn't available continuously without the cooling fans running and controlled correctly, so a sizing calculation that assumes the higher ONAF figure as the baseline capacity is building in an assumption that depends on auxiliary equipment functioning as designed.
+  </p>
+
+  <h2>9. Neglecting Voltage Drop and Fault Level</h2>
+  <p>
+    Transformer sizing doesn't end at kVA capacity. The transformer's percentage impedance affects both the voltage drop under load and the fault current available on the secondary side — two figures that feed directly into downstream cable sizing, protective device coordination, and switchgear fault ratings. A transformer selected purely on kVA capacity without checking its impedance can produce a system where voltage drop under normal load is outside acceptable limits, or where downstream breakers aren't rated to interrupt the available fault current safely. Both of these are sizing-adjacent decisions that get skipped when "sizing" is treated as a single kVA number rather than a full set of electrical parameters.
+  </p>
+
+  <h2>How to Size a Transformer Correctly — Step by Step</h2>
+  <p>
+    Bringing the points above together, a sound transformer sizing process generally follows this sequence:
+  </p>
+  <ul>
+    <li><strong>Establish the actual demand load</strong> in kW, using demand and diversity factors rather than simply summing connected nameplate ratings.</li>
+    <li><strong>Convert to kVA</strong> using the site's actual or design power factor, not an assumed round number.</li>
+    <li><strong>Add a future-expansion margin</strong> — typically 20% to 30% — based on how likely and how large future growth actually is for that specific facility.</li>
+    <li><strong>Check motor starting requirements</strong> against the transformer's impedance to confirm voltage dip stays within acceptable limits for the largest motor(s) on site.</li>
+    <li><strong>Assess harmonic content</strong> from VFDs, UPS systems, and other nonlinear loads, and apply a K-rating or de-rating where the nonlinear load share is significant.</li>
+    <li><strong>Round up to the next standard kVA rating</strong> rather than down, to preserve operating margin.</li>
+    <li><strong>Correct for ambient temperature and cooling type</strong> specific to the installation location and enclosure design.</li>
+    <li><strong>Verify voltage drop and fault level</strong> against downstream cable and switchgear ratings before finalizing the selection.</li>
+  </ul>
+
+  <h2>Conclusion</h2>
+  <p>
+    Proper transformer sizing requires more than adding up equipment nameplate ratings and picking the nearest kVA figure. Power factor, demand versus connected load, future expansion, motor starting current, harmonic content, ambient temperature, cooling configuration, and downstream voltage drop and fault level all interact, and a sizing calculation that treats them individually — rather than as separate boxes to check — is what actually holds up under real operating conditions. Avoiding the mistakes covered here improves system reliability, keeps operating costs predictable, and gives the transformer a realistic chance of running its full rated service life while still leaving room for the facility to grow.
+  </p>
+
+</article>
+
+<!-- ===================== FAQ ===================== -->
+<section class="max-w-3xl mx-auto px-6 pb-14">
+  <h2 class="text-2xl font-display font-bold text-brandDark mb-6">Frequently Asked Questions</h2>
+  <div class="space-y-3">
+
+    <details class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+      <summary class="flex justify-between items-center font-semibold text-brandDark">
+        How much spare capacity should I add for future expansion?
+        <span class="plus text-xl text-sky-500">+</span>
+      </summary>
+      <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+        A margin of 20% to 30% above the calculated demand load is a common starting point, but the right figure depends on how likely and how large future growth is for that specific facility. An owner-occupied plant with an active expansion roadmap justifies a larger margin than a leased building with a fixed tenant mix.
+      </p>
+    </details>
+
+    <details class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+      <summary class="flex justify-between items-center font-semibold text-brandDark">
+        Why is my transformer rated in kVA instead of kW?
+        <span class="plus text-xl text-sky-500">+</span>
+      </summary>
+      <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+        A transformer supplies apparent power, which includes both the real power (kW) that does useful work and the reactive power that inductive loads like motors demand. kVA captures both components, which is why load figures given in kW must be converted to kVA using the power factor before comparing them to a transformer's nameplate rating.
+      </p>
+    </details>
+
+    <details class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+      <summary class="flex justify-between items-center font-semibold text-brandDark">
+        What happens if I undersize a transformer?
+        <span class="plus text-xl text-sky-500">+</span>
+      </summary>
+      <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+        An undersized transformer runs hotter than its design allows, which accelerates insulation aging and shortens service life. It can also cause excessive voltage drop under load, nuisance protection tripping, and severe voltage dips during motor starting events.
+      </p>
+    </details>
+
+    <details class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+      <summary class="flex justify-between items-center font-semibold text-brandDark">
+        Is it bad to oversize a transformer significantly?
+        <span class="plus text-xl text-sky-500">+</span>
+      </summary>
+      <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+        A modest margin above calculated demand is good practice, but a grossly oversized transformer costs more upfront, takes up more space, and runs less efficiently at light load for most of its operating life, since transformer efficiency typically peaks somewhere in the middle of its loading range rather than at very low load.
+      </p>
+    </details>
+
+    <details class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+      <summary class="flex justify-between items-center font-semibold text-brandDark">
+        What is a K-rated transformer and when do I need one?
+        <span class="plus text-xl text-sky-500">+</span>
+      </summary>
+      <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+        A K-rated transformer is designed with additional winding and core capacity to safely dissipate the extra heating caused by harmonic currents from nonlinear loads such as VFDs, UPS systems, and switch-mode power supplies. It's typically considered when nonlinear load makes up a significant share — commonly cited around 15% to 20% or more — of the total connected load.
+      </p>
+    </details>
+
+    <details class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+      <summary class="flex justify-between items-center font-semibold text-brandDark">
+        Does ambient temperature really affect transformer sizing?
+        <span class="plus text-xl text-sky-500">+</span>
+      </summary>
+      <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+        Yes. Nameplate ratings assume a reference ambient temperature, commonly 40°C for oil-filled distribution transformers. If the actual installation environment runs hotter — a poorly ventilated plant room or a rooftop enclosure under direct sun, for example — the transformer's effective safe loading drops below its nameplate figure unless it's de-rated or oversized to compensate.
+      </p>
+    </details>
+
+    <details class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+      <summary class="flex justify-between items-center font-semibold text-brandDark">
+        Should I size the transformer for connected load or demand load?
+        <span class="plus text-xl text-sky-500">+</span>
+      </summary>
+      <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+        Demand load, not total connected load. Connected load sums the nameplate rating of every piece of equipment as if everything ran simultaneously at full rating, which is rarely realistic. Demand and diversity factors bring that figure down to a load the transformer will actually see in practice.
+      </p>
+    </details>
+
+  </div>
+</section>
+
+<!-- ===================== RELATED CALCULATORS ===================== -->
+<section class="max-w-5xl mx-auto px-6 py-12">
+
+  <h2 class="text-2xl font-display font-bold text-brandDark mb-6">
+    Related Calculators
+  </h2>
+
+  <div class="grid md:grid-cols-3 gap-5">
+
+    <a href="transformer-size.html" class="bg-white border border-gray-100 shadow-sm p-5 rounded-xl hover:border-sky-400 transition">
+      <h3 class="font-display font-semibold text-brandDark mb-2">Transformer Size Calculator</h3>
+      <p class="text-sm text-gray-500">Calculate the required transformer capacity in kVA for your load.</p>
+    </a>
+
+    <a href="kw-kva.html" class="bg-white border border-gray-100 shadow-sm p-5 rounded-xl hover:border-sky-400 transition">
+      <h3 class="font-display font-semibold text-brandDark mb-2">kVA ↔ kW Calculator</h3>
+      <p class="text-sm text-gray-500">Convert between kVA and kW using your system's power factor.</p>
+    </a>
+
+    <a href="apfc.html" class="bg-white border border-gray-100 shadow-sm p-5 rounded-xl hover:border-sky-400 transition">
+      <h3 class="font-display font-semibold text-brandDark mb-2">APFC Capacitor Calculator</h3>
+      <p class="text-sm text-gray-500">Improve power factor and reduce utility penalties.</p>
+    </a>
+
+    <a href="power-factor.html" class="bg-white border border-gray-100 shadow-sm p-5 rounded-xl hover:border-sky-400 transition">
+      <h3 class="font-display font-semibold text-brandDark mb-2">Power Factor Explained</h3>
+      <p class="text-sm text-gray-500">Understand kW, kVAR, and kVA and how they relate.</p>
+    </a>
+
+    <a href="motor-current.html" class="bg-white border border-gray-100 shadow-sm p-5 rounded-xl hover:border-sky-400 transition">
+      <h3 class="font-display font-semibold text-brandDark mb-2">Motor Current Calculator</h3>
+      <p class="text-sm text-gray-500">Estimate full-load and starting current for large motors.</p>
+    </a>
+
+    <a href="dg-size.html" class="bg-white border border-gray-100 shadow-sm p-5 rounded-xl hover:border-sky-400 transition">
+      <h3 class="font-display font-semibold text-brandDark mb-2">DG Size Calculator</h3>
+      <p class="text-sm text-gray-500">Size a backup generator alongside your transformer.</p>
+    </a>
+
+  </div>
+
+</section>
+
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+</body>
+</html>

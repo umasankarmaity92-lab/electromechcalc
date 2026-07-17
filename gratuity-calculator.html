@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>Gratuity Calculator (India) | ElectroMechCalc</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+<meta name="description" content="Free Gratuity Calculator for India. Estimate your gratuity amount based on last drawn Basic + DA and years of service, as per the Payment of Gratuity Act, 1972, including the statutory cap.">
+<link rel="canonical" href="https://www.electromechcalc.com/gratuity-calculator.html">
+<link rel="icon" href="/favicon.png" type="image/png">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brandDark: '#0B1220',
+          brandPanel: '#111c2e',
+          brandLine: '#1f2f47',
+          brandBlue: '#0ea5e9',
+          brandAmber: '#f59e0b'
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace']
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{
+    display:none;
+  }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{
+    display:block;
+  }
+  .nav-dropdown-panel{
+    padding-top:10px;
+    margin-top:-10px;
+  }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{
+    background:linear-gradient(160deg,#0B1220,#15233a);
+  }
+  .fund-badge{
+    background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9);
+  }
+
+  .breakdown-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:12.5px;
+  }
+  .breakdown-table th,
+  .breakdown-table td{
+    padding:7px 8px;
+    text-align:right;
+    border-bottom:1px solid #e5e7eb;
+    white-space:nowrap;
+  }
+  .breakdown-table th:first-child,
+  .breakdown-table td:first-child{
+    text-align:left;
+  }
+  .breakdown-table th{
+    color:#6b7280;
+    font-weight:600;
+    text-transform:uppercase;
+    font-size:10.5px;
+    letter-spacing:0.4px;
+    background:#f8fafc;
+    position:sticky;
+    top:0;
+  }
+  .breakdown-table td{
+    color:#111827;
+  }
+  .breakdown-wrap{
+    max-height:280px;
+    overflow-y:auto;
+    overflow-x:auto;
+    margin-top:4px;
+    border-radius:8px;
+    border:1px solid #e5e7eb;
+  }
+
+  /* search bar */
+  .search-wrap{ position:relative; }
+  .search-input{
+    background:rgba(255,255,255,0.06);
+    border:1px solid #1f2f47;
+    color:#e2e8f0;
+    border-radius:8px;
+    padding:8px 12px 8px 34px;
+    font-size:13px;
+    width:190px;
+    outline:none;
+    transition:.15s ease;
+  }
+  .search-input::placeholder{ color:#64748b; }
+  .search-input:focus{
+    width:230px;
+    border-color:#0ea5e9;
+    background:rgba(255,255,255,0.1);
+  }
+  .search-icon{
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#64748b;
+    pointer-events:none;
+  }
+  .search-results{
+    position:absolute;
+    top:calc(100% + 8px);
+    right:0;
+    width:280px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    box-shadow:0 14px 30px rgba(11,18,32,0.25);
+    overflow:hidden;
+    display:none;
+    z-index:60;
+  }
+  .search-wrap.has-results .search-results{ display:block; }
+  .search-results a{
+    display:block;
+    padding:10px 14px;
+    font-size:13px;
+    color:#0B1220;
+    border-bottom:1px solid #f1f5f9;
+  }
+  .search-results a:last-child{ border-bottom:none; }
+  .search-results a:hover{ background:#f0f9ff; }
+  .search-empty{
+    padding:12px 14px;
+    font-size:12.5px;
+    color:#94a3b8;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== PAGE HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-3xl mx-auto px-4 py-14 text-center relative z-10">
+    <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+      <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+      Financial &middot; Free &middot; Instant results
+    </span>
+    <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+      Gratuity Calculator <span class="text-sky-400">(India)</span>
+    </h1>
+    <p class="text-gray-400 text-sm max-w-xl mx-auto">
+      Estimate your gratuity payout as per the Payment of Gratuity Act, 1972 — based on your last drawn Basic + DA and total years of service.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== CALCULATOR ===================== -->
+<section class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Gratuity Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Choose your employment type — permanent staff need 5 years of service, while fixed-term employees now qualify after just 1 year under the new labour code.</p>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Employment Type</label>
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2">
+          <div id="typePermanent" class="toggle-btn active" onclick="setEmploymentType('permanent')">Permanent</div>
+          <div id="typeFixedTerm" class="toggle-btn" onclick="setEmploymentType('fixedTerm')">Fixed-Term</div>
+        </div>
+        <p class="text-[11px] text-gray-400 mt-2">Permanent employees need 5 years of continuous service. Fixed-term employees are eligible after 1 year, under the Code on Social Security, 2020 (effective 21 Nov 2025).</p>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Last Drawn Monthly Basic + DA (₹)</label>
+        <input id="lastSalary" type="number" value="50000" step="500" placeholder="e.g. 50000" class="input-field mt-2">
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Years of Service</label>
+          <input id="serviceYears" type="number" value="10" step="1" min="0" placeholder="e.g. 10" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Additional Months</label>
+          <input id="serviceMonths" type="number" value="7" step="1" min="0" max="11" placeholder="e.g. 7" class="input-field mt-2">
+        </div>
+      </div>
+
+      <p class="text-[11px] text-gray-400 mb-5">If additional months are 6 or more, service is rounded up to the next full year (e.g. 10 years 7 months → 11 years).</p>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateGratuity()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">Gratuity = (15 × Salary × Years) ÷ 26</span>
+        <span class="formula-chip">Capped at ₹20,00,000</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div class="lg:col-span-2 flex flex-col gap-4">
+
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Estimated Gratuity Payable</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">₹—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter your details and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Rounded Years</span>
+            <span id="rYears" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Before Cap</span>
+            <span id="rBeforeCap" class="font-display font-semibold text-lg">₹—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Calculation Breakdown</span>
+        <div class="breakdown-wrap" id="breakdownBox" style="max-height:none;">
+          <p class="text-xs text-gray-400 p-3">Calculate to see the step-by-step gratuity calculation.</p>
+        </div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="epf-calculator.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            EPF Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="sip-calculator.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            SIP &amp; Lump Sum Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="cagr-calculator.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            CAGR Calculator <span class="text-sky-500">→</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding Gratuity Calculation</h2>
+
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Gratuity is a lump-sum benefit paid by an employer to an employee as a token of appreciation for continuous service, typically at retirement, resignation, or termination after at least five years of service (the five-year rule is relaxed in case of death or disability). It is governed in India by the Payment of Gratuity Act, 1972, for most establishments with ten or more employees.</p>
+
+      <p>Gratuity is a lump-sum benefit paid by an employer to an employee in recognition of continuous service. Until late 2025, the rule was simple and uniform: everyone, permanent staff and contract staff alike, needed 5 years of continuous service before gratuity became payable, except in cases of death or disablement. That changed with the Code on Social Security, 2020, which came into force on 21 November 2025 and now treats permanent employees and fixed-term employees differently for eligibility purposes, while keeping the underlying formula the same for both.</p>
+
+      <p><strong>Permanent employees — the 5-year rule still applies.</strong> If you are a permanent employee, nothing has changed for you: you still need to complete 5 years of continuous service with the same employer before you qualify for gratuity (again, this is waived if you die or are disabled while in service). The formula remains 15 days of your last drawn Basic + DA for every completed year of service, divided by 26 (the standard working days in a month). <strong>Worked example (Permanent):</strong> suppose your last drawn Basic + DA is ₹50,000/month and you have completed 10 years and 7 months of service. Since 7 months is 6 or more, your service is rounded up to 11 years, so your gratuity works out to (15 × ₹50,000 × 11) ÷ 26 ≈ ₹3,17,307.</p>
+
+      <p><strong>Fixed-term employees — eligible after just 1 year, under the new labour code.</strong> This is the headline change. Fixed-term (contract) employees are now eligible for gratuity after completing just 1 year of continuous service, instead of waiting 5 years like before. This was introduced specifically to give contract and project-based staff the same social security protection as permanent employees, since most fixed-term contracts run for only 1–3 years and workers were routinely missing out on gratuity entirely under the old 5-year rule. The formula and divisor stay identical to the permanent-employee case — only the minimum qualifying period changes. <strong>Worked example (Fixed-Term):</strong> suppose your last drawn Basic + DA is ₹40,000/month and you completed 1 year and 8 months on a fixed-term contract. Since 8 months is 6 or more, your service is rounded up to 2 years, so your gratuity works out to (15 × ₹40,000 × 2) ÷ 26 ≈ ₹46,154 — an amount you simply would not have received at all under the pre-2025 rule, since you hadn't completed 5 years.</p>
+
+      <p><strong>Formula used (same for both employment types):</strong> Gratuity = (15 × Last Drawn Basic + DA × Rounded Years of Service) ÷ 26. Years of service are rounded up to the next full year whenever the additional months beyond a completed year are 6 or more; otherwise the extra months are ignored. This calculator applies that exact rule regardless of whether you select Permanent or Fixed-Term — the only thing the toggle changes is the minimum-service eligibility check.</p>
+
+      <p>The gratuity amount is also subject to a cap of ₹20,00,000, which is also the current tax-exempt limit for private-sector employees. This calculator applies that cap automatically to whichever type of employee you select — any amount an employer voluntarily pays above this, under their own scheme, is treated as an ex-gratia payment for tax purposes rather than statutory gratuity.</p>
+
+      <p>One more change worth knowing: the new labour codes also introduced a "50% wage rule," which requires that Basic + DA make up at least 50% of an employee's total CTC. If your salary structure currently has a lower basic with heavy allowances, your employer may need to restructure it — and since gratuity is calculated only on Basic + DA, a higher basic salary under this rule can meaningfully increase your gratuity payout even without any change to your years of service.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Reference: Payment of Gratuity Act, 1972, Ministry of Labour &amp; Employment, Government of India. This calculator is for educational planning purposes only and does not represent an official government statement or guaranteed payout; always confirm with your employer's HR/Finance team.</p>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Who is eligible for gratuity now — has the 5-year rule changed?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It depends on your employment type. Permanent employees still need 5 years of continuous service, unchanged from before. Fixed-term (contract) employees, however, are now eligible after just 1 year of continuous service, under the Code on Social Security, 2020 (effective 21 November 2025). Both are relaxed in case of death or disablement, where gratuity is payable regardless of tenure.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How is the extra months rounding handled?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">If the additional service beyond completed years is 6 months or more, it is rounded up to the next full year. If it is less than 6 months, it is ignored and only the completed years are used in the calculation.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is there a maximum limit on gratuity?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, gratuity payable is capped at ₹20,00,000, which is also the current tax-exempt limit for private-sector employees covered under the Act. Any amount an employer pays beyond this, if applicable under their own policy, is treated as an ex-gratia payment rather than statutory gratuity, and may be taxed differently.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is gratuity taxable?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Gratuity received by government employees is fully exempt from tax. For other employees covered under the Act, gratuity is exempt up to the statutory limit; any amount above that limit is taxable as per applicable income tax rules. Please consult a tax professional for your specific situation.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+
+<script>
+  // ===== Gratuity Calculator Logic =====
+  const GRATUITY_DIVISOR = 26;
+  const GRATUITY_CAP = 2000000; // ₹20,00,000 statutory / tax-exempt cap
+  let employmentType = 'permanent';
+
+  function setEmploymentType(type){
+    employmentType = type;
+    document.getElementById('typePermanent').classList.toggle('active', type === 'permanent');
+    document.getElementById('typeFixedTerm').classList.toggle('active', type === 'fixedTerm');
+  }
+
+  function calculateGratuity(){
+    const salary = parseFloat(document.getElementById('lastSalary').value);
+    const years = parseFloat(document.getElementById('serviceYears').value);
+    const months = parseFloat(document.getElementById('serviceMonths').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+
+    if(isNaN(salary) || salary <= 0){ errors.push('Enter a valid last drawn Basic + DA greater than 0.'); }
+    if(isNaN(years) || years < 0){ errors.push('Enter a valid number of years of service (0 or more).'); }
+    if(isNaN(months) || months < 0 || months > 11){ errors.push('Enter additional months between 0 and 11.'); }
+
+    const totalCompletedYears = (!isNaN(years) && !isNaN(months)) ? years + (months/12) : NaN;
+    const minYearsRequired = employmentType === 'fixedTerm' ? 1 : 5;
+    if(!isNaN(totalCompletedYears) && totalCompletedYears < minYearsRequired){
+      if(employmentType === 'fixedTerm'){
+        errors.push('Fixed-term employees need at least 1 year of continuous service to qualify for gratuity under the new labour code (relaxed in case of death or disablement).');
+      } else {
+        errors.push('Permanent employees generally need at least 5 years of continuous service to qualify for gratuity (relaxed in case of death or disablement).');
+      }
+    }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '₹—';
+      document.getElementById('rYears').textContent = '—';
+      document.getElementById('rBeforeCap').textContent = '₹—';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    } else {
+      validationBox.classList.add('hidden');
+      validationBox.innerHTML = '';
+    }
+
+    const roundedYears = months >= 6 ? years + 1 : years;
+    const gratuityBeforeCap = (salary * roundedYears * 15) / GRATUITY_DIVISOR;
+    const finalGratuity = Math.min(gratuityBeforeCap, GRATUITY_CAP);
+    const wasCapped = gratuityBeforeCap > GRATUITY_CAP;
+
+    document.getElementById('rResult').textContent = '₹' + finalGratuity.toLocaleString('en-IN', {maximumFractionDigits:0});
+    document.getElementById('resultSub').textContent = wasCapped ? 'Capped at the ₹20,00,000 statutory ceiling' : 'Based on your entered service details';
+    document.getElementById('rYears').textContent = roundedYears + ' yrs';
+    document.getElementById('rBeforeCap').textContent = '₹' + gratuityBeforeCap.toLocaleString('en-IN', {maximumFractionDigits:0});
+
+    const eligibilityLabel = employmentType === 'fixedTerm' ? 'Fixed-Term (1-year eligibility, new labour code)' : 'Permanent (5-year eligibility)';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <tbody>
+                <tr><td>Employment Type</td><td>${eligibilityLabel}</td></tr>
+                <tr><td>Last Drawn Basic + DA</td><td>₹${salary.toLocaleString('en-IN')}</td></tr>
+                <tr><td>Entered Service</td><td>${years} yrs ${months} mo</td></tr>
+                <tr><td>Rounded Years Used</td><td>${roundedYears} yrs</td></tr>
+                <tr><td>Formula</td><td>(15 × ${salary.toLocaleString('en-IN')} × ${roundedYears}) ÷ ${GRATUITY_DIVISOR}</td></tr>
+                <tr><td>Gratuity Before Cap</td><td>₹${Math.round(gratuityBeforeCap).toLocaleString('en-IN')}</td></tr>
+                <tr><td>Statutory / Tax-Exempt Cap</td><td>₹${GRATUITY_CAP.toLocaleString('en-IN')}</td></tr>
+                <tr><td><strong>Final Gratuity Payable</strong></td><td><strong>₹${Math.round(finalGratuity).toLocaleString('en-IN')}</strong></td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  // run once on load with default values
+  calculateGratuity();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>UPS Size Calculator | ElectroMechCalc</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+<meta name="description" content="Free UPS size calculator — find the correct UPS kVA rating and input current for your load, power factor, and phase, with standard size recommendation.">
+<link rel="canonical" href="https://www.electromechcalc.com/ups-size.html">
+<link rel="icon" href="/favicon.png" type="image/png">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brandDark: '#0B1220',
+          brandPanel: '#111c2e',
+          brandLine: '#1f2f47',
+          brandBlue: '#0ea5e9',
+          brandAmber: '#f59e0b'
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace']
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{
+    display:none;
+  }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{
+    display:block;
+  }
+  .nav-dropdown-panel{
+    padding-top:10px;
+    margin-top:-10px;
+  }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .result-tile{
+    background:linear-gradient(160deg,#0B1220,#15233a);
+  }
+  .sun-badge{
+    background:conic-gradient(from 0deg,#f59e0b,#fbbf24,#f59e0b);
+  }
+
+  /* search bar */
+  .search-wrap{ position:relative; }
+  .search-input{
+    background:rgba(255,255,255,0.06);
+    border:1px solid #1f2f47;
+    color:#e2e8f0;
+    border-radius:8px;
+    padding:8px 12px 8px 34px;
+    font-size:13px;
+    width:190px;
+    outline:none;
+    transition:.15s ease;
+  }
+  .search-input::placeholder{ color:#64748b; }
+  .search-input:focus{
+    width:230px;
+    border-color:#0ea5e9;
+    background:rgba(255,255,255,0.1);
+  }
+  .search-icon{
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#64748b;
+    pointer-events:none;
+  }
+  .search-results{
+    position:absolute;
+    top:calc(100% + 8px);
+    right:0;
+    width:280px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    box-shadow:0 14px 30px rgba(11,18,32,0.25);
+    overflow:hidden;
+    display:none;
+    z-index:60;
+  }
+  .search-wrap.has-results .search-results{ display:block; }
+  .search-results a{
+    display:block;
+    padding:10px 14px;
+    font-size:13px;
+    color:#0B1220;
+    border-bottom:1px solid #f1f5f9;
+  }
+  .search-results a:last-child{ border-bottom:none; }
+  .search-results a:hover{ background:#f0f9ff; }
+  .search-empty{
+    padding:12px 14px;
+    font-size:12.5px;
+    color:#94a3b8;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== PAGE HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-3xl mx-auto px-4 py-14 text-center relative z-10">
+    <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+      <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+      Electrical &middot; Free &middot; Instant results
+    </span>
+    <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+      UPS Size Calculator
+    </h1>
+    <p class="text-gray-400 text-sm max-w-xl mx-auto">
+      Enter your load as kW, HP, or Amp, pick single or three phase, and get the recommended UPS kVA rating plus input current — rounded to the nearest standard UPS size.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== CALCULATOR ===================== -->
+<section class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Load & Supply Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Fill in your connected load, phase type, and power factor below.</p>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Phase Type</label>
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2">
+          <div id="phase1" class="toggle-btn" onclick="setPhase('1')">Single Phase</div>
+          <div id="phase3" class="toggle-btn active" onclick="setPhase('3')">Three Phase</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Input Type</label>
+          <select id="loadType" class="input-field mt-2" onchange="setLoadType()">
+            <option value="kw">Kilowatt (kW)</option>
+            <option value="hp">Horsepower (HP)</option>
+            <option value="amp">Amp (A)</option>
+          </select>
+        </div>
+        <div>
+          <label id="loadLabel" class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Load Value (kW)</label>
+          <input id="loadValue" type="number" value="8" step="0.1" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Voltage (V)</label>
+          <input id="voltage" type="number" value="415" step="1" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Power Factor</label>
+          <input id="pf" type="number" value="0.9" step="0.01" min="0.01" max="1" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateUPSSize()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate UPS Size
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">kVA = kW ÷ PF</span>
+        <span class="formula-chip">3Φ: I = (1000×kW) ÷ (√3×V×PF)</span>
+        <span class="formula-chip">1Φ: I = (1000×kW) ÷ (V×PF)</span>
+        <span class="formula-chip">UPS Size = next standard rating ≥ kVA</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div class="lg:col-span-2 flex flex-col gap-4">
+
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full sun-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-400">Recommended UPS</span>
+        <div id="rUpsKVA" class="font-display font-bold text-3xl mt-1">— kVA</div>
+        <p class="text-xs text-gray-400 mt-1">Standard size, rounded up for headroom</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Calculated kVA</span>
+          <div id="rCalcKVA" class="font-display font-bold text-xl text-brandDark mt-1">— kVA</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Input Current</span>
+          <div id="rCurrent" class="font-display font-bold text-xl text-brandDark mt-1">— A</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Load (kW)</span>
+          <div id="rLoadKW" class="font-display font-bold text-xl text-brandDark mt-1">— kW</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Load (HP)</span>
+          <div id="rLoadHP" class="font-display font-bold text-xl text-brandDark mt-1">— HP</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500">Sizing Notes</span>
+        <p id="rNotes" class="text-sm text-gray-600 mt-1.5 leading-relaxed">Enter your load and hit calculate to see the recommended UPS rating and how much headroom it gives you.</p>
+      </div>
+
+      <!-- related calculators — placed here in results column so it's visible without competing with the input form -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="inverter-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Inverter Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="kw-kva.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            kVA ↔ kW Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="kva-current.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            kVA ↔ Current Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="kw-current.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            kW ↔ Current Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="dg-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            DG Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="transformer-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Transformer Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="motor-current.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Motor Current Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="apfc.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            APFC Capacitor Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="cable-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Cable Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="ups-calculator.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            UPS Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="solar-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Solar Panel Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="electrical-pro-max.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-amber-100 bg-amber-50 text-sm font-semibold text-amber-700">
+            ⭐ Electrical Pro Max <span class="text-amber-500">→</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding UPS Sizing</h2>
+
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Choosing the right UPS rating is a balancing act that trips up a lot of first-time buyers, and even a few experienced panel builders when the load list changes late in a project. A UPS that is undersized will trip on inrush current the moment a compressor or a large monitor bank switches on, and a UPS that is grossly oversized wastes capital, takes up more floor space, and often runs less efficiently at light load than a correctly matched unit would. This calculator follows the same sizing logic used by electrical contractors and data-centre facilities teams: convert whatever load figure you have on hand into real power, translate that into the apparent power the UPS itself is rated in, and then round up to a standard, commercially available size.</p>
+
+      <p>The starting point is always the connected load in kilowatts, because kW is the unit almost every piece of equipment is ultimately rated in, even when the nameplate shows something else. If your load is already known in kW, the calculator uses that figure directly. If instead you have a motor or pump rated in horsepower, the tool first converts shaft power to electrical kW using the standard factor <strong>1 HP = 0.746 kW</strong>. And if all you have is a current reading from a clamp meter or an existing panel ammeter, the calculator works backward from the supply voltage, the phase configuration, and the load's power factor. For a single-phase circuit, real power is <strong>kW = (V × I × PF) ÷ 1000</strong>; for a three-phase circuit, the same relationship picks up a √3 term to account for the phase geometry, giving <strong>kW = (√3 × V × I × PF) ÷ 1000</strong>. Whichever path you start from, the load ends up expressed in the same common unit, which is what makes UPS sizing consistent regardless of how the equipment happens to be labelled.</p>
+
+      <p>Once the load is known in kW, sizing the UPS itself comes down to a single, deliberately simple relationship: <strong>kVA = kW ÷ Power Factor</strong>. A UPS is rated in apparent power (kVA), not real power (kW), because its internal components — the inverter stage, the battery charger, the wiring — all have to be sized to handle the full current the load draws, regardless of how much of that current is doing useful work versus how much is reactive. A load with a poor power factor therefore demands a proportionally larger UPS even though the real power it consumes hasn't changed; this is exactly why data-centre and server-room loads, which often run at PF 0.9 or lower, need noticeably bigger UPS units than their kW rating alone would suggest.</p>
+
+      <p>The calculated kVA figure is rarely a number you can buy off the shelf, so the final step rounds it up to the nearest standard UPS rating — units are manufactured in fixed steps such as 1, 2, 3, 5, 7.5, 10, 15, 20, 30, 50, and on up into the hundreds of kVA, rather than to arbitrary custom values. Rounding up rather than down is intentional: it builds in headroom for inrush current when equipment first switches on, for any future load growth on the same circuit, and for the gradual capacity loss that battery-based UPS systems experience as they age. As a rule of thumb, aim for the standard size that gives you somewhere between 10% and 25% of spare capacity over your calculated demand — enough margin to be safe, without paying for capacity you'll never realistically use.</p>
+
+      <p>Alongside the kVA rating, the calculator also reports the input current the UPS will draw from the upstream supply, using the same three-phase or single-phase relationship in reverse. This figure matters for anyone sizing the incoming breaker, the supply cable, or an isolator switch feeding the UPS — it tells you what the panel upstream actually needs to be rated for, separate from what the UPS itself is rated to deliver to the protected load downstream.</p>
+
+      <p>As with any sizing exercise, treat the output here as an solid engineering starting point rather than a final purchase decision. Real installations should also account for future expansion plans, the specific inrush characteristics of the connected equipment, ambient temperature at the installation site, and any redundancy requirements (N+1 or 2N configurations) mandated by the facility's uptime requirements. Always have the final UPS selection reviewed by a qualified electrical engineer before procurement, particularly for critical-load installations such as server rooms, hospitals, or industrial control systems.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is a UPS rated in kVA instead of kW?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A UPS's internal components — the inverter, charger, and wiring — must handle the full current the load draws, not just the portion doing useful work. kVA (apparent power) captures that total current demand, while kW (real power) only reflects the working portion, so UPS units are always rated in kVA.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How much headroom should I add over the calculated kVA?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A margin of roughly 10–25% is standard practice. It covers inrush current from motors and switch-mode equipment at start-up, future load additions, and the gradual capacity loss that comes with battery ageing. Rounding up to the next standard UPS size usually lands you in this range automatically.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does a lower power factor mean I need a bigger UPS?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes. Since kVA = kW ÷ PF, a lower power factor increases the calculated kVA for the same real-power load. Server and IT loads with poor power factors often need a noticeably larger UPS than their kW rating alone would suggest.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I size the UPS based on running load or starting (inrush) current?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Base the calculation on steady-state running load, then rely on the standard-size rounding and headroom margin to absorb short inrush spikes. For loads with very high inrush (large motors, compressors), check the UPS manufacturer's surge rating separately, since sustained oversizing just for inrush wastes capacity.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+
+<script>
+  // ===== UPS Size Calculator Logic =====
+  let currentPhase = '3';
+
+  function setPhase(p){
+    currentPhase = p;
+    document.getElementById('phase1').classList.toggle('active', p==='1');
+    document.getElementById('phase3').classList.toggle('active', p==='3');
+    document.getElementById('voltage').value = p==='3' ? 415 : 220;
+  }
+
+  function setLoadType(){
+    const type = document.getElementById('loadType').value;
+    const label = document.getElementById('loadLabel');
+    const input = document.getElementById('loadValue');
+    if(type === 'hp'){
+      label.textContent = 'Load Value (HP)';
+      input.placeholder = 'e.g. 10';
+    } else if(type === 'amp'){
+      label.textContent = 'Load Value (Amp)';
+      input.placeholder = 'e.g. 14';
+    } else {
+      label.textContent = 'Load Value (kW)';
+      input.placeholder = 'e.g. 8';
+    }
+  }
+
+  function getRecommendedUPS(kva){
+    const sizes = [1,2,3,5,7.5,10,15,20,30,40,50,60,80,100,120,160,200,250,300,400,500,600,800,1000];
+    for(let s of sizes){
+      if(kva <= s) return s;
+    }
+    return sizes[sizes.length-1];
+  }
+
+  function calculateUPSSize(){
+    const loadType = document.getElementById('loadType').value;
+    const loadValue = parseFloat(document.getElementById('loadValue').value);
+    let pf = parseFloat(document.getElementById('pf').value);
+    const voltage = parseFloat(document.getElementById('voltage').value);
+
+    const errors = [];
+    if (isNaN(loadValue) || loadValue <= 0){ errors.push('Load Value must be greater than 0.'); }
+    if (isNaN(pf) || pf <= 0 || pf > 1){ errors.push('Power Factor must be between 0.01 and 1. Reset to 0.9.'); pf = 0.9; }
+    if (isNaN(voltage) || voltage <= 0){ errors.push('Voltage must be greater than 0.'); }
+
+    const validationBox = document.getElementById('validationBox');
+    if (errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
+      if (isNaN(loadValue) || loadValue <= 0 || isNaN(voltage) || voltage <= 0){
+        document.getElementById('rUpsKVA').textContent = '— kVA';
+        document.getElementById('rCalcKVA').textContent = '— kVA';
+        document.getElementById('rCurrent').textContent = '— A';
+        document.getElementById('rLoadKW').textContent = '— kW';
+        document.getElementById('rLoadHP').textContent = '— HP';
+        document.getElementById('rNotes').textContent = 'Fix the input errors above to see a valid result.';
+        return;
+      }
+    } else {
+      validationBox.classList.add('hidden');
+      validationBox.innerHTML = '';
+    }
+
+    let kw, current;
+    if (loadType === 'hp'){
+      kw = loadValue * 0.746;
+      current = (currentPhase === '3')
+        ? (1000 * kw) / (Math.sqrt(3) * voltage * pf)
+        : (1000 * kw) / (voltage * pf);
+    } else if (loadType === 'amp'){
+      current = loadValue;
+      kw = (currentPhase === '3')
+        ? (Math.sqrt(3) * voltage * current * pf) / 1000
+        : (voltage * current * pf) / 1000;
+    } else {
+      kw = loadValue;
+      current = (currentPhase === '3')
+        ? (1000 * kw) / (Math.sqrt(3) * voltage * pf)
+        : (1000 * kw) / (voltage * pf);
+    }
+
+    const kva = kw / pf;
+    const recommended = getRecommendedUPS(kva);
+    const headroomPct = ((recommended - kva) / kva) * 100;
+
+    document.getElementById('rUpsKVA').textContent = recommended + ' kVA';
+    document.getElementById('rCalcKVA').textContent = kva.toFixed(2) + ' kVA';
+    document.getElementById('rCurrent').textContent = current.toFixed(2) + ' A';
+    document.getElementById('rLoadKW').textContent = kw.toFixed(2) + ' kW';
+    document.getElementById('rLoadHP').textContent = (kw/0.746).toFixed(2) + ' HP';
+
+    document.getElementById('rNotes').textContent =
+      `A ${currentPhase === '3' ? 'three' : 'single'}-phase load of ${kw.toFixed(2)} kW at PF ${pf.toFixed(2)} needs about ${kva.toFixed(2)} kVA. The nearest standard UPS size above this is ${recommended} kVA, giving roughly ${headroomPct.toFixed(0)}% headroom over the calculated demand. Input current at ${voltage}V works out to about ${current.toFixed(1)} A.`;
+  }
+
+  // run once on load with default values
+  setLoadType();
+  calculateUPSSize();
+</script>
+
+</body>
+</html>

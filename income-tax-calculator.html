@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>Income Tax Calculator (Old vs New Regime) India | ElectroMechCalc</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+<meta name="description" content="Free Income Tax Calculator for India. Compare your tax liability under the Old and New tax regimes for FY 2025-26 and find out which regime saves you more.">
+<link rel="canonical" href="https://www.electromechcalc.com/income-tax-calculator.html">
+<link rel="icon" href="/favicon.png" type="image/png">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brandDark: '#0B1220',
+          brandPanel: '#111c2e',
+          brandLine: '#1f2f47',
+          brandBlue: '#0ea5e9',
+          brandAmber: '#f59e0b'
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace']
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{
+    display:none;
+  }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{
+    display:block;
+  }
+  .nav-dropdown-panel{
+    padding-top:10px;
+    margin-top:-10px;
+  }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{
+    background:linear-gradient(160deg,#0B1220,#15233a);
+  }
+  .fund-badge{
+    background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9);
+  }
+
+  .breakdown-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:12.5px;
+  }
+  .breakdown-table th,
+  .breakdown-table td{
+    padding:7px 8px;
+    text-align:right;
+    border-bottom:1px solid #e5e7eb;
+    white-space:nowrap;
+  }
+  .breakdown-table th:first-child,
+  .breakdown-table td:first-child{
+    text-align:left;
+  }
+  .breakdown-table th{
+    color:#6b7280;
+    font-weight:600;
+    text-transform:uppercase;
+    font-size:10.5px;
+    letter-spacing:0.4px;
+    background:#f8fafc;
+    position:sticky;
+    top:0;
+  }
+  .breakdown-table td{
+    color:#111827;
+  }
+  .breakdown-wrap{
+    max-height:280px;
+    overflow-y:auto;
+    overflow-x:auto;
+    margin-top:4px;
+    border-radius:8px;
+    border:1px solid #e5e7eb;
+  }
+
+  /* search bar */
+  .search-wrap{ position:relative; }
+  .search-input{
+    background:rgba(255,255,255,0.06);
+    border:1px solid #1f2f47;
+    color:#e2e8f0;
+    border-radius:8px;
+    padding:8px 12px 8px 34px;
+    font-size:13px;
+    width:190px;
+    outline:none;
+    transition:.15s ease;
+  }
+  .search-input::placeholder{ color:#64748b; }
+  .search-input:focus{
+    width:230px;
+    border-color:#0ea5e9;
+    background:rgba(255,255,255,0.1);
+  }
+  .search-icon{
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#64748b;
+    pointer-events:none;
+  }
+  .search-results{
+    position:absolute;
+    top:calc(100% + 8px);
+    right:0;
+    width:280px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    box-shadow:0 14px 30px rgba(11,18,32,0.25);
+    overflow:hidden;
+    display:none;
+    z-index:60;
+  }
+  .search-wrap.has-results .search-results{ display:block; }
+  .search-results a{
+    display:block;
+    padding:10px 14px;
+    font-size:13px;
+    color:#0B1220;
+    border-bottom:1px solid #f1f5f9;
+  }
+  .search-results a:last-child{ border-bottom:none; }
+  .search-results a:hover{ background:#f0f9ff; }
+  .search-empty{
+    padding:12px 14px;
+    font-size:12.5px;
+    color:#94a3b8;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== PAGE HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-3xl mx-auto px-4 py-14 text-center relative z-10">
+    <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+      <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+      Financial &middot; Free &middot; Instant results
+    </span>
+    <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+      Income Tax Calculator <span class="text-sky-400">(Old vs New Regime)</span>
+    </h1>
+    <p class="text-gray-400 text-sm max-w-xl mx-auto">
+      Compare your tax liability under the Old and New tax regimes for FY 2025-26 (AY 2026-27) and see which one saves you more.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== CALCULATOR ===================== -->
+<section class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Income &amp; Deduction Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter your annual income and eligible deductions. Deductions below are only used to compute Old Regime tax, since most are not allowed under the New Regime. This calculator assumes salaried / pension income eligible for the standard deduction under both regimes.</p>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Age Category</label>
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2">
+          <div id="ageBelow60" class="toggle-btn active" onclick="setAgeCategory('below60')">Below 60</div>
+          <div id="age60to80" class="toggle-btn" onclick="setAgeCategory('60to80')">60–80 yrs</div>
+          <div id="ageAbove80" class="toggle-btn" onclick="setAgeCategory('above80')">Above 80</div>
+        </div>
+        <p class="text-[11px] text-gray-400 mt-2">Age category changes the basic exemption limit under the Old Regime only. New Regime slabs are the same for all ages.</p>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Annual Gross Income (₹)</label>
+        <input id="grossIncome" type="number" value="1200000" step="10000" min="0" placeholder="e.g. 1200000" class="input-field mt-2" oninput="calculateTax()">
+        <p class="text-[11px] text-gray-400 mt-2">Total salary / income before any deductions, including bonus and taxable allowances.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4 mb-1">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Section 80C (₹)</label>
+          <input id="ded80C" type="number" value="150000" step="5000" min="0" class="input-field mt-2" oninput="calculateTax()">
+          <p class="text-[11px] text-gray-400 mt-1">PF, ELSS, life insurance etc. Capped at ₹1,50,000.</p>
+          <p id="warn80C" class="text-[11px] text-amber-600 mt-1 hidden"></p>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Section 80D (₹)</label>
+          <input id="ded80D" type="number" value="25000" step="1000" min="0" class="input-field mt-2" oninput="calculateTax()">
+          <p class="text-[11px] text-gray-400 mt-1">Health insurance premium. Capped at ₹25,000 (₹50,000 if you selected 60+ above). Actual limit can vary with parents' age and preventive check-ups; this is a simplified cap.</p>
+          <p id="warn80D" class="text-[11px] text-amber-600 mt-1 hidden"></p>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4 mb-5 mt-4">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Home Loan Interest — 24(b) (₹)</label>
+          <input id="dedHomeLoan" type="number" value="0" step="5000" min="0" class="input-field mt-2" oninput="calculateTax()">
+          <p class="text-[11px] text-gray-400 mt-1">Self-occupied property, capped at ₹2,00,000.</p>
+          <p id="warnHomeLoan" class="text-[11px] text-amber-600 mt-1 hidden"></p>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">NPS — 80CCD(1B) (₹)</label>
+          <input id="dedNPS" type="number" value="0" step="5000" min="0" class="input-field mt-2" oninput="calculateTax()">
+          <p class="text-[11px] text-gray-400 mt-1">Additional self-contribution, capped at ₹50,000.</p>
+          <p id="warnNPS" class="text-[11px] text-amber-600 mt-1 hidden"></p>
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateTax()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Recalculate
+      </button>
+
+      <p class="text-[11px] text-gray-400 mt-3">Results update automatically as you type. The 80C/80D/24(b)/NPS deductions only affect the Old Regime — the New Regime has no such deductions, so its tax stays the same regardless of these fields; that's expected, not a bug.</p>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">New: Std. Ded. ₹75,000 + Slabs + 87A marginal relief</span>
+        <span class="formula-chip">Old: Std. Ded. ₹50,000 + 80C/80D/24(b) + 87A marginal relief</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div class="lg:col-span-2 flex flex-col gap-4">
+
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Recommended Regime</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter your details and hit compare</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">New Regime Tax</span>
+            <span id="rNewTax" class="font-display font-semibold text-lg">₹—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Old Regime Tax</span>
+            <span id="rOldTax" class="font-display font-semibold text-lg">₹—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Calculation Breakdown</span>
+        <div class="breakdown-wrap" id="breakdownBox" style="max-height:none;">
+          <p class="text-xs text-gray-400 p-3">Compare to see the detailed slab-wise tax calculation.</p>
+        </div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="fd-calculator.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            FD Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="ppf-calculator.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            PPF Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="nps-calculator.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            NPS Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="epf-calculator.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            EPF Calculator <span class="text-sky-500">→</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Old Regime vs New Regime — What's the Difference?</h2>
+
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>India currently runs two parallel personal income tax structures. The <strong>New Regime</strong> is now the default option, with lower slab rates but almost no deductions or exemptions. The <strong>Old Regime</strong> has higher slab rates but allows a wide range of deductions such as 80C, 80D, HRA and home loan interest, which can bring your effective tax down significantly if you actively invest and claim them.</p>
+
+      <p><strong>New Regime slabs (FY 2025-26):</strong> ₹0–4L: Nil, ₹4–8L: 5%, ₹8–12L: 10%, ₹12–16L: 15%, ₹16–20L: 20%, ₹20–24L: 25%, above ₹24L: 30%. A standard deduction of ₹75,000 applies to salaried taxpayers, and a tax rebate under Section 87A means taxable income up to ₹12,00,000 (₹12,75,000 including standard deduction) effectively attracts zero tax, with marginal relief tapering the tax smoothly for incomes just above that threshold.</p>
+
+      <p><strong>Old Regime slabs (below 60 years):</strong> ₹0–2.5L: Nil, ₹2.5–5L: 5%, ₹5–10L: 20%, above ₹10L: 30%. Senior citizens (60–80) get a higher exemption limit of ₹3L, and super senior citizens (80+) get ₹5L. A standard deduction of ₹50,000 applies, along with deductions like 80C (up to ₹1.5L), 80D, home loan interest under Section 24(b) (up to ₹2L), and NPS under 80CCD(1B) (up to ₹50,000). Rebate under 87A makes tax zero if taxable income is up to ₹5,00,000, again with marginal relief just above that line.</p>
+
+      <p><strong>Which one should you pick?</strong> If you don't invest much or don't have a home loan / HRA to claim, the New Regime usually works out cheaper because of its lower slabs and higher rebate threshold. If you have substantial 80C investments, health insurance, a home loan, or high HRA exemption, the Old Regime can still come out ahead — this calculator runs both numbers side by side so you don't have to guess.</p>
+
+      <p>A 4% Health &amp; Education Cess is added on top of the computed tax in both regimes, after the 87A rebate/marginal relief is applied. This calculator does not account for HRA exemption, capital gains, or surcharge on very high incomes, and assumes salary/pension income eligible for the standard deduction — for a complete picture, especially if you have business or rental income, it's a good idea to review your Form 16 or full return with a tax professional.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Reference: Income Tax Act, 1961, and Finance Act provisions for FY 2025-26 (AY 2026-27), Government of India. This calculator is for educational planning purposes only and does not constitute tax advice; always confirm with a qualified CA or tax advisor.</p>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Which regime is the default now?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The New Tax Regime is the default option for all taxpayers. If you want to be taxed under the Old Regime instead, you need to specifically opt for it — salaried employees can do this each year while filing their return or via their employer's declaration form.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I switch between regimes every year?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Salaried individuals with no business income can switch between the Old and New Regime every financial year. Those with business or professional income have a one-time option to switch back to the Old Regime after opting out of it.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does this calculator include HRA exemption?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No. HRA exemption depends on your actual rent paid, city of residence, and basic salary, which makes it highly individual. This calculator focuses on 80C, 80D, home loan interest, and NPS to give a directional comparison — factor in your HRA exemption separately for a fully accurate picture.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is there a rebate that makes tax fully zero?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes. Under Section 87A, if your taxable income is up to ₹12,00,000 under the New Regime, or up to ₹5,00,000 under the Old Regime, your tax liability is reduced to zero through this rebate. If your income is slightly above these thresholds, marginal relief caps your tax so it never exceeds the amount by which your income exceeds the threshold — this calculator applies that relief automatically.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+
+<script>
+  // ===== Income Tax Calculator Logic =====
+  let ageCategory = 'below60';
+
+  function setAgeCategory(cat){
+    ageCategory = cat;
+    document.getElementById('ageBelow60').classList.toggle('active', cat === 'below60');
+    document.getElementById('age60to80').classList.toggle('active', cat === '60to80');
+    document.getElementById('ageAbove80').classList.toggle('active', cat === 'above80');
+    calculateTax();
+  }
+
+  function slabTax(income, slabs){
+    let tax = 0;
+    let prev = 0;
+    for(const [limit, rate] of slabs){
+      if(income > prev){
+        const taxable = Math.min(income, limit) - prev;
+        tax += taxable * rate;
+        prev = limit;
+      } else break;
+    }
+    return tax;
+  }
+
+  // Applies Section 87A rebate + marginal relief.
+  // If taxableIncome <= threshold, tax is fully rebated to 0.
+  // If taxableIncome > threshold, marginal relief ensures tax never
+  // exceeds the amount by which income exceeds the threshold.
+  function applyRebateAndMarginalRelief(taxableIncome, tax, threshold){
+    if(taxableIncome <= threshold) return 0;
+    const excess = taxableIncome - threshold;
+    if(tax > excess) return excess;
+    return tax;
+  }
+
+  function setWarning(id, msg){
+    const el = document.getElementById(id);
+    if(msg){
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    } else {
+      el.textContent = '';
+      el.classList.add('hidden');
+    }
+  }
+
+  function calculateTax(){
+    const grossRaw = document.getElementById('grossIncome').value;
+    const c80CRaw = document.getElementById('ded80C').value;
+    const c80DRaw = document.getElementById('ded80D').value;
+    const homeLoanRaw = document.getElementById('dedHomeLoan').value;
+    const npsRaw = document.getElementById('dedNPS').value;
+
+    const gross = parseFloat(grossRaw);
+    let c80CIn = parseFloat(c80CRaw);
+    let c80DIn = parseFloat(c80DRaw);
+    let homeLoanIn = parseFloat(homeLoanRaw);
+    let npsIn = parseFloat(npsRaw);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+
+    if(grossRaw === '' || isNaN(gross) || gross < 0){ errors.push('Enter a valid annual gross income of ₹0 or more.'); }
+    if(c80CRaw !== '' && (isNaN(c80CIn) || c80CIn < 0)){ errors.push('Section 80C amount cannot be negative.'); }
+    if(c80DRaw !== '' && (isNaN(c80DIn) || c80DIn < 0)){ errors.push('Section 80D amount cannot be negative.'); }
+    if(homeLoanRaw !== '' && (isNaN(homeLoanIn) || homeLoanIn < 0)){ errors.push('Home loan interest cannot be negative.'); }
+    if(npsRaw !== '' && (isNaN(npsIn) || npsIn < 0)){ errors.push('NPS 80CCD(1B) amount cannot be negative.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '—';
+      document.getElementById('rNewTax').textContent = '₹—';
+      document.getElementById('rOldTax').textContent = '₹—';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    if(isNaN(c80CIn) || c80CIn < 0) c80CIn = 0;
+    if(isNaN(c80DIn) || c80DIn < 0) c80DIn = 0;
+    if(isNaN(homeLoanIn) || homeLoanIn < 0) homeLoanIn = 0;
+    if(isNaN(npsIn) || npsIn < 0) npsIn = 0;
+
+    // caps, with visible warnings when a value is reduced
+    const cap80C = 150000;
+    const cap80D = (ageCategory === '60to80' || ageCategory === 'above80') ? 50000 : 25000;
+    const capHomeLoan = 200000;
+    const capNPS = 50000;
+
+    const c80C = Math.min(c80CIn, cap80C);
+    const c80D = Math.min(c80DIn, cap80D);
+    const homeLoan = Math.min(homeLoanIn, capHomeLoan);
+    const nps = Math.min(npsIn, capNPS);
+
+    setWarning('warn80C', c80CIn > cap80C ? `Capped at ₹${cap80C.toLocaleString('en-IN')}; only this much is used in the calculation.` : '');
+    setWarning('warn80D', c80DIn > cap80D ? `Capped at ₹${cap80D.toLocaleString('en-IN')} for your age category.` : '');
+    setWarning('warnHomeLoan', homeLoanIn > capHomeLoan ? `Capped at ₹${capHomeLoan.toLocaleString('en-IN')}.` : '');
+    setWarning('warnNPS', npsIn > capNPS ? `Capped at ₹${capNPS.toLocaleString('en-IN')}.` : '');
+
+    // ---- New Regime ----
+    const newStdDed = 75000;
+    const newTaxableIncome = Math.max(0, gross - newStdDed);
+    const newSlabs = [[400000,0],[800000,0.05],[1200000,0.10],[1600000,0.15],[2000000,0.20],[2400000,0.25],[Infinity,0.30]];
+    const newRebateThreshold = 1200000;
+    let newTax = slabTax(newTaxableIncome, newSlabs);
+    newTax = applyRebateAndMarginalRelief(newTaxableIncome, newTax, newRebateThreshold);
+    const newCess = newTax * 0.04;
+    const newTotalTax = newTax + newCess;
+
+    // ---- Old Regime ----
+    const oldStdDed = 50000;
+    const totalDeductions = oldStdDed + c80C + c80D + homeLoan + nps;
+    const oldTaxableIncome = Math.max(0, gross - totalDeductions);
+
+    let exemption = 250000;
+    if(ageCategory === '60to80') exemption = 300000;
+    if(ageCategory === 'above80') exemption = 500000;
+
+    // slab-wise old regime tax, built with the same slabTax() helper,
+    // using the exemption limit for the selected age category
+    let oldSlabs;
+    if(ageCategory === 'above80'){
+      oldSlabs = [[500000,0],[1000000,0.20],[Infinity,0.30]];
+    } else {
+      oldSlabs = [[exemption,0],[500000,0.05],[1000000,0.20],[Infinity,0.30]];
+    }
+    const oldRebateThreshold = 500000; // fixed at ₹5L regardless of age category
+    let oldTax = slabTax(oldTaxableIncome, oldSlabs);
+    oldTax = applyRebateAndMarginalRelief(oldTaxableIncome, oldTax, oldRebateThreshold);
+    const oldCess = oldTax * 0.04;
+    const oldTotalTax = oldTax + oldCess;
+
+    const better = newTotalTax <= oldTotalTax ? 'New Regime' : 'Old Regime';
+    const savings = Math.abs(newTotalTax - oldTotalTax);
+
+    document.getElementById('rResult').textContent = better;
+    document.getElementById('resultSub').textContent = 'Saves you ₹' + Math.round(savings).toLocaleString('en-IN') + ' compared to the other regime';
+    document.getElementById('rNewTax').textContent = '₹' + Math.round(newTotalTax).toLocaleString('en-IN');
+    document.getElementById('rOldTax').textContent = '₹' + Math.round(oldTotalTax).toLocaleString('en-IN');
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <tbody>
+                <tr><td colspan="2" style="background:#f8fafc;"><strong>New Regime</strong></td></tr>
+                <tr><td>Standard Deduction</td><td>₹${newStdDed.toLocaleString('en-IN')}</td></tr>
+                <tr><td>Taxable Income</td><td>₹${Math.round(newTaxableIncome).toLocaleString('en-IN')}</td></tr>
+                <tr><td>Tax after 87A rebate/relief</td><td>₹${Math.round(newTax).toLocaleString('en-IN')}</td></tr>
+                <tr><td>Health &amp; Edu. Cess (4%)</td><td>₹${Math.round(newCess).toLocaleString('en-IN')}</td></tr>
+                <tr><td><strong>Total Tax Payable</strong></td><td><strong>₹${Math.round(newTotalTax).toLocaleString('en-IN')}</strong></td></tr>
+                <tr><td colspan="2" style="background:#f8fafc;"><strong>Old Regime</strong></td></tr>
+                <tr><td>Standard Deduction</td><td>₹${oldStdDed.toLocaleString('en-IN')}</td></tr>
+                <tr><td>80C Used (of ₹${c80CIn.toLocaleString('en-IN')} entered)</td><td>₹${c80C.toLocaleString('en-IN')}</td></tr>
+                <tr><td>80D Used (of ₹${c80DIn.toLocaleString('en-IN')} entered)</td><td>₹${c80D.toLocaleString('en-IN')}</td></tr>
+                <tr><td>24(b) Used (of ₹${homeLoanIn.toLocaleString('en-IN')} entered)</td><td>₹${homeLoan.toLocaleString('en-IN')}</td></tr>
+                <tr><td>NPS 80CCD(1B) Used (of ₹${npsIn.toLocaleString('en-IN')} entered)</td><td>₹${nps.toLocaleString('en-IN')}</td></tr>
+                <tr><td>Total Deductions</td><td>₹${Math.round(totalDeductions).toLocaleString('en-IN')}</td></tr>
+                <tr><td>Exemption Limit Used</td><td>₹${exemption.toLocaleString('en-IN')}</td></tr>
+                <tr><td>Taxable Income</td><td>₹${Math.round(oldTaxableIncome).toLocaleString('en-IN')}</td></tr>
+                <tr><td>Tax after 87A rebate/relief</td><td>₹${Math.round(oldTax).toLocaleString('en-IN')}</td></tr>
+                <tr><td>Health &amp; Edu. Cess (4%)</td><td>₹${Math.round(oldCess).toLocaleString('en-IN')}</td></tr>
+                <tr><td><strong>Total Tax Payable</strong></td><td><strong>₹${Math.round(oldTotalTax).toLocaleString('en-IN')}</strong></td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  // run once on load with default values
+  calculateTax();
+
+
+</script>
+
+</body>
+</html>

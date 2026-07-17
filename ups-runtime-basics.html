@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="theme-color" content="#ffffff">
+<title>UPS Sizing: kVA Isn't the Whole Story | ElectroMechCalc</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<meta name="description"
+content="Why a bigger kVA UPS doesn't always mean longer runtime. Understand kVA vs Watts, battery Ah capacity, the runtime formula, and how to size a UPS correctly for your backup time needs.">
+
+<meta name="keywords"
+content="UPS sizing, UPS runtime, battery Ah capacity, kVA vs watts UPS, UPS battery backup time, VRLA battery sizing">
+
+<link rel="canonical"
+href="https://www.electromechcalc.com/ups-runtime-basics.html">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        brandDark:'#0B1220',
+        brandPanel:'#111c2e',
+        brandLine:'#1f2f47',
+        brandBlue:'#0ea5e9',
+        brandAmber:'#f59e0b'
+      },
+      fontFamily: {
+        display: ['"Space Grotesk"', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace']
+      }
+    }
+  }
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  .formula-block{
+    background:#0b1220;
+    border:1px solid #1f2f47;
+    border-radius:10px;
+    padding:16px 18px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    color:#a7f3d0;
+    white-space:pre-line;
+    line-height:1.7;
+  }
+
+  .blog-prose h2{
+    font-size:1.5rem;
+    font-weight:700;
+    color:#0B1220;
+    margin-top:2rem;
+    margin-bottom:0.75rem;
+  }
+  .blog-prose p{
+    color:#374151;
+    line-height:1.75;
+    margin-bottom:1rem;
+  }
+  .blog-prose strong{ color:#0B1220; }
+  .blog-prose ul{
+    margin:0 0 1rem 1.25rem;
+    color:#374151;
+    line-height:1.75;
+  }
+  .blog-prose li{ margin-bottom:0.4rem; }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .result-tile{
+    background:linear-gradient(160deg,#0B1220,#15233a);
+  }
+  .sun-badge{
+    background:conic-gradient(from 0deg,#f59e0b,#fbbf24,#f59e0b);
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  /* search bar */
+  .search-wrap{ position:relative; }
+  .search-input{
+    background:rgba(255,255,255,0.06);
+    border:1px solid #1f2f47;
+    color:#e2e8f0;
+    border-radius:8px;
+    padding:8px 12px 8px 34px;
+    font-size:13px;
+    width:190px;
+    outline:none;
+    transition:.15s ease;
+  }
+  .search-input::placeholder{ color:#64748b; }
+  .search-input:focus{
+    width:230px;
+    border-color:#0ea5e9;
+    background:rgba(255,255,255,0.1);
+  }
+  .search-icon{
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#64748b;
+    pointer-events:none;
+  }
+  .search-results{
+    position:absolute;
+    top:calc(100% + 8px);
+    right:0;
+    width:280px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    box-shadow:0 14px 30px rgba(11,18,32,0.25);
+    overflow:hidden;
+    display:none;
+    z-index:60;
+  }
+  .search-wrap.has-results .search-results{ display:block; }
+  .search-results a{
+    display:block;
+    padding:10px 14px;
+    font-size:13px;
+    color:#0B1220;
+    border-bottom:1px solid #f1f5f9;
+  }
+  .search-results a:last-child{ border-bottom:none; }
+  .search-results a:hover{ background:#f0f9ff; }
+  .search-empty{
+    padding:12px 14px;
+    font-size:12.5px;
+    color:#94a3b8;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== HERO ===================== -->
+<section class="bg-brandDark border-b border-brandLine">
+  <div class="max-w-4xl mx-auto px-6 py-16 text-center">
+
+    <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1.5 rounded-full mb-5">
+      <span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+      UPS
+    </span>
+
+    <h1 class="text-3xl md:text-5xl font-display font-bold text-white leading-tight mb-5">
+      UPS Sizing: kVA Isn't the Whole Story
+    </h1>
+
+    <p class="text-gray-400 max-w-2xl mx-auto">
+      Battery runtime depends on Ah capacity too — a bigger kVA UPS won't always run longer. Here's how the two ratings actually relate, and how to size both correctly.
+    </p>
+
+  </div>
+</section>
+
+<!-- ===================== BATTERY RUNTIME CALCULATOR (moved to top) ===================== -->
+<section class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Battery Runtime Calculator</h2>
+      <p class="text-xs text-gray-500 mb-6">Estimate backup time from your battery bank, or find the Ah needed for a target runtime.</p>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Calculation Mode</label>
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2">
+          <div id="modeRuntime" class="toggle-btn active" onclick="setCalcMode('runtime')">Find Runtime</div>
+          <div id="modeAh" class="toggle-btn" onclick="setCalcMode('ah')">Find Required Ah</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Battery Voltage (V)</label>
+          <input id="rtVoltage" type="number" value="48" step="1" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Inverter Efficiency (%)</label>
+          <input id="rtEfficiency" type="number" value="90" step="1" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Load (Watts)</label>
+          <input id="rtLoad" type="number" value="600" step="10" class="input-field mt-2">
+        </div>
+        <div id="ahFieldWrap">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Battery Capacity (Ah)</label>
+          <input id="rtAh" type="number" value="100" step="1" class="input-field mt-2">
+        </div>
+        <div id="runtimeFieldWrap" class="hidden">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Target Runtime (hours)</label>
+          <input id="rtTargetHours" type="number" value="0.5" step="0.1" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="mb-5" id="agingFieldWrap" style="display:none;">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Aging Factor</label>
+        <input id="rtAging" type="number" value="0.8" step="0.05" min="0.1" max="1" class="input-field mt-2">
+        <p class="text-[11px] text-gray-400 mt-1">Typical: 0.8 — batteries reach end-of-life around 80% of nameplate capacity.</p>
+      </div>
+
+      <div id="rtValidationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateRuntime()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">Runtime (h) = (Ah × V × Eff) ÷ Watts</span>
+        <span class="formula-chip">Ah = (Watts × h) ÷ (V × Eff × Aging)</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div class="lg:col-span-2 flex flex-col gap-4">
+
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full sun-badge opacity-20"></div>
+        <span id="rtResultLabel" class="font-mono text-[10px] uppercase tracking-wider text-amber-400">Estimated Runtime</span>
+        <div id="rtResultMain" class="font-display font-bold text-3xl mt-1">— hours</div>
+        <p id="rtResultSub" class="text-xs text-gray-400 mt-1">Enter values and click Calculate</p>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500">Sizing Notes</span>
+        <p id="rtNotes" class="text-sm text-gray-600 mt-1.5 leading-relaxed">Runtime and required Ah scale linearly with load — halving the load roughly doubles the backup time for the same battery bank.</p>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="ups-calculator.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            UPS Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="ups-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            UPS Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="inverter-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Inverter Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="solar-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Solar Panel Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="kw-kva.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            kVA ↔ kW Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="dg-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            DG Size Calculator <span class="text-sky-500">→</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- AD SPACE (DISABLED until AdSense approval) =====================
+<div class="max-w-4xl mx-auto px-6 py-8">
+  <div class="h-[90px] border border-dashed border-gray-300 rounded-md flex items-center justify-center text-gray-400 font-mono text-[11px] uppercase tracking-wide">
+    Ad Space — Leaderboard 728×90
+  </div>
+</div>
+===================== END AD SPACE -->
+
+<!-- ===================== ARTICLE BODY ===================== -->
+<article class="max-w-3xl mx-auto px-6 py-12 bg-white blog-prose">
+
+  <p>
+    It's a common assumption: buy a bigger UPS, get longer backup time. In reality, a 5 kVA UPS with a small internal battery pack can run out of power faster than a 1.5 kVA unit with a larger external battery bank. The reason comes down to a distinction that's easy to overlook — kVA tells you how much load the UPS's inverter can <strong>support</strong>, while runtime is governed almost entirely by a completely different number: the battery's amp-hour (Ah) capacity. Mixing these two up is one of the most common — and most expensive — UPS sizing mistakes.
+  </p>
+
+  <h2>kVA vs. Watts: Two Different Limits</h2>
+  <p>
+    Every UPS carries two ratings: VA (or kVA) and Watts. The VA rating defines the maximum apparent power the inverter can physically deliver, while the Watts rating reflects the real, usable power after accounting for the UPS output power factor — typically 0.7 to 0.9 for many consumer and line-interactive units. A 1500VA UPS at a 0.6 output power factor only delivers 900W of real capacity, not 1500W. Connecting a load that draws more than the Watt rating will overload the UPS even though the VA headroom looks fine on paper, so the Watt figure — not the VA figure — is what actually limits how much equipment you can safely connect.
+  </p>
+
+  <h2>Runtime Is a Battery Question, Not a kVA Question</h2>
+  <p>
+    Once the UPS can support your load's real power draw, the next question — how long will it last on battery — depends on a separate set of variables entirely: battery voltage, amp-hour (Ah) capacity, and inverter efficiency. A UPS with a small internal battery might support a large load comfortably from a kVA standpoint but only bridge a few minutes of backup, while a smaller-kVA unit paired with an external battery bank can sustain a modest load for an hour or more. This is exactly why a "bigger" UPS by kVA rating doesn't automatically mean longer runtime — the two numbers answer different questions.
+  </p>
+
+  <div class="formula-block">Runtime (hours) = (Battery Ah × Battery Voltage × Efficiency) ÷ Load (Watts)
+
+Where:
+Battery Ah = Amp-hour rating of the battery bank
+Battery Voltage = Nominal DC bus voltage of the battery string
+Efficiency = Inverter efficiency, typically 0.85–0.95
+Load (Watts) = Real power drawn by the connected equipment</div>
+
+  <p>
+    <span style="font-weight:600;color:#0B1220;">Worked example:</span> A 48V battery bank rated at 100 Ah, running at 90% inverter efficiency, supplying a 600W load: Runtime = (100 × 48 × 0.9) ÷ 600 = 7.2 hours. Halve the load to 300W and the same battery bank stretches to roughly 14.4 hours — runtime scales with load and battery energy, completely independent of the UPS's kVA rating, as long as the kVA rating is large enough to support the load in the first place. Try your own numbers in the calculator above.
+  </p>
+
+  <h2>Sizing the Battery for a Target Runtime</h2>
+  <p>
+    When the requirement is a specific backup window — say, 30 minutes for a graceful shutdown, or several hours for a critical process — the formula runs in reverse to find the required Ah capacity, with extra margin built in for battery aging and depth-of-discharge limits. Switch the calculator above to "Find Required Ah" to run this in reverse.
+  </p>
+
+  <div class="formula-block">Required Battery Capacity (Ah) = (Load Watts × Runtime hours) ÷ (Battery Voltage × Efficiency × Aging Factor)
+
+Typical Aging Factor: 0.8 (accounts for batteries reaching end-of-life
+at roughly 80% of nameplate capacity)</div>
+
+  <p>
+    For a 1,000W load needing 30 minutes (0.5 hours) of runtime from a 48V battery bank at 90% efficiency and an aging factor of 0.8: Ah = (1,000 × 0.5) ÷ (48 × 0.9 × 0.8) ≈ 14.5 Ah — and in practice, a battery rated somewhat above this figure would be selected to leave margin for real-world conditions.
+  </p>
+
+  <h2>Why Real Runtime Often Falls Short of the Formula</h2>
+  <p>
+    The basic runtime formula assumes ideal conditions, but several real-world factors reduce usable capacity below the nameplate number:
+  </p>
+  <ul>
+    <li><strong>Battery aging</strong> — lead-acid batteries typically lose around 20% of their capacity over a 5–7 year service life, so sizing only for day-one capacity leaves no margin near end of life.</li>
+    <li><strong>Temperature</strong> — both UPS output capacity and battery capacity derate in hot or cold environments; a UPS rated for full output at 25°C may deliver noticeably less at 35°C.</li>
+    <li><strong>High discharge rates</strong> — batteries deliver less total energy when discharged quickly (the Peukert effect) than the simple Ah × Voltage figure suggests.</li>
+    <li><strong>Depth of discharge limits</strong> — most lead-acid designs are sized for shallow, regular discharge (around 20%) with only occasional deep discharge, which affects how much of the rated Ah is safely usable.</li>
+  </ul>
+
+  <h2>The Sizing Sequence That Avoids This Mistake</h2>
+  <p>
+    A reliable UPS specification follows the load all the way through, rather than jumping straight to a single VA number. First, total the real Watts of every device that must stay powered, and convert to VA using each device's power factor. Second, size the UPS kVA/Watt rating with headroom for inrush current and future growth — typically 20–30% above the calculated steady-state load. Third, and separately, define the required backup runtime and size the battery Ah using the runtime formula with aging and efficiency margins included. Treating these as two distinct sizing steps — UPS capacity for the load, battery capacity for the runtime — is what prevents the classic mismatch of a UPS that handles the load fine but dies in minutes when the power actually goes out.
+  </p>
+
+  <h2>Conclusion</h2>
+  <p>
+    kVA and battery Ah answer two different engineering questions, and conflating them is how oversized-on-paper UPS systems end up underperforming in the field. Size the UPS's VA/Watt rating to comfortably support the connected load with margin for inrush and growth, then size the battery bank's Ah capacity separately against your actual target runtime, with realistic allowances for aging, temperature, and discharge rate. Get both right independently, and the backup system will behave the way the spec sheet promised when the power actually fails.
+  </p>
+
+</article>
+
+<!-- ===================== RELATED CALCULATORS ===================== -->
+<section class="max-w-5xl mx-auto px-6 py-12">
+
+  <h2 class="text-2xl font-display font-bold text-brandDark mb-6">
+    Related Calculators
+  </h2>
+
+  <div class="grid md:grid-cols-3 gap-5">
+
+    <a href="ups-calculator.html" class="bg-white border border-gray-100 shadow-sm p-5 rounded-xl hover:border-sky-400 transition">
+      <h3 class="font-display font-semibold text-brandDark mb-2">UPS Calculator</h3>
+      <p class="text-sm text-gray-500">Battery backup runtime estimate for your connected load.</p>
+    </a>
+
+    <a href="ups-size.html" class="bg-white border border-gray-100 shadow-sm p-5 rounded-xl hover:border-sky-400 transition">
+      <h3 class="font-display font-semibold text-brandDark mb-2">UPS Size Calculator</h3>
+      <p class="text-sm text-gray-500">Find the correct UPS kVA rating and input current for your load.</p>
+    </a>
+
+    <a href="kw-kva.html" class="bg-white border border-gray-100 shadow-sm p-5 rounded-xl hover:border-sky-400 transition">
+      <h3 class="font-display font-semibold text-brandDark mb-2">kVA ↔ kW Calculator</h3>
+      <p class="text-sm text-gray-500">Convert between apparent power and real power using your system's power factor.</p>
+    </a>
+
+    <a href="dg-size.html" class="bg-white border border-gray-100 shadow-sm p-5 rounded-xl hover:border-sky-400 transition">
+      <h3 class="font-display font-semibold text-brandDark mb-2">DG Size Calculator</h3>
+      <p class="text-sm text-gray-500">Size a backup generator alongside your UPS for extended outage coverage.</p>
+    </a>
+
+    <a href="cable-size.html" class="bg-white border border-gray-100 shadow-sm p-5 rounded-xl hover:border-sky-400 transition">
+      <h3 class="font-display font-semibold text-brandDark mb-2">Cable Size Calculator</h3>
+      <p class="text-sm text-gray-500">Select the correct conductor size for your UPS input and output circuits.</p>
+    </a>
+
+    <a href="solar-size.html" class="bg-white border border-gray-100 shadow-sm p-5 rounded-xl hover:border-sky-400 transition">
+      <h3 class="font-display font-semibold text-brandDark mb-2">Solar Panel Size Calculator</h3>
+      <p class="text-sm text-gray-500">Array size, panel count, and battery Ah for a solar backup system.</p>
+    </a>
+
+  </div>
+
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+
+<script>
+  // ===== Battery Runtime Calculator Logic =====
+  let calcMode = 'runtime';
+
+  function setCalcMode(mode){
+    calcMode = mode;
+    document.getElementById('modeRuntime').classList.toggle('active', mode === 'runtime');
+    document.getElementById('modeAh').classList.toggle('active', mode === 'ah');
+
+    document.getElementById('ahFieldWrap').classList.toggle('hidden', mode !== 'runtime');
+    document.getElementById('runtimeFieldWrap').classList.toggle('hidden', mode !== 'ah');
+    document.getElementById('agingFieldWrap').style.display = (mode === 'ah') ? 'block' : 'none';
+
+    document.getElementById('rtResultLabel').textContent = (mode === 'runtime') ? 'Estimated Runtime' : 'Required Battery Capacity';
+    document.getElementById('rtResultMain').textContent = (mode === 'runtime') ? '— hours' : '— Ah';
+    document.getElementById('rtResultSub').textContent = 'Enter values and click Calculate';
+
+    document.getElementById('rtValidationBox').classList.add('hidden');
+    document.getElementById('rtValidationBox').innerHTML = '';
+  }
+
+  function calculateRuntime(){
+    const voltage = parseFloat(document.getElementById('rtVoltage').value);
+    const effPct = parseFloat(document.getElementById('rtEfficiency').value);
+    const load = parseFloat(document.getElementById('rtLoad').value);
+    const eff = effPct / 100;
+
+    const errors = [];
+    if (isNaN(voltage) || voltage <= 0){ errors.push('Battery Voltage must be greater than 0.'); }
+    if (isNaN(effPct) || effPct <= 0 || effPct > 100){ errors.push('Inverter Efficiency must be between 1 and 100.'); }
+    if (isNaN(load) || load <= 0){ errors.push('Load must be greater than 0.'); }
+
+    const validationBox = document.getElementById('rtValidationBox');
+
+    if (calcMode === 'runtime'){
+      const ah = parseFloat(document.getElementById('rtAh').value);
+      if (isNaN(ah) || ah <= 0){ errors.push('Battery Capacity (Ah) must be greater than 0.'); }
+
+      if (errors.length){
+        validationBox.classList.remove('hidden');
+        validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
+        document.getElementById('rtResultMain').textContent = '— hours';
+        document.getElementById('rtResultSub').textContent = 'Fix the input errors above to see a valid result.';
+        return;
+      }
+      validationBox.classList.add('hidden');
+      validationBox.innerHTML = '';
+
+      const hours = (ah * voltage * eff) / load;
+      const wholeHours = Math.floor(hours);
+      const minutes = Math.round((hours - wholeHours) * 60);
+
+      document.getElementById('rtResultMain').textContent = hours.toFixed(2) + ' hours';
+      document.getElementById('rtResultSub').textContent = '≈ ' + wholeHours + 'h ' + minutes + 'm backup time';
+      document.getElementById('rtNotes').textContent =
+        `A ${ah} Ah battery bank at ${voltage}V with ${effPct}% inverter efficiency supports a ${load}W load for about ${hours.toFixed(2)} hours (≈ ${wholeHours}h ${minutes}m). Halving the load roughly doubles this runtime.`;
+
+    } else {
+      const targetHours = parseFloat(document.getElementById('rtTargetHours').value);
+      const aging = parseFloat(document.getElementById('rtAging').value);
+
+      if (isNaN(targetHours) || targetHours <= 0){ errors.push('Target Runtime must be greater than 0.'); }
+      if (isNaN(aging) || aging <= 0 || aging > 1){ errors.push('Aging Factor must be between 0.1 and 1.'); }
+
+      if (errors.length){
+        validationBox.classList.remove('hidden');
+        validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
+        document.getElementById('rtResultMain').textContent = '— Ah';
+        document.getElementById('rtResultSub').textContent = 'Fix the input errors above to see a valid result.';
+        return;
+      }
+      validationBox.classList.add('hidden');
+      validationBox.innerHTML = '';
+
+      const requiredAh = (load * targetHours) / (voltage * eff * aging);
+
+      document.getElementById('rtResultMain').textContent = requiredAh.toFixed(2) + ' Ah';
+      document.getElementById('rtResultSub').textContent = `for ${targetHours}h at ${load}W on ${voltage}V`;
+      document.getElementById('rtNotes').textContent =
+        `To back up a ${load}W load for ${targetHours} hour(s) on a ${voltage}V bank at ${effPct}% efficiency with an aging factor of ${aging}, you need at least ${requiredAh.toFixed(2)} Ah of battery capacity. Choose the nearest standard battery size at or above this figure.`;
+    }
+  }
+
+  // run once on load with default values
+  setCalcMode('runtime');
+  calculateRuntime();
+</script>
+
+</body>
+</html>

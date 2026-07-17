@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>ElectroMechCalc – 30+ Free Electrical, Mechanical & Financial Calculators</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+<meta name="description" content="Instant, accurate calculators for engineers & technicians — transformer sizing, cable size, motor current, DG sizing, bearing life, plus EPF, SIP, income tax & more. 100% free, no sign-up.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ElectroMechCalc – 30+ Free Electrical, Mechanical & Financial Calculators">
+<meta property="og:description" content="Transformer sizing, cable size, motor current, DG sizing, bearing life, EPF, SIP, income tax & more — every formula shown, every result instant. 100% free.">
+<meta property="og:url" content="https://www.electromechcalc.com/">
+<meta property="og:image" content="https://www.electromechcalc.com/logo.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ElectroMechCalc – 30+ Free Engineering & Financial Calculators">
+<meta name="twitter:description" content="Free electrical, mechanical & financial calculators built for real fieldwork. Formulas shown, results instant, no sign-up.">
+<link rel="canonical" href="https://www.electromechcalc.com/">
+<link rel="icon" href="/favicon.png" type="image/png">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brandDark: '#0B1220',
+          brandPanel: '#111c2e',
+          brandLine: '#1f2f47',
+          brandBlue: '#0ea5e9',
+          brandAmber: '#f59e0b'
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace']
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+    animation: gridDrift 30s linear infinite;
+  }
+  @keyframes gridDrift{
+    0%{ background-position: 0px 0px, 0px 0px; }
+    100%{ background-position: 42px 42px, 42px 42px; }
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  .featured-card{
+    background:linear-gradient(160deg,#0B1220,#15233a);
+  }
+  .featured-card .formula-chip{background:rgba(255,255,255,.08);color:#fbbf24;}
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+    .blueprint-grid{animation:none !important;}
+  }
+
+  .feedback-btn{
+    transition:.15s ease;
+  }
+  .feedback-btn.selected{
+    background:#0ea5e9;
+    color:#fff;
+    border-color:#0ea5e9;
+  }
+
+  /* ===== Dropdown hover-delay fix =====
+     group-hover disappears instantly when the cursor leaves the
+     trigger button, even while moving down into the panel. Using a
+     JS-driven delay class instead of pure CSS group-hover so there is
+     a buffer window before the panel closes. */
+  .nav-dropdown .nav-dropdown-panel{
+    display:none;
+  }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{
+    display:block;
+  }
+  /* small invisible bridge so cursor never "leaves" the hover zone
+     between the button and the panel */
+  .nav-dropdown-panel{
+    padding-top:10px;
+    margin-top:-10px;
+  }
+
+  .nav-icon-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:24px;
+    height:24px;
+    border-radius:9999px;
+    flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block;
+    padding:8px 12px;
+    border-radius:8px;
+    font-size:13px;
+    color:#0B1220;
+  }
+  .nav-dropdown-link:hover{
+    background:rgba(14,165,233,.10);
+    color:#0ea5e9;
+  }
+
+  .mobile-sublink{
+    display:block;
+    padding:6px 10px;
+    border-radius:6px;
+    font-size:13px;
+    color:#e2e8f0;
+    opacity:0.85;
+  }
+  .mobile-sublink:hover{
+    background:rgba(14,165,233,.12);
+    color:#0ea5e9;
+    opacity:1;
+  }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===== Disabled Premium link styling =====
+     Looks like a normal nav/button item but is not clickable yet.
+     Swap class back to a real <a href> once AdSense approval is done. */
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  /* search bar */
+  .search-wrap{ position:relative; }
+  .search-input{
+    background:rgba(255,255,255,0.06);
+    border:1px solid #1f2f47;
+    color:#e2e8f0;
+    border-radius:8px;
+    padding:8px 12px 8px 34px;
+    font-size:13px;
+    width:190px;
+    outline:none;
+    transition:.15s ease;
+  }
+  .search-input::placeholder{ color:#f1f5f9; opacity:0.85; }
+  .search-input:focus{
+    width:230px;
+    border-color:#0ea5e9;
+    background:rgba(255,255,255,0.1);
+  }
+  .search-icon{
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#64748b;
+    pointer-events:none;
+  }
+  .search-results{
+    position:absolute;
+    top:calc(100% + 8px);
+    right:0;
+    width:280px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    box-shadow:0 14px 30px rgba(11,18,32,0.25);
+    overflow:hidden;
+    z-index:60;
+  }
+  .search-results.hidden{ display:none; }
+  .search-results a{
+    display:block;
+    padding:10px 14px;
+    font-size:13px;
+    color:#0B1220;
+    border-bottom:1px solid #f1f5f9;
+  }
+  .search-results a:last-child{ border-bottom:none; }
+  .search-results a:hover{ background:#f0f9ff; }
+  .search-empty{
+    padding:12px 14px;
+    font-size:12.5px;
+    color:#94a3b8;
+  }
+
+  .page-prose h2{
+    font-size:1.4rem;
+    font-weight:700;
+    color:#0B1220;
+    margin-top:1.75rem;
+    margin-bottom:0.6rem;
+    font-family:'Space Grotesk',system-ui,sans-serif;
+  }
+  .page-prose h3{
+    font-size:1.1rem;
+    font-weight:700;
+    color:#0B1220;
+    margin-top:1.25rem;
+    margin-bottom:0.5rem;
+    font-family:'Space Grotesk',system-ui,sans-serif;
+  }
+  .page-prose p{
+    color:#374151;
+    line-height:1.75;
+    margin-bottom:1rem;
+  }
+  .page-prose strong{ color:#0B1220; }
+  .page-prose ul{ margin:0 0 1rem 1.25rem; color:#374151; line-height:1.75; }
+  .page-prose li{ margin-bottom:0.4rem; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.18),transparent_70%)] pointer-events-none"></div>
+
+  <!-- decorative left: electrical schematic line-art -->
+  <svg class="hidden lg:block absolute left-4 top-1/2 -translate-y-1/2 opacity-[0.16] pointer-events-none" width="220" height="260" viewBox="0 0 220 260" fill="none">
+    <rect x="30" y="30" width="70" height="90" rx="4" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <path d="M65 30V10M65 120v20M30 65H10M100 65h20" stroke="#38bdf8" stroke-width="1.5"/>
+    <circle cx="65" cy="65" r="14" stroke="#38bdf8" stroke-width="1.5"/>
+    <path d="M58 65h14M65 58v14" stroke="#38bdf8" stroke-width="1.5"/>
+    <path d="M110 160 130 140h30l-15 20h30l-45 45 8-32h-25z" stroke="#f59e0b" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M20 180q20-10 40 0t40 0" stroke="#38bdf8" stroke-width="1.5"/>
+    <circle cx="20" cy="180" r="2.5" fill="#38bdf8"/>
+    <circle cx="60" cy="180" r="2.5" fill="#38bdf8"/>
+    <circle cx="100" cy="180" r="2.5" fill="#38bdf8"/>
+  </svg>
+
+  <!-- decorative right: gear + growth-line schematic -->
+  <svg class="hidden lg:block absolute right-4 top-1/2 -translate-y-1/2 opacity-[0.16] pointer-events-none" width="220" height="260" viewBox="0 0 220 260" fill="none">
+    <circle cx="150" cy="70" r="28" stroke="#38bdf8" stroke-width="1.5"/>
+    <circle cx="150" cy="70" r="8" stroke="#38bdf8" stroke-width="1.5"/>
+    <path d="M150 34v10M150 96v10M186 70h-10M114 70h10M174 46l-7 7M133 87l-7 7M174 94l-7-7M133 53l-7-7" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M20 210 55 175 85 195 130 145 165 165" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M145 145h20v20" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="20" cy="210" r="2.5" fill="#f59e0b"/>
+    <circle cx="85" cy="195" r="2.5" fill="#f59e0b"/>
+    <circle cx="165" cy="165" r="2.5" fill="#f59e0b"/>
+    <rect x="40" y="230" width="140" height="1" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3 3"/>
+  </svg>
+
+  <div class="max-w-3xl mx-auto px-4 py-20 text-center relative z-10">
+
+    <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1.5 rounded-full mb-6">
+      <span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+      Free &middot; No sign-up &middot; Instant results
+    </span>
+
+    <h1 class="text-3xl md:text-5xl font-display font-bold text-white leading-tight mb-4">
+      Engineering &amp; Financial calculators built for <span class="text-sky-400">real fieldwork</span>
+    </h1>
+    <p class="text-gray-400 text-base mb-8 max-w-xl mx-auto">
+      Transformer sizing, motor current, cable sizing, DG sets, pump calculations, and financial planning tools — every formula shown, every result accurate to the standard your job demands.
+    </p>
+
+    <div class="flex flex-wrap gap-3 justify-center mb-8">
+      <a href="#electrical-calculators" class="bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3 px-7 rounded-md shadow transition">
+        Explore Electrical Calculators
+      </a>
+      <a href="#mechanical-calculators" class="bg-white/5 hover:bg-white/10 text-gray-200 font-semibold text-sm py-3 px-7 rounded-md border border-brandLine transition">
+        Explore Mechanical Calculators
+      </a>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mb-10 text-[11px] font-mono text-gray-500">
+      <span class="inline-flex items-center gap-1.5"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>No login required</span>
+      <span class="inline-flex items-center gap-1.5"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Formulas verified</span>
+      <span class="inline-flex items-center gap-1.5"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>Built for field use</span>
+    </div>
+
+    <div class="flex justify-center gap-10 flex-wrap" id="heroStats">
+      <div class="text-center">
+        <div class="font-mono text-xl font-semibold text-white"><span class="stat-num" data-target="30" data-suffix="+">0+</span></div>
+        <div class="text-[11px] text-gray-500 uppercase tracking-wide">Engineering Calculators</div>
+      </div>
+      <div class="text-center">
+        <div class="font-mono text-xl font-semibold text-white"><span class="stat-num" data-target="100" data-suffix="%">0%</span></div>
+        <div class="text-[11px] text-gray-500 uppercase tracking-wide">Free to use</div>
+      </div>
+      <div class="text-center">
+        <div class="font-mono text-xl font-semibold text-white">&lt;1s</div>
+        <div class="text-[11px] text-gray-500 uppercase tracking-wide">Result time</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== AD SPACE (DISABLED until AdSense approval) =====================
+<div class="max-w-3xl mx-auto px-4 mt-10">
+  <div class="h-[90px] border border-dashed border-gray-300 rounded-md flex items-center justify-center text-gray-400 font-mono text-[11px] uppercase tracking-wide">
+    Ad Space — Leaderboard 728×90
+  </div>
+</div>
+===================== END AD SPACE ===================== -->
+
+<!-- ===================== ELECTRICAL CALCULATORS ===================== -->
+<section id="electrical-calculators" class="max-w-6xl mx-auto px-4 py-16">
+
+  <div class="flex items-end justify-between flex-wrap gap-3 border-b border-gray-200 pb-4 mb-10">
+    <div>
+      <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">01 — Electrical</span>
+      <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Electrical Calculators</h2>
+    </div>
+  </div>
+
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+    <a href="transformer-size.html" class="calc-card relative bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <span class="absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full shadow">🔥 Popular</span>
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-sky-50 text-sky-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" stroke-linejoin="round" stroke-linecap="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">Transformer Size Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Find the correct kVA rating for a transformer based on your connected load and voltage.</p>
+      <span class="formula-chip">kVA = (V × I × √3) / 1000</span>
+    </a>
+
+    <a href="kw-kva.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-sky-50 text-sky-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" stroke-linejoin="round" stroke-linecap="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">kVA ↔ kW Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Convert between apparent power and real power using your system's power factor.</p>
+      <span class="formula-chip">kW = kVA × PF</span>
+    </a>
+
+    <a href="hp-kw.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-sky-50 text-sky-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" stroke-linejoin="round" stroke-linecap="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">HP ↔ kW Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Convert horsepower to kilowatts and back — built for motor nameplate conversions.</p>
+      <span class="formula-chip">kW = HP × 0.7457</span>
+    </a>
+
+    <a href="motor-current.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-sky-50 text-sky-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" stroke-linejoin="round" stroke-linecap="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">Motor Current Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Estimate full-load amperage for single or three-phase motors from rated power and voltage.</p>
+      <span class="formula-chip">I = P / (V × √3 × PF)</span>
+    </a>
+
+    <a href="apfc.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-sky-50 text-sky-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" stroke-linejoin="round" stroke-linecap="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">APFC Capacitor Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Size the correct capacitor bank to correct your system's power factor.</p>
+      <span class="formula-chip">kVAR = kW × (tanφ1 − tanφ2)</span>
+    </a>
+
+    <a href="kva-current.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-sky-50 text-sky-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" stroke-linejoin="round" stroke-linecap="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">kVA ↔ Current Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Convert kVA to line current and back for single or three-phase systems.</p>
+      <span class="formula-chip">I = kVA × 1000 / (V × √3)</span>
+    </a>
+
+    <a href="kw-current.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-sky-50 text-sky-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" stroke-linejoin="round" stroke-linecap="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">kW ↔ Current Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Convert real power directly to current draw using voltage and power factor.</p>
+      <span class="formula-chip">I = kW × 1000 / (V × √3 × PF)</span>
+    </a>
+
+    <a href="dg-size.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-sky-50 text-sky-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" stroke-linejoin="round" stroke-linecap="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">DG Size Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Determine the right diesel generator rating for your connected and starting load.</p>
+      <span class="formula-chip">kVA = Total Load / PF</span>
+    </a>
+
+    <a href="cable-size.html" class="calc-card relative bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <span class="absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full shadow">🔥 Popular</span>
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-sky-50 text-sky-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" stroke-linejoin="round" stroke-linecap="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">Cable Size Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Select the correct conductor size based on current, length, and voltage drop limits.</p>
+      <span class="formula-chip">A = (ρ × L × I) / Vd</span>
+    </a>
+
+    <a href="inverter-size.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-sky-50 text-sky-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" stroke-linejoin="round" stroke-linecap="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">Inverter Size Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Find the right inverter VA rating for your load, with surge and safety margin included.</p>
+      <span class="formula-chip">VA = Watts / PF</span>
+    </a>
+
+    <a href="ups-calculator.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-sky-50 text-sky-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" stroke-linejoin="round" stroke-linecap="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">UPS Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Estimate battery backup runtime, or find the battery Ah needed for a target backup time.</p>
+      <span class="formula-chip">Runtime = (Ah × V × η) / W</span>
+    </a>
+
+    <a href="ups-size.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-sky-50 text-sky-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" stroke-linejoin="round" stroke-linecap="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">UPS Size Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Find the right UPS kVA rating and input current for your load and power factor.</p>
+      <span class="formula-chip">kVA = Load (kW) / PF</span>
+    </a>
+
+    <a href="electrical-pro-max.html" class="calc-card featured-card rounded-xl shadow-sm p-6 flex flex-col gap-3 text-white">
+      <h3 class="font-display font-semibold text-lg flex items-center gap-1.5">⭐ Electrical Pro Max</h3>
+      <p class="text-sm text-gray-300 flex-grow">Our complete suite — cable sizing, voltage drop, fault current, and load balancing in one tool.</p>
+      <span class="formula-chip">All-in-one toolkit</span>
+    </a>
+
+  </div>
+</section>
+
+<!-- ===================== MECHANICAL CALCULATORS ===================== -->
+<section id="mechanical-calculators" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-6xl mx-auto px-4">
+
+    <div class="flex items-end justify-between flex-wrap gap-3 border-b border-gray-200 pb-4 mb-10">
+      <div>
+        <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">02 — Mechanical</span>
+        <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Mechanical Calculators</h2>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+
+      <a href="bearing-life.html" class="calc-card bg-gray-50 rounded-xl border border-gray-100 p-6 flex flex-col gap-3">
+        <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-amber-50 text-amber-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><h3 class="font-display font-semibold text-base text-brandDark">Bearing Life Calculator</h3></div>
+        <p class="text-sm text-gray-500 flex-grow">Estimate L10 bearing service life from dynamic load rating and operating speed.</p>
+        <span class="formula-chip">L10 = (C/P)^p</span>
+      </a>
+
+      <a href="gear-ratio.html" class="calc-card bg-gray-50 rounded-xl border border-gray-100 p-6 flex flex-col gap-3">
+        <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-amber-50 text-amber-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><h3 class="font-display font-semibold text-base text-brandDark">Gear Ratio Calculator</h3></div>
+        <p class="text-sm text-gray-500 flex-grow">Calculate gear ratio, output speed, and torque multiplication for a gear pair.</p>
+        <span class="formula-chip">GR = T2 / T1</span>
+      </a>
+
+      <a href="pump-head.html" class="calc-card bg-gray-50 rounded-xl border border-gray-100 p-6 flex flex-col gap-3">
+        <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-amber-50 text-amber-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><h3 class="font-display font-semibold text-base text-brandDark">Pump Head Calculator</h3></div>
+        <p class="text-sm text-gray-500 flex-grow">Estimate total head a pump must overcome including elevation and friction loss.</p>
+        <span class="formula-chip">H = Hs + Hf + Hv</span>
+      </a>
+
+      <a href="pump-tdh.html" class="calc-card bg-gray-50 rounded-xl border border-gray-100 p-6 flex flex-col gap-3">
+        <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-amber-50 text-amber-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><h3 class="font-display font-semibold text-base text-brandDark">TDH Calculator</h3></div>
+        <p class="text-sm text-gray-500 flex-grow">Calculate Total Dynamic Head for correct pump selection in your system.</p>
+        <span class="formula-chip">TDH = Static + Friction + Pressure Head</span>
+      </a>
+      <a href="cooling-tower.html" class="calc-card bg-gray-50 rounded-xl border border-gray-100 p-6 flex flex-col gap-3">
+        <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-amber-50 text-amber-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><h3 class="font-display font-semibold text-base text-brandDark">Cooling Tower Efficiency Calculator</h3></div>
+        <p class="text-sm text-gray-500 flex-grow">Calculate cooling tower efficiency for correct cooling tower selection in your system.</p>
+        <span class="formula-chip">Efficiency (%) = Range ÷ (Range + Approach) × 100</span>
+      </a>
+      <a href="belt-length.html" class="calc-card bg-gray-50 rounded-xl border border-gray-100 p-6 flex flex-col gap-3">
+        <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-amber-50 text-amber-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><h3 class="font-display font-semibold text-base text-brandDark">Belt Length Calculator</h3></div>
+        <p class="text-sm text-gray-500 flex-grow">Calculate belt length for correct belt in your system.</p>
+        <span class="formula-chip">Belt Length = 2C + 1.57 × (D2 + D1) + (D2 − D1)² ÷ (4 × C)
+
+Where: C  = Center distance between pulleys
+       D1 = Driver (smaller) pulley diameter
+       D2 = Driven (larger) pulley diameter</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FINANCIAL CALCULATORS ===================== -->
+<section id="financial-calculators" class="max-w-6xl mx-auto px-4 py-16">
+
+  <div class="flex items-end justify-between flex-wrap gap-3 border-b border-gray-200 pb-4 mb-10">
+    <div>
+      <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">03 — Financial</span>
+      <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Financial Calculators</h2>
+      <p class="text-sm text-gray-500 mt-2 max-w-xl">Financial planning tools for engineers and technicians — plan your retirement corpus, investments, and growth rate alongside your day-to-day engineering calculations.</p>
+    </div>
+  </div>
+
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+    <a href="epf-calculator.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-emerald-50 text-emerald-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12M6 8h12M6 3c4 0 8 1 8 5s-4 5-8 5l8 8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">EPF Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Project your EPF retirement corpus with an annual salary step-up percentage, using the same monthly interest method EPFO applies to your passbook.</p>
+      <span class="formula-chip">Interest = Opening Balance × (Rate ÷ 12)</span>
+    </a>
+
+    <a href="sip-calculator.html" class="calc-card relative bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <span class="absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full shadow">🔥 Popular</span>
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-emerald-50 text-emerald-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12M6 8h12M6 3c4 0 8 1 8 5s-4 5-8 5l8 8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">SIP &amp; Lump Sum Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Calculate SIP maturity with annual step-up, or compare against a one-time lump sum investment, using the standard formula used by major fund houses.</p>
+      <span class="formula-chip">FV = P × [(1+r)^n − 1] / r × (1+r)</span>
+    </a>
+
+    <a href="cagr-calculator.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-emerald-50 text-emerald-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12M6 8h12M6 3c4 0 8 1 8 5s-4 5-8 5l8 8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">CAGR Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Find the annualized growth rate of any investment between a starting and ending value.</p>
+      <span class="formula-chip">CAGR = (FV/PV)^(1/n) − 1</span>
+    </a>
+
+    <a href="gratuity-calculator.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-emerald-50 text-emerald-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12M6 8h12M6 3c4 0 8 1 8 5s-4 5-8 5l8 8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">Gratuity Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Estimate your gratuity payout.</p>
+      <span class="formula-chip">Gratuity = (15 × Salary × Years) ÷ 26,
+      Capped at ₹20,00,000</span>
+    </a>
+
+    <a href="income-tax-calculator.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-emerald-50 text-emerald-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12M6 8h12M6 3c4 0 8 1 8 5s-4 5-8 5l8 8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">Income Tax Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Compare your tax liability under the Old vs New regime and pick the option that saves you more.</p>
+      <span class="formula-chip">Tax = Σ (Slab Income × Slab Rate)</span>
+    </a>
+
+    <a href="fd-calculator.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-emerald-50 text-emerald-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12M6 8h12M6 3c4 0 8 1 8 5s-4 5-8 5l8 8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">FD Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Calculate the maturity value of your fixed deposit with quarterly compounding.</p>
+      <span class="formula-chip">A = P × (1 + r/n)^(n×t)</span>
+    </a>
+
+    <a href="rd-calculator.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-emerald-50 text-emerald-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12M6 8h12M6 3c4 0 8 1 8 5s-4 5-8 5l8 8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">RD Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Find the maturity value of your recurring deposit based on monthly installment and tenure.</p>
+      <span class="formula-chip">M = P × [(1+r)^n − 1] / (1 − (1+r)^(-1/3))</span>
+    </a>
+
+    <a href="ppf-calculator.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-emerald-50 text-emerald-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12M6 8h12M6 3c4 0 8 1 8 5s-4 5-8 5l8 8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">PPF Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Project your Public Provident Fund maturity value over the 15-year lock-in with annual contributions.</p>
+      <span class="formula-chip">A = P × [(1+r)^n − 1] / r × (1+r)</span>
+    </a>
+
+    <a href="nps-calculator.html" class="calc-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-3">
+      <div class="flex items-center gap-2 mb-0.5"><span class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-emerald-50 text-emerald-600"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12M6 8h12M6 3c4 0 8 1 8 5s-4 5-8 5l8 8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h3 class="font-display font-semibold text-lg text-brandDark">NPS Calculator</h3></div>
+      <p class="text-sm text-gray-500 flex-grow">Estimate your NPS pension corpus at retirement and the monthly annuity it can generate.</p>
+      <span class="formula-chip">Corpus = Σ Contributions × (1+r)^n</span>
+    </a>
+
+  </div>
+</section>
+
+<!-- ===================== AD SPACE (DISABLED until AdSense approval) =====================
+<div class="max-w-3xl mx-auto px-4 my-14">
+  <div class="h-[120px] border border-dashed border-gray-300 rounded-md flex items-center justify-center text-gray-400 font-mono text-[11px] uppercase tracking-wide">
+    Ad Space — In-Content 728×120
+  </div>
+</div>
+===================== END AD SPACE ===================== -->
+
+<!-- ===================== WHY SECTION ===================== -->
+<section class="max-w-6xl mx-auto px-4 py-16">
+  <div class="mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">04 — Why ElectroMechCalc</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Built by people who read nameplates for a living</h2>
+  </div>
+
+  <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div class="flex gap-3">
+      <span class="font-mono text-xs text-sky-600 border-2 border-sky-500 w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0">1</span>
+      <div>
+        <h4 class="font-semibold text-sm text-brandDark mb-1">Formulas shown, not hidden</h4>
+        <p class="text-sm text-gray-500">Every calculator displays the exact formula used, so you can verify or learn it.</p>
+      </div>
+    </div>
+    <div class="flex gap-3">
+      <span class="font-mono text-xs text-sky-600 border-2 border-sky-500 w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0">2</span>
+      <div>
+        <h4 class="font-semibold text-sm text-brandDark mb-1">Standard-aligned values</h4>
+        <p class="text-sm text-gray-500">Default constants follow common industry standards, not arbitrary rounding.</p>
+      </div>
+    </div>
+    <div class="flex gap-3">
+      <span class="font-mono text-xs text-sky-600 border-2 border-sky-500 w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0">3</span>
+      <div>
+        <h4 class="font-semibold text-sm text-brandDark mb-1">Works in the field</h4>
+        <p class="text-sm text-gray-500">Fast on mobile data, no login walls — get your number in seconds on site.</p>
+      </div>
+    </div>
+    <div class="flex gap-3">
+      <span class="font-mono text-xs text-sky-600 border-2 border-sky-500 w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0">4</span>
+      <div>
+        <h4 class="font-semibold text-sm text-brandDark mb-1">Always free</h4>
+        <p class="text-sm text-gray-500">Every calculator on this site is free, with no usage limits or paywalls.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TESTIMONIALS ===================== -->
+<section class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="text-center mb-10">
+      <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">What engineers say</span>
+      <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Trusted on-site, every day</h2>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-gray-50 rounded-xl border border-gray-100 p-6">
+        <div class="flex gap-0.5 text-amber-400 mb-3">★★★★★</div>
+        <p class="text-sm text-gray-600 leading-relaxed mb-4">Saved me a trip back to the office just to size a DG set. Formula's right there, result checks out every time.</p>
+        <div class="text-xs font-semibold text-brandDark">Electrical Engineer</div>
+      </div>
+      <div class="bg-gray-50 rounded-xl border border-gray-100 p-6">
+        <div class="flex gap-0.5 text-amber-400 mb-3">★★★★★</div>
+        <p class="text-sm text-gray-600 leading-relaxed mb-4">Cable size and voltage drop calculators are spot on with IS standards. Use it for every panel drawing now.</p>
+        <div class="text-xs font-semibold text-brandDark">Electrical Design Engineer</div>
+      </div>
+      <div class="bg-gray-50 rounded-xl border border-gray-100 p-6">
+        <div class="flex gap-0.5 text-amber-400 mb-3">★★★★★</div>
+        <p class="text-sm text-gray-600 leading-relaxed mb-4">Mechanical Engineer — the formula chips actually helped me understand the concept, not just get an answer.</p>
+        <div class="text-xs font-semibold text-brandDark">Mechanical Engineer</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PREMIUM ===================== -->
+<section class="max-w-6xl mx-auto px-4 pb-16">
+  <div class="bg-brandDark blueprint-grid rounded-2xl p-10 flex flex-wrap items-center justify-between gap-8 relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_100%_50%,rgba(245,158,11,0.15),transparent_70%)] pointer-events-none"></div>
+    <div class="relative z-10 max-w-md">
+      <span class="font-mono text-xs uppercase tracking-wider text-amber-400">Premium Resources</span>
+      <h3 class="text-xl md:text-2xl font-display font-bold text-white mt-2 mb-2">Excel tools &amp; maintenance templates for working engineers</h3>
+      <p class="text-sm text-gray-400">Downloadable AMC trackers, maintenance checklists, and ready-made engineering spreadsheets — built to save hours on repetitive paperwork.</p>
+    </div>
+    <span class="premium-disabled relative z-10 bg-amber-500 text-brandDark font-semibold text-sm py-3 px-7 rounded-md inline-block flex-shrink-0" title="Coming soon">
+      View Premium Products
+    </span>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <div class="text-center mb-10">
+      <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">05 — FAQ</span>
+      <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    </div>
+
+    <div class="divide-y divide-gray-200">
+      <details class="py-5" open>
+        <summary class="font-semibold text-brandDark flex justify-between items-center">
+          What is kVA, and how is it different from kW?
+          <span class="plus text-sky-500 text-xl">+</span>
+        </summary>
+        <p class="text-sm text-gray-500 mt-3 leading-relaxed">kVA (kilovolt-amperes) is apparent power — the total power flowing in an AC circuit, including both the power doing useful work and the power lost to reactive loads like motor coils. kW (kilowatts) is real power, the portion that actually performs work. The two are related by power factor: <strong>kW = kVA × PF</strong>. A power factor of 1.0 means all apparent power is real power; most industrial loads run between 0.8 and 0.95.</p>
+      </details>
+
+      <details class="py-5">
+        <summary class="font-semibold text-brandDark flex justify-between items-center">
+          Why is Power Factor important when sizing equipment?
+          <span class="plus text-sky-500 text-xl">+</span>
+        </summary>
+        <p class="text-sm text-gray-500 mt-3 leading-relaxed">Power factor determines how much of the delivered apparent power (kVA) is actually converted into usable work (kW). A low power factor means transformers, generators, and cables must be rated larger to deliver the same real power, raising equipment cost and line losses. Many utilities also penalize industrial customers for poor power factor, which is why correction capacitors (APFC panels) are common on factory floors.</p>
+      </details>
+
+      <details class="py-5">
+        <summary class="font-semibold text-brandDark flex justify-between items-center">
+          How do I choose the right transformer or DG size for my load?
+          <span class="plus text-sky-500 text-xl">+</span>
+        </summary>
+        <p class="text-sm text-gray-500 mt-3 leading-relaxed">Add up your total connected load in kW, divide by the expected power factor to get kVA, then add a safety margin — typically 20–25% — for future load growth and motor starting surges. Our Transformer Size and DG Size calculators handle this automatically and round up to the nearest standard rating.</p>
+      </details>
+
+      <details class="py-5">
+        <summary class="font-semibold text-brandDark flex justify-between items-center">
+          Are these calculators accurate enough for professional use?
+          <span class="plus text-sky-500 text-xl">+</span>
+        </summary>
+        <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — every formula used is the same standard formula taught in electrical and mechanical engineering coursework and referenced in field handbooks. That said, for safety-critical or code-compliance decisions, always verify results against your local electrical code and have them reviewed by a licensed engineer. The EPF, SIP, and CAGR calculators follow the standard methods used by EPFO and major mutual fund houses, and are for educational planning purposes only — they do not constitute financial advice.</p>
+      </details>
+    </div>
+
+    <div class="flex items-center justify-center gap-3 mt-10 pt-8 border-t border-gray-100">
+      <span class="text-sm text-gray-500">Was this helpful?</span>
+      <button type="button" class="feedback-btn border border-gray-200 rounded-md w-9 h-9 flex items-center justify-center text-gray-500 hover:border-sky-400" onclick="this.classList.add('selected');this.nextElementSibling.classList.remove('selected')" aria-label="Yes, helpful">👍</button>
+      <button type="button" class="feedback-btn border border-gray-200 rounded-md w-9 h-9 flex items-center justify-center text-gray-500 hover:border-sky-400" onclick="this.classList.add('selected');this.previousElementSibling.classList.remove('selected')" aria-label="Not helpful">👎</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ABOUT / EXPLAINER (long-form, homepage SEO content) ===================== -->
+<section class="bg-gray-50 border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-6 page-prose">
+
+    <div class="text-center mb-10">
+      <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">06 — About These Calculators</span>
+      <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark !mt-0">Why ElectroMechCalc Exists, and How to Get the Most Out of It</h2>
+    </div>
+
+    <h3>A Toolkit Built Around One Idea: Show the Formula</h3>
+    <p>
+      Almost every electrical, mechanical, or financial calculation you'll ever need on the job or in coursework comes down to a handful of well-established formulas. The hard part usually isn't the math itself — it's remembering the right constant, tracking down the correct standard, or doing the arithmetic quickly enough to keep moving. ElectroMechCalc was built to remove that friction. Every calculator on this site — whether it's sizing a transformer, converting kVA to kW, estimating a motor's full-load current, or projecting an EPF maturity value — shows the underlying formula alongside the result, so the number you get is something you can verify, learn from, and trust, not a black box you have to take on faith.
+    </p>
+
+    <h3>Three Categories, One Consistent Standard</h3>
+    <p>
+      The site is organized into three broad categories: <strong>electrical calculators</strong>, <strong>mechanical calculators</strong>, and <strong>financial planning calculators</strong>. The electrical section covers the calculations that come up most often around panels, transformers, and motors — transformer kVA sizing, kVA-to-kW and kW-to-current conversions, motor full-load current, APFC capacitor sizing for power factor correction, cable sizing, diesel generator sizing, inverter and UPS sizing, and solar panel array sizing. The mechanical section handles the calculations technicians and maintenance engineers reach for on rotating equipment and fluid systems — bearing L10 life, gear ratios, pump head and total dynamic head, belt length, and cooling tower efficiency. The financial section applies the same formula-first philosophy to personal finance — EPF, gratuity, SIP and lump-sum investment growth, CAGR, income tax comparison between the old and new regimes, fixed and recurring deposits, PPF, and NPS. Different domains, same principle: show the math, use standard-aligned defaults, and give an answer fast enough to be useful in the middle of a task.
+    </p>
+
+    <h3>Who Actually Uses These Tools</h3>
+    <p>
+      Most visitors fall into one of a few groups. Electrical and mechanical engineering students use the calculators to check homework and lab results against a known-good formula rather than trusting a single worked example from a textbook. Site electricians and technicians use them standing in front of a panel or a pump skid, where a fast, mobile-friendly calculator beats flipping through a handbook or hunting for a signal to load a heavier tool. Plant maintenance teams use the bearing life, pump head, and cooling tower calculators to plan replacements and diagnose underperforming equipment before it fails outright. Facility managers use the transformer, DG, UPS, and solar sizing calculators when planning capacity for a new load, an expansion, or a backup power system. And because a lot of that same audience also plans their own retirement and investments, we added a small, focused set of financial calculators — EPF, SIP, CAGR, and the rest — built with the same emphasis on transparent, checkable math.
+    </p>
+
+    <h3>How to Use a Calculator on This Site</h3>
+    <p>
+      Every calculator follows the same basic pattern. You enter the inputs the formula actually needs — nothing extra, no forced sign-up, no account. The result appears instantly in the browser, along with the formula that produced it and a short explanation of what each term means. If a calculator involves an industry-standard constant or default assumption — a typical power factor, a standard safety margin, a common motor efficiency — that default is disclosed rather than buried, and in most cases you can override it if your specific situation calls for something different. Because the page shows its work, you can sanity-check the result by hand if you want to, use it to double-check a manual calculation, or use it to learn the formula itself rather than just the answer.
+    </p>
+
+    <h3>Accuracy, Standards, and Where the Formulas Come From</h3>
+    <p>
+      Our electrical calculators are built around formulas and default values referenced against recognized standards bodies — IEC for transformer and cable sizing, IEEE for motor and power system calculations, BIS for India-specific equipment ratings, and NEC for cable ampacity and installation practice where applicable. Our financial calculators are cross-checked against the published methods used by EPFO and major mutual fund houses, so the maturity and growth figures line up with how those institutions actually calculate them. That said, this site is an educational and planning resource, not a substitute for professional engineering judgment or licensed financial advice. For anything safety-critical, code-compliance related, or involving a significant financial decision, treat the calculator output as a strong starting estimate and verify it against your local electrical code or a qualified professional before acting on it. Our <a href="disclaimer.html" class="text-sky-600 underline">Disclaimer</a> covers this in more detail, and our <a href="editorial-policy.html" class="text-sky-600 underline">Editorial Policy</a> explains how we research, verify, and update every calculator and article on the site.
+    </p>
+
+    <h3>Why Everything Is Free</h3>
+    <p>
+      There's no paywall or subscription anywhere on ElectroMechCalc, and there isn't one planned for the core calculators. The site started as a set of personal spreadsheets used on the job and grew from there — the goal was always to make a fast, accurate number available to anyone who needed it, not to build a gated product. The site is supported by advertising rather than by charging for access, which is also why the calculators are built to load quickly and work reasonably well even on a slow mobile connection at a job site, where waiting for a page to load can matter as much as the calculation itself.
+    </p>
+
+    <h3>Built for the Field as Much as the Classroom</h3>
+    <p>
+      A lot of engineering calculator sites are built primarily for a desktop, in a quiet office, with a stable connection. That's not always where these numbers are actually needed. ElectroMechCalc is designed to work on a phone with limited data, standing next to a distribution panel or a pump skid, with minimal typing and a result that appears as soon as the inputs are filled in. The same simplicity also makes the site useful in a classroom or a study session, where the priority shifts from speed to understanding — seeing the formula next to the result helps connect the calculation back to the theory behind it.
+    </p>
+
+    <h3>Feedback, Corrections, and New Calculators</h3>
+    <p>
+      This is a small, actively maintained site, and the calculator list keeps growing based on what people actually ask for. If you spot an error in a formula or a result, want a calculator that doesn't exist yet, or have feedback on how an existing tool works, the fastest way to reach us is through the <a href="contact.html" class="text-sky-600 underline">Contact page</a>. Every message is reviewed, and corrections in particular are taken seriously — accuracy is the entire point of a site like this, and a wrong formula is worth fixing quickly. You can read more about who writes and reviews this content on our <a href="about.html" class="text-sky-600 underline">About page</a>.
+    </p>
+
+  </div>
+</section>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "ElectroMechCalc",
+  "url": "https://www.electromechcalc.com/",
+  "description": "Instant, accurate calculators for engineers & technicians — transformer sizing, cable size, motor current, DG sizing, bearing life, plus EPF, SIP, income tax & more. 100% free, no sign-up.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "ElectroMechCalc",
+    "url": "https://www.electromechcalc.com/",
+    "logo": "https://www.electromechcalc.com/logo.png",
+    "sameAs": []
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is kVA, and how is it different from kW?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "kVA (kilovolt-amperes) is apparent power — the total power flowing in an AC circuit, including both the power doing useful work and the power lost to reactive loads like motor coils. kW (kilowatts) is real power, the portion that actually performs work. The two are related by power factor: kW = kVA × PF. A power factor of 1.0 means all apparent power is real power; most industrial loads run between 0.8 and 0.95."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is Power Factor important when sizing equipment?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Power factor determines how much of the delivered apparent power (kVA) is actually converted into usable work (kW). A low power factor means transformers, generators, and cables must be rated larger to deliver the same real power, raising equipment cost and line losses. Many utilities also penalize industrial customers for poor power factor, which is why correction capacitors (APFC panels) are common on factory floors."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I choose the right transformer or DG size for my load?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Add up your total connected load in kW, divide by the expected power factor to get kVA, then add a safety margin — typically 20–25% — for future load growth and motor starting surges. Our Transformer Size and DG Size calculators handle this automatically and round up to the nearest standard rating."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are these calculators accurate enough for professional use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes — every formula used is the same standard formula taught in electrical and mechanical engineering coursework and referenced in field handbooks. That said, for safety-critical or code-compliance decisions, always verify results against your local electrical code and have them reviewed by a licensed engineer. The EPF, SIP, and CAGR calculators follow the standard methods used by EPFO and major mutual fund houses, and are for educational planning purposes only — they do not constitute financial advice."
+      }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<script>
+  // ===== Hero stat count-up animation (page-specific, homepage only) =====
+  (function(){
+    const statEls = document.querySelectorAll('.stat-num');
+    if(!statEls.length) return;
+    let played = false;
+    const animate = (el) => {
+      const target = parseInt(el.dataset.target, 10);
+      const suffix = el.dataset.suffix || '';
+      const duration = 900;
+      const start = performance.now();
+      const step = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(target * eased) + suffix;
+        if(progress < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+    const container = document.getElementById('heroStats');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if(entry.isIntersecting && !played){
+          played = true;
+          statEls.forEach(animate);
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.4 });
+    if(container) observer.observe(container);
+  })();
+</script>
+
+</body>
+</html>

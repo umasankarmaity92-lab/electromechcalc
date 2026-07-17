@@ -1,0 +1,273 @@
+/* ==========================================================================
+   ElectroMechCalc — shared site theme
+   Single source of truth for typography, layout helpers, search UI,
+   and dark/light theming. Every page links this file instead of
+   carrying its own duplicated <style> block.
+
+   Theme model: body.dark-theme / body.light-theme is toggled by
+   site-nav.js. Everything themeable reads from the CSS custom
+   properties defined below (--bg, --surface, --text, etc.) rather
+   than hardcoded hex values, so there is exactly one place to change
+   a color for both themes.
+   ========================================================================== */
+
+body { font-family: 'Inter', system-ui, sans-serif; }
+h1, h2, h3, .font-display { font-family: 'Space Grotesk', system-ui, sans-serif; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+
+.blueprint-grid {
+  background-image:
+    linear-gradient(#1f2f47 1px, transparent 1px),
+    linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+.calc-card {
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.calc-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px rgba(11,18,32,0.10);
+  border-color: #0ea5e9;
+}
+
+.formula-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: #eaf6fd;
+  color: #0369a1;
+  padding: 3px 9px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+details summary::-webkit-details-marker { display: none; }
+details summary { list-style: none; cursor: pointer; }
+details summary .plus { transition: transform .2s ease; }
+details[open] summary .plus { transform: rotate(45deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+.nav-dropdown .nav-dropdown-panel { display: none; }
+.nav-dropdown.nav-dropdown-open .nav-dropdown-panel { display: block; }
+.nav-dropdown-panel { padding-top: 10px; margin-top: -10px; }
+
+.nav-dropdown-link {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text);
+}
+.nav-dropdown-link:hover {
+  background: rgba(14,165,233,.10);
+  color: var(--accent);
+}
+
+.mobile-sublink {
+  display: block;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--nav-text);
+  opacity: 0.85;
+}
+.mobile-sublink:hover {
+  background: rgba(14,165,233,.12);
+  color: var(--accent);
+  opacity: 1;
+}
+
+.mobile-dropdown summary::-webkit-details-marker { display: none; }
+.mobile-dropdown summary { list-style: none; }
+.mobile-dropdown summary .plus { transition: transform .2s ease; }
+.mobile-dropdown[open] summary .plus { transform: rotate(45deg); }
+
+.premium-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---------------------------- search bar --------------------------------- */
+
+.search-wrap { position: relative; }
+
+.search-input {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 12px 8px 34px;
+  font-size: 13px;
+  width: 190px;
+  outline: none;
+  transition: .15s ease;
+}
+.search-input::placeholder { color: var(--text-2); }
+.search-input:focus {
+  width: 230px;
+  border-color: #0ea5e9;
+  background: rgba(255,255,255,0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  pointer-events: none;
+}
+
+/*
+ * Visibility state: site-nav.js toggles the "hidden" class on
+ * #searchResults directly (classList.add/remove("hidden")). The
+ * rules below match that exact mechanism — no separate
+ * ".search-wrap.has-results" wrapper class is used anywhere, so
+ * there is only one signal that controls whether results show.
+ */
+.search-results {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 280px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 14px 30px rgba(11,18,32,0.25);
+  overflow: hidden;
+  z-index: 60;
+}
+.search-results.hidden { display: none; }
+
+.search-results a {
+  display: block;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+.search-results a:last-child { border-bottom: none; }
+.search-results a:hover { background: rgba(14,165,233,.10) !important; }
+
+.search-empty {
+  padding: 12px 14px;
+  font-size: 12.5px;
+  color: var(--text-2);
+}
+
+/* ---------------------------- article prose ------------------------------ */
+
+.page-prose h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 1.75rem;
+  margin-bottom: 0.6rem;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+}
+.page-prose p { color: var(--text-2); line-height: 1.75; margin-bottom: 1rem; }
+.page-prose strong { color: var(--text); }
+.page-prose ul { margin: 0 0 1rem 1.25rem; color: var(--text-2); line-height: 1.75; }
+.page-prose li { margin-bottom: 0.4rem; }
+
+.nav-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+}
+
+/* ---------------------------- theme switch -------------------------------- */
+
+.theme-switch {
+  width: 38px;
+  height: 20px;
+  border-radius: 9999px;
+  background: #64748b;
+  position: relative;
+  transition: .2s ease;
+  flex-shrink: 0;
+}
+.theme-switch-dot {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  transition: .2s ease;
+}
+body.dark-theme .theme-switch { background: #0ea5e9; }
+body.dark-theme .theme-switch-dot { transform: translateX(18px); }
+
+/* ================= UNIVERSAL THEME (CSS custom properties) ================= */
+
+:root {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --text: #111827;
+  --text-2: #475569;
+  --border: #e5e7eb;
+  --nav: #ffffff;
+  --nav-text: #111827;
+  --accent: #0ea5e9;
+}
+
+body.dark-theme {
+  --bg: #0B1220;
+  --surface: #111c2e;
+  --surface-2: #0f172a;
+  --text: #e2e8f0;
+  --text-2: #94a3b8;
+  --border: #1f2f47;
+  --nav: #111c2e;
+  --nav-text: #e2e8f0;
+}
+
+body {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  transition: background-color .25s ease, color .25s ease;
+}
+
+.site-header {
+  background: var(--nav) !important;
+  border-color: var(--border) !important;
+}
+
+#mainNav, #mobileNav {
+  color: var(--nav-text) !important;
+  background: var(--nav) !important;
+}
+
+.nav-link, .mobile-link {
+  color: var(--nav-text) !important;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: .15s ease;
+}
+.nav-link:hover, .mobile-link:hover {
+  background: rgba(14,165,233,.12);
+  color: var(--accent) !important;
+}
+
+.bg-white, .bg-gray-50 { background: var(--surface) !important; }
+.border, .border-gray-100, .border-gray-200 { border-color: var(--border) !important; }
+.text-gray-800, .text-brandDark { color: var(--text) !important; }
+.text-gray-700, .text-gray-600, .text-gray-500 { color: var(--text-2) !important; }
+
+footer {
+  background: var(--surface) !important;
+  border-top: 1px solid var(--border);
+}

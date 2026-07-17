@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>HP ↔ kW Calculator | ElectroMechCalc</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+<meta name="description" content="Free HP to kW and kW to HP converter. Instantly convert horsepower and kilowatts for motors and engines, with formula and conversion factor.">
+<link rel="canonical" href="https://www.electromechcalc.com/hp-kw.html">
+<link rel="icon" href="/favicon.png" type="image/png">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brandDark: '#0B1220',
+          brandPanel: '#111c2e',
+          brandLine: '#1f2f47',
+          brandBlue: '#0ea5e9',
+          brandAmber: '#f59e0b'
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace']
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{
+    display:none;
+  }
+  
+  .nav-icon-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:24px;
+    height:24px;
+    border-radius:9999px;
+    flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block;
+    padding:8px 12px;
+    border-radius:8px;
+    font-size:13px;
+    color:#0B1220;
+  }
+  .nav-dropdown-link:hover{
+    background:rgba(14,165,233,.10);
+    color:#0ea5e9;
+  }
+
+  .mobile-sublink{
+    display:block;
+    padding:6px 10px;
+    border-radius:6px;
+    font-size:13px;
+    color:#e2e8f0;
+    opacity:0.85;
+  }
+  .mobile-sublink:hover{
+    background:rgba(14,165,233,.12);
+    color:#0ea5e9;
+    opacity:1;
+  }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+.nav-dropdown.nav-dropdown-open .nav-dropdown-panel{
+    display:block;
+  }
+  .nav-dropdown-panel{
+    padding-top:10px;
+    margin-top:-10px;
+  }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .result-tile{
+    background:linear-gradient(160deg,#0B1220,#15233a);
+  }
+  .volt-badge{
+    background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9);
+  }
+
+  /* search bar */
+  .search-wrap{ position:relative; }
+  .search-input{
+    background:rgba(255,255,255,0.06);
+    border:1px solid #1f2f47;
+    color:#e2e8f0;
+    border-radius:8px;
+    padding:8px 12px 8px 34px;
+    font-size:13px;
+    width:190px;
+    outline:none;
+    transition:.15s ease;
+  }
+  .search-input::placeholder{ color:#64748b; }
+  .search-input:focus{
+    width:230px;
+    border-color:#0ea5e9;
+    background:rgba(255,255,255,0.1);
+  }
+  .search-icon{
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#64748b;
+    pointer-events:none;
+  }
+  .search-results{
+    position:absolute;
+    top:calc(100% + 8px);
+    right:0;
+    width:280px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    box-shadow:0 14px 30px rgba(11,18,32,0.25);
+    overflow:hidden;
+    z-index:60;
+  }
+  .search-results.hidden{ display:none; }
+.search-results a{
+    display:block;
+    padding:10px 14px;
+    font-size:13px;
+    color:#0B1220;
+    border-bottom:1px solid #f1f5f9;
+  }
+  .search-results a:last-child{ border-bottom:none; }
+  .search-results a:hover{ background:#f0f9ff; }
+  .search-empty{
+    padding:12px 14px;
+    font-size:12.5px;
+    color:#94a3b8;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+
+<!-- ===================== PAGE HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-3xl mx-auto px-4 py-14 text-center relative z-10">
+    <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+      <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+      Electrical &middot; Free &middot; Instant results
+    </span>
+    <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+      HP ↔ kW Calculator
+    </h1>
+    <p class="text-gray-400 text-sm max-w-xl mx-auto">
+      Convert horsepower (HP) to kilowatts (kW) or the other way round, using the standard fixed engineering conversion factor.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== CALCULATOR ===================== -->
+<section class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Power Conversion Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Choose the conversion direction, then enter your known value.</p>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Conversion Direction</label>
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2">
+          <div id="dirHpKw" class="toggle-btn active" onclick="setDirection('hpToKw')">HP → kW</div>
+          <div id="dirKwHp" class="toggle-btn" onclick="setDirection('kwToHp')">kW → HP</div>
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="valueLabel">Power (HP)</label>
+        <input id="value" type="number" value="15" step="0.1" class="input-field mt-2">
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculate()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">kW = HP × 0.746</span>
+        <span class="formula-chip">HP = kW ÷ 0.746</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div class="lg:col-span-2 flex flex-col gap-4">
+
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full volt-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Real Power</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">— kW</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Converted using the standard 0.746 factor</p>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Formula Used</span>
+        <div id="formulaBox" class="text-sm text-gray-600 leading-relaxed font-mono whitespace-pre-line">Enter a value and hit calculate to see the worked formula.</div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="transformer-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Transformer Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="kw-kva.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            kVA ↔ kW Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="kva-current.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            kVA ↔ Current Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="kw-current.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            kW ↔ Current Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="motor-current.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Motor Current Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="apfc.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            APFC Capacitor Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="dg-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            DG Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="cable-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Cable Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="electrical-pro-max.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-amber-100 bg-amber-50 text-sm font-semibold text-amber-700">
+            ⭐ Electrical Pro Max <span class="text-amber-500">→</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding HP ↔ kW Conversion</h2>
+
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Horsepower (HP) and kilowatts (kW) are two different units used to express the same physical quantity: power, the rate at which work is done. Horsepower dates back to the 18th century, when engineer James Watt needed a way to compare the output of his early steam engines to the pulling capacity of a horse, since horses were the dominant source of mechanical power at the time. The unit stuck, and even today it remains the standard way many motor, engine, and pump nameplates express their rated power, particularly in the United States and on older or imported industrial equipment.</p>
+
+      <p>The kilowatt, by contrast, is part of the International System of Units (SI) and is the standard unit of power used almost everywhere else in electrical and mechanical engineering — on motor nameplates, generator ratings, transformer specifications, and utility billing. Because HP and kW measure the exact same physical quantity, just scaled differently, the conversion between them is a fixed, unchanging constant: 1 HP is defined as exactly 0.746 kW (more precisely 0.7457 kW for mechanical horsepower, commonly rounded to 0.746 in engineering practice). This means converting in either direction is a simple multiplication or division — no other variables like voltage, current, or power factor are involved, unlike a conversion to kVA.</p>
+
+      <p>This conversion is used constantly in real engineering work: comparing an imported pump rated in HP against a locally available motor rated in kW, cross-checking nameplate data between two pieces of equipment specified in different unit systems, or converting an engine's HP rating into kW for inclusion in an SI-based technical report or specification sheet.</p>
+
+      <p><strong>Worked example:</strong> Suppose an imported water pump is nameplated at 15 HP, and you need its rating in kW to match against a locally available motor. Using the formula: kW = 15 × 0.746 = 11.19 kW. So a local motor rated at approximately 11.2 kW (commonly rounded up to the nearest standard size, such as 11 kW or 15 kW depending on the manufacturer's range) would be the appropriate match. Conversely, if a generator is rated at 25 kW and you need its equivalent in horsepower for an older specification sheet: HP = 25 ÷ 0.746 ≈ 33.51 HP — useful when comparing against engine-driven generator sets that are typically rated in HP rather than kW.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is the HP ↔ kW conversion factor fixed?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">HP and kW both measure power — the rate of doing work — just in different unit systems. Since they describe the exact same physical quantity, the relationship between them never changes: 1 HP always equals 0.746 kW. No voltage, current, or power factor is involved, unlike conversions to or from kVA.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is 0.746 the exact conversion factor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The precise mechanical horsepower conversion is 0.7457 kW, commonly rounded to 0.746 in field and engineering practice. Electrical horsepower and metric horsepower use slightly different definitions, but 0.746 is the figure used on the vast majority of motor and pump nameplates.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        When would I need to convert HP to kW?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Common cases include matching an imported motor or pump rated in HP against locally available kW-rated equipment, converting an engine's HP rating for an SI-based specification sheet, or cross-checking nameplate data between two pieces of equipment specified in different unit systems.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Are these calculators accurate enough for professional use?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — this uses the same standard conversion factor taught in electrical and mechanical engineering coursework and referenced in field handbooks. For safety-critical or code-compliance decisions, always verify results against your local electrical code and have them reviewed by a licensed engineer.</p>
+    </details>
+  </div>
+</section>
+
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<script>
+  // ===== HP <-> kW Calculator Logic =====
+  let currentDirection = 'hpToKw';
+  const factor = 0.746;
+
+  function setDirection(dir){
+    currentDirection = dir;
+    document.getElementById('dirHpKw').classList.toggle('active', dir === 'hpToKw');
+    document.getElementById('dirKwHp').classList.toggle('active', dir === 'kwToHp');
+    document.getElementById('valueLabel').textContent = dir === 'hpToKw' ? 'Power (HP)' : 'Power (kW)';
+    calculate();
+  }
+
+  function calculate(){
+    const value = parseFloat(document.getElementById('value').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if (isNaN(value) || value <= 0){ errors.push('Enter a value greater than 0.'); }
+
+    if (errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '— ' + (currentDirection === 'hpToKw' ? 'kW' : 'HP');
+      document.getElementById('formulaBox').textContent = 'Fix the input errors above to see a valid result.';
+      return;
+    } else {
+      validationBox.classList.add('hidden');
+      validationBox.innerHTML = '';
+    }
+
+    let result, resultUnit, resultLabel, formulaText, subText;
+
+    if (currentDirection === 'hpToKw'){
+      result = value * factor;
+      resultUnit = 'kW';
+      resultLabel = 'Real Power';
+      subText = `Converted from ${value} HP`;
+      formulaText = `kW = HP × 0.746\nkW = ${value} × 0.746\nkW = ${result.toFixed(3)} kW`;
+    } else {
+      result = value / factor;
+      resultUnit = 'HP';
+      resultLabel = 'Horsepower';
+      subText = `Converted from ${value} kW`;
+      formulaText = `HP = kW ÷ 0.746\nHP = ${value} ÷ 0.746\nHP = ${result.toFixed(3)} HP`;
+    }
+
+    document.getElementById('rResult').textContent = result.toFixed(2) + ' ' + resultUnit;
+    document.getElementById('resultLabel').textContent = resultLabel;
+    document.getElementById('resultSub').textContent = subText;
+    document.getElementById('formulaBox').textContent = formulaText;
+  }
+
+  // run once on load with default values
+  calculate();
+</script>
+
+</body>
+</html>

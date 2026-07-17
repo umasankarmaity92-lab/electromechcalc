@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>Motor Current Calculator (FLC) — kW/HP to Amps, kVA &amp; Breaker Size | ElectroMechCalc</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+<meta name="description" content="Free motor current calculator — get full load current (FLC) in amps from motor power in kW or HP, voltage, power factor & efficiency, plus apparent power (kVA) and suggested breaker size, for single or three phase motors.">
+<meta name="keywords" content="motor current calculator, full load current calculator, FLC calculator, motor amps calculator, HP to amps, kW to amps motor, three phase motor current, motor breaker sizing">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/motor-current.html">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Motor Current Calculator (FLC) — kW/HP to Amps, kVA &amp; Breaker Size">
+<meta property="og:description" content="Estimate a motor's full load current (FLC) from power, voltage, power factor, and efficiency, with suggested breaker size.">
+<meta property="og:url" content="https://www.electromechcalc.com/motor-current.html">
+<meta property="og:image" content="https://www.electromechcalc.com/logo.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Motor Current Calculator (FLC) — kW/HP to Amps, kVA &amp; Breaker Size">
+<meta name="twitter:description" content="Free tool to estimate motor full load current, apparent power, and breaker size for single or three phase motors.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
+
+<!-- Structured data: WebApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Motor Current Calculator",
+  "url": "https://www.electromechcalc.com/motor-current.html",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free online calculator to estimate a motor's full load current (FLC) in amps from rated power, voltage, power factor, and efficiency, with apparent power and suggested breaker size, for single-phase and three-phase motors.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<!-- Structured data: FAQPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Should I use the calculated current or the motor's nameplate FLC?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Always prefer the nameplate FLC when it's available, since it reflects the actual tested performance of that specific motor design. Use this calculator to estimate FLC when the nameplate is missing, to cross-check a suspicious nameplate value, or when sizing a system before a specific motor model has been chosen." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does a three-phase motor draw less current than a single-phase motor of the same power?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The square root of 3 factor in the three-phase formula means the same power is delivered using less current per line compared to a single-phase motor at the same voltage, since three-phase power is spread across three conductors instead of two. This is one reason three-phase supply is preferred for larger motors, since it allows smaller cable and switchgear for the same power." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is efficiency used to calculate current, since current relates to input power?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A motor's nameplate power rating is its mechanical output shaft power, not the electrical power it draws from the supply. Since some input energy is always lost to winding resistance, friction, and core losses, the actual electrical input power is higher than the rated output; dividing by efficiency converts the rated output power to the real electrical input power used in the current formula." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why add a margin on top of the calculated FLC for cable and breaker sizing?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Motors draw a brief inrush or starting current well above FLC, and real-world loads fluctuate slightly above rated conditions. A design margin of roughly 20 to 25 percent on top of FLC, consistent with common electrical code practice for continuous loads, keeps cables and protective devices from nuisance-tripping or overheating during normal operation." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does power factor correction change the motor's FLC?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Power factor correction capacitors reduce the reactive current drawn from the supply upstream of the correction point, lowering the total line current and apparent power seen by the utility, but they don't change the current the motor itself draws internally at its own terminals." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the approximate full load current of a 3-phase motor in India?",
+      "acceptedAnswer": { "@type": "Answer", "text": "As a rough field rule of thumb at 415V and 0.85 power factor, a 3-phase motor draws roughly 1.5 to 1.8 amps per kW of rated output. For example, a 10 HP (7.5 kW) motor typically draws around 13 to 15 A, and a 20 HP (15 kW) motor draws around 26 to 30 A, though the exact figure depends on the motor's actual efficiency and power factor, which is why checking the nameplate or using the calculator above gives a more accurate result." }
+    }
+  ]
+}
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brandDark: '#0B1220',
+          brandPanel: '#111c2e',
+          brandLine: '#1f2f47',
+          brandBlue: '#0ea5e9',
+          brandAmber: '#f59e0b'
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace']
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{
+    display:none;
+  }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{
+    display:block;
+  }
+  .nav-dropdown-panel{
+    padding-top:10px;
+    margin-top:-10px;
+  }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .result-tile{
+    background:linear-gradient(160deg,#0B1220,#15233a);
+  }
+  .drop-badge{
+    background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9);
+  }
+
+  /* search bar */
+  .search-wrap{ position:relative; }
+  .search-input{
+    background:rgba(255,255,255,0.06);
+    border:1px solid #1f2f47;
+    color:#e2e8f0;
+    border-radius:8px;
+    padding:8px 12px 8px 34px;
+    font-size:13px;
+    width:190px;
+    outline:none;
+    transition:.15s ease;
+  }
+  .search-input::placeholder{ color:#64748b; }
+  .search-input:focus{
+    width:230px;
+    border-color:#0ea5e9;
+    background:rgba(255,255,255,0.1);
+  }
+  .search-icon{
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#64748b;
+    pointer-events:none;
+  }
+  .search-results{
+    position:absolute;
+    top:calc(100% + 8px);
+    right:0;
+    width:280px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    box-shadow:0 14px 30px rgba(11,18,32,0.25);
+    overflow:hidden;
+    display:none;
+    z-index:60;
+  }
+  .search-wrap.has-results .search-results{ display:block; }
+  .search-results a{
+    display:block;
+    padding:10px 14px;
+    font-size:13px;
+    color:#0B1220;
+    border-bottom:1px solid #f1f5f9;
+  }
+  .search-results a:last-child{ border-bottom:none; }
+  .search-results a:hover{ background:#f0f9ff; }
+  .search-empty{
+    padding:12px 14px;
+    font-size:12.5px;
+    color:#94a3b8;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== PAGE HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-3xl mx-auto px-4 py-14 text-center relative z-10">
+    <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+      <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+      Electrical &middot; Free &middot; Instant results
+    </span>
+    <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+      Motor Current Calculator
+    </h1>
+    <p class="text-gray-400 text-sm max-w-xl mx-auto">
+      Enter motor power in kW or HP, voltage, power factor, and efficiency to get the full load current (FLC) for single-phase or three-phase motors — plus recommended cable and breaker sizing.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== CALCULATOR ===================== -->
+<section class="max-w-6xl mx-auto px-4 py-10">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Motor Details</h2>
+      <p class="text-xs text-gray-500 mb-5">Fill in the motor's rated power, supply, and performance figures below.</p>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Supply Type</label>
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2">
+          <div id="phase1" class="toggle-btn" onclick="setMotorType('single')">Single Phase</div>
+          <div id="phase3" class="toggle-btn active" onclick="setMotorType('three')">Three Phase</div>
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Power Unit</label>
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2">
+          <div id="unitKW" class="toggle-btn active" onclick="setPowerUnit('kw')">Kilowatt (kW)</div>
+          <div id="unitHP" class="toggle-btn" onclick="setPowerUnit('hp')">Horsepower (HP)</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="powerLabel">Motor Power (kW)</label>
+          <input id="powerVal" type="number" value="10" step="0.1" min="0" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Voltage (V)</label>
+          <input id="voltage" type="number" value="415" step="1" min="1" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Power Factor</label>
+          <input id="pf" type="number" value="0.85" step="0.01" min="0.01" max="1" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Efficiency (%)</label>
+          <input id="eff" type="number" value="90" step="1" min="1" max="100" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="border-t border-gray-100 pt-5 mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Cable/Breaker Sizing Margin (%)</label>
+        <input id="margin" type="number" value="25" step="1" min="0" max="100" class="input-field mt-2">
+        <p class="text-[11px] text-gray-400 mt-1.5">Standard practice adds 25% margin above FLC for overload and starting current allowance (per typical electrical code sizing rules).</p>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateCurrent()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate Current
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">Single: I = P ÷ (V × PF × η)</span>
+        <span class="formula-chip">Three: I = P ÷ (√3 × V × PF × η)</span>
+        <span class="formula-chip">1 HP = 746 W</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div class="lg:col-span-2 flex flex-col gap-4">
+
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full drop-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400">Full Load Current</span>
+        <div id="rCurrent" class="font-display font-bold text-3xl mt-1">— A</div>
+        <p class="text-xs text-gray-400 mt-1">Current drawn by the motor at rated load</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Power (kW)</span>
+          <div id="rPowerKW" class="font-display font-bold text-xl text-brandDark mt-1">— kW</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Power (HP)</span>
+          <div id="rPowerHP" class="font-display font-bold text-xl text-brandDark mt-1">— HP</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Apparent Power</span>
+          <div id="rKVA" class="font-display font-bold text-xl text-brandDark mt-1">— kVA</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Input Power Drawn</span>
+          <div id="rInputKW" class="font-display font-bold text-xl text-brandDark mt-1">— kW</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Sizing Current</span>
+          <div id="rSizingCurrent" class="font-display font-bold text-xl text-brandDark mt-1">— A</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Suggested Breaker</span>
+          <div id="rBreaker" class="font-display font-bold text-xl text-brandDark mt-1">— A</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500">Formula Used</span>
+        <p id="rNote" class="text-sm text-gray-600 mt-1.5 leading-relaxed">Enter your values and hit calculate to see the full breakdown.</p>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="hp-kw.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            HP ↔ kW Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="kw-kva.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            kVA ↔ kW Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="kva-current.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            kVA ↔ Current Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="kw-current.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            kW ↔ Current Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="apfc.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            APFC Capacitor Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="cable-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Cable Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="dg-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            DG Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="transformer-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Transformer Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="electrical-pro-max.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-amber-100 bg-amber-50 text-sm font-semibold text-amber-700">
+            ⭐ Electrical Pro Max <span class="text-amber-500">→</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section class="bg-white border-y border-gray-100 py-12">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-5">Understanding Motor Full Load Current</h2>
+
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Full Load Current (FLC) is the steady-state current a motor draws from the supply when running at its rated output power. It is the single most important number for selecting the cable, contactor, overload relay, and circuit breaker feeding a motor — undersize any of these against the real FLC and the motor either nuisance-trips or, worse, overheats the wiring. Motor nameplates usually list a rated FLC, but this calculator lets you verify or estimate it directly from the motor's rated power, supply voltage, power factor, and efficiency, following the same relationships used throughout standard IEC/NEMA motor sizing references.</p>
+
+      <p>For a <strong>single-phase</strong> motor, the relationship between electrical input power and current is <strong>I = P ÷ (V × PF × η)</strong>, where P is the rated shaft power converted to watts, V is the supply voltage, PF is the power factor, and η is the motor's efficiency as a decimal. Efficiency is included because the motor's electrical input power is always higher than its rated mechanical output power — a 10 kW motor at 90% efficiency actually draws about 11.1 kW of electrical power to deliver that 10 kW at the shaft.</p>
+
+      <p>For a <strong>three-phase</strong> motor, the same relationship gains a √3 (≈1.732) term to account for the phase geometry of a balanced three-phase system: <strong>I = P ÷ (√3 × V × PF × η)</strong>. If the motor's power is rated in horsepower rather than kilowatts, the calculator first converts it using <strong>1 HP = 746 W</strong> before applying either formula.</p>
+
+      <p>Once FLC is known, this calculator also estimates the <strong>apparent power (kVA)</strong> the supply must deliver, which is simply the product of voltage, current, and the appropriate phase factor divided by power factor, and gives a <strong>sizing current</strong> with a design margin (typically 20–25%) added on top of FLC — a standard allowance used when selecting cable ampacity, contactor rating, and breaker trip setting, so the protective devices don't nuisance-trip on normal starting inrush and small load variations. The suggested breaker rating rounds this sizing current up to a common commercially available breaker size.</p>
+
+      <p>As always, treat this as an engineering estimate rather than a substitute for the motor's actual nameplate FLC, which accounts for the specific winding design and test data of that motor. Always cross-check the final cable, breaker, and overload settings against the manufacturer's nameplate and applicable local electrical code before commissioning.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Why FLC Is the Starting Point for Every Downstream Component</h3>
+      <p>Full Load Current is the anchor figure for an entire chain of downstream decisions on a motor circuit. The cable feeding the motor must be sized so its current-carrying capacity comfortably exceeds FLC (see the Cable Size Calculator for that step). The contactor must be rated for FLC under its AC-3 duty classification, which accounts for the make/break duty of switching an inductive motor load rather than a simple resistive one. The thermal overload relay is set at or just above FLC so it protects the motor winding from sustained overload without nuisance-tripping on normal load variation. And the upstream breaker or fuse must be sized to protect the cable while tolerating the motor's brief but large starting inrush current — typically 5 to 7 times FLC for a direct-on-line start. Getting FLC right, whether from the nameplate or estimated here, is therefore the first and most consequential step in the whole selection chain.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Starting Current vs Full Load Current</h3>
+      <p>It's easy to confuse FLC with starting (inrush) current, but they describe two very different moments in a motor's operation. FLC is the steady-state current drawn once the motor has reached full rated speed under full rated load — this is the number used for cable, contactor, and overload sizing. Starting current, by contrast, is the much larger current an induction motor draws for a fraction of a second (or a few seconds for larger motors) while it accelerates from standstill, because the rotor initially looks almost like a short-circuited transformer secondary to the supply. For a motor started direct-on-line (DOL), this inrush is typically 5–7× FLC; for a star-delta starter it drops to roughly 2–2.5× FLC; and for a soft starter or VFD it can be limited to as little as 1.5–2× FLC or less. This is why breakers and fuses protecting motor circuits use a "motor rated" or time-delay characteristic rather than an instantaneous trip at FLC — they need to ride through the brief starting surge without tripping, while still protecting against a genuine sustained overload.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">How to Use This Motor Current Calculator</h3>
+      <ol class="list-decimal pl-5 space-y-1">
+        <li><strong>Select the phase type</strong> — single phase for smaller domestic/workshop motors, three phase for most industrial and commercial motors above roughly 1–2 HP.</li>
+        <li><strong>Enter the motor's rated power</strong> in kW or HP, whichever matches the nameplate, along with the supply voltage.</li>
+        <li><strong>Enter the power factor and efficiency</strong> from the nameplate if available; if not, 0.85 PF and 88–92% efficiency are reasonable estimates for a typical general-purpose induction motor in this size range.</li>
+        <li>Click <em>Calculate</em> to see the estimated FLC, apparent power (kVA), a sizing current with margin applied, and a suggested breaker rating.</li>
+      </ol>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Common Mistakes in Motor Current Estimation</h3>
+      <ul class="list-disc pl-5 space-y-1">
+        <li><strong>Forgetting to divide by efficiency.</strong> Using rated shaft power directly as electrical input power understates FLC, sometimes by 10% or more.</li>
+        <li><strong>Assuming a flat power factor across all motor sizes.</strong> Power factor varies with motor loading and size — small motors and lightly loaded motors often run at a lower PF than their nameplate full-load figure.</li>
+        <li><strong>Sizing the breaker directly at FLC with no margin.</strong> This leads to nuisance tripping during normal starting and load fluctuation; the 20–25% sizing margin exists specifically to avoid this.</li>
+        <li><strong>Confusing single-phase and three-phase formulas.</strong> Missing the √3 term on a three-phase calculation, or wrongly applying it to a single-phase motor, produces an FLC that's off by a factor of roughly 1.73.</li>
+      </ul>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Typical Full Load Current Reference (415V, 3-Phase, 0.85 PF)</h3>
+      <p>The table below gives approximate FLC values for common motor sizes as a quick sanity check — always confirm against the actual motor nameplate for final design.</p>
+      <div class="overflow-x-auto my-3">
+        <table class="breakdown-table" style="min-width:420px;">
+          <thead>
+            <tr><th style="text-align:left;">Motor Rating</th><th>Approx. FLC (A)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align:left;">5 HP (3.7 kW)</td><td>7 A</td></tr>
+            <tr><td style="text-align:left;">10 HP (7.5 kW)</td><td>14 A</td></tr>
+            <tr><td style="text-align:left;">20 HP (15 kW)</td><td>27 A</td></tr>
+            <tr><td style="text-align:left;">30 HP (22 kW)</td><td>40 A</td></tr>
+            <tr><td style="text-align:left;">50 HP (37 kW)</td><td>65 A</td></tr>
+            <tr><td style="text-align:left;">100 HP (75 kW)</td><td>130 A</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs text-gray-400">Figures are indicative only, based on typical 88–92% efficiency induction motors. Actual FLC varies by manufacturer, motor design, and duty class — always confirm against the nameplate.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="max-w-3xl mx-auto px-4 py-12">
+  <div class="text-center mb-8">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2">Content last reviewed: July 2026</p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I use the calculated current or the motor's nameplate FLC?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Always prefer the nameplate FLC when it's available, since it reflects the actual tested performance of that specific motor design. Use this calculator to estimate FLC when the nameplate is missing, to cross-check a suspicious nameplate value, or when sizing a system before a specific motor model has been chosen.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does a three-phase motor draw less current than a single-phase motor of the same power?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The √3 (≈1.732) factor in the three-phase formula means the same power is delivered using less current per line compared to a single-phase motor at the same voltage, since three-phase power is spread across three conductors instead of two. This is one reason three-phase supply is preferred for larger motors — it allows smaller cable and switchgear for the same power.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is efficiency used to calculate current, since current relates to input power?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A motor's nameplate power rating is its mechanical output (shaft) power, not the electrical power it draws from the supply. Since some input energy is always lost to winding resistance, friction, and core losses, the actual electrical input power is higher than the rated output — dividing by efficiency converts the rated output power to the real electrical input power used in the current formula.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why add a margin on top of the calculated FLC for cable and breaker sizing?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Motors draw a brief inrush/starting current well above FLC, and real-world loads fluctuate slightly above rated conditions. A design margin of roughly 20–25% on top of FLC, consistent with common electrical code practice for continuous loads, keeps cables and protective devices from nuisance-tripping or overheating during normal operation.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does power factor correction change the motor's FLC?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Power factor correction capacitors reduce the reactive current drawn from the supply upstream of the correction point, lowering the total line current and apparent power (kVA) seen by the utility, but they don't change the current the motor itself draws internally at its own terminals. Use the APFC Capacitor Calculator to size correction capacitors for a given load.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the approximate full load current of a 3-phase motor in India?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">As a rough field rule of thumb at 415V and 0.85 power factor, a 3-phase motor draws roughly 1.5–1.8 A per kW of rated output. For example, a 10 HP (7.5 kW) motor typically draws around 13–15 A, and a 20 HP (15 kW) motor draws around 26–30 A — see the reference table above for more sizes, or enter your exact motor rating in the calculator for a precise figure.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+
+<script>
+  // ===== Motor Current Calculator Logic =====
+  let motorType = 'three';
+  let powerUnit = 'kw';
+
+  function setMotorType(type){
+    motorType = type;
+    document.getElementById('phase1').classList.toggle('active', type==='single');
+    document.getElementById('phase3').classList.toggle('active', type==='three');
+    document.getElementById('voltage').value = type==='three' ? 415 : 230;
+    calculateCurrent();
+  }
+
+  function setPowerUnit(unit){
+    powerUnit = unit;
+    document.getElementById('unitKW').classList.toggle('active', unit==='kw');
+    document.getElementById('unitHP').classList.toggle('active', unit==='hp');
+    document.getElementById('powerLabel').textContent = unit==='hp' ? 'Motor Power (HP)' : 'Motor Power (kW)';
+    calculateCurrent();
+  }
+
+  function clamp(val, min, max){
+    return Math.min(Math.max(val, min), max);
+  }
+
+  function calculateCurrent(){
+    const powerVal = parseFloat(document.getElementById('powerVal').value) || 0;
+    const voltage  = parseFloat(document.getElementById('voltage').value) || 0;
+    let   pf       = parseFloat(document.getElementById('pf').value) || 0.85;
+    let   eff      = (parseFloat(document.getElementById('eff').value) || 90) / 100;
+    let   margin   = parseFloat(document.getElementById('margin').value);
+    if (isNaN(margin)) margin = 25;
+
+    // ---- Validation ----
+    const errors = [];
+    if (powerVal <= 0){ errors.push('Motor Power must be greater than 0.'); }
+    if (voltage <= 0){ errors.push('Voltage must be greater than 0.'); }
+    if (pf <= 0 || pf > 1){ errors.push('Power Factor must be between 0.01 and 1. Reset to 0.85.'); pf = 0.85; }
+    if (eff <= 0 || eff > 1){ errors.push('Efficiency must be between 1% and 100%. Reset to 90%.'); eff = 0.90; }
+    if (margin < 0){ errors.push('Sizing margin cannot be negative. Reset to 25%.'); margin = 25; }
+
+    const validationBox = document.getElementById('validationBox');
+    if (errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
+      if (powerVal <= 0 || voltage <= 0){
+        document.getElementById('rCurrent').textContent = '— A';
+        document.getElementById('rPowerKW').textContent = '— kW';
+        document.getElementById('rPowerHP').textContent = '— HP';
+        document.getElementById('rKVA').textContent = '— kVA';
+        document.getElementById('rInputKW').textContent = '— kW';
+        document.getElementById('rSizingCurrent').textContent = '— A';
+        document.getElementById('rBreaker').textContent = '— A';
+        document.getElementById('rNote').textContent = 'Fix the input errors above to see a valid result.';
+        return;
+      }
+    } else {
+      validationBox.classList.add('hidden');
+      validationBox.innerHTML = '';
+    }
+
+    const root3 = 1.732;
+    const powerWatts = powerUnit === 'hp' ? powerVal * 746 : powerVal * 1000;
+    const powerKW = powerWatts / 1000;
+    const powerHP = powerWatts / 746;
+
+    let current, formulaText;
+    if (motorType === 'single'){
+      current = powerWatts / (voltage * pf * eff);
+      formulaText = `Single-phase: I = P ÷ (V × PF × η) = ${powerWatts.toFixed(0)} ÷ (${voltage} × ${pf} × ${eff.toFixed(2)}) = ${current.toFixed(2)} A`;
+    } else {
+      current = powerWatts / (root3 * voltage * pf * eff);
+      formulaText = `Three-phase: I = P ÷ (√3 × V × PF × η) = ${powerWatts.toFixed(0)} ÷ (1.732 × ${voltage} × ${pf} × ${eff.toFixed(2)}) = ${current.toFixed(2)} A`;
+    }
+
+    const inputKW = powerKW / eff;
+    const kva = motorType === 'single'
+      ? (voltage * current) / 1000
+      : (root3 * voltage * current) / 1000;
+
+    const sizingCurrent = current * (1 + margin / 100);
+    const commonBreakers = [6,10,16,20,25,32,40,50,63,80,100,125,160,200,250,320,400,500,630,800];
+    const suggestedBreaker = commonBreakers.find(b => b >= sizingCurrent) || Math.ceil(sizingCurrent / 50) * 50;
+
+    document.getElementById('rCurrent').textContent = current.toFixed(2) + ' A';
+    document.getElementById('rPowerKW').textContent = powerKW.toFixed(2) + ' kW';
+    document.getElementById('rPowerHP').textContent = powerHP.toFixed(2) + ' HP';
+    document.getElementById('rKVA').textContent = kva.toFixed(2) + ' kVA';
+    document.getElementById('rInputKW').textContent = inputKW.toFixed(2) + ' kW';
+    document.getElementById('rSizingCurrent').textContent = sizingCurrent.toFixed(2) + ' A';
+    document.getElementById('rBreaker').textContent = suggestedBreaker + ' A';
+
+    document.getElementById('rNote').textContent = formulaText + ` — with a ${margin}% sizing margin, cable and breaker should be rated for at least ${sizingCurrent.toFixed(1)} A (suggested standard breaker: ${suggestedBreaker} A).`;
+  }
+
+  // run once on load with default values
+  setMotorType('three');
+  setPowerUnit('kw');
+  calculateCurrent();
+</script>
+
+</body>
+</html>
