@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>Bearing Life Calculator | ElectroMechCalc</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+<meta name="description" content="Free bearing life calculator. Calculate the L10 bearing life in million revolutions and operating hours from dynamic load rating, equivalent load, and speed, with formula.">
+<link rel="canonical" href="https://www.electromechcalc.com/bearing-life.html">
+<link rel="icon" href="/favicon.png" type="image/png">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brandDark: '#0B1220',
+          brandPanel: '#111c2e',
+          brandLine: '#1f2f47',
+          brandBlue: '#0ea5e9',
+          brandAmber: '#f59e0b'
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace']
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{ transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+  .calc-card:hover{ transform:translateY(-3px); box-shadow:0 14px 28px rgba(11,18,32,0.10); border-color:#0ea5e9; }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{ cursor:not-allowed; opacity:0.55; pointer-events:none; user-select:none; }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{ border-color:#0ea5e9; background:#fff; box-shadow:0 0 0 3px rgba(14,165,233,0.12); }
+
+  .toggle-btn{
+    flex:1; text-align:center; padding:10px 8px; font-size:13px; font-weight:600;
+    border-radius:8px; cursor:pointer; color:#64748b; transition:.15s ease;
+  }
+  .toggle-btn.active{ background:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  /* search bar */
+  .search-wrap{ position:relative; }
+  .search-input{
+    background:rgba(255,255,255,0.06);
+    border:1px solid #1f2f47;
+    color:#e2e8f0;
+    border-radius:8px;
+    padding:8px 12px 8px 34px;
+    font-size:13px;
+    width:190px;
+    outline:none;
+    transition:.15s ease;
+  }
+  .search-input::placeholder{ color:#64748b; }
+  .search-input:focus{ width:230px; border-color:#0ea5e9; background:rgba(255,255,255,0.1); }
+  .search-icon{ position:absolute; left:10px; top:50%; transform:translateY(-50%); color:#64748b; pointer-events:none; }
+  .search-results{
+    position:absolute; top:calc(100% + 8px); right:0; width:280px;
+    background:#fff; border:1px solid #e5e7eb; border-radius:10px;
+    box-shadow:0 14px 30px rgba(11,18,32,0.25); overflow:hidden; display:none; z-index:60;
+  }
+  .search-wrap.has-results .search-results{ display:block; }
+  .search-results a{ display:block; padding:10px 14px; font-size:13px; color:#0B1220; border-bottom:1px solid #f1f5f9; }
+  .search-results a:last-child{ border-bottom:none; }
+  .search-results a:hover{ background:#f0f9ff; }
+  .search-empty{ padding:12px 14px; font-size:12.5px; color:#94a3b8; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== PAGE HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-3xl mx-auto px-4 py-14 text-center relative z-10">
+    <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+      <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+      Mechanical &middot; Free &middot; Instant results
+    </span>
+    <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+      Bearing Life <span class="text-sky-400">Calculator</span>
+    </h1>
+    <p class="text-gray-400 text-sm max-w-xl mx-auto">
+      Estimate L10 bearing life in million revolutions and operating hours from dynamic load rating, equivalent load, and speed.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== CALCULATOR ===================== -->
+<section class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Bearing Load & Speed Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter the dynamic load rating, actual equivalent load, and operating speed to estimate service life.</p>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Bearing Type</label>
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2">
+          <div id="typeBall" class="toggle-btn active" onclick="setType('ball')">Ball Bearing</div>
+          <div id="typeRoller" class="toggle-btn" onclick="setType('roller')">Roller Bearing</div>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Dynamic Load Rating C (N)</label>
+          <input id="c" type="number" value="25000" step="100" placeholder="e.g. 25000" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Equivalent Dynamic Load P (N)</label>
+          <input id="p" type="number" value="5000" step="100" placeholder="e.g. 5000" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Bearing Speed (RPM)</label>
+        <input id="rpm" type="number" value="1450" step="10" placeholder="e.g. 1450" class="input-field mt-2">
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateBearing()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate Bearing Life
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">L10 = (C/P)^k &nbsp;[k = 3 ball, 10/3 roller]</span>
+        <span class="formula-chip">Life (hrs) = (L10 × 10⁶) ÷ (60 × RPM)</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div class="lg:col-span-2 flex flex-col gap-4">
+
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400">L10 Bearing Life</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">— hrs</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter your details and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">L10 (Million Rev)</span>
+            <span id="rL10" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Load Ratio (C/P)</span>
+            <span id="rRatio" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+
+        <div class="mt-3 pt-3 border-t border-white/10">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Estimated Life at Continuous Duty</span>
+          <div class="flex items-baseline gap-2 mt-0.5">
+            <span id="rYears" class="font-display font-semibold text-lg">— yrs</span>
+            <span id="rYearsNote" class="text-[11px] text-gray-400">(running 24/7)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="gear-ratio.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Gear Ratio Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="pump-head.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Pump Head Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="pump-tdh.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            TDH Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="belt-length.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Belt Length Calculator <span class="text-sky-500">→</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding Bearing Life (L10)</h2>
+
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Bearing life is one of the most critical parameters in rotating machinery design, since a bearing is almost always the component that determines how long a motor, pump, gearbox, or fan can run before it needs maintenance. The L10 life is the industry-standard way to express this: it is the number of revolutions, or operating hours, that 90% of a population of identical bearings will complete or exceed before the first signs of fatigue failure appear. Only 10% of bearings are statistically expected to fail before reaching the L10 life, which is why manufacturers and reliability teams treat it as the baseline figure for planning replacement intervals.</p>
+
+      <p>The calculation depends on two load values: the dynamic load rating C, a fixed value the manufacturer assigns to that specific bearing based on its internal geometry and material, and the equivalent dynamic load P, the actual combined radial and axial load the bearing experiences in service. The ratio of C to P is raised to a power of 3 for ball bearings, or roughly 10/3 for roller bearings, since roller bearings have a different fatigue-load relationship due to their line-contact geometry rather than the point contact of ball bearings.</p>
+
+      <p><strong>Continuous-duty estimate.</strong> Alongside the raw hours figure, this calculator also converts the life into years assuming the bearing runs continuously (24 hours a day, every day), which is a useful sanity check for planning long-interval maintenance schedules on equipment that runs around the clock, such as process pumps or continuously-running fans.</p>
+
+      <p>This calculator is used constantly by mechanical and maintenance engineers when selecting a bearing for a new design, verifying whether an existing bearing is adequately rated for a higher load or speed, or estimating the remaining service interval before a scheduled bearing replacement.</p>
+
+      <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mt-2">Formulas Used</h6>
+      <div class="formula-chip block w-fit whitespace-pre-line">L10 (Million Revolutions) = (C / P)^k
+Bearing Life (Hours) = (L10 × 1,000,000) ÷ (60 × RPM)
+
+Where: C = Dynamic Load Rating (N), P = Equivalent Dynamic Load (N),
+RPM = Bearing operating speed, k = 3 (ball) or 10/3 (roller)</div>
+
+      <p><span class="font-semibold text-amber-600">Example:</span> Ball bearing with C = 25,000 N, P = 5,000 N, speed = 1,450 RPM. Load ratio C/P = 5. L10 = 5³ = 125 million revolutions. Bearing Life = (125 × 1,000,000) ÷ (60 × 1,450) ≈ <strong>1,437 hours</strong>, or roughly 2 months of continuous 24/7 running. This means 90% of such bearings will run at least this long before fatigue failure.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Reference: The L10 life equation is the standard ISO 281 fatigue-life relationship used across mechanical and maintenance engineering for rolling-element bearing selection. This calculator is for preliminary, educational sizing only and does not account for lubrication, contamination, or temperature-based life adjustment factors used in a full ISO 281 modified life calculation.</p>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What does "L10 life" actually mean?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">L10 life is the number of revolutions or hours at which 10% of a large population of identical bearings, operating under the same load and speed, are statistically expected to show the first signs of fatigue failure. The other 90% are expected to last at least that long, which is why it's used as a conservative baseline for maintenance planning rather than an average failure point.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is the exponent different for ball and roller bearings?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Ball bearings make point contact with the raceway, while roller bearings make line contact. This difference in contact geometry changes how stress concentrates under load and how fatigue develops over repeated cycles, which is reflected in the load-life exponent: 3 for ball bearings and approximately 10/3 for roller bearings.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Where do I find the Dynamic Load Rating (C) for my bearing?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The basic dynamic load rating is published by the bearing manufacturer in their catalog or datasheet for that specific bearing designation (e.g. 6205, 22218). It's a fixed value determined by the bearing's internal geometry and material and does not change with your application.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I calculate the Equivalent Dynamic Load (P)?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">P combines the actual radial and axial loads acting on the bearing into a single equivalent value, typically using manufacturer-supplied factors (P = X·Fr + Y·Fa). For a purely radial load with no significant axial component, P is often simply equal to the radial load Fr — check your bearing's datasheet for the exact combination method.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does this replace a full ISO 281 life calculation?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — this calculator gives the basic L10 rating life only. A full modified life calculation (L10m or Lnm per ISO 281) also applies reliability, lubrication, and contamination adjustment factors that can significantly increase or decrease the practical service life beyond this basic estimate.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+
+<script>
+  // ===== Bearing Life Calculator Logic =====
+  let bearingType = 'ball';
+
+  function setType(type){
+    bearingType = type;
+    document.getElementById('typeBall').classList.toggle('active', type === 'ball');
+    document.getElementById('typeRoller').classList.toggle('active', type === 'roller');
+  }
+
+  function calculateBearing(){
+    const c   = parseFloat(document.getElementById('c').value);
+    const p   = parseFloat(document.getElementById('p').value);
+    const rpm = parseFloat(document.getElementById('rpm').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+
+    if(isNaN(c) || c <= 0){ errors.push('Enter a valid dynamic load rating (C) greater than 0.'); }
+    if(isNaN(p) || p <= 0){ errors.push('Enter a valid equivalent dynamic load (P) greater than 0.'); }
+    if(isNaN(rpm) || rpm <= 0){ errors.push('Enter a valid operating speed greater than 0 RPM.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '— hrs';
+      document.getElementById('rL10').textContent = '—';
+      document.getElementById('rRatio').textContent = '—';
+      document.getElementById('rYears').textContent = '— yrs';
+      return;
+    } else {
+      validationBox.classList.add('hidden');
+      validationBox.innerHTML = '';
+    }
+
+    const exponent = (bearingType === 'ball') ? 3 : (10 / 3);
+    const ratio = c / p;
+    const L10rev = Math.pow(ratio, exponent);
+    const L10hours = (L10rev * 1000000) / (60 * rpm);
+    const years = L10hours / (24 * 365);
+
+    document.getElementById('rResult').textContent = L10hours.toLocaleString(undefined, {maximumFractionDigits:0}) + ' hrs';
+    document.getElementById('resultSub').textContent = `${bearingType === 'ball' ? 'Ball' : 'Roller'} bearing at ${rpm} RPM`;
+    document.getElementById('rL10').textContent = L10rev.toFixed(2) + ' M rev';
+    document.getElementById('rRatio').textContent = ratio.toFixed(2);
+    document.getElementById('rYears').textContent = years.toFixed(2) + ' yrs';
+  }
+
+  // run once on load with default values
+  calculateBearing();
+</script>
+
+</body>
+</html>

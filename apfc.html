@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>APFC Capacitor Calculator (kVAr) — Power Factor Correction | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free APFC capacitor calculator. Find the required capacitor kVAr to correct your load's power factor from an existing value to a target value, with formula, worked example, and standard capacitor bank size.">
+<meta name="keywords" content="APFC calculator, power factor correction calculator, capacitor kVAr calculator, kVAr calculator, power factor calculator, kW kVA kVAr calculator, capacitor bank sizing, power triangle calculator">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/apfc.html">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="APFC Capacitor Calculator (kVAr) — Power Factor Correction">
+<meta property="og:description" content="Calculate the capacitor kVAr needed to correct your load's power factor, with a matching standard capacitor bank size and kVA reduction.">
+<meta property="og:url" content="https://www.electromechcalc.com/apfc.html">
+<meta property="og:image" content="https://www.electromechcalc.com/logo.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="APFC Capacitor Calculator (kVAr) — Power Factor Correction">
+<meta name="twitter:description" content="Calculate the capacitor kVAr needed to correct your load's power factor, with a matching standard capacitor bank size and kVA reduction.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "APFC Capacitor Calculator",
+  "url": "https://www.electromechcalc.com/apfc.html",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free online calculator to determine the required APFC capacitor kVAr, standard capacitor bank size, and resulting kVA reduction for power factor correction of an electrical load.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why does a poor power factor matter if my real power (kW) doesn't change?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A poor power factor means the supply has to carry more apparent power (kVA) than the real work (kW) actually being done, since extra reactive current flows to and from the load. This larger current increases losses in cables and transformers, can trigger utility power-factor penalty charges, and eats into the available capacity of your electrical infrastructure even though no additional useful work is happening." }
+    },
+    {
+      "@type": "Question",
+      "name": "What target power factor should I correct to?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Most utilities require or incentivize a power factor of 0.90 to 0.95 or higher, and many electrical codes and panel designers commonly target 0.95 to 0.99. Correcting all the way to unity is technically possible but rarely done, since it offers diminishing returns and increases the risk of overcorrection if the load varies." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I overcorrect and get a leading power factor?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, if the installed capacitor kVAr exceeds what the actual running load needs, for example during light-load periods, the power factor can swing leading rather than lagging, which utilities also penalize and which can cause voltage rise issues. This is why APFC panels use automatic step switching rather than a single fixed capacitor bank." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does correcting power factor reduce my electricity bill?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It does not reduce the real energy consumed in kWh, since that reflects actual work done, but it typically eliminates or reduces utility low-power-factor penalty charges, which are common in industrial and commercial tariffs, and can free up transformer and cable capacity for additional load." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between kW, kVA, and kVAr?",
+      "acceptedAnswer": { "@type": "Answer", "text": "kW is real power, the actual work done by the load. kVA is apparent power, the total power the supply has to deliver. kVAr is reactive power, the non-working component drawn by inductive loads like motors and transformers. The three form a right-angled power triangle, where kVA is the hypotenuse of kW and kVAr, and the power factor is the cosine of the angle between kVA and kW." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brandDark: '#0B1220',
+          brandPanel: '#111c2e',
+          brandLine: '#1f2f47',
+          brandBlue: '#0ea5e9',
+          brandAmber: '#f59e0b'
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace']
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  
+  .nav-icon-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:24px;
+    height:24px;
+    border-radius:9999px;
+    flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block;
+    padding:8px 12px;
+    border-radius:8px;
+    font-size:13px;
+    color:#0B1220;
+  }
+  .nav-dropdown-link:hover{
+    background:rgba(14,165,233,.10);
+    color:#0ea5e9;
+  }
+
+  .mobile-sublink{
+    display:block;
+    padding:6px 10px;
+    border-radius:6px;
+    font-size:13px;
+    color:#e2e8f0;
+    opacity:0.85;
+  }
+  .mobile-sublink:hover{
+    background:rgba(14,165,233,.12);
+    color:#0ea5e9;
+    opacity:1;
+  }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+.nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar */
+  .search-wrap{ position:relative; }
+  .search-input{
+    background:rgba(255,255,255,0.06);
+    border:1px solid #1f2f47;
+    color:#e2e8f0;
+    border-radius:8px;
+    padding:8px 12px 8px 34px;
+    font-size:13px;
+    width:190px;
+    outline:none;
+    transition:.15s ease;
+  }
+  .search-input::placeholder{ color:#64748b; }
+  .search-input:focus{
+    width:230px;
+    border-color:#0ea5e9;
+    background:rgba(255,255,255,0.1);
+  }
+  .search-icon{
+    position:absolute; left:10px; top:50%; transform:translateY(-50%);
+    color:#64748b; pointer-events:none;
+  }
+  .search-results{
+    position:absolute; top:calc(100% + 8px); right:0; width:280px;
+    background:#fff; border:1px solid #e5e7eb; border-radius:10px;
+    box-shadow:0 14px 30px rgba(11,18,32,0.25); overflow:hidden; z-index:60;
+  }
+  .search-results.hidden{ display:none; }
+.search-results a{
+    display:block; padding:10px 14px; font-size:13px; color:#0B1220;
+    border-bottom:1px solid #f1f5f9;
+  }
+  .search-results a:last-child{ border-bottom:none; }
+  .search-results a:hover{ background:#f0f9ff; }
+  .search-empty{ padding:12px 14px; font-size:12.5px; color:#94a3b8; }
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-3xl mx-auto px-4 py-14 text-center relative z-10">
+    <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+      <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+      Electrical &middot; Free &middot; Instant results
+    </span>
+    <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+      APFC Capacitor <span class="text-sky-400">Calculator</span>
+    </h1>
+    <p class="text-gray-400 text-sm max-w-xl mx-auto">
+      Work out the capacitor kVAr needed to correct your load's power factor to a target value, with the nearest standard capacitor bank size.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Load & Power Factor Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter your load and current/target power factor to size the required APFC capacitor.</p>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Load (kW)</label>
+        <input id="kw" type="number" value="100" step="1" placeholder="e.g. 100" class="input-field mt-2">
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Current Power Factor</label>
+          <input id="pf1" type="number" value="0.75" step="0.01" min="0.1" max="0.99" placeholder="e.g. 0.75" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Target Power Factor</label>
+          <input id="pf2" type="number" value="0.95" step="0.01" min="0.1" max="0.999" placeholder="e.g. 0.95" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateAPFC()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate Capacitor kVAr
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">kVAr = kW × (tanφ₁ − tanφ₂)</span>
+        <span class="formula-chip">φ = cos⁻¹(PF)</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div class="lg:col-span-2 flex flex-col gap-4">
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400">Required Capacitor</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">— kVAr</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter your details and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Recommended Standard Size</span>
+            <span id="rStandard" class="font-display font-semibold text-lg">— kVAr</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">kVA Reduction</span>
+            <span id="rKvaSaving" class="font-display font-semibold text-lg">— kVA</span>
+          </div>
+        </div>
+
+        <div class="mt-3 pt-3 border-t border-white/10">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Original vs Corrected kVA</span>
+          <div class="flex items-baseline gap-2 mt-0.5">
+            <span id="rKvaCompare" class="font-display font-semibold text-lg">— → —</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/transformer-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Transformer Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="/kw-kva.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            kVA ↔ kW Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="/motor-current.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Motor Current Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="/kva-current.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            kVA ↔ Current Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="/kw-current.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            kW ↔ Current Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="/cable-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Cable Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="/dg-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            DG Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="/inverter-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Inverter Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="/hp-kw.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            HP ↔ kW Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="/solar-size.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Solar Panel Size Calculator <span class="text-sky-500">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] EXPLANATION ===================== -->
+<section class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding APFC Capacitor Sizing</h2>
+
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>An Automatic Power Factor Correction (APFC) panel improves the power factor of an electrical installation by switching in capacitor banks that supply reactive power locally, reducing the reactive (kVAr) component that the utility supply and the upstream transformer would otherwise have to carry. Most industrial and commercial loads — induction motors, transformers, welding sets, and lighting ballasts — are inductive in nature, meaning they draw current that lags behind voltage, and that lag is exactly what a power factor number is measuring.</p>
+
+      <p>This calculator works out exactly how much capacitive reactive power, in kVAr, needs to be added to bring a load from its existing, poor power factor up to a desired, improved target power factor. The active power in kW drawn by the load stays constant — correction does not change how much real work is being done — but the reactive power in kVAr drawn from the supply reduces as the power factor improves, which also reduces the total apparent power in kVA that the supply needs to deliver for the same job.</p>
+
+      <p><strong>kVA reduction.</strong> Beyond the capacitor size itself, this calculator also shows the original and corrected apparent power in kVA side by side, since this is what ultimately determines transformer loading, cable sizing, and utility demand charges. A lower kVA for the same real kW load means headroom is freed up on the upstream supply without adding any additional real load — often enough extra capacity to add a new machine or expand a line without upgrading the transformer.</p>
+
+      <p>In practice, this calculation is used by electrical engineers and panel designers to correctly size an APFC panel for a factory, commercial building, or any installation with a poor power factor. Capacitors typically come in fixed standard steps rather than continuously variable sizes, and the calculator rounds up to the nearest standard step so the recommended size can be ordered directly from a manufacturer's catalogue.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">kW, kVA, and kVAr — The Power Triangle Explained</h3>
+      <p>Every AC electrical load involves three related quantities that together form what's called the power triangle. <strong>kW (kilowatt)</strong> is the real, or active, power — the actual useful work the load performs, whether that's spinning a motor shaft, producing heat, or lighting a room. <strong>kVA (kilovolt-ampere)</strong> is the apparent power — the total power the supply has to deliver, calculated simply as voltage multiplied by current, without regard to how much of it is doing useful work. <strong>kVAr (kilovolt-ampere reactive)</strong> is the reactive power — the portion of apparent power that doesn't do any useful work but is still drawn from the supply, mostly to build and collapse magnetic fields in motors, transformers, and other inductive equipment.</p>
+
+      <p>These three quantities relate to each other geometrically as a right-angled triangle: kW forms the base, kVAr forms the vertical side, and kVA is the hypotenuse. Mathematically, kVA² = kW² + kVAr², which is just the Pythagorean theorem applied to power. The angle between the kVA hypotenuse and the kW base is called φ (phi), and the cosine of that angle, cos(φ), is exactly what we call the power factor. A power factor of 1.0 (or unity) means φ = 0°, meaning there's no reactive component at all and kVA equals kW exactly. A power factor of 0.75 means a significant chunk of the apparent power is reactive rather than real, so the supply has to carry more current than the real work alone would require.</p>
+
+      <p>Power factor correction using capacitors works because capacitors are also reactive devices, but their reactive power is exactly opposite in phase to inductive reactive power. When a capacitor bank is connected in parallel with an inductive load, the capacitor's leading reactive power cancels out part of the load's lagging reactive power at the point of connection. The motor or transformer still draws the same reactive power it always needed internally, but that reactive power now circulates locally between the capacitor and the load instead of having to travel all the way back through the cables, meters, and transformer from the utility supply — which is why correction reduces current draw on the supply side without touching the real kW being consumed.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Formula Used for Capacitor kVAr</h3>
+      <p>The standard formula for calculating the required capacitor kVAr to move from an existing power factor to a target power factor is:</p>
+      <div class="formula-chip block w-fit whitespace-pre-line">Capacitor kVAr = kW × (tanφ₁ − tanφ₂)
+
+φ₁ = cos⁻¹(Current PF)
+φ₂ = cos⁻¹(Target PF)
+
+Where: tanφ₁ = tangent of the current power-factor angle,
+tanφ₂ = tangent of the target power-factor angle</div>
+      <p>The intuition behind this formula follows directly from the power triangle. At the existing power factor, the reactive power the load draws is kW × tanφ₁ (since tanφ equals kVAr divided by kW in the triangle). At the target power factor, the reactive power the load should draw from the supply is kW × tanφ₂. The difference between these two reactive-power values is exactly the amount of reactive power the capacitor bank needs to locally supply, so that the supply only has to provide the smaller, corrected reactive component going forward.</p>
+
+      <p>Once the required kVAr is known, this calculator also works out the resulting apparent power before and after correction, using kVA = kW ÷ PF at both the current and target power factor. The difference between these two values — the kVA reduction — is what shows up directly as freed-up transformer, cable, and switchgear capacity.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Worked Example: 100 kW Load, PF 0.75 → 0.95</h3>
+      <p>Take a factory load of 100 kW running at a poor power factor of 0.75, which needs to be corrected to a target power factor of 0.95.</p>
+      <p><strong>Step 1 — Find the angles.</strong> φ₁ = cos⁻¹(0.75) ≈ 41.41°, and φ₂ = cos⁻¹(0.95) ≈ 18.19°.</p>
+      <p><strong>Step 2 — Find the tangents.</strong> tanφ₁ ≈ 0.882, and tanφ₂ ≈ 0.329.</p>
+      <p><strong>Step 3 — Apply the formula.</strong> Capacitor kVAr = 100 × (0.882 − 0.329) ≈ 55.3 kVAr.</p>
+      <p><strong>Step 4 — Round to the nearest standard size.</strong> Since APFC capacitor banks are supplied in fixed steps (5, 10, 15, 20, 25, 30, 40, 50, 60, 75, 100 kVAr and larger), the nearest standard size at or above 55.3 kVAr is a <strong>60 kVAr</strong> capacitor bank.</p>
+      <p><strong>Step 5 — Check the kVA reduction.</strong> Before correction, kVA = 100 ÷ 0.75 ≈ 133.3 kVA. After correction, kVA = 100 ÷ 0.95 ≈ 105.3 kVA. That's a reduction of roughly 28 kVA for the same 100 kW of real load — capacity that's now freed up on the transformer and incoming cables without adding a single extra kW of actual work.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Why Power Factor Correction Matters</h3>
+      <p>Utilities in India and most countries actively monitor power factor and apply financial penalties to industrial and commercial consumers whose average power factor falls below a threshold, commonly around 0.90 to 0.95, and correspondingly offer incentives or rebates for maintaining a high power factor. Beyond tariff considerations, a poor power factor also means higher current for the same real power, which increases I²R losses in cables and transformer windings, causes larger voltage drops, and can force premature upgrades of transformers, cables, and switchgear that would otherwise have had sufficient headroom.</p>
+
+      <p>Correcting power factor with a properly sized APFC panel is one of the most cost-effective electrical improvements available to a facility, since the payback typically comes from eliminated penalty charges and deferred infrastructure upgrades, often within a year or two of installation. This calculator gives the core sizing number — the required kVAr — that any APFC panel design starts from, before moving on to detailed considerations like step configuration, switching sequence, and harmonic filtering.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">How to Use This APFC Calculator</h3>
+      <p>Getting an accurate capacitor sizing only takes three inputs:</p>
+      <ol class="list-decimal pl-5 space-y-1">
+        <li><strong>Enter your connected load in kW</strong> — this should be the real, active power drawn by the load or facility, typically available from an energy meter or electricity bill.</li>
+        <li><strong>Enter your current power factor</strong> — also usually available from the energy meter, electricity bill, or a power quality analyzer reading. It will be a decimal value less than 1, such as 0.75 or 0.80.</li>
+        <li><strong>Enter your target power factor</strong> — the power factor you want to achieve, typically 0.95 or higher to comfortably clear utility penalty thresholds. Click <em>Calculate Capacitor kVAr</em> to get the required kVAr, the nearest standard capacitor bank size, and the resulting kVA reduction.</li>
+      </ol>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Common Mistakes When Sizing APFC Capacitors</h3>
+      <ul class="list-disc pl-5 space-y-1">
+        <li><strong>Using nameplate kW instead of actual metered kW.</strong> A motor's nameplate rating is its maximum design output, not what it's actually drawing on average — always size correction around real, metered load data where possible.</li>
+        <li><strong>Correcting to unity power factor (1.0).</strong> Overcorrection risks pushing the power factor leading rather than lagging during light-load periods, which utilities also penalize and which can cause voltage rise on the bus — most designs target 0.95 to 0.98, not 1.0.</li>
+        <li><strong>Ignoring load variation.</strong> A fixed capacitor bank sized for full load will overcorrect during low-load periods; this is why real APFC panels use automatic step switching (hence "Automatic" in APFC) rather than a single fixed capacitor.</li>
+        <li><strong>Skipping harmonic assessment.</strong> Facilities with variable-frequency drives, UPS systems, or other non-linear loads generating harmonics need detuned reactors in series with the capacitors to avoid resonance — this calculator does not account for harmonic filtering.</li>
+      </ul>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mb-2">Reference: Standard Capacitor Bank Sizes (kVAr)</h6>
+      <table class="w-full text-xs mb-3">
+        <thead>
+          <tr class="text-gray-500 border-b border-sky-100">
+            <th class="text-left py-1.5 font-semibold">Standard Size</th>
+            <th class="text-right py-1.5 font-semibold">Typical Use</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-700">
+          <tr class="border-b border-sky-100/70"><td class="py-1.5">5 – 20 kVAr</td><td class="text-right py-1.5">Small workshops, individual machines</td></tr>
+          <tr class="border-b border-sky-100/70"><td class="py-1.5">25 – 60 kVAr</td><td class="text-right py-1.5">Small-to-mid factories, commercial buildings</td></tr>
+          <tr class="border-b border-sky-100/70"><td class="py-1.5">75 – 150 kVAr</td><td class="text-right py-1.5">Mid-size industrial installations</td></tr>
+          <tr><td class="py-1.5">200 kVAr+</td><td class="text-right py-1.5">Large industrial plants (multiple banks/steps)</td></tr>
+        </tbody>
+      </table>
+
+      <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mt-2">Formula Used</h6>
+      <div class="formula-chip block w-fit whitespace-pre-line">Capacitor kVAr = kW × (tanφ₁ − tanφ₂)
+
+φ₁ = cos⁻¹(Current PF)
+φ₂ = cos⁻¹(Target PF)
+
+Where: tanφ₁ = tangent of current PF angle, tanφ₂ = tangent of target PF angle</div>
+
+      <p><span class="font-semibold text-amber-600">Example:</span> Load = 100 kW, current PF = 0.75, target PF = 0.95. φ₁ = cos⁻¹(0.75) ≈ 41.41°, φ₂ = cos⁻¹(0.95) ≈ 18.19°. tanφ₁ ≈ 0.882, tanφ₂ ≈ 0.329. kVAr = 100 × (0.882 − 0.329) ≈ <strong>55.3 kVAr</strong>. Select the nearest standard size → <strong>60 kVAr</strong> capacitor bank, which also drops the apparent power from about 133 kVA down to roughly 105 kVA for the same 100 kW real load.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Reference: The power-triangle relationship used here is the standard method taught across electrical engineering courses and applied in industrial power factor correction panel design. This calculator is for preliminary, educational sizing only and does not replace a detailed harmonic and resonance study for the final APFC panel design.</p>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] FAQ ===================== -->
+<section class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2">Content last reviewed: July 2026 · Reference: standard power-triangle method</p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does a poor power factor matter if my real power (kW) doesn't change?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A poor power factor means the supply has to carry more apparent power (kVA) than the real work (kW) actually being done, since extra reactive current flows to and from the load. This larger current increases losses in cables and transformers, can trigger utility power-factor penalty charges, and eats into the available capacity of your electrical infrastructure even though no additional useful work is happening.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What target power factor should I correct to?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Most utilities require or incentivize a power factor of 0.90–0.95 or higher, and many electrical codes and panel designers commonly target 0.95–0.99. Correcting all the way to unity (1.0) is technically possible but rarely done, since it offers diminishing returns and increases the risk of overcorrection (leading power factor) if the load varies.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I overcorrect and get a "leading" power factor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — if the installed capacitor kVAr exceeds what the actual running load needs (for example, during light-load periods), the power factor can swing leading rather than lagging, which utilities also penalize and which can cause voltage rise issues. This is why APFC panels use automatic step switching rather than a single fixed capacitor bank, adding or removing steps as the load changes.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does correcting power factor reduce my electricity bill?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It doesn't reduce the real energy (kWh) consumed, since that reflects actual work done, but it typically eliminates or reduces utility low-power-factor penalty charges, which are common in industrial and commercial tariffs. It can also allow more load to be added to an existing transformer or supply connection without upgrading capacity.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the difference between kW, kVA, and kVAr?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">kW is real power, the actual work done by the load. kVA is apparent power, the total power the supply has to deliver. kVAr is reactive power, the non-working component drawn by inductive loads like motors and transformers. The three form a right-angled power triangle, where kVA is the hypotenuse of kW and kVAr, and the power factor is the cosine of the angle between kVA and kW.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does this replace a full APFC panel design?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — this is a preliminary, educational sizing estimate for the total required kVAr. A full APFC panel design also needs to account for step sizing and switching sequence, harmonic filtering (detuned reactors where variable-frequency drives or other harmonic-generating loads are present), and protection coordination, ideally reviewed by a qualified electrical engineer.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+  // ===== APFC Capacitor Calculator Logic =====
+  const standardSizes = [5,10,15,20,25,30,40,50,60,75,100,125,150,200];
+
+  function calculateAPFC(){
+    const kw  = parseFloat(document.getElementById('kw').value);
+    const pf1 = parseFloat(document.getElementById('pf1').value);
+    const pf2 = parseFloat(document.getElementById('pf2').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+
+    if(isNaN(kw) || kw <= 0){ errors.push('Enter a valid load greater than 0 kW.'); }
+    if(isNaN(pf1) || pf1 <= 0 || pf1 >= 1){ errors.push('Enter a valid current power factor between 0.1 and 0.99.'); }
+    if(isNaN(pf2) || pf2 <= 0 || pf2 >= 1){ errors.push('Enter a valid target power factor between 0.1 and 0.99.'); }
+    if(!errors.length && pf2 <= pf1){ errors.push('Target power factor must be greater than the current power factor.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '— kVAr';
+      document.getElementById('rStandard').textContent = '— kVAr';
+      document.getElementById('rKvaSaving').textContent = '— kVA';
+      document.getElementById('rKvaCompare').textContent = '— → —';
+      return;
+    } else {
+      validationBox.classList.add('hidden');
+      validationBox.innerHTML = '';
+    }
+
+    const phi1 = Math.acos(pf1);
+    const phi2 = Math.acos(pf2);
+    const kvar = kw * (Math.tan(phi1) - Math.tan(phi2));
+
+    let recommended = standardSizes.find(size => size >= kvar);
+    if (!recommended) recommended = Math.ceil(kvar);
+
+    const kvaOriginal = kw / pf1;
+    const kvaCorrected = kw / pf2;
+    const kvaSaving = kvaOriginal - kvaCorrected;
+
+    document.getElementById('rResult').textContent = kvar.toFixed(2) + ' kVAr';
+    document.getElementById('resultSub').textContent = `Correcting from PF ${pf1} to PF ${pf2}`;
+    document.getElementById('rStandard').textContent = recommended + ' kVAr';
+    document.getElementById('rKvaSaving').textContent = kvaSaving.toFixed(2) + ' kVA';
+    document.getElementById('rKvaCompare').textContent = kvaOriginal.toFixed(1) + ' → ' + kvaCorrected.toFixed(1) + ' kVA';
+  }
+
+  // run once on load with default values
+  calculateAPFC();
+</script>
+
+</body>
+</html>

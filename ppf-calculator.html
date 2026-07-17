@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>PPF Calculator (Public Provident Fund) India | ElectroMechCalc</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+<meta name="description" content="Free PPF Calculator for India. Project your Public Provident Fund maturity value with yearly contributions and annual compounding over a 15-year tenure.">
+<link rel="canonical" href="https://www.electromechcalc.com/ppf-calculator.html">
+<link rel="icon" href="/favicon.png" type="image/png">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brandDark: '#0B1220',
+          brandPanel: '#111c2e',
+          brandLine: '#1f2f47',
+          brandBlue: '#0ea5e9',
+          brandAmber: '#f59e0b'
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace']
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{
+    display:none;
+  }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{
+    display:block;
+  }
+  .nav-dropdown-panel{
+    padding-top:10px;
+    margin-top:-10px;
+  }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{
+    background:linear-gradient(160deg,#0B1220,#15233a);
+  }
+  .fund-badge{
+    background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9);
+  }
+
+  .breakdown-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:12.5px;
+  }
+  .breakdown-table th,
+  .breakdown-table td{
+    padding:7px 8px;
+    text-align:right;
+    border-bottom:1px solid #e5e7eb;
+    white-space:nowrap;
+  }
+  .breakdown-table th:first-child,
+  .breakdown-table td:first-child{
+    text-align:left;
+  }
+  .breakdown-table th{
+    color:#6b7280;
+    font-weight:600;
+    text-transform:uppercase;
+    font-size:10.5px;
+    letter-spacing:0.4px;
+    background:#f8fafc;
+    position:sticky;
+    top:0;
+  }
+  .breakdown-table td{
+    color:#111827;
+  }
+  .breakdown-wrap{
+    max-height:280px;
+    overflow-y:auto;
+    overflow-x:auto;
+    margin-top:4px;
+    border-radius:8px;
+    border:1px solid #e5e7eb;
+  }
+
+  /* search bar */
+  .search-wrap{ position:relative; }
+  .search-input{
+    background:rgba(255,255,255,0.06);
+    border:1px solid #1f2f47;
+    color:#e2e8f0;
+    border-radius:8px;
+    padding:8px 12px 8px 34px;
+    font-size:13px;
+    width:190px;
+    outline:none;
+    transition:.15s ease;
+  }
+  .search-input::placeholder{ color:#64748b; }
+  .search-input:focus{
+    width:230px;
+    border-color:#0ea5e9;
+    background:rgba(255,255,255,0.1);
+  }
+  .search-icon{
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#64748b;
+    pointer-events:none;
+  }
+  .search-results{
+    position:absolute;
+    top:calc(100% + 8px);
+    right:0;
+    width:280px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    box-shadow:0 14px 30px rgba(11,18,32,0.25);
+    overflow:hidden;
+    display:none;
+    z-index:60;
+  }
+  .search-wrap.has-results .search-results{ display:block; }
+  .search-results a{
+    display:block;
+    padding:10px 14px;
+    font-size:13px;
+    color:#0B1220;
+    border-bottom:1px solid #f1f5f9;
+  }
+  .search-results a:last-child{ border-bottom:none; }
+  .search-results a:hover{ background:#f0f9ff; }
+  .search-empty{
+    padding:12px 14px;
+    font-size:12.5px;
+    color:#94a3b8;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== PAGE HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-3xl mx-auto px-4 py-14 text-center relative z-10">
+    <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+      <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+      Financial &middot; Free &middot; Instant results
+    </span>
+    <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+      PPF Calculator <span class="text-sky-400">(Public Provident Fund)</span>
+    </h1>
+    <p class="text-gray-400 text-sm max-w-xl mx-auto">
+      Project your PPF maturity value with yearly contributions, annual compounding, and the standard 15-year lock-in.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== CALCULATOR ===================== -->
+<section class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-1">PPF Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter your yearly contribution, the current interest rate, and your investment tenure.</p>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Yearly Investment (₹)</label>
+        <input id="ppfYearly" type="number" value="150000" step="5000" min="500" max="150000" placeholder="e.g. 150000" class="input-field mt-2">
+        <p class="text-[11px] text-gray-400 mt-2">Minimum ₹500, maximum ₹1,50,000 per financial year as per PPF rules.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Interest Rate (% p.a.)</label>
+          <input id="ppfRate" type="number" value="7.1" step="0.1" min="0" placeholder="e.g. 7.1" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Tenure (Years)</label>
+          <input id="ppfTenure" type="number" value="15" step="1" min="15" placeholder="e.g. 15" class="input-field mt-2">
+        </div>
+      </div>
+
+      <p class="text-[11px] text-gray-400 mb-5">PPF has a mandatory 15-year lock-in, extendable in blocks of 5 years thereafter. Interest is compounded annually, assuming deposits are made at the start of each financial year for maximum benefit.</p>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculatePPF()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">Annual Compounding</span>
+        <span class="formula-chip">15-Year Lock-in, EEE Tax-Free</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div class="lg:col-span-2 flex flex-col gap-4">
+
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Maturity Value</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">₹—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter your details and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Total Invested</span>
+            <span id="rInvested" class="font-display font-semibold text-lg">₹—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Interest Earned</span>
+            <span id="rInterest" class="font-display font-semibold text-lg">₹—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Year-wise Breakdown</span>
+        <div class="breakdown-wrap" id="breakdownBox">
+          <p class="text-xs text-gray-400 p-3">Calculate to see the year-by-year PPF growth.</p>
+        </div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="epf-calculator.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            EPF Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="nps-calculator.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            NPS Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="fd-calculator.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            FD Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="income-tax-calculator.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Income Tax Calculator <span class="text-sky-500">→</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding PPF (Public Provident Fund)</h2>
+
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>The Public Provident Fund is a government-backed, long-term savings scheme popular for its "EEE" tax status — your contribution, the interest earned, and the maturity amount are all exempt from tax. It comes with a mandatory lock-in of 15 years, after which it can be extended indefinitely in blocks of 5 years, with or without further contributions.</p>
+
+      <p><strong>How interest is calculated:</strong> PPF interest is computed monthly on the lowest balance between the 5th and last day of the month, but credited to your account at the end of the financial year. For simplicity, this calculator assumes the full yearly contribution is made at the start of the financial year and compounds annually — this represents the maximum possible benefit and is close to actual returns if you deposit early each year.</p>
+
+      <p><strong>Contribution limits:</strong> You can invest a minimum of ₹500 and a maximum of ₹1,50,000 in a PPF account per financial year, and this combined limit applies across all your PPF accounts (self plus any minor accounts you operate). Contributions above ₹1,50,000 do not earn interest and are not eligible for tax deduction.</p>
+
+      <p><strong>Worked example:</strong> depositing ₹1,50,000 every year for 15 years at 7.1% p.a. compounded annually grows to approximately ₹40.68 lakh, of which your own contribution is ₹22.5 lakh and the rest, about ₹18.18 lakh, is interest — entirely tax-free.</p>
+
+      <p>PPF also offers partial withdrawal facility from the 7th financial year onward and a loan facility between the 3rd and 6th year, making it more liquid than it first appears despite the long lock-in.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Reference: Public Provident Fund Scheme, Ministry of Finance, Government of India. Interest rates are revised quarterly by the government; this calculator uses a fixed rate for the entire tenure for simplicity. This tool is for educational planning purposes only.</p>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is PPF interest really tax-free?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, PPF enjoys "EEE" (Exempt-Exempt-Exempt) tax status — your contribution qualifies for deduction under Section 80C (Old Regime only), the interest earned is fully tax-free, and the maturity amount is also tax-free.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I extend my PPF account after 15 years?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, you can extend your PPF account in blocks of 5 years any number of times, either with further contributions or without. You need to submit an extension form within one year of maturity if you wish to continue contributing.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does the interest rate change over time?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, the government revises the PPF interest rate every quarter based on prevailing bond yields. This calculator assumes the rate you enter stays constant for the entire tenure, which is a simplification for projection purposes.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I withdraw money before 15 years?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Partial withdrawal is allowed from the 7th financial year of account opening, subject to a cap based on your balance. Premature closure is allowed only in specific circumstances such as medical emergencies or higher education, and attracts a small interest penalty.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+
+<script>
+  // ===== PPF Calculator Logic =====
+  function calculatePPF(){
+    const yearly = parseFloat(document.getElementById('ppfYearly').value);
+    const rate = parseFloat(document.getElementById('ppfRate').value);
+    const years = parseInt(document.getElementById('ppfTenure').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(yearly) || yearly < 500){ errors.push('Enter a valid yearly investment of at least ₹500.'); }
+    if(yearly > 150000){ errors.push('Yearly investment cannot exceed ₹1,50,000 as per PPF rules.'); }
+    if(isNaN(rate) || rate <= 0){ errors.push('Enter a valid interest rate greater than 0.'); }
+    if(isNaN(years) || years < 15){ errors.push('PPF tenure must be at least 15 years.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '₹—';
+      document.getElementById('rInvested').textContent = '₹—';
+      document.getElementById('rInterest').textContent = '₹—';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    let balance = 0;
+    let rows = '';
+    for(let y = 1; y <= years; y++){
+      balance += yearly;
+      const interest = balance * (rate/100);
+      balance += interest;
+      rows += `<tr><td>Year ${y}</td><td>₹${Math.round(interest).toLocaleString('en-IN')}</td><td>₹${Math.round(balance).toLocaleString('en-IN')}</td></tr>`;
+    }
+
+    const totalInvested = yearly * years;
+    const interestEarned = balance - totalInvested;
+
+    document.getElementById('rResult').textContent = '₹' + balance.toLocaleString('en-IN', {maximumFractionDigits:0});
+    document.getElementById('resultSub').textContent = 'Projected value after ' + years + ' years';
+    document.getElementById('rInvested').textContent = '₹' + totalInvested.toLocaleString('en-IN', {maximumFractionDigits:0});
+    document.getElementById('rInterest').textContent = '₹' + interestEarned.toLocaleString('en-IN', {maximumFractionDigits:0});
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Year</th><th>Interest</th><th>Balance</th></tr></thead>
+            <tbody>${rows}</tbody>
+        </table>
+    `;
+  }
+
+  // run once on load with default values
+  calculatePPF();
+
+</script>
+
+</body>
+</html>
