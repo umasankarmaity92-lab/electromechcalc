@@ -108,6 +108,20 @@ details[open] summary .plus { transform: rotate(45deg); }
 }
 
 /* ---------------------------- search bar --------------------------------- */
+/*
+ * FIX (search dropdown misalignment): .search-wrap is a flex item that
+ * stretches wide (lg:flex-1 lg:max-w-xl lg:mx-auto in header.html) so the
+ * whole search AREA sits centered in the header. Previously the <input>
+ * inside it had a fixed width (190/230px) far narrower than that area,
+ * so the input rendered near the left of the wide box while
+ * .search-results (anchored with right:0) rendered at the wide box's
+ * right edge — two different reference widths, hence the visual gap.
+ *
+ * Fix: make the input fill .search-wrap completely (width:100%), and
+ * anchor .search-results with left:0 + right:0 (instead of a fixed
+ * 280px + right:0) so the dropdown always exactly matches the input's
+ * rendered width and position, on every breakpoint, automatically.
+ */
 
 .search-wrap { position: relative; }
 
@@ -118,13 +132,12 @@ details[open] summary .plus { transform: rotate(45deg); }
   border-radius: 8px;
   padding: 8px 12px 8px 34px;
   font-size: 13px;
-  width: 190px;
+  width: 100%;
   outline: none;
   transition: .15s ease;
 }
 .search-input::placeholder { color: var(--text-2); }
 .search-input:focus {
-  width: 230px;
   border-color: #0ea5e9;
   background: rgba(255,255,255,0.1);
 }
@@ -140,8 +153,6 @@ details[open] summary .plus { transform: rotate(45deg); }
 
 @media (max-width: 1023.98px) {
   .search-wrap { width: 100%; margin-top: 2px; }
-  .search-input,
-  .search-input:focus { width: 100%; }
 }
 
 /*
@@ -154,8 +165,9 @@ details[open] summary .plus { transform: rotate(45deg); }
 .search-results {
   position: absolute;
   top: calc(100% + 8px);
+  left: 0;
   right: 0;
-  width: 280px;
+  width: auto;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
