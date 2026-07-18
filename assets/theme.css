@@ -123,8 +123,19 @@ details[open] summary .plus { transform: rotate(45deg); }
  * rendered width and position, on every breakpoint, automatically.
  */
 
-.search-wrap { position: relative; }
+.search-wrap { position: relative !important; }
 
+/*
+ * !important on width/position below is intentional: several pages
+ * (index.html, editorial-policy.html, etc.) still carry an old
+ * per-page duplicate <style> block with the pre-fix .search-input /
+ * .search-results rules (width:190px, right:0, width:280px). Those
+ * inline blocks load AFTER this stylesheet in <head>, so at equal
+ * specificity they'd normally win the cascade and silently re-break
+ * this fix page-by-page. !important here guarantees the corrected
+ * layout applies everywhere from this one file, without having to
+ * hunt down and edit every page's inline <style> block individually.
+ */
 .search-input {
   background: var(--surface-2);
   border: 1px solid var(--border);
@@ -132,12 +143,13 @@ details[open] summary .plus { transform: rotate(45deg); }
   border-radius: 8px;
   padding: 8px 12px 8px 34px;
   font-size: 13px;
-  width: 100%;
+  width: 100% !important;
   outline: none;
   transition: .15s ease;
 }
 .search-input::placeholder { color: var(--text-2); }
 .search-input:focus {
+  width: 100% !important;
   border-color: #0ea5e9;
   background: rgba(255,255,255,0.1);
 }
@@ -165,9 +177,9 @@ details[open] summary .plus { transform: rotate(45deg); }
 .search-results {
   position: absolute;
   top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  width: auto;
+  left: 0 !important;
+  right: 0 !important;
+  width: auto !important;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
