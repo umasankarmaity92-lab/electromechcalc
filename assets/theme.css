@@ -174,12 +174,28 @@ details[open] summary .plus { transform: rotate(45deg); }
  * ".search-wrap.has-results" wrapper class is used anywhere, so
  * there is only one signal that controls whether results show.
  */
+/*
+ * !important on display below is critical: some pages (e.g.
+ * kw-kva.html) still carry an OLD per-page duplicate <style> block
+ * using a different, defunct visibility system:
+ *   .search-results { display:none; }
+ *   .search-wrap.has-results .search-results { display:block; }
+ * But site-nav.js only ever toggles a "hidden" CLASS on #searchResults
+ * directly — it never adds "has-results" to .search-wrap. So on any
+ * page still carrying that old block, results are permanently stuck
+ * at display:none no matter what site-nav.js does; the search LOGIC
+ * runs fine (innerHTML gets populated) but the box never becomes
+ * visible. Forcing display here guarantees the "hidden" class is the
+ * only thing controlling visibility, everywhere, regardless of any
+ * leftover local CSS.
+ */
 .search-results {
   position: absolute;
   top: calc(100% + 8px);
   left: 0 !important;
   right: 0 !important;
   width: auto !important;
+  display: block !important;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -187,7 +203,7 @@ details[open] summary .plus { transform: rotate(45deg); }
   overflow: hidden;
   z-index: 60;
 }
-.search-results.hidden { display: none; }
+.search-results.hidden { display: none !important; }
 
 .search-results a {
   display: block;
