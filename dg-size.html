@@ -293,24 +293,33 @@
 
       <div class="grid grid-cols-2 gap-4 mb-5">
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Load (kW)</label>
-          <input id="kw" type="number" value="80" step="0.1" class="input-field mt-2">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Input Type</label>
+          <select id="inputType" class="input-field mt-2" onchange="toggleLoadInput()">
+            <option value="kw">Kilowatt (kW)</option>
+            <option value="hp">Horsepower (HP)</option>
+            <option value="amp">Amp (A)</option>
+          </select>
         </div>
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Power Factor</label>
-          <input id="pf" type="number" value="0.8" step="0.01" min="0.01" max="1" class="input-field mt-2">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="loadValueLabel">Load Value (kW)</label>
+          <input id="loadValue" type="number" value="80" step="0.1" class="input-field mt-2">
         </div>
       </div>
 
       <div class="grid grid-cols-2 gap-4 mb-5">
         <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Power Factor</label>
+          <input id="pf" type="number" value="0.8" step="0.01" min="0.01" max="1" class="input-field mt-2">
+        </div>
+        <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Voltage (V)</label>
           <input id="voltage" type="number" value="415" step="1" class="input-field mt-2">
         </div>
-        <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Safety Margin (%)</label>
-          <input id="margin" type="number" value="20" step="1" min="0" class="input-field mt-2">
-        </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Safety Margin (%)</label>
+        <input id="margin" type="number" value="20" step="1" min="0" class="input-field mt-2">
       </div>
 
       <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
@@ -322,6 +331,7 @@
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
         <span class="formula-chip">kVA = kW ÷ PF</span>
         <span class="formula-chip">I = (kVA × 1000) / (√3 × V)</span>
+        <span class="formula-chip">kW ↔ HP = kW × 1.341</span>
         <span class="formula-chip">Fuel = kW × 0.27 L/hr</span>
       </div>
     </div>
@@ -332,8 +342,8 @@
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full volt-badge opacity-20"></div>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Recommended DG Size</span>
-        <div id="rResult" class="font-display font-bold text-3xl mt-1">— kVA</div>
-        <p class="text-xs text-gray-400 mt-1" id="resultSub">Nearest standard DG set size for your load</p>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1 text-white">— kVA</div>
+        <p class="text-xs text-slate-300 mt-1" id="resultSub">Nearest standard DG set size for your load</p>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
@@ -540,15 +550,32 @@
     calculate();
   }
 
+  function toggleLoadInput(){
+    const type = document.getElementById('inputType').value;
+    const label = document.getElementById('loadValueLabel');
+    const input = document.getElementById('loadValue');
+    if(type === 'hp'){
+      label.textContent = 'Load Value (HP)';
+      input.placeholder = 'Enter value in HP';
+    } else if(type === 'amp'){
+      label.textContent = 'Load Value (Amp)';
+      input.placeholder = 'Enter value in Amp';
+    } else {
+      label.textContent = 'Load Value (kW)';
+      input.placeholder = 'Enter value in kW';
+    }
+  }
+
   function calculate(){
-    const kw = parseFloat(document.getElementById('kw').value);
+    const inputType = document.getElementById('inputType').value;
+    const loadValue = parseFloat(document.getElementById('loadValue').value);
     const pf = parseFloat(document.getElementById('pf').value);
     const voltage = parseFloat(document.getElementById('voltage').value);
     let margin = parseFloat(document.getElementById('margin').value);
 
     const validationBox = document.getElementById('validationBox');
     const errors = [];
-    if (isNaN(kw) || kw <= 0){ errors.push('Load (kW) must be greater than 0.'); }
+    if (isNaN(loadValue) || loadValue <= 0){ errors.push('Load Value must be greater than 0.'); }
     if (isNaN(pf) || pf <= 0 || pf > 1){ errors.push('Power Factor must be between 0 and 1.'); }
     if (isNaN(voltage) || voltage <= 0){ errors.push('Voltage must be greater than 0.'); }
     if (isNaN(margin) || margin < 0){ margin = 0; }
@@ -566,6 +593,29 @@
     }
 
     const phaseLabel = currentPhase === 'single' ? 'Single-phase' : 'Three-phase';
+
+    // ---- Load in kW, HP, Amp (same conversion logic as Transformer Size Calculator) ----
+    let kw = 0, hp = 0, amp = 0;
+    if (inputType === 'kw'){
+      kw  = loadValue;
+      hp  = kw * 1.341;
+      amp = currentPhase === 'single'
+          ? (kw * 1000) / (voltage * pf)
+          : (kw * 1000) / (root3 * voltage * pf);
+    } else if (inputType === 'hp'){
+      hp  = loadValue;
+      kw  = hp / 1.341;
+      amp = currentPhase === 'single'
+          ? (kw * 1000) / (voltage * pf)
+          : (kw * 1000) / (root3 * voltage * pf);
+    } else {
+      amp = loadValue;
+      kw  = currentPhase === 'single'
+          ? (voltage * amp * pf) / 1000
+          : (root3 * voltage * amp * pf) / 1000;
+      hp  = kw * 1.341;
+    }
+
     const baseKva = kw / pf;
     const kva = baseKva * (1 + margin / 100);
 
@@ -581,10 +631,11 @@
     }
 
     document.getElementById('rResult').textContent = recommended + ' kVA';
-    document.getElementById('resultSub').textContent = `${phaseLabel}, for a ${kw} kW load at PF ${pf}`;
+    document.getElementById('resultSub').textContent = `${phaseLabel}, for a ${kw.toFixed(2)} kW load at PF ${pf}`;
 
     document.getElementById('detailBox').textContent =
 `Phase Type: ${phaseLabel}
+Load: ${kw.toFixed(2)} kW (${hp.toFixed(2)} HP / ${amp.toFixed(2)} A)
 Base DG Capacity (no margin): ${baseKva.toFixed(2)} kVA
 Safety Margin Applied: ${margin}%
 Required DG Capacity (with margin): ${kva.toFixed(2)} kVA
@@ -598,7 +649,7 @@ Estimated Fuel Consumption: ${fuel.toFixed(2)} L/hr`;
 
     document.getElementById('formulaBox').textContent =
 `Base kVA = kW ÷ PF
-Base kVA = ${kw} ÷ ${pf}
+Base kVA = ${kw.toFixed(2)} ÷ ${pf}
 Base kVA = ${baseKva.toFixed(2)} kVA
 
 kVA with Margin = Base kVA × (1 + Margin% ÷ 100)
@@ -609,11 +660,12 @@ ${currentFormulaText}
 I = ${current.toFixed(2)} A
 
 Fuel (L/hr) = kW × 0.27
-Fuel (L/hr) = ${kw} × 0.27
+Fuel (L/hr) = ${kw.toFixed(2)} × 0.27
 Fuel (L/hr) = ${fuel.toFixed(2)} L/hr`;
   }
 
   // run once on load with default values
+  toggleLoadInput();
   calculate();
 </script>
 

@@ -311,33 +311,48 @@
 
       <div class="grid sm:grid-cols-2 gap-4 mb-5">
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Supply Voltage (V)</label>
-          <input id="voltage" type="number" value="415" step="1" placeholder="e.g. 415" class="input-field mt-2">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Input Type</label>
+          <select id="inputType" class="input-field mt-2" onchange="toggleLoadInput()">
+            <option value="kw">Kilowatt (kW)</option>
+            <option value="hp">Horsepower (HP)</option>
+            <option value="amp">Amp (A)</option>
+          </select>
         </div>
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Load (kW)</label>
-          <input id="kw" type="number" value="20" step="0.5" placeholder="e.g. 20" class="input-field mt-2">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="loadValueLabel">Load Value (kW)</label>
+          <input id="loadValue" type="number" value="20" step="0.5" placeholder="e.g. 20" class="input-field mt-2">
         </div>
       </div>
 
       <div class="grid sm:grid-cols-2 gap-4 mb-5">
         <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Supply Voltage (V)</label>
+          <input id="voltage" type="number" value="415" step="1" placeholder="e.g. 415" class="input-field mt-2">
+        </div>
+        <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Power Factor</label>
           <input id="pf" type="number" value="0.85" step="0.01" min="0.1" max="1" placeholder="e.g. 0.85" class="input-field mt-2">
         </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4 mb-5">
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Cable Length (m, one-way)</label>
           <input id="length" type="number" value="60" step="1" placeholder="e.g. 60" class="input-field mt-2">
         </div>
-      </div>
-
-      <div class="mb-5">
-        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Conductor Material</label>
-        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2">
-          <div id="materialCopper" class="toggle-btn active" onclick="setMaterial('copper')">Copper</div>
-          <div id="materialAluminium" class="toggle-btn" onclick="setMaterial('aluminium')">Aluminium</div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Conductor Material</label>
+          <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2">
+            <div id="materialCopper" class="toggle-btn active" onclick="setMaterial('copper')">Copper</div>
+            <div id="materialAluminium" class="toggle-btn" onclick="setMaterial('aluminium')">Aluminium</div>
+          </div>
         </div>
       </div>
+
+      <label class="flex items-center gap-2.5 mb-6 cursor-pointer select-none">
+        <input id="marginToggle" type="checkbox" checked class="w-4 h-4 accent-brandBlue">
+        <span class="text-xs font-semibold text-gray-600">Add 20% Safety Margin for future load growth</span>
+      </label>
 
       <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
@@ -348,6 +363,7 @@
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
         <span class="formula-chip">I = (kW × 1000) ÷ (V × PF) &nbsp;[1-phase]</span>
         <span class="formula-chip">I = (kW × 1000) ÷ (√3 × V × PF) &nbsp;[3-phase]</span>
+        <span class="formula-chip">kW ↔ HP = kW × 1.341</span>
         <span class="formula-chip">Vd% = (√ph × I × L × R ÷ 1000) ÷ V × 100</span>
       </div>
     </div>
@@ -358,25 +374,25 @@
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Recommended Cable Size</span>
-        <div id="rResult" class="font-display font-bold text-3xl mt-1">— sq.mm</div>
-        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter your details and hit calculate</p>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1 text-white">— sq.mm</div>
+        <p class="text-xs text-slate-300 mt-1" id="resultSub">Enter your details and hit calculate</p>
 
         <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Full-Load Current</span>
-            <span id="rCurrent" class="font-display font-semibold text-lg">— A</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Full-Load Current</span>
+            <span id="rCurrent" class="font-display font-semibold text-lg text-white">— A</span>
           </div>
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Recommended MCCB</span>
-            <span id="rMccb" class="font-display font-semibold text-lg">— A</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Recommended MCCB</span>
+            <span id="rMccb" class="font-display font-semibold text-lg text-white">— A</span>
           </div>
         </div>
 
         <div class="mt-3 pt-3 border-t border-white/10">
-          <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Estimated Voltage Drop</span>
+          <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Estimated Voltage Drop</span>
           <div class="flex items-baseline gap-2 mt-0.5">
-            <span id="rVdrop" class="font-display font-semibold text-lg">—%</span>
-            <span id="rVdropNote" class="text-[11px] text-gray-400"></span>
+            <span id="rVdrop" class="font-display font-semibold text-lg text-white">—%</span>
+            <span id="rVdropNote" class="text-[11px] text-slate-300"></span>
           </div>
         </div>
       </div>
@@ -580,6 +596,22 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
     document.getElementById('materialAluminium').classList.toggle('active', type === 'aluminium');
   }
 
+  function toggleLoadInput(){
+    const type = document.getElementById('inputType').value;
+    const label = document.getElementById('loadValueLabel');
+    const input = document.getElementById('loadValue');
+    if(type === 'hp'){
+      label.textContent = 'Load Value (HP)';
+      input.placeholder = 'Enter value in HP';
+    } else if(type === 'amp'){
+      label.textContent = 'Load Value (Amp)';
+      input.placeholder = 'Enter value in Amp';
+    } else {
+      label.textContent = 'Load Value (kW)';
+      input.placeholder = 'Enter value in kW';
+    }
+  }
+
   const cableSizes = [1.5, 2.5, 4, 6, 10, 16, 25, 35, 50, 70, 95, 120, 150, 185, 240, 300, 400];
   const copperRating    = [10,16,25,32,40,63,80,100,125,160,200,250,315,355,400,500,630];
   const aluminiumRating = [null,10,16,25,32,40,63,80,100,125,160,200,250,315,355,400,500];
@@ -595,16 +627,18 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
   }
 
   function calculateCable(){
+    const inputType = document.getElementById('inputType').value;
+    const loadValue = parseFloat(document.getElementById('loadValue').value);
     const voltage = parseFloat(document.getElementById('voltage').value);
-    const kw = parseFloat(document.getElementById('kw').value);
     const pf = parseFloat(document.getElementById('pf').value);
     const length = parseFloat(document.getElementById('length').value);
+    const marginOn = document.getElementById('marginToggle').checked;
 
     const validationBox = document.getElementById('validationBox');
     const errors = [];
 
     if(isNaN(voltage) || voltage <= 0){ errors.push('Enter a valid supply voltage greater than 0.'); }
-    if(isNaN(kw) || kw <= 0){ errors.push('Enter a valid load greater than 0 kW.'); }
+    if(isNaN(loadValue) || loadValue <= 0){ errors.push('Enter a valid Load Value greater than 0.'); }
     if(isNaN(pf) || pf <= 0 || pf > 1){ errors.push('Enter a valid power factor between 0.1 and 1.'); }
     if(isNaN(length) || length <= 0){ errors.push('Enter a valid cable length greater than 0 m.'); }
 
@@ -624,9 +658,25 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
     }
 
     const isThree = (phase === 'three');
-    const current = isThree
-      ? (kw * 1000) / (Math.sqrt(3) * voltage * pf)
-      : (kw * 1000) / (voltage * pf);
+
+    // ---- Load in kW, HP, Amp (same conversion logic as Transformer Size Calculator) ----
+    let kw = 0, hp = 0, amp = 0;
+    if(inputType === 'kw'){
+      kw  = loadValue;
+      hp  = kw * 1.341;
+      amp = isThree ? (kw * 1000) / (Math.sqrt(3) * voltage * pf) : (kw * 1000) / (voltage * pf);
+    } else if(inputType === 'hp'){
+      hp  = loadValue;
+      kw  = hp / 1.341;
+      amp = isThree ? (kw * 1000) / (Math.sqrt(3) * voltage * pf) : (kw * 1000) / (voltage * pf);
+    } else {
+      amp = loadValue;
+      kw  = isThree ? (Math.sqrt(3) * voltage * amp * pf) / 1000 : (voltage * amp * pf) / 1000;
+      hp  = kw * 1.341;
+    }
+
+    const current = amp;
+    const sizingCurrent = marginOn ? current * 1.2 : current;
 
     const ratingTable = (material === 'copper') ? copperRating : aluminiumRating;
     const resTable = (material === 'copper') ? copperR : aluminiumR;
@@ -634,7 +684,7 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
     let baseIndex = ratingTable.length - 1;
     for(let i = 0; i < ratingTable.length; i++){
       const rating = ratingTable[i];
-      if(rating !== null && current <= rating){ baseIndex = i; break; }
+      if(rating !== null && sizingCurrent <= rating){ baseIndex = i; break; }
     }
 
     let stepUp = 0;
@@ -653,10 +703,10 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
 
     const recVdrop = voltageDropPct(current, length, resTable[recIndex], voltage, isThree);
 
-    document.getElementById('rResult').textContent = recSize + ' sq.mm';
+    document.getElementById('rResult').textContent = recSize + ' sq.mm' + (marginOn ? ' (incl. 20% margin)' : '');
     document.getElementById('resultSub').textContent = (recSize !== baseSize)
-      ? `Stepped up from ${baseSize} sq.mm for a ${length} m run`
-      : `Base size sufficient for a ${length} m run`;
+      ? `Stepped up from ${baseSize} sq.mm for a ${length} m run${marginOn ? ' + 20% margin' : ''}`
+      : `Base size sufficient for a ${length} m run${marginOn ? ' + 20% margin' : ''}`;
     document.getElementById('rCurrent').textContent = current.toFixed(2) + ' A';
     document.getElementById('rMccb').textContent = mccb + ' A';
     document.getElementById('rVdrop').textContent = recVdrop.toFixed(2) + '%';
@@ -711,6 +761,7 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
     `;
   }
 
+  toggleLoadInput();
   calculateCable();
 </script>
 
