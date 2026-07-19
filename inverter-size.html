@@ -221,6 +221,22 @@
     background:#fff;
     box-shadow:0 0 0 3px rgba(14,165,233,0.12);
   }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
   .result-tile{
     background:linear-gradient(160deg,#0B1220,#15233a);
   }
@@ -338,14 +354,14 @@
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full volt-badge opacity-20"></div>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400">Recommended Inverter</span>
-        <div id="rRecommended" class="font-display font-bold text-3xl mt-1 text-white">— VA</div>
-        <p class="text-xs text-slate-300 mt-1" id="rRecommendedKva">— kVA continuous rating needed</p>
+        <div id="rRecommended" class="font-display font-bold text-3xl mt-1 text-white">— kVA</div>
+        <p class="text-xs text-slate-300 mt-1" id="rRecommendedKva">Nearest standard commercial rating</p>
       </div>
 
       <div class="grid grid-cols-2 gap-4">
         <div class="bg-white rounded-xl border border-gray-100 p-4">
-          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Apparent Power</span>
-          <div id="rApparent" class="font-display font-bold text-xl text-brandDark mt-1">— VA</div>
+          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Calculated kVA</span>
+          <div id="rApparent" class="font-display font-bold text-xl text-brandDark mt-1">— kVA</div>
         </div>
         <div class="bg-white rounded-xl border border-gray-100 p-4">
           <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Surge Requirement</span>
@@ -573,9 +589,9 @@
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
       if (isNaN(loadValue) || loadValue <= 0 || isNaN(voltage) || voltage <= 0){
-        document.getElementById('rRecommended').textContent = '— VA';
+        document.getElementById('rRecommended').textContent = '— kVA';
         document.getElementById('rRecommendedKva').textContent = 'Fix the input errors above to see a valid result.';
-        document.getElementById('rApparent').textContent = '— VA';
+        document.getElementById('rApparent').textContent = '— kVA';
         document.getElementById('rSurge').textContent = '— W';
         document.getElementById('rLoadKw').textContent = '— kW';
         document.getElementById('rAmp').textContent = '— A';
@@ -613,9 +629,9 @@
     // Nearest standard commercial inverter size that covers both continuous VA and surge requirement
     const suggestedSize = standardSizes.find(s => s >= recommendedVA && s >= surgeRequirement) || standardSizes[standardSizes.length - 1];
 
-    document.getElementById('rRecommended').textContent = Math.round(recommendedVA).toLocaleString('en-IN') + ' VA';
-    document.getElementById('rRecommendedKva').textContent = (recommendedVA / 1000).toFixed(2) + ' kVA continuous rating needed';
-    document.getElementById('rApparent').textContent = Math.round(apparentPower).toLocaleString('en-IN') + ' VA';
+    document.getElementById('rRecommended').textContent = (suggestedSize/1000).toFixed(suggestedSize % 1000 === 0 ? 1 : 2) + ' kVA';
+    document.getElementById('rRecommendedKva').textContent = 'Nearest standard commercial rating';
+    document.getElementById('rApparent').textContent = (recommendedVA / 1000).toFixed(2) + ' kVA';
     document.getElementById('rSurge').textContent = Math.round(surgeRequirement).toLocaleString('en-IN') + ' W';
     document.getElementById('rLoadKw').textContent = kw.toFixed(2) + ' kW';
     document.getElementById('rAmp').textContent = amp.toFixed(2) + ' A';
