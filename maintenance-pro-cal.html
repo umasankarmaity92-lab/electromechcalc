@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- category: Mechanical -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maintenance Pro Cal | MTBF, MTTR, OEE, Reliability &amp; PM Interval Calculator</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+<meta name="description" content="Free Maintenance Calculator with MTBF, MTTR, OEE, Downtime Cost, Reliability, PM Interval, Lubrication, Spare Parts, Availability and Maintenance Cost tools. Instant results with formulas and engineering explanations.">
+<meta name="keywords" content="maintenance calculator, MTBF calculator, MTTR calculator, OEE calculator, downtime cost calculator, PM interval calculator, lubrication interval calculator, spare parts calculator, reliability calculator, equipment availability calculator">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/maintenance-pro-cal.html">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Maintenance Calculator | MTBF, MTTR, OEE, Reliability &amp; PM Interval Calculator">
+<meta property="og:description" content="Free Maintenance Calculator with MTBF, MTTR, OEE, Downtime Cost, Reliability, PM Interval, Lubrication, Spare Parts, Availability and Maintenance Cost tools.">
+<meta property="og:url" content="https://www.electromechcalc.com/maintenance-pro-cal.html">
+<meta property="og:image" content="https://www.electromechcalc.com/logo.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Maintenance Calculator | MTBF, MTTR, OEE, Reliability &amp; PM Interval Calculator">
+<meta name="twitter:description" content="Free all-in-one industrial maintenance calculator — MTBF, MTTR, OEE, Downtime Cost, PM &amp; Lubrication Interval, Spares, Cost, Availability and Reliability.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
+
+<!-- Structured data: WebApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Maintenance Pro Cal",
+  "url": "https://www.electromechcalc.com/maintenance-pro-cal.html",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free online industrial maintenance calculator covering MTBF, MTTR, OEE, Downtime Cost, PM Interval, Lubrication Interval, Spare Parts Inventory, Maintenance Cost, Equipment Availability and Reliability.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<!-- Structured data: FAQPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "What's the difference between MTBF and MTTR?", "acceptedAnswer": { "@type": "Answer", "text": "MTBF measures how long equipment runs, on average, before it fails. MTTR measures how long it takes, on average, to fix it once it does fail. Together they feed into availability: Availability = MTBF ÷ (MTBF + MTTR)." } },
+    { "@type": "Question", "name": "How is OEE calculated, and what's a good score?", "acceptedAnswer": { "@type": "Answer", "text": "OEE multiplies Availability, Performance, and Quality. A world-class OEE benchmark is generally 85% or higher; most manufacturing plants run in the 40-60% range." } },
+    { "@type": "Question", "name": "What is a good MTBF value?", "acceptedAnswer": { "@type": "Answer", "text": "Below 1,000 hours is generally poor, 1,000-3,000 hours average, 3,000-6,000 hours good, and 6,000+ hours excellent, though the right benchmark depends on the asset type and industry." } },
+    { "@type": "Question", "name": "How is Availability different from MTBF?", "acceptedAnswer": { "@type": "Answer", "text": "MTBF measures time between failures. Availability measures the percentage of scheduled time an asset is actually up, calculated as MTBF ÷ (MTBF + MTTR) or directly as Uptime ÷ Total Scheduled Time." } },
+    { "@type": "Question", "name": "What is a good maintenance cost as a percentage of RAV?", "acceptedAnswer": { "@type": "Answer", "text": "Roughly 2-3% of Replacement Asset Value per year is a commonly cited target for well-run industrial facilities, though process-heavy industries often run higher." } }
+  ]
+}
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brandDark: '#0B1220',
+          brandPanel: '#111c2e',
+          brandLine: '#1f2f47',
+          brandBlue: '#0ea5e9',
+          brandAmber: '#f59e0b'
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace']
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+  .calc-card.active{
+    border-color:#0ea5e9;
+    background:#eaf6fd;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{
+    display:none;
+  }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{
+    display:block;
+  }
+  .nav-dropdown-panel{
+    padding-top:10px;
+    margin-top:-10px;
+  }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .result-tile{
+    background:linear-gradient(160deg,#0B1220,#15233a);
+  }
+  .fund-badge{
+    background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9);
+  }
+
+  /* search bar */
+  .search-wrap{ position:relative; }
+  .search-input{
+    background:rgba(255,255,255,0.06);
+    border:1px solid #1f2f47;
+    color:#e2e8f0;
+    border-radius:8px;
+    padding:8px 12px 8px 34px;
+    font-size:13px;
+    width:190px;
+    outline:none;
+    transition:.15s ease;
+  }
+  .search-input::placeholder{ color:#64748b; }
+  .search-input:focus{
+    width:230px;
+    border-color:#0ea5e9;
+    background:rgba(255,255,255,0.1);
+  }
+  .search-icon{
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#64748b;
+    pointer-events:none;
+  }
+  .search-results{
+    position:absolute;
+    top:calc(100% + 8px);
+    right:0;
+    width:280px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    box-shadow:0 14px 30px rgba(11,18,32,0.25);
+    overflow:hidden;
+    display:none;
+    z-index:60;
+  }
+  .search-wrap.has-results .search-results{ display:block; }
+  .search-results a{
+    display:block;
+    padding:10px 14px;
+    font-size:13px;
+    color:#0B1220;
+    border-bottom:1px solid #f1f5f9;
+  }
+  .search-results a:last-child{ border-bottom:none; }
+  .search-results a:hover{ background:#f0f9ff; }
+  .search-empty{
+    padding:12px 14px;
+    font-size:12.5px;
+    color:#94a3b8;
+  }
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== HEADER ===================== -->
+<header class="bg-brandDark text-white sticky top-0 z-50 border-b border-brandLine">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center gap-4">
+
+    <a href="index.html" class="flex items-center gap-3 flex-shrink-0">
+      <img src="logo.png" alt="ElectroMechCalc Logo" class="h-11 w-11 object-contain drop-shadow-[0_0_16px_rgba(14,165,233,0.55)]">
+      <div class="leading-tight">
+        <h1 class="text-lg font-display font-bold">
+          <span class="text-white">Electro</span><span class="text-sky-400">Mech</span><span class="text-amber-400">Calc</span>
+        </h1>
+        <p class="text-[10px] font-mono uppercase tracking-wider text-gray-500">Engineering Calculators</p>
+      </div>
+    </a>
+
+    <button id="menuToggle" class="lg:hidden text-gray-300" aria-label="Toggle menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+    </button>
+
+    <nav id="mainNav" class="hidden lg:flex items-center gap-1 text-sm text-gray-300">
+
+      <a href="index.html" class="px-3 py-2 rounded hover:bg-white/5 hover:text-white">Home</a>
+
+      <div class="relative nav-dropdown">
+        <button class="px-3 py-2 rounded hover:bg-white/5 hover:text-white flex items-center gap-1">
+          Electrical
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="nav-dropdown-panel absolute bg-white text-gray-800 rounded-lg shadow-xl min-w-[300px] py-2 border border-gray-100">
+          <a href="transformer-size.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">Transformer Size Calculator</span>
+            <span class="text-xs text-gray-500">kVA rating for your connected load</span>
+          </a>
+          <a href="kw-kva.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">kVA ↔ kW Calculator</span>
+            <span class="text-xs text-gray-500">Convert apparent to real power</span>
+          </a>
+          <a href="hp-kw.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">HP ↔ kW Calculator</span>
+            <span class="text-xs text-gray-500">Motor power unit conversion</span>
+          </a>
+          <a href="motor-current.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">Motor Current Calculator</span>
+            <span class="text-xs text-gray-500">Full-load amperage estimate</span>
+          </a>
+          <a href="apfc.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">APFC Capacitor Calculator</span>
+            <span class="text-xs text-gray-500">Power factor correction sizing</span>
+          </a>
+          <a href="kva-current.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">kVA ↔ Current Calculator</span>
+            <span class="text-xs text-gray-500">Convert kVA to amps and back</span>
+          </a>
+          <a href="kw-current.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">kW ↔ Current Calculator</span>
+            <span class="text-xs text-gray-500">Convert real power to amps</span>
+          </a>
+          <a href="dg-size.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">DG Size Calculator</span>
+            <span class="text-xs text-gray-500">Generator sizing for your load</span>
+          </a>
+          <a href="cable-size.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">Cable Size Calculator</span>
+            <span class="text-xs text-gray-500">Conductor sizing by current & length</span>
+          </a>
+          <a href="inverter-size.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">Inverter Size Calculator</span>
+            <span class="text-xs text-gray-500">VA rating for your connected load</span>
+          </a>
+          <a href="ups-calculator.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">UPS Calculator</span>
+            <span class="text-xs text-gray-500">Battery backup runtime estimate</span>
+          </a>
+          <a href="ups-size.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">UPS Size Calculator</span>
+            <span class="text-xs text-gray-500">kVA rating from your load</span>
+          </a>
+          <a href="solar-size.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">Solar Panel Size Calculator</span>
+            <span class="text-xs text-gray-500">Array size, panel count & battery Ah</span>
+          </a>
+          <div class="border-t border-gray-100 mt-1 pt-1">
+            <a href="electrical-pro-max.html" class="flex items-center gap-1.5 px-4 py-2.5 hover:bg-amber-50 text-amber-600 font-semibold text-sm">
+              ⭐ Electrical Pro Max
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative nav-dropdown">
+        <button class="px-3 py-2 rounded hover:bg-white/5 hover:text-white flex items-center gap-1">
+          Mechanical
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="nav-dropdown-panel absolute bg-white text-gray-800 rounded-lg shadow-xl min-w-[260px] py-2 border border-gray-100">
+          <a href="bearing-life.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">Bearing Life Calculator</span>
+            <span class="text-xs text-gray-500">L10 bearing life estimate</span>
+          </a>
+          <a href="gear-ratio.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">Gear Ratio Calculator</span>
+            <span class="text-xs text-gray-500">Speed and torque ratio</span>
+          </a>
+          <a href="pump-head.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">Pump Head Calculator</span>
+            <span class="text-xs text-gray-500">Total dynamic head estimate</span>
+          </a>
+          <a href="pump-tdh.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">TDH Calculator</span>
+            <span class="text-xs text-gray-500">Total dynamic head for pump selection</span>
+          </a>
+          <a href="cooling-tower.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">Cooling Tower Efficiency Calculator</span>
+            <span class="text-xs text-gray-500">Range, approach & efficiency</span>
+          </a>
+          <a href="belt-length.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">Belt Length Calculator</span>
+          </a>
+          <a href="unit-converter-pro.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">Unit Converter Pro</span>
+            <span class="text-xs text-gray-500">9 engineering unit converters</span>
+          </a>
+          <div class="border-t border-gray-100 mt-1 pt-1">
+            <a href="maintenance-pro-cal.html" class="flex items-center gap-1.5 px-4 py-2.5 bg-amber-50 text-amber-600 font-semibold text-sm">
+              ⭐ Maintenance Pro Cal
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative nav-dropdown">
+        <button class="px-3 py-2 rounded hover:bg-white/5 hover:text-white flex items-center gap-1">
+          Financial
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="nav-dropdown-panel absolute bg-white text-gray-800 rounded-lg shadow-xl min-w-[260px] py-2 border border-gray-100">
+          <a href="epf-calculator.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">EPF Calculator</span>
+            <span class="text-xs text-gray-500">Step-up EPF maturity projection</span>
+          </a>
+          <a href="gratuity-calculator.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">Gratuity Calculator</span>
+            <span class="text-xs text-gray-500">Estimate your gratuity payout</span>
+          </a>
+          <a href="sip-calculator.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">SIP &amp; Lump Sum Calculator</span>
+            <span class="text-xs text-gray-500">Step-up SIP and lump sum growth</span>
+          </a>
+          <a href="cagr-calculator.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">CAGR Calculator</span>
+            <span class="text-xs text-gray-500">Annualized investment growth rate</span>
+          </a>
+          <a href="income-tax-calculator.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">Income Tax Calculator</span>
+            <span class="text-xs text-gray-500">Old vs New regime comparison</span>
+          </a>
+          <a href="fd-calculator.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">FD Calculator</span>
+            <span class="text-xs text-gray-500">Fixed deposit maturity value</span>
+          </a>
+          <a href="rd-calculator.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">RD Calculator</span>
+            <span class="text-xs text-gray-500">Recurring deposit maturity value</span>
+          </a>
+          <a href="ppf-calculator.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">PPF Calculator</span>
+            <span class="text-xs text-gray-500">Public Provident Fund maturity</span>
+          </a>
+          <a href="nps-calculator.html" class="flex flex-col px-4 py-2.5 hover:bg-gray-50">
+            <span class="font-semibold text-sm text-brandDark">NPS Calculator</span>
+            <span class="text-xs text-gray-500">Pension corpus &amp; annuity estimate</span>
+          </a>
+        </div>
+      </div>
+
+      <a href="about.html" class="px-3 py-2 rounded hover:bg-white/5 hover:text-white">About</a>
+      <a href="contact.html" class="px-3 py-2 rounded hover:bg-white/5 hover:text-white">Contact</a>
+
+      <!-- search bar -->
+      <div class="search-wrap ml-2" id="searchWrap">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.5-3.5" stroke-linecap="round"/></svg>
+        <input id="siteSearch" type="text" class="search-input" placeholder="Search calculators…" autocomplete="off">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+
+      <span class="premium-disabled ml-1 bg-brandBlue text-white font-semibold text-sm py-2 px-4 rounded-md inline-block" title="Coming soon">⭐ Premium</span>
+    </nav>
+  </div>
+
+  <!-- mobile nav -->
+  <nav id="mobileNav" class="hidden lg:hidden flex-col bg-brandDark border-t border-brandLine px-4 py-3 space-y-1 text-sm text-gray-300">
+    <div class="search-wrap mb-2 w-full" id="searchWrapMobile">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-3.5-3.5" stroke-linecap="round"/></svg>
+      <input id="siteSearchMobile" type="text" class="search-input" style="width:100%;" placeholder="Search calculators…" autocomplete="off">
+      <div class="search-results" id="searchResultsMobile" style="width:100%;"></div>
+    </div>
+    <a href="index.html" class="block px-2 py-2 rounded hover:bg-white/5">Home</a>
+    <details class="px-2">
+      <summary class="py-2 flex justify-between items-center">Electrical <span class="plus text-lg">+</span></summary>
+      <div class="pl-3 pb-2 space-y-1 text-gray-400">
+        <a href="transformer-size.html" class="block py-1.5">Transformer Size Calculator</a>
+        <a href="kw-kva.html" class="block py-1.5">kVA ↔ kW Calculator</a>
+        <a href="hp-kw.html" class="block py-1.5">HP ↔ kW Calculator</a>
+        <a href="motor-current.html" class="block py-1.5">Motor Current Calculator</a>
+        <a href="apfc.html" class="block py-1.5">APFC Capacitor Calculator</a>
+        <a href="kva-current.html" class="block py-1.5">kVA ↔ Current Calculator</a>
+        <a href="kw-current.html" class="block py-1.5">kW ↔ Current Calculator</a>
+        <a href="dg-size.html" class="block py-1.5">DG Size Calculator</a>
+        <a href="cable-size.html" class="block py-1.5">Cable Size Calculator</a>
+        <a href="inverter-size.html" class="block py-1.5">Inverter Size Calculator</a>
+        <a href="ups-calculator.html" class="block py-1.5">UPS Calculator</a>
+        <a href="ups-size.html" class="block py-1.5">UPS Size Calculator</a>
+        <a href="solar-size.html" class="block py-1.5">Solar Panel Size Calculator</a>
+        <a href="electrical-pro-max.html" class="block py-1.5 text-amber-400">⭐ Electrical Pro Max</a>
+      </div>
+    </details>
+    <details class="px-2" open>
+      <summary class="py-2 flex justify-between items-center">Mechanical <span class="plus text-lg">+</span></summary>
+      <div class="pl-3 pb-2 space-y-1 text-gray-400">
+        <a href="bearing-life.html" class="block py-1.5">Bearing Life Calculator</a>
+        <a href="gear-ratio.html" class="block py-1.5">Gear Ratio Calculator</a>
+        <a href="pump-head.html" class="block py-1.5">Pump Head Calculator</a>
+        <a href="pump-tdh.html" class="block py-1.5">TDH Calculator</a>
+        <a href="cooling-tower.html" class="block py-1.5">Cooling Tower Efficiency Calculator</a>
+        <a href="belt-length.html" class="block py-1.5">Belt Length Calculator</a>
+        <a href="unit-converter-pro.html" class="block py-1.5">Unit Converter Pro</a>
+        <a href="maintenance-pro-cal.html" class="block py-1.5 text-amber-400">⭐ Maintenance Pro Cal</a>
+      </div>
+    </details>
+    <details class="px-2">
+      <summary class="py-2 flex justify-between items-center">Financial <span class="plus text-lg">+</span></summary>
+      <div class="pl-3 pb-2 space-y-1 text-gray-400">
+        <a href="epf-calculator.html" class="block py-1.5">EPF Calculator</a>
+        <a href="gratuity-calculator.html" class="block py-1.5">Gratuity Calculator</a>
+        <a href="sip-calculator.html" class="block py-1.5">SIP &amp; Lump Sum Calculator</a>
+        <a href="cagr-calculator.html" class="block py-1.5">CAGR Calculator</a>
+        <a href="income-tax-calculator.html" class="block py-1.5">Income Tax Calculator</a>
+        <a href="fd-calculator.html" class="block py-1.5">FD Calculator</a>
+        <a href="rd-calculator.html" class="block py-1.5">RD Calculator</a>
+        <a href="ppf-calculator.html" class="block py-1.5">PPF Calculator</a>
+        <a href="nps-calculator.html" class="block py-1.5">NPS Calculator</a>
+      </div>
+    </details>
+    <a href="about.html" class="block px-2 py-2 rounded hover:bg-white/5">About</a>
+    <a href="contact.html" class="block px-2 py-2 rounded hover:bg-white/5">Contact</a>
+    <span class="premium-disabled block mt-2 text-center bg-brandBlue text-white font-semibold py-2 rounded-md" title="Coming soon">⭐ Premium</span>
+  </nav>
+</header>
+
+<!-- ===================== PAGE HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-3xl mx-auto px-4 py-14 text-center relative z-10">
+    <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1.5 rounded-full mb-5">
+      <span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+      Industrial Maintenance &middot; 10-in-1 &middot; Free &middot; Instant results
+    </span>
+    <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+      Maintenance Pro <span class="text-sky-400">Cal</span>
+    </h1>
+    <p class="text-gray-400 text-sm max-w-xl mx-auto">
+      Every industrial maintenance calculator you need in one place — MTBF, MTTR, OEE, Downtime Cost, PM &amp; Lubrication Intervals, Spare Parts, Cost, Availability &amp; Reliability.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== CALCULATOR ===================== -->
+<section class="max-w-6xl mx-auto px-4 py-14">
+
+  <!-- Currency selector -->
+  <div class="flex justify-center mb-4">
+    <label class="flex items-center gap-2 text-xs font-semibold text-gray-500 bg-white border border-gray-200 rounded-full px-3 py-1.5">
+      Currency
+      <select id="currencySelect" class="font-mono text-xs font-semibold text-brandDark bg-transparent outline-none" onchange="changeCurrency(this.value)">
+        <option value="USD" selected>USD ($)</option>
+        <option value="INR">INR (₹)</option>
+        <option value="EUR">EUR (€)</option>
+        <option value="GBP">GBP (£)</option>
+      </select>
+    </label>
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="flex flex-wrap gap-2 justify-center mb-8" id="tabBar">
+    <button class="tab-pill active" data-cat="mtbf" onclick="switchCalc('mtbf')">⏱ MTBF</button>
+    <button class="tab-pill" data-cat="mttr" onclick="switchCalc('mttr')">🔧 MTTR</button>
+    <button class="tab-pill" data-cat="oee" onclick="switchCalc('oee')">📊 OEE</button>
+    <button class="tab-pill" data-cat="downtime" onclick="switchCalc('downtime')">💸 Downtime Cost</button>
+    <button class="tab-pill" data-cat="pm" onclick="switchCalc('pm')">🗓 PM Interval</button>
+    <button class="tab-pill" data-cat="lube" onclick="switchCalc('lube')">🛢 Lubrication Interval</button>
+    <button class="tab-pill" data-cat="spares" onclick="switchCalc('spares')">📦 Spare Parts</button>
+    <button class="tab-pill" data-cat="cost" onclick="switchCalc('cost')">💰 Maintenance Cost</button>
+    <button class="tab-pill" data-cat="avail" onclick="switchCalc('avail')">✅ Availability</button>
+    <button class="tab-pill" data-cat="reliability" onclick="switchCalc('reliability')">📈 Reliability</button>
+  </div>
+
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+
+      <!-- MTBF -->
+      <div class="calc-panel active" id="panel-mtbf">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">MTBF Calculator</h2>
+        <p class="text-xs text-gray-500 mb-6">Mean Time Between Failures — average operating time between equipment failures.</p>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Total Operating Time (hours)</label>
+            <input id="mtbf_time" type="number" value="8760" step="any" min="0" class="input-field mt-2" oninput="calcMTBF()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Number of Failures</label>
+            <input id="mtbf_failures" type="number" value="4" step="any" min="0" class="input-field mt-2" oninput="calcMTBF()">
+          </div>
+        </div>
+      </div>
+
+      <!-- MTTR -->
+      <div class="calc-panel" id="panel-mttr">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">MTTR Calculator</h2>
+        <p class="text-xs text-gray-500 mb-6">Mean Time To Repair — average time taken to repair a failed asset.</p>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Total Repair Time (hours)</label>
+            <input id="mttr_time" type="number" value="18" step="any" min="0" class="input-field mt-2" oninput="calcMTTR()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Number of Repairs</label>
+            <input id="mttr_repairs" type="number" value="4" step="any" min="0" class="input-field mt-2" oninput="calcMTTR()">
+          </div>
+        </div>
+      </div>
+
+      <!-- OEE -->
+      <div class="calc-panel" id="panel-oee">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">OEE Calculator</h2>
+        <p class="text-xs text-gray-500 mb-6">Overall Equipment Effectiveness = Availability × Performance × Quality.</p>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Planned Production Time (min)</label>
+            <input id="oee_planned" type="number" value="480" step="any" min="0" class="input-field mt-2" oninput="calcOEE()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Downtime (min)</label>
+            <input id="oee_downtime" type="number" value="60" step="any" min="0" class="input-field mt-2" oninput="calcOEE()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Ideal Cycle Time (sec/unit)</label>
+            <input id="oee_cycle" type="number" value="1" step="any" min="0" class="input-field mt-2" oninput="calcOEE()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Total Count (units)</label>
+            <input id="oee_total" type="number" value="19000" step="any" min="0" class="input-field mt-2" oninput="calcOEE()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Good Count (units)</label>
+            <input id="oee_good" type="number" value="18000" step="any" min="0" class="input-field mt-2" oninput="calcOEE()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Downtime Cost -->
+      <div class="calc-panel" id="panel-downtime">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Downtime Cost Calculator</h2>
+        <p class="text-xs text-gray-500 mb-6">Total cost impact of unplanned equipment downtime.</p>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Downtime Duration (hours)</label>
+            <input id="dc_hours" type="number" value="3" step="any" min="0" class="input-field mt-2" oninput="calcDowntime()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Lost Production Cost (<span class="cur-sym">$</span>/hour)</label>
+            <input id="dc_prod" type="number" value="2000" step="any" min="0" class="input-field mt-2" oninput="calcDowntime()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Labor Cost (<span class="cur-sym">$</span>/hour)</label>
+            <input id="dc_labor" type="number" value="150" step="any" min="0" class="input-field mt-2" oninput="calcDowntime()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Other Costs (<span class="cur-sym">$</span>/hour)</label>
+            <input id="dc_other" type="number" value="100" step="any" min="0" class="input-field mt-2" oninput="calcDowntime()">
+          </div>
+        </div>
+      </div>
+
+      <!-- PM Interval -->
+      <div class="calc-panel" id="panel-pm">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Preventive Maintenance Interval Calculator</h2>
+        <p class="text-xs text-gray-500 mb-6">Recommended PM interval derived from historical MTBF.</p>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">MTBF (hours)</label>
+            <input id="pm_mtbf" type="number" value="2190" step="any" min="0" class="input-field mt-2" oninput="calcPM()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Safety Factor (0–1)</label>
+            <input id="pm_factor" type="number" value="0.5" step="0.01" min="0" max="1" class="input-field mt-2" oninput="calcPM()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Operating Hours per Year</label>
+            <input id="pm_annual" type="number" value="8760" step="any" min="0" class="input-field mt-2" oninput="calcPM()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Lubrication Interval -->
+      <div class="calc-panel" id="panel-lube">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Lubrication Interval Calculator</h2>
+        <p class="text-xs text-gray-500 mb-6">Bearing relubrication interval using bore diameter, speed, temperature &amp; contamination.</p>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Bearing Bore Diameter (mm)</label>
+            <input id="lube_d" type="number" value="50" step="any" min="0" class="input-field mt-2" oninput="calcLube()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Speed (RPM)</label>
+            <input id="lube_n" type="number" value="1450" step="any" min="0" class="input-field mt-2" oninput="calcLube()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Operating Temperature (°C)</label>
+            <input id="lube_temp" type="number" value="70" step="any" class="input-field mt-2" oninput="calcLube()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Contamination Level</label>
+            <select id="lube_contam" class="input-field mt-2" onchange="calcLube()">
+              <option value="1">Light</option>
+              <option value="0.5">Moderate</option>
+              <option value="0.1">Severe</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spare Parts -->
+      <div class="calc-panel" id="panel-spares">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Spare Parts Inventory Calculator</h2>
+        <p class="text-xs text-gray-500 mb-6">Reorder point, safety stock &amp; economic order quantity for critical spares.</p>
+        <div class="space-y-4">
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Avg Daily Usage</label>
+              <input id="sp_avg" type="number" value="2" step="any" min="0" class="input-field mt-2" oninput="calcSpares()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Max Daily Usage</label>
+              <input id="sp_max" type="number" value="5" step="any" min="0" class="input-field mt-2" oninput="calcSpares()">
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Lead Time (days)</label>
+            <input id="sp_lead" type="number" value="10" step="any" min="0" class="input-field mt-2" oninput="calcSpares()">
+          </div>
+          <div class="grid sm:grid-cols-3 gap-4">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Annual Demand</label>
+              <input id="sp_demand" type="number" value="730" step="any" min="0" class="input-field mt-2" oninput="calcSpares()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Order Cost (<span class="cur-sym">$</span>)</label>
+              <input id="sp_ocost" type="number" value="50" step="any" min="0" class="input-field mt-2" oninput="calcSpares()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Holding Cost (<span class="cur-sym">$</span>/unit/yr)</label>
+              <input id="sp_hcost" type="number" value="5" step="any" min="0" class="input-field mt-2" oninput="calcSpares()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Maintenance Cost -->
+      <div class="calc-panel" id="panel-cost">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Maintenance Cost Calculator</h2>
+        <p class="text-xs text-gray-500 mb-6">Total maintenance spend and cost as a percentage of Replacement Asset Value (RAV).</p>
+        <div class="space-y-4">
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Labor Cost (<span class="cur-sym">$</span>)</label>
+              <input id="mc_labor" type="number" value="40000" step="any" min="0" class="input-field mt-2" oninput="calcCost()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Parts / Material Cost (<span class="cur-sym">$</span>)</label>
+              <input id="mc_parts" type="number" value="25000" step="any" min="0" class="input-field mt-2" oninput="calcCost()">
+            </div>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Contractor Cost (<span class="cur-sym">$</span>)</label>
+              <input id="mc_contract" type="number" value="10000" step="any" min="0" class="input-field mt-2" oninput="calcCost()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Overhead Cost (<span class="cur-sym">$</span>)</label>
+              <input id="mc_overhead" type="number" value="5000" step="any" min="0" class="input-field mt-2" oninput="calcCost()">
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Replacement Asset Value — RAV (<span class="cur-sym">$</span>)</label>
+            <input id="mc_rav" type="number" value="1500000" step="any" min="0" class="input-field mt-2" oninput="calcCost()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Availability -->
+      <div class="calc-panel" id="panel-avail">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Equipment Availability Calculator</h2>
+        <p class="text-xs text-gray-500 mb-6">Percentage of scheduled time the equipment is available to run.</p>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Total Scheduled Time (hours)</label>
+            <input id="av_total" type="number" value="720" step="any" min="0" class="input-field mt-2" oninput="calcAvail()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Downtime (hours)</label>
+            <input id="av_down" type="number" value="24" step="any" min="0" class="input-field mt-2" oninput="calcAvail()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Reliability -->
+      <div class="calc-panel" id="panel-reliability">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Reliability Calculator</h2>
+        <p class="text-xs text-gray-500 mb-6">Probability of survival without failure over a mission time, using the exponential reliability model R(t) = e^(−t/MTBF).</p>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">MTBF (hours)</label>
+            <input id="rel_mtbf" type="number" value="2190" step="any" min="0" class="input-field mt-2" oninput="calcReliability()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Mission Time t (hours)</label>
+            <input id="rel_t" type="number" value="500" step="any" min="0" class="input-field mt-2" oninput="calcReliability()">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div class="lg:col-span-2 flex flex-col gap-4">
+
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="rLabel">Result</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1 break-all">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values to calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Formula</span>
+          <span id="rFormula" class="font-display font-semibold text-sm">—</span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div class="grid grid-cols-2 gap-2 text-xs" id="quickTable"></div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">All 10 Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5" id="calcList"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">One Tool, Ten Maintenance Calculators</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Maintenance Pro Cal bundles the ten metrics maintenance and reliability engineers use most often — MTBF, MTTR, OEE, downtime cost, PM and lubrication intervals, spare parts inventory, maintenance cost, availability, and reliability — into a single page. Pick a tab, enter your numbers, and get an instant, formula-backed result with a full breakdown.</p>
+      <p><strong>Lubrication interval accounts for temperature de-rating.</strong> Above 70°C, the base relubrication interval (from the standard 14×10⁶/(n√d) bearing formula) is halved for every full 15°C step above that threshold, then further scaled by a contamination factor — light, moderate, or severe — so a hot, dirty environment correctly produces a much shorter recommended interval than a clean, cool one.</p>
+      <p>All calculations use standard, widely-published reliability and maintenance engineering formulas (e.g. exponential reliability R(t) = e^(−t/MTBF), OEE = Availability × Performance × Quality). For extremely tight-tolerance or safety-critical decisions, always cross-check against your CMMS data and site engineering standards.</p>
+      <p>Working on the mechanical side of a specific asset? The <a href="bearing-life.html" class="text-sky-600 hover:underline">Bearing Life Calculator</a> pairs well with the Lubrication Interval tab above, the <a href="pump-head.html" class="text-sky-600 hover:underline">Pump Head Calculator</a> and <a href="pump-tdh.html" class="text-sky-600 hover:underline">TDH Calculator</a> are useful before sizing spares for a pumping system, and the <a href="cooling-tower.html" class="text-sky-600 hover:underline">Cooling Tower Efficiency Calculator</a> complements the Availability and OEE tabs for utility equipment.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== IN-DEPTH GUIDE (10 CALCULATORS) ===================== -->
+<section class="bg-gray-50 border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <div class="text-center mb-10">
+      <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">In-Depth Guide</span>
+      <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Formulas &amp; Explanations for All 10 Calculators</h2>
+      <p class="text-sm text-gray-500 mt-3 max-w-xl mx-auto">Every formula this tool uses, why it's built that way, and how to read the result — calculator by calculator.</p>
+    </div>
+
+    <div class="divide-y divide-gray-200 bg-white rounded-2xl border border-gray-100 px-6">
+
+      <details class="py-6">
+        <summary class="font-display font-semibold text-brandDark text-lg flex justify-between items-center">
+          1. MTBF Calculator — Mean Time Between Failures
+          <span class="plus text-sky-500 text-xl">+</span>
+        </summary>
+        <div class="text-sm text-gray-600 leading-relaxed mt-4 space-y-4">
+          <p class="formula-chip">MTBF = Total Operating Time ÷ Number of Failures</p>
+          <p>Mean Time Between Failures is the single most-quoted number in maintenance and reliability engineering, and for good reason: it condenses an asset's entire failure history into one comparable figure. The calculator divides the total hours an asset (or a fleet of identical assets) was actually running by the number of failures recorded during that same window. If a pump ran for 8,760 hours in a year and failed four times, its MTBF is 2,190 hours — meaning that, on average, you can expect roughly 91 days of trouble-free running between breakdowns.</p>
+          <p>It is critical to use <strong>operating time</strong>, not calendar time. A machine that sat idle for two months should not have that idle period counted as "surviving without failure," because it wasn't being stressed during that time. Most CMMS platforms log run-hours separately from calendar time for exactly this reason, and this calculator expects the same — the hours you enter should reflect actual duty time.</p>
+          <p>MTBF assumes a roughly constant failure rate, which corresponds to the flat "useful life" middle section of the classic bathtub curve, after infant-mortality failures have been weeded out and before wear-out failures begin to dominate. Under this assumption, failures are memoryless and follow an exponential distribution, which is exactly the model this calculator's companion Reliability tool uses (R(t) = e^(−t/MTBF)). If your asset is still in its early-life or its wear-out phase, MTBF will understate or overstate real-world risk, and a Weibull-based analysis would be more appropriate — but MTBF remains an excellent, simple first-pass metric for budgeting, staffing, and comparing sister assets.</p>
+          <p>The calculator also reports the instantaneous <strong>failure rate (λ)</strong>, which is simply 1 ÷ MTBF. This is the number reliability engineers plug into larger system models — for example, calculating the combined failure rate of a series system by summing the λ values of its components. A higher failure rate means a less reliable asset; a lower one means fewer surprises.</p>
+          <p>MTBF feeds directly into two other calculators on this page. Paired with MTTR (Mean Time To Repair), it produces Availability: Availability = MTBF ÷ (MTBF + MTTR). And it is the raw input for the PM Interval calculator, where a safety factor is applied to MTBF to recommend a preventive maintenance schedule that intervenes comfortably before the average failure point, rather than waiting for the machine to actually fail.</p>
+          <p>A common mistake is calculating MTBF from too small a sample. One or two failures over a short period produces a wildly unstable estimate — a single early or late failure can swing the number by 50% or more. Reliability engineers generally want at least 5–10 failure events, ideally from a population of identical assets rather than a single unit, before trusting MTBF for critical decisions like spares stocking or capital replacement planning. Where sample sizes are small, treat the output as a directional estimate rather than a precise figure, and revisit it as more failure data accumulates. Tracking MTBF over time, quarter by quarter, is often more valuable than any single snapshot, because a rising trend flags degrading reliability long before it becomes a crisis.</p>
+        <div class="mt-5 grid sm:grid-cols-2 gap-4">
+          <div class="bg-sky-50 border border-sky-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 block mb-2">Typical Industrial Applications</span>
+            <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+              <li>Cement plant rotating equipment</li>
+              <li>Food &amp; beverage processing lines</li>
+              <li>Steel plant rolling mills</li>
+              <li>Textile mills</li>
+              <li>Water treatment pumping stations</li>
+            </ul>
+          </div>
+          <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-amber-600 block mb-2">Typical MTBF Range</span>
+            <table class="w-full text-xs text-gray-600">
+              <tbody>
+                <tr><td class="py-0.5 font-medium text-brandDark">Motor</td><td class="py-0.5 text-right">2,500–6,000 hr</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Pump</td><td class="py-0.5 text-right">1,500–4,000 hr</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Compressor</td><td class="py-0.5 text-right">4,000–9,000 hr</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Conveyor gearbox</td><td class="py-0.5 text-right">6,000–12,000 hr</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-4 bg-white border border-gray-200 rounded-xl p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block mb-2">Interpretation</span>
+          <div class="flex flex-wrap gap-2 text-xs">
+            <span class="px-2 py-1 rounded bg-red-50 text-red-600 font-medium">&lt; 1,000 hr — Poor</span>
+            <span class="px-2 py-1 rounded bg-amber-50 text-amber-600 font-medium">1,000–3,000 hr — Average</span>
+            <span class="px-2 py-1 rounded bg-sky-50 text-sky-600 font-medium">3,000–6,000 hr — Good</span>
+            <span class="px-2 py-1 rounded bg-emerald-50 text-emerald-600 font-medium">6,000+ hr — Excellent</span>
+          </div>
+        </div>
+        <div class="mt-4 bg-rose-50 border border-rose-100 rounded-xl p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-rose-600 block mb-2">Common Mistakes</span>
+          <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+            <li>Using calendar time instead of actual operating time</li>
+            <li>Ignoring failures that occur during standby or idle periods</li>
+            <li>Trusting an MTBF calculated from fewer than 5 failure events</li>
+            <li>Calculating MTBF once and never updating it as new failure data comes in</li>
+          </ul>
+        </div>
+        </div>
+      </details>
+
+      <details class="py-6">
+        <summary class="font-display font-semibold text-brandDark text-lg flex justify-between items-center">
+          2. MTTR Calculator — Mean Time To Repair
+          <span class="plus text-sky-500 text-xl">+</span>
+        </summary>
+        <div class="text-sm text-gray-600 leading-relaxed mt-4 space-y-4">
+          <p class="formula-chip">MTTR = Total Repair Time ÷ Number of Repairs</p>
+          <p>Mean Time To Repair measures maintainability rather than reliability — it answers "once something breaks, how long are we down for?" rather than "how often does it break?" The calculator takes the cumulative hours spent repairing an asset across a period and divides by how many discrete repair events occurred, giving the average clock-time per repair.</p>
+          <p>What counts as "repair time" matters enormously here, and it's a frequent source of confusion. The correct measurement is the full elapsed time from the moment the failure is detected (or reported) to the moment the asset is verified back in service — not just wrench-time. That means MTTR should include fault diagnosis, waiting for a technician to arrive, waiting for spare parts if they aren't on the shelf, the actual repair work, and post-repair functional testing. Many organizations under-report MTTR by only counting active hands-on repair time and ignoring diagnosis and logistics delays, which flatters the number but hides the real operational impact of downtime.</p>
+          <p>The calculator also derives the <strong>repair rate (μ)</strong>, the reciprocal of MTTR, which is the maintainability equivalent of a failure rate — it expresses how many repairs, on average, could theoretically be completed per hour of repair effort. This value is used in more advanced availability and queueing models when maintenance crews are shared across multiple assets.</p>
+          <p>MTTR is one of the two inputs (alongside MTBF) that determine Availability: Availability = MTBF ÷ (MTBF + MTTR). This relationship shows why reducing MTTR is often the fastest lever for improving uptime — halving MTTR has a proportionally similar effect on availability as doubling MTBF, but is usually far cheaper and faster to achieve. Common MTTR-reduction strategies include: standardizing spare parts and keeping critical ones on the shelf (which the Spare Parts Inventory calculator on this page helps plan), pre-staging repair procedures and tooling ("job kits"), cross-training technicians so the right skill is always available, using quick-disconnect or modular designs during equipment specification, and building clear escalation paths so diagnosis doesn't stall waiting for the right person.</p>
+          <p>Like MTBF, MTTR is a statistical average and can be distorted by outliers. A single repair that dragged on for days because a part had to be shipped internationally can inflate the average far above what a "typical" repair looks like. For this reason many maintenance teams track both MTTR and the median repair time side by side, and separately monitor the "long tail" of unusually slow repairs, since those are often where the real root-cause opportunities for process improvement live — waiting on parts, waiting on approvals, or waiting on specialist labor are process failures just as much as the equipment failure itself, and they're usually far easier to fix than the underlying mechanical fault.</p>
+        <div class="mt-5 grid sm:grid-cols-2 gap-4">
+          <div class="bg-sky-50 border border-sky-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 block mb-2">Typical Industrial Applications</span>
+            <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+              <li>Electrical panel &amp; control fault repair</li>
+              <li>Bearing / seal replacement</li>
+              <li>Conveyor belt splicing &amp; replacement</li>
+              <li>PLC and instrumentation fault-finding</li>
+            </ul>
+          </div>
+          <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-amber-600 block mb-2">Typical MTTR Range</span>
+            <table class="w-full text-xs text-gray-600">
+              <tbody>
+                <tr><td class="py-0.5 font-medium text-brandDark">Electrical fault</td><td class="py-0.5 text-right">1–3 hr</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Mechanical (bearing/seal)</td><td class="py-0.5 text-right">3–8 hr</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Major overhaul</td><td class="py-0.5 text-right">24–72 hr</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-4 bg-white border border-gray-200 rounded-xl p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block mb-2">Interpretation</span>
+          <div class="flex flex-wrap gap-2 text-xs">
+            <span class="px-2 py-1 rounded bg-emerald-50 text-emerald-600 font-medium">&lt; 2 hr — Excellent</span>
+            <span class="px-2 py-1 rounded bg-sky-50 text-sky-600 font-medium">2–6 hr — Good</span>
+            <span class="px-2 py-1 rounded bg-amber-50 text-amber-600 font-medium">6–24 hr — Average</span>
+            <span class="px-2 py-1 rounded bg-red-50 text-red-600 font-medium">24+ hr — Poor</span>
+          </div>
+        </div>
+        <div class="mt-4 bg-rose-50 border border-rose-100 rounded-xl p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-rose-600 block mb-2">Common Mistakes</span>
+          <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+            <li>Counting only hands-on wrench time, not full downtime</li>
+            <li>Ignoring the wait time for spare parts or a technician</li>
+            <li>Letting a single long outlier repair skew the average</li>
+            <li>Not separating diagnosis time from actual repair time</li>
+          </ul>
+        </div>
+        </div>
+      </details>
+
+      <details class="py-6">
+        <summary class="font-display font-semibold text-brandDark text-lg flex justify-between items-center">
+          3. OEE Calculator — Overall Equipment Effectiveness
+          <span class="plus text-sky-500 text-xl">+</span>
+        </summary>
+        <div class="text-sm text-gray-600 leading-relaxed mt-4 space-y-4">
+          <p class="formula-chip">OEE = Availability × Performance × Quality</p>
+          <p>Overall Equipment Effectiveness, developed within Total Productive Maintenance (TPM) practice, is the industry-standard way to answer a deceptively simple question: of all the product a machine could theoretically have made in the time it was scheduled to run, how much good product did it actually make? It multiplies three independent ratios, each capturing a different category of loss.</p>
+          <p><strong>Availability</strong> = Run Time ÷ Planned Production Time, where Run Time = Planned Production Time − Downtime. This captures stoppage losses: breakdowns, changeovers, and any time the line simply wasn't running when it was supposed to be. <strong>Performance</strong> = (Ideal Cycle Time × Total Count) ÷ Run Time. This captures speed losses — running slower than the theoretical best cycle time, minor stops, and small idling events that don't get logged as full downtime but still eat capacity. <strong>Quality</strong> = Good Count ÷ Total Count, capturing defect losses — units that had to be scrapped or reworked. These three ratios together are known in TPM as addressing the "Six Big Losses": breakdowns and setup/adjustment (Availability); idling/minor stops and reduced speed (Performance); process defects and reduced yield (Quality).</p>
+          <p>Because OEE is a product of three fractions, it punishes weakness in any single category severely — a plant running at 95% Availability, 95% Performance, and 95% Quality only achieves 85.7% OEE, not 95%. This multiplicative structure is intentional: it prevents a strong score in one area from masking a real problem in another, and it's why OEE is considered a much more honest metric than looking at uptime alone.</p>
+          <p>Industry benchmarks generally treat 85% OEE as "world class," a level achieved by only the most disciplined manufacturing operations. Most conventional plants that haven't formally attacked their losses sit in the 40–60% range, and discovering that number for the first time is often a wake-up call — it typically means nearly half of theoretical capacity is being lost to a combination of stoppages, slow running, and scrap that nobody had previously quantified in one place.</p>
+          <p>Using this calculator effectively means feeding it accurate shop-floor data: Planned Production Time should exclude time the line was never scheduled to run (breaks, no orders), Downtime should capture every stoppage regardless of cause, Ideal Cycle Time should come from the equipment manufacturer's rated speed (not a "typical" speed, which already has losses baked in), and Good Count should only include units that pass quality on the first pass — reworked units count as a quality loss even if they're eventually shippable. Once you have a baseline OEE, breaking it into its three components tells you exactly where to focus: a low Availability score points to reliability and changeover problems, low Performance points to minor stops and equipment condition, and low Quality points to process control and material issues. Tracking OEE weekly, by line and by shift, turns an abstract efficiency number into a concrete improvement roadmap.</p>
+        <div class="mt-5 grid sm:grid-cols-2 gap-4">
+          <div class="bg-sky-50 border border-sky-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 block mb-2">Typical Industrial Applications</span>
+            <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+              <li>Automotive assembly lines</li>
+              <li>Packaging &amp; bottling lines</li>
+              <li>CNC machining cells</li>
+              <li>FMCG production plants</li>
+            </ul>
+          </div>
+          <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-amber-600 block mb-2">Typical OEE Benchmark</span>
+            <table class="w-full text-xs text-gray-600">
+              <tbody>
+                <tr><td class="py-0.5 font-medium text-brandDark">World Class</td><td class="py-0.5 text-right">85%+</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Good</td><td class="py-0.5 text-right">60–85%</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Average Manufacturing</td><td class="py-0.5 text-right">40–60%</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Poor</td><td class="py-0.5 text-right">Below 40%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-4 bg-rose-50 border border-rose-100 rounded-xl p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-rose-600 block mb-2">Common Mistakes</span>
+          <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+            <li>Using a "typical" run speed instead of the OEM-rated ideal cycle time</li>
+            <li>Excluding reworked units from the quality loss figure</li>
+            <li>Looking at the single OEE number without breaking it into its three factors</li>
+            <li>Comparing OEE across dissimilar lines or products</li>
+          </ul>
+        </div>
+        </div>
+      </details>
+
+      <details class="py-6">
+        <summary class="font-display font-semibold text-brandDark text-lg flex justify-between items-center">
+          4. Downtime Cost Calculator
+          <span class="plus text-sky-500 text-xl">+</span>
+        </summary>
+        <div class="text-sm text-gray-600 leading-relaxed mt-4 space-y-4">
+          <p class="formula-chip">Total Cost = Downtime Hours × (Lost Production Rate + Labor Rate + Other Costs)</p>
+          <p>Unplanned downtime is expensive in ways that rarely show up on a single line item, which is exactly why so many reliability investments struggle to get approved — the cost of doing nothing is invisible until someone calculates it. This calculator forces that calculation by multiplying the duration of a stoppage by a combined hourly cost rate built from three components.</p>
+          <p><strong>Lost Production Cost</strong> is usually the largest and most underestimated component. It should represent the margin or throughput value lost per hour the line is down — not just raw material cost, but the value of finished product that could have been sold, including any contractual penalties for missed delivery commitments. <strong>Labor Cost</strong> captures the wages of operators and technicians who are idle, or actively troubleshooting, during the stoppage — people are usually still being paid even though nothing is being produced. <strong>Other Costs</strong> is a catch-all for everything else the downtime touches: expedited freight for emergency spare parts, overtime premiums to make up lost production later, energy consumed while equipment idles or restarts, quality issues caused by an unplanned shutdown (like scrapped work-in-progress), and in severe cases, customer goodwill and reputational cost that don't fit neatly into a spreadsheet but are very real.</p>
+          <p>Multiplying these three rates by the downtime hours gives a total cost that is frequently an order of magnitude larger than most people's gut-feel estimate. This is precisely the number that justifies investment in reliability programs, redundant equipment, spare parts inventory, and condition monitoring — a $50,000 predictive maintenance sensor package is an easy decision once you can show it would have prevented a $200,000 downtime event.</p>
+          <p>To get a realistic hourly rate, it helps to build it from actual financial data rather than rough guesses: divide daily revenue or contribution margin by scheduled production hours to get the lost-production rate, pull fully-loaded labor rates (including benefits) from payroll or finance, and review a sample of recent breakdown reports to estimate typical "other cost" categories like expedite fees. Because this rate is asset- and line-specific, a bottleneck machine feeding an entire plant will have a dramatically higher downtime cost per hour than a piece of equipment with redundant backup or slack capacity elsewhere in the process — which is exactly the kind of prioritization insight this calculator is meant to surface. Running the numbers for your most critical assets, and comparing the resulting downtime cost against the cost of preventive measures, is one of the clearest ways to build a data-backed business case for a maintenance budget increase.</p>
+        <div class="mt-5 grid sm:grid-cols-2 gap-4">
+          <div class="bg-sky-50 border border-sky-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 block mb-2">Typical Industrial Applications</span>
+            <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+              <li>Bottleneck-machine cost justification</li>
+              <li>Business case for spares &amp; condition monitoring</li>
+              <li>Reliability program ROI calculations</li>
+            </ul>
+          </div>
+          <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-amber-600 block mb-2">Typical Hourly Downtime Cost</span>
+            <table class="w-full text-xs text-gray-600">
+              <tbody>
+                <tr><td class="py-0.5 font-medium text-brandDark">Small workshop</td><td class="py-0.5 text-right">$200–500/hr</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Mid-size manufacturing</td><td class="py-0.5 text-right">$2,000–10,000/hr</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Continuous process (steel/petrochem)</td><td class="py-0.5 text-right">$20,000–100,000+/hr</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-4 bg-rose-50 border border-rose-100 rounded-xl p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-rose-600 block mb-2">Common Mistakes</span>
+          <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+            <li>Forgetting lost margin and contractual late-delivery penalties</li>
+            <li>Ignoring idle labor cost while the line is stopped</li>
+            <li>Not including restart, energy, and expedited-freight costs</li>
+            <li>Treating it as a one-off estimate instead of updating it as costs change</li>
+          </ul>
+        </div>
+        </div>
+      </details>
+
+      <details class="py-6">
+        <summary class="font-display font-semibold text-brandDark text-lg flex justify-between items-center">
+          5. PM Interval Calculator — Preventive Maintenance Scheduling
+          <span class="plus text-sky-500 text-xl">+</span>
+        </summary>
+        <div class="text-sm text-gray-600 leading-relaxed mt-4 space-y-4">
+          <p class="formula-chip">PM Interval = MTBF × Safety Factor</p>
+          <p>Preventive maintenance only earns its keep if it happens before a failure, with enough margin to be practical, but not so early that it wastes labor and spare-part life on components that still had plenty of service left. This calculator translates a measured MTBF into a recommended PM interval by applying a safety factor between 0 and 1.</p>
+          <p>The logic borrows from the P-F curve concept used in Reliability-Centered Maintenance (RCM): once a component starts to degrade, there is a window between the point a Potential failure becomes detectable (P) and the point it actually Fails (F). A well-chosen PM interval intervenes safely inside that window — early enough to catch degradation before it becomes a breakdown, but late enough to actually use the component's useful life rather than replacing it needlessly early. Because MTBF represents the <em>average</em> point of failure under an exponential (constant hazard rate) model, scheduling a PM exactly at MTBF would mean roughly half of assets fail before their scheduled maintenance — clearly too risky for anything critical. Applying a safety factor pulls the interval comfortably earlier than the statistical average failure point.</p>
+          <p>A safety factor of 0.5, the calculator's default, is a widely used starting rule of thumb: schedule PM at half the observed MTBF. For safety-critical, high-consequence, or hard-to-access equipment, a more conservative factor (0.3–0.4) is often chosen to build in extra margin; for low-consequence, easily monitored, or redundant equipment where a failure is merely an inconvenience, a less conservative factor (0.6–0.8) can reduce unnecessary maintenance labor and part consumption without meaningfully increasing risk. The right factor is ultimately a business decision balancing the cost of doing PM too often against the cost and safety consequence of an unplanned failure — and should be revisited whenever real-world failure data suggests the current interval is either catching problems too late (repeat failures near end of interval) or replacing parts too early (removed parts show little wear).</p>
+          <p>The calculator also converts the interval into <strong>PMs per year</strong>, which is the number that actually lands on a maintenance planner's calendar and staffing model — it tells you how many times per year a technician needs to be scheduled against that asset, which rolls up directly into labor budgeting and spare parts consumption planning. As MTBF data improves with more operating history, revisit and recalculate this interval periodically; a PM schedule set once from limited early data and never revisited is one of the most common ways maintenance programs drift out of alignment with how equipment actually fails in the field.</p>
+        <div class="mt-5 grid sm:grid-cols-2 gap-4">
+          <div class="bg-sky-50 border border-sky-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 block mb-2">Typical Industrial Applications</span>
+            <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+              <li>Motor bearing preventive maintenance</li>
+              <li>Pump seal inspection scheduling</li>
+              <li>Gearbox oil-change intervals</li>
+              <li>Conveyor belt inspection planning</li>
+            </ul>
+          </div>
+          <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-amber-600 block mb-2">Typical Safety Factor</span>
+            <table class="w-full text-xs text-gray-600">
+              <tbody>
+                <tr><td class="py-0.5 font-medium text-brandDark">Safety-critical / hard-to-access</td><td class="py-0.5 text-right">0.3–0.4</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Standard equipment</td><td class="py-0.5 text-right">0.5</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Low-consequence / redundant</td><td class="py-0.5 text-right">0.6–0.8</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-4 bg-rose-50 border border-rose-100 rounded-xl p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-rose-600 block mb-2">Common Mistakes</span>
+          <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+            <li>Using the same safety factor for every asset regardless of criticality</li>
+            <li>Never revisiting the interval after new failure history comes in</li>
+            <li>Setting the schedule once from limited early data and leaving it unchanged for years</li>
+          </ul>
+        </div>
+        </div>
+      </details>
+
+      <details class="py-6">
+        <summary class="font-display font-semibold text-brandDark text-lg flex justify-between items-center">
+          6. Lubrication Interval Calculator
+          <span class="plus text-sky-500 text-xl">+</span>
+        </summary>
+        <div class="text-sm text-gray-600 leading-relaxed mt-4 space-y-4">
+          <p class="formula-chip">t = (14×10⁶ ÷ (n × √d)) × Temperature Factor × Contamination Factor</p>
+          <p>Bearing lubrication failure is one of the leading causes of premature bearing failure in rotating equipment, and yet relubrication intervals are frequently set by habit ("grease it every quarter") rather than by the actual operating conditions of the bearing. This calculator uses the widely-published bearing-industry base formula, where n is rotational speed in RPM and d is the bearing bore diameter in millimetres, to estimate a base relubrication interval in hours before applying two real-world de-rating factors.</p>
+          <p>The base formula reflects a well-established relationship in bearing engineering: grease life shortens as speed increases (faster rotation shears and works the grease more aggressively) and as bore diameter increases (larger bearings have higher surface speeds at the same RPM and larger, harder-to-lubricate internal geometry). This relationship is why the interval is inversely proportional to speed and to the square root of bore diameter — a relatively gentle diameter penalty compared to the much steeper speed penalty.</p>
+          <p>The <strong>Temperature Factor</strong> applies the maintenance-industry rule of thumb that grease life roughly halves for every 15°C the operating temperature rises above 70°C — heat accelerates the chemical oxidation and physical breakdown of the base oil and thickener in the grease. Below 70°C, no penalty is applied because most standard greases perform reliably within their designed range. Above that threshold, the calculator steps the temperature into 15°C brackets and applies a compounding 0.5× factor per bracket, so a bearing running at 100°C sees its base interval quartered (two 15°C steps), and one running hotter still sees it fall further — reflecting how disproportionately damaging sustained high heat is to grease life.</p>
+          <p>The <strong>Contamination Factor</strong> then layers in the operating environment: Light contamination (clean, well-sealed environments) applies no penalty; Moderate contamination (typical industrial dust, occasional washdown) halves the interval; Severe contamination (heavy dust, moisture ingress, or process chemical exposure) cuts it to roughly a tenth of the clean-environment interval, because contaminants act as an abrasive inside the bearing and also degrade the grease chemically far faster than heat alone.</p>
+          <p>Multiplying all three factors together — base interval, temperature de-rating, and contamination de-rating — produces a realistic, condition-specific relubrication schedule rather than a generic calendar-based one. The result is also converted into months for easy scheduling. In practice, this estimate should be treated as a starting point: grease manufacturer datasheets, bearing OEM recommendations, and condition-monitoring feedback (grease analysis, vibration trends, or bearing temperature trending) should all be used to fine-tune the interval for your specific bearing and application, especially for large, expensive, or safety-critical rotating equipment where over- or under-greasing both carry real cost.</p>
+        <div class="mt-5 grid sm:grid-cols-2 gap-4">
+          <div class="bg-sky-50 border border-sky-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 block mb-2">Typical Industrial Applications</span>
+            <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+              <li>Motor &amp; pump bearing relubrication</li>
+              <li>Cooling fan bearings</li>
+              <li>Gearbox and coupling maintenance</li>
+            </ul>
+          </div>
+          <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-amber-600 block mb-2">Typical Relubrication Range</span>
+            <table class="w-full text-xs text-gray-600">
+              <tbody>
+                <tr><td class="py-0.5 font-medium text-brandDark">Clean, cool environment</td><td class="py-0.5 text-right">12–24 mo</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Standard industrial</td><td class="py-0.5 text-right">6–12 mo</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Hot / dirty environment</td><td class="py-0.5 text-right">1–3 mo</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-4 bg-rose-50 border border-rose-100 rounded-xl p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-rose-600 block mb-2">Common Mistakes</span>
+          <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+            <li>Ignoring the temperature de-rating above 70°C</li>
+            <li>Over-greasing, which can be as damaging as under-greasing</li>
+            <li>Using a fixed calendar interval regardless of speed or bore size</li>
+            <li>Not cross-checking against grease analysis or vibration trending</li>
+          </ul>
+        </div>
+        </div>
+      </details>
+
+      <details class="py-6">
+        <summary class="font-display font-semibold text-brandDark text-lg flex justify-between items-center">
+          7. Spare Parts Inventory Calculator
+          <span class="plus text-sky-500 text-xl">+</span>
+        </summary>
+        <div class="text-sm text-gray-600 leading-relaxed mt-4 space-y-4">
+          <p class="formula-chip">ROP = (Avg Daily Usage × Lead Time) + Safety Stock,&nbsp; Safety Stock = (Max Daily Usage − Avg Daily Usage) × Lead Time,&nbsp; EOQ = √(2 × Annual Demand × Order Cost ÷ Holding Cost)</p>
+          <p>Spare parts inventory sits at an uncomfortable intersection of two opposing risks: stock too little and a critical asset sits idle waiting for a part while downtime cost accumulates by the hour; stock too much and working capital gets tied up in shelves of parts that slowly depreciate, take up storeroom space, and sometimes expire or become obsolete before they're ever used. This calculator answers two separate questions that together resolve that tension: <em>when</em> to reorder, and <em>how much</em> to order.</p>
+          <p><strong>Reorder Point (ROP)</strong> answers the "when" question. It's built from expected lead-time demand (Average Daily Usage × Lead Time) plus a Safety Stock buffer. The buffer exists because real-world usage isn't perfectly steady — some days you'll consume more than average — and because lead times themselves can slip. This calculator's safety stock formula, (Maximum Daily Usage − Average Daily Usage) × Lead Time, is a straightforward and widely used approach: it sizes the buffer around the gap between your worst realistic daily draw-down and your typical one, scaled by how long you'd have to survive on that buffer before a new order arrives. The result is the stock level that should trigger a purchase order — not the level at which you run out.</p>
+          <p><strong>Economic Order Quantity (EOQ)</strong> answers the "how much" question, using the classic Wilson formula from inventory theory. It balances two costs that move in opposite directions as order size changes: Ordering Cost (the fixed cost of placing and processing each purchase order — administrative time, shipping, receiving) falls per unit as you order larger batches less frequently, while Holding Cost (storage, insurance, capital tied up, obsolescence risk) rises as you carry more inventory at once. EOQ finds the order quantity that minimizes the sum of these two costs, and the calculator also reports how many orders per year that implies (Annual Demand ÷ EOQ).</p>
+          <p>It's worth being explicit about where this model applies and where it doesn't. EOQ assumes fairly steady, predictable demand and is well suited to consumable, moderate-cost items like filters, seals, belts, and common bearings. It is deliberately <strong>not</strong> the right model for a small number of extremely critical, expensive, long-lead-time spares — the single spare motor for your only production line, for example — where the correct stocking decision is driven by downtime-cost-avoidance and criticality analysis rather than by minimizing ordering and holding costs. For those items, the right question isn't "what minimizes cost" but "can we afford to be without this for weeks while a replacement is manufactured," and the answer is very often yes, stock one anyway, EOQ math notwithstanding. A well-run spares strategy typically applies this calculator's logic to the broad base of consumable parts, while handling critical, insurance-type spares through a separate criticality-based review.</p>
+        <div class="mt-5 grid sm:grid-cols-2 gap-4">
+          <div class="bg-sky-50 border border-sky-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 block mb-2">Typical Industrial Applications</span>
+            <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+              <li>Filters, seals, and belts inventory</li>
+              <li>Common bearing stock planning</li>
+              <li>Consumable spares budgeting</li>
+            </ul>
+          </div>
+          <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-amber-600 block mb-2">Stocking Approach by Criticality</span>
+            <table class="w-full text-xs text-gray-600">
+              <tbody>
+                <tr><td class="py-0.5 font-medium text-brandDark">Critical / insurance spare</td><td class="py-0.5 text-right">Stock 1, ignore EOQ</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Consumable / moderate cost</td><td class="py-0.5 text-right">Use ROP + EOQ</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-4 bg-rose-50 border border-rose-100 rounded-xl p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-rose-600 block mb-2">Common Mistakes</span>
+          <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+            <li>Applying EOQ math to a single critical insurance spare</li>
+            <li>Ignoring lead-time variability when setting safety stock</li>
+            <li>Not updating average/maximum daily usage as consumption patterns change</li>
+          </ul>
+        </div>
+        </div>
+      </details>
+
+      <details class="py-6">
+        <summary class="font-display font-semibold text-brandDark text-lg flex justify-between items-center">
+          8. Maintenance Cost Calculator
+          <span class="plus text-sky-500 text-xl">+</span>
+        </summary>
+        <div class="text-sm text-gray-600 leading-relaxed mt-4 space-y-4">
+          <p class="formula-chip">Total Cost = Labor + Parts + Contractor + Overhead,&nbsp; % of RAV = (Total Cost ÷ RAV) × 100</p>
+          <p>Maintenance budgets are notoriously hard to benchmark in isolation — a maintenance spend of $80,000 a year means very different things for a small workshop and a heavy process plant. This calculator solves that by rolling up your total maintenance spend across four categories and then expressing it as a percentage of Replacement Asset Value (RAV), a standard normalization technique used across the reliability industry to make maintenance cost comparable across sites, industries, and asset sizes.</p>
+          <p>The four cost components — <strong>Labor</strong> (in-house maintenance wages and benefits), <strong>Parts/Materials</strong> (spares, consumables, lubricants), <strong>Contractor</strong> (outsourced specialist work), and <strong>Overhead</strong> (tools, training, supervision, facilities allocated to the maintenance function) — together capture the full, fully-loaded cost of keeping assets running, rather than just the visible line items on a purchase order. Many organizations under-report maintenance cost by only tracking parts and contractor invoices while leaving internal labor and overhead outside the picture, which understates the true cost and makes benchmarking against industry figures meaningless.</p>
+          <p><strong>Replacement Asset Value</strong> is the estimated current cost to replace all the physical assets being maintained — not their depreciated book value, but what it would actually cost today to rebuild or repurchase the plant and equipment. Dividing annual maintenance spend by RAV strips out the effect of plant size and lets you compare a $2M/year maintenance budget on a $100M facility (2% of RAV) fairly against a $200K/year budget on a $10M facility (also 2% of RAV) — two very different absolute numbers that represent the same relative maintenance intensity.</p>
+          <p>Industry benchmarks commonly cite a maintenance cost of roughly 2–3% of RAV per year as a reasonable target for well-run industrial facilities, though the right figure varies significantly by industry, asset age, and criticality — process-heavy industries like petrochemicals or pulp and paper often run higher due to aggressive corrosion and fouling environments, while lighter discrete manufacturing can run lower. A ratio well above benchmark can indicate an aging asset base, a reactive (rather than planned) maintenance culture, or genuine underinvestment catching up all at once; a ratio well below benchmark isn't automatically good news either — it can just as easily signal deferred maintenance building up hidden risk that will surface later as a spike in both cost and downtime. Tracking this ratio over several years, alongside leading indicators like the ratio of planned-to-reactive work orders, gives a much more complete picture than the cost percentage alone.</p>
+        <div class="mt-5 grid sm:grid-cols-2 gap-4">
+          <div class="bg-sky-50 border border-sky-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 block mb-2">Typical Industrial Applications</span>
+            <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+              <li>Annual maintenance budget benchmarking</li>
+              <li>Cross-site cost comparison using RAV</li>
+              <li>Reliability program business cases</li>
+            </ul>
+          </div>
+          <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-amber-600 block mb-2">Typical Cost as % of RAV</span>
+            <table class="w-full text-xs text-gray-600">
+              <tbody>
+                <tr><td class="py-0.5 font-medium text-brandDark">Well-run facility</td><td class="py-0.5 text-right">2–3%/yr</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Process-heavy industry</td><td class="py-0.5 text-right">3–5%/yr</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Reactive / aging plant</td><td class="py-0.5 text-right">5%+/yr</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-4 bg-rose-50 border border-rose-100 rounded-xl p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-rose-600 block mb-2">Common Mistakes</span>
+          <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+            <li>Excluding internal labor and overhead from the total</li>
+            <li>Comparing absolute spend across plants of different sizes instead of using % of RAV</li>
+            <li>Using an outdated RAV figure instead of current replacement cost</li>
+          </ul>
+        </div>
+        </div>
+      </details>
+
+      <details class="py-6">
+        <summary class="font-display font-semibold text-brandDark text-lg flex justify-between items-center">
+          9. Equipment Availability Calculator
+          <span class="plus text-sky-500 text-xl">+</span>
+        </summary>
+        <div class="text-sm text-gray-600 leading-relaxed mt-4 space-y-4">
+          <p class="formula-chip">Availability (%) = (Total Scheduled Time − Downtime) ÷ Total Scheduled Time × 100</p>
+          <p>Availability is the metric that most directly answers the question every plant manager actually cares about: of the time this asset was supposed to be running, what fraction of it actually was? This calculator uses the simplest and most direct form of that calculation — total scheduled time minus downtime, divided by total scheduled time — giving a straightforward uptime percentage over whatever period you're measuring.</p>
+          <p>It's worth understanding how this relates to the more analytical form of availability used elsewhere on this page. Given MTBF and MTTR, availability can also be expressed as Availability = MTBF ÷ (MTBF + MTTR) — mathematically, over a long enough period, this converges to the same answer as the direct Total Time / Downtime calculation here, because MTBF + MTTR represents one complete up-then-down cycle, and MTBF is the "up" portion of it. The direct method used in this calculator is more practical for a specific historical period (a month, a quarter, a shift) where you already know total downtime, while the MTBF/MTTR method is more useful for forward-looking predictions and for comparing the reliability and maintainability contributions separately.</p>
+          <p>Reliability engineering also distinguishes between a few related flavors of availability that are worth knowing even though this calculator reports the simplest one: <strong>Inherent Availability</strong> considers only corrective maintenance downtime, assuming instant parts and labor availability — a theoretical best case. <strong>Achieved Availability</strong> adds in preventive maintenance downtime. <strong>Operational Availability</strong>, the most realistic and the closest match to what this calculator computes, includes all sources of downtime the asset actually experiences in the field — breakdowns, PM, waiting for parts, administrative delays, everything. Operational Availability is almost always lower than the other two because it reflects real logistics and organizational friction, not just the physics of the equipment.</p>
+          <p>Availability also feeds directly into the OEE calculation elsewhere on this page — it is literally the first of OEE's three multiplied factors — so a low availability score here will proportionally drag OEE down even if performance and quality are strong. World-class availability benchmarks vary by industry, but many capital-intensive continuous-process operations target 95%+ for critical equipment, while more complex or older assets may realistically run in the 80–90% range. Because a single long unplanned outage can dominate an availability calculation, it's often more actionable to track availability broken down by <em>cause</em> (breakdowns vs. changeovers vs. planned PM vs. waiting-for-parts) rather than as one aggregate number — the aggregate tells you how much time was lost, but the breakdown tells you what to actually go fix first.</p>
+        <div class="mt-5 grid sm:grid-cols-2 gap-4">
+          <div class="bg-sky-50 border border-sky-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 block mb-2">Typical Industrial Applications</span>
+            <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+              <li>Feeds directly into the OEE calculation above</li>
+              <li>Uptime SLA / KPI reporting</li>
+              <li>Bottleneck and capacity-loss analysis</li>
+            </ul>
+          </div>
+          <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-amber-600 block mb-2">Typical Availability Benchmark</span>
+            <table class="w-full text-xs text-gray-600">
+              <tbody>
+                <tr><td class="py-0.5 font-medium text-brandDark">Critical continuous process</td><td class="py-0.5 text-right">95%+</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Complex / older assets</td><td class="py-0.5 text-right">80–90%</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">Reactive maintenance plant</td><td class="py-0.5 text-right">Below 80%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-4 bg-rose-50 border border-rose-100 rounded-xl p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-rose-600 block mb-2">Common Mistakes</span>
+          <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+            <li>Reporting one aggregate number instead of breaking downtime down by cause</li>
+            <li>Confusing Inherent, Achieved, and Operational availability</li>
+            <li>Letting a single long outage dominate a short reporting period</li>
+          </ul>
+        </div>
+        </div>
+      </details>
+
+      <details class="py-6">
+        <summary class="font-display font-semibold text-brandDark text-lg flex justify-between items-center">
+          10. Reliability Calculator — R(t)
+          <span class="plus text-sky-500 text-xl">+</span>
+        </summary>
+        <div class="text-sm text-gray-600 leading-relaxed mt-4 space-y-4">
+          <p class="formula-chip">R(t) = e^(−t ÷ MTBF),&nbsp; F(t) = 1 − R(t)</p>
+          <p>Where MTBF describes the average time between failures, Reliability R(t) answers a sharper and often more useful question: what is the <em>probability</em> that this asset survives without failing for a specific mission time t? This calculator implements the exponential reliability model, the standard approach for equipment operating in its useful-life phase where the failure rate is assumed roughly constant over time — no significant wear-out or infant-mortality effects — which is a good approximation for a great deal of industrial equipment operating within its normal service life.</p>
+          <p>The exponential model has an elegant and important property called the "memoryless" property: under this model, an asset that has already run for 1,000 hours without failing has exactly the same probability of surviving the next 500 hours as a brand-new asset does of surviving its first 500 hours. This is a direct mathematical consequence of a constant failure rate, and it's why the formula only needs two inputs — MTBF and the mission time t — rather than also needing to know how long the asset has already been running. It also means the exponential model should not be used to represent components that genuinely wear out (bearings, belts, batteries) over very long mission times without corroborating condition data, since real wear-out failure rates increase with age in a way this simple model doesn't capture; for those cases, a Weibull reliability model with a shape parameter greater than 1 is the more accurate tool.</p>
+          <p>Reading the output is straightforward: R(t) close to 1 (or 100%) means the asset is very likely to complete the mission time without failure; R(t) closer to 0 means failure within that window is likely. The complementary figure, Unreliability or F(t) = 1 − R(t), is equally useful and is often the more intuitive number for risk conversations — it's literally the probability of failure within the mission window, which is what insurance, warranty, and safety-margin decisions actually care about.</p>
+          <p>Practical applications of this calculator include: setting realistic warranty periods (choosing t such that F(t) stays below an acceptable failure probability), planning shutdown or turnaround intervals for continuous-process equipment where an in-mission failure would be very costly to interrupt, sizing standby or redundant equipment for missions where a target reliability must be guaranteed, and communicating risk to non-technical stakeholders in probability terms rather than abstract hour counts. As with MTBF itself, the quality of this calculator's output is only as good as the MTBF value feeding into it — a shaky MTBF estimate from limited failure data will produce a shaky reliability probability, so it's good practice to revisit this calculation as more operating history accumulates and MTBF estimates mature.</p>
+        <div class="mt-5 grid sm:grid-cols-2 gap-4">
+          <div class="bg-sky-50 border border-sky-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 block mb-2">Typical Industrial Applications</span>
+            <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+              <li>Setting realistic warranty periods</li>
+              <li>Turnaround / shutdown interval planning</li>
+              <li>Sizing standby or redundant equipment</li>
+            </ul>
+          </div>
+          <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-amber-600 block mb-2">Reading R(t)</span>
+            <table class="w-full text-xs text-gray-600">
+              <tbody>
+                <tr><td class="py-0.5 font-medium text-brandDark">R(t) &gt; 0.9</td><td class="py-0.5 text-right">Very likely to survive</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">R(t) 0.7–0.9</td><td class="py-0.5 text-right">Likely to survive</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">R(t) 0.5–0.7</td><td class="py-0.5 text-right">Moderate risk</td></tr>
+                <tr><td class="py-0.5 font-medium text-brandDark">R(t) &lt; 0.5</td><td class="py-0.5 text-right">High risk within mission time</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-4 bg-rose-50 border border-rose-100 rounded-xl p-4">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-rose-600 block mb-2">Common Mistakes</span>
+          <ul class="text-xs text-gray-600 space-y-1 list-disc pl-4">
+            <li>Applying the exponential model to genuinely wear-out components (bearings, belts) over long missions</li>
+            <li>Trusting R(t) built on an unstable, low-sample MTBF</li>
+            <li>Ignoring F(t) — the failure probability is often the more actionable number for risk decisions</li>
+          </ul>
+        </div>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MAINTENANCE WORKFLOW ===================== -->
+<section class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="text-center mb-10">
+      <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Big Picture</span>
+      <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">How These Metrics Connect</h2>
+      <p class="text-sm text-gray-500 mt-3 max-w-xl mx-auto">Each calculator on this page is one link in the same chain — a failure event eventually rolls up into cost and, through improvement, back into reliability.</p>
+    </div>
+    <div class="flex flex-wrap items-center justify-center gap-2 md:gap-3">
+      <div class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-center min-w-[120px]">
+        <span class="block text-xs font-semibold text-brandDark">Failure</span>
+        <span class="block text-[10px] text-gray-500">MTBF</span>
+      </div>
+      <span class="text-sky-400 font-bold">→</span>
+      <div class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-center min-w-[120px]">
+        <span class="block text-xs font-semibold text-brandDark">Repair</span>
+        <span class="block text-[10px] text-gray-500">MTTR</span>
+      </div>
+      <span class="text-sky-400 font-bold">→</span>
+      <div class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-center min-w-[120px]">
+        <span class="block text-xs font-semibold text-brandDark">Availability</span>
+        <span class="block text-[10px] text-gray-500">MTBF ÷ (MTBF+MTTR)</span>
+      </div>
+      <span class="text-sky-400 font-bold">→</span>
+      <div class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-center min-w-[120px]">
+        <span class="block text-xs font-semibold text-brandDark">OEE</span>
+        <span class="block text-[10px] text-gray-500">Avail × Perf × Qual</span>
+      </div>
+      <span class="text-sky-400 font-bold">→</span>
+      <div class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-center min-w-[120px]">
+        <span class="block text-xs font-semibold text-brandDark">Maintenance Cost</span>
+        <span class="block text-[10px] text-gray-500">Downtime Cost</span>
+      </div>
+      <span class="text-sky-400 font-bold">→</span>
+      <div class="bg-sky-50 border border-sky-200 rounded-xl px-4 py-3 text-center min-w-[120px]">
+        <span class="block text-xs font-semibold text-sky-700">Reliability Improvement</span>
+        <span class="block text-[10px] text-sky-600">PM &amp; Lubrication Interval</span>
+      </div>
+    </div>
+    <p class="text-xs text-gray-400 text-center mt-6">A failure drives repair time (MTTR); MTBF and MTTR together set Availability; Availability feeds OEE; the resulting downtime and spend feed Maintenance Cost — and tightening the PM and lubrication interval is how you push reliability back up and shorten the cycle.</p>
+  </div>
+</section>
+
+<!-- ===================== COMPARISON TABLE ===================== -->
+<section class="bg-gray-50 border-y border-gray-100 py-16">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="text-center mb-10">
+      <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Quick Reference</span>
+      <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Compare the 10 Metrics</h2>
+    </div>
+    <div class="overflow-x-auto bg-white rounded-2xl border border-gray-100">
+      <table class="w-full text-xs md:text-sm text-left">
+        <thead class="bg-gray-50 text-gray-500 uppercase text-[10px] tracking-wider">
+          <tr>
+            <th class="px-4 py-3">Metric</th>
+            <th class="px-4 py-3">Measures</th>
+            <th class="px-4 py-3">Higher = Better?</th>
+            <th class="px-4 py-3">Primarily Used For</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 text-gray-600">
+          <tr><td class="px-4 py-3 font-semibold text-brandDark">MTBF</td><td class="px-4 py-3">Reliability (time between failures)</td><td class="px-4 py-3 text-emerald-600">Yes</td><td class="px-4 py-3">PM planning, reliability tracking</td></tr>
+          <tr><td class="px-4 py-3 font-semibold text-brandDark">MTTR</td><td class="px-4 py-3">Maintainability (repair time)</td><td class="px-4 py-3 text-red-500">No</td><td class="px-4 py-3">Maintenance performance, crew efficiency</td></tr>
+          <tr><td class="px-4 py-3 font-semibold text-brandDark">OEE</td><td class="px-4 py-3">Overall equipment effectiveness</td><td class="px-4 py-3 text-emerald-600">Yes</td><td class="px-4 py-3">Production efficiency &amp; loss analysis</td></tr>
+          <tr><td class="px-4 py-3 font-semibold text-brandDark">Downtime Cost</td><td class="px-4 py-3">Financial impact of stoppages</td><td class="px-4 py-3 text-red-500">No</td><td class="px-4 py-3">Business case for reliability spend</td></tr>
+          <tr><td class="px-4 py-3 font-semibold text-brandDark">PM Interval</td><td class="px-4 py-3">Preventive maintenance timing</td><td class="px-4 py-3">Context-dependent</td><td class="px-4 py-3">Scheduling &amp; staffing</td></tr>
+          <tr><td class="px-4 py-3 font-semibold text-brandDark">Lubrication Interval</td><td class="px-4 py-3">Bearing relubrication timing</td><td class="px-4 py-3">Context-dependent</td><td class="px-4 py-3">Bearing life extension</td></tr>
+          <tr><td class="px-4 py-3 font-semibold text-brandDark">Spare Parts (ROP/EOQ)</td><td class="px-4 py-3">Inventory timing &amp; quantity</td><td class="px-4 py-3">Context-dependent</td><td class="px-4 py-3">Storeroom planning</td></tr>
+          <tr><td class="px-4 py-3 font-semibold text-brandDark">Maintenance Cost</td><td class="px-4 py-3">Spend as % of RAV</td><td class="px-4 py-3 text-red-500">No</td><td class="px-4 py-3">Budget benchmarking</td></tr>
+          <tr><td class="px-4 py-3 font-semibold text-brandDark">Availability</td><td class="px-4 py-3">Uptime</td><td class="px-4 py-3 text-emerald-600">Yes</td><td class="px-4 py-3">OEE input, SLA reporting</td></tr>
+          <tr><td class="px-4 py-3 font-semibold text-brandDark">Reliability R(t)</td><td class="px-4 py-3">Probability of survival to time t</td><td class="px-4 py-3 text-emerald-600">Yes</td><td class="px-4 py-3">Warranty, redundancy, risk planning</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What's the difference between MTBF and MTTR?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">MTBF (Mean Time Between Failures) measures how long equipment runs, on average, before it fails. MTTR (Mean Time To Repair) measures how long it takes, on average, to fix it once it does fail. Together they feed directly into availability: Availability = MTBF ÷ (MTBF + MTTR).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How is OEE calculated, and what's a good score?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">OEE multiplies three factors: Availability (actual run time ÷ planned time), Performance (actual output rate vs ideal rate), and Quality (good units ÷ total units produced). A world-class OEE benchmark is generally considered to be 85% or higher; most manufacturing plants typically run in the 40–60% range.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does temperature affect the lubrication interval so much?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Heat accelerates grease oxidation and breakdown. As a practical rule of thumb, bearing grease life roughly halves for every 15°C rise above 70°C, so this calculator applies that de-rating on top of the base speed/bore interval, then layers on a contamination factor for the operating environment.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What's the difference between Reorder Point (ROP) and EOQ?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Reorder Point tells you <em>when</em> to place a new order — the stock level at which you should reorder, including a safety-stock buffer for lead-time variability. Economic Order Quantity (EOQ) tells you <em>how much</em> to order each time to minimize combined ordering and holding costs. Spare Parts Inventory calculates both together.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is Maintenance Pro Cal free to use?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — all ten calculators in this tool are completely free with no sign-up, exactly like every other calculator on ElectroMechCalc.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is MTBF in simple terms?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">MTBF (Mean Time Between Failures) is the average operating time an asset runs before it fails, calculated as Total Operating Time ÷ Number of Failures. A higher MTBF means a more reliable asset.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is considered a good MTBF value?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It depends heavily on the asset type and industry, but as a general guide: below 1,000 hours is considered poor, 1,000–3,000 hours average, 3,000–6,000 hours good, and 6,000+ hours excellent. Always compare against your own asset's history rather than a generic number.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does MTBF decrease over time for an asset?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A falling MTBF trend usually signals the asset is entering the wear-out phase of the bathtub curve, that maintenance is being deferred, or that operating conditions (load, contamination, temperature) have worsened. Tracking MTBF quarter by quarter catches this decline long before it becomes a crisis.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How is Availability different from MTBF?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">MTBF measures how long an asset runs between failures. Availability measures what percentage of scheduled time it's actually up and running, and is calculated either directly (Uptime ÷ Total Scheduled Time) or from MTBF and MTTR together: Availability = MTBF ÷ (MTBF + MTTR).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How is the PM interval calculated from MTBF?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">PM Interval = MTBF × Safety Factor. A safety factor of 0.5 is a common starting point — scheduling maintenance at half the average failure point leaves margin so most assets are serviced before they actually fail.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How reliable is the exponential Reliability model R(t)?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The exponential model R(t) = e^(−t/MTBF) is accurate for equipment in its useful-life phase with a roughly constant failure rate. It's a poor fit for components that genuinely wear out (bearings, belts, batteries) over long mission times — a Weibull model is more appropriate there.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is a good maintenance cost as a percentage of RAV?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Roughly 2–3% of Replacement Asset Value per year is a commonly cited target for well-run industrial facilities. Process-heavy industries like petrochemicals often run higher; the right figure varies by industry, asset age, and criticality.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How often should spare parts reorder points be reviewed?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Review ROP and EOQ at least annually, or whenever usage patterns, lead times, or costs shift materially — a reorder point calculated on stale usage data can leave you both overstocked on some parts and short on others.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I use this calculator in a currency other than USD?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — use the currency selector above the calculator tabs to switch the displayed symbol between USD, INR, EUR, and GBP. This changes the symbol shown, not the value; enter your cost inputs directly in your chosen currency.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== REFERENCES ===================== -->
+<section class="max-w-3xl mx-auto px-4 pb-16">
+  <div class="bg-gray-50 border border-gray-100 rounded-2xl p-6">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-3">References</span>
+    <ul class="text-xs text-gray-500 space-y-1.5 list-disc pl-4">
+      <li>ISO 14224 — Collection and exchange of reliability and maintenance data for equipment</li>
+      <li>SMRP Best Practices — Society for Maintenance &amp; Reliability Professionals</li>
+      <li>Reliability Engineering Handbook (standard reliability &amp; maintainability formulas)</li>
+      <li>SKF Bearing Handbook — relubrication interval methodology</li>
+      <li>Total Productive Maintenance, Seiichi Nakajima — OEE and the Six Big Losses</li>
+    </ul>
+    <p class="text-xs text-gray-400 mt-4">Results from this tool are for preliminary planning and educational use. For safety-critical or capital-intensive decisions, verify against your CMMS data, OEM documentation, and applicable engineering standards. See our <a href="editorial-policy.html" class="text-sky-600 hover:underline">Editorial Policy</a> for how formulas on this site are sourced and reviewed.</p>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="bg-brandDark text-gray-400 text-sm pt-14">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="grid md:grid-cols-5 gap-10 pb-10 border-b border-brandLine">
+
+
+      <div class="md:col-span-1">
+        <a href="index.html" class="flex items-center gap-2 mb-3">
+          <img src="logo.png" alt="ElectroMechCalc Logo" class="h-9 w-9 object-contain">
+          <span class="font-display font-bold text-white text-base">Electro<span class="text-sky-400">Mech</span><span class="text-amber-400">Calc</span></span>
+        </a>
+        <p class="text-xs text-gray-500 leading-relaxed max-w-[260px]">Free electrical and mechanical engineering calculators for technicians, students, and working engineers. Formula-first, field-tested, always free.</p>
+      </div>
+
+      <div>
+        <h5 class="font-mono text-xs uppercase tracking-wider text-white mb-4">Electrical</h5>
+        <div class="space-y-2.5 text-xs">
+          <a href="transformer-size.html" class="block hover:text-white">Transformer Size</a>
+          <a href="kw-kva.html" class="block hover:text-white">kVA ↔ kW</a>
+          <a href="motor-current.html" class="block hover:text-white">Motor Current</a>
+          <a href="cable-size.html" class="block hover:text-white">Cable Size</a>
+          <a href="dg-size.html" class="block hover:text-white">DG Size</a>
+          <a href="inverter-size.html" class="block hover:text-white">Inverter Size</a>
+          <a href="ups-calculator.html" class="block hover:text-white">UPS Calculator</a>
+          <a href="ups-size.html" class="block hover:text-white">UPS Size</a>
+          <a href="solar-size.html" class="block hover:text-white">Solar Panel Size</a>
+        </div>
+      </div>
+
+      <div>
+        <h5 class="font-mono text-xs uppercase tracking-wider text-white mb-4">Mechanical</h5>
+        <div class="space-y-2.5 text-xs">
+          <a href="bearing-life.html" class="block hover:text-white">Bearing Life</a>
+          <a href="gear-ratio.html" class="block hover:text-white">Gear Ratio</a>
+          <a href="pump-head.html" class="block hover:text-white">Pump Head</a>
+          <a href="pump-tdh.html" class="block hover:text-white">TDH</a>
+          <a href="belt-length.html" class="block hover:text-white">Belt Length</a>
+          <a href="cooling-tower.html" class="block hover:text-white">Cooling Tower Efficiency</a>
+          <a href="unit-converter-pro.html" class="block hover:text-white">Unit Converter Pro</a>
+          <a href="maintenance-pro-cal.html" class="block hover:text-white">Maintenance Pro Cal</a>
+        </div>
+      </div>
+
+      <div>
+        <h5 class="font-mono text-xs uppercase tracking-wider text-white mb-4">Maintenance Pro Cal</h5>
+        <div class="space-y-2.5 text-xs">
+          <a href="#" onclick="switchCalc('mtbf');return false;" class="block hover:text-white">MTBF Calculator</a>
+          <a href="#" onclick="switchCalc('mttr');return false;" class="block hover:text-white">MTTR Calculator</a>
+          <a href="#" onclick="switchCalc('oee');return false;" class="block hover:text-white">OEE Calculator</a>
+          <a href="#" onclick="switchCalc('downtime');return false;" class="block hover:text-white">Downtime Cost</a>
+          <a href="#" onclick="switchCalc('pm');return false;" class="block hover:text-white">PM Interval</a>
+          <a href="#" onclick="switchCalc('lube');return false;" class="block hover:text-white">Lubrication Interval</a>
+          <a href="#" onclick="switchCalc('spares');return false;" class="block hover:text-white">Spare Parts</a>
+          <a href="#" onclick="switchCalc('cost');return false;" class="block hover:text-white">Maintenance Cost</a>
+          <a href="#" onclick="switchCalc('avail');return false;" class="block hover:text-white">Availability</a>
+          <a href="#" onclick="switchCalc('reliability');return false;" class="block hover:text-white">Reliability Calculator</a>
+        </div>
+      </div>
+
+      <div>
+        <h5 class="font-mono text-xs uppercase tracking-wider text-white mb-4">Company</h5>
+        <div class="space-y-2.5 text-xs">
+          <a href="about.html" class="block hover:text-white">About Us</a>
+          <a href="contact.html" class="block hover:text-white">Contact</a>
+          <span class="premium-disabled block" title="Coming soon">Premium</span>
+          <a href="privacy-policy.html" class="block hover:text-white">Privacy Policy</a>
+          <a href="terms.html" class="block hover:text-white">Terms &amp; Conditions</a>
+          <a href="disclaimer.html" class="block hover:text-white">Disclaimer</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="flex flex-wrap justify-between items-center gap-3 py-6 text-xs text-gray-500">
+      <span>© 2026 ElectroMechCalc. All rights reserved.</span>
+      <span class="space-x-4">
+        <a href="privacy-policy.html" class="hover:text-white">Privacy</a>
+        <a href="terms.html" class="hover:text-white">Terms</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const menuToggle = document.getElementById('menuToggle');
+  const mobileNav = document.getElementById('mobileNav');
+  menuToggle.addEventListener('click', () => {
+    const isHidden = mobileNav.classList.toggle('hidden');
+    mobileNav.classList.toggle('flex', !isHidden);
+    menuToggle.setAttribute('aria-expanded', !isHidden);
+  });
+
+  document.querySelectorAll('.nav-dropdown').forEach((dropdown) => {
+    let closeTimer = null;
+    const openDropdown = () => {
+      if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+      dropdown.classList.add('nav-dropdown-open');
+    };
+    const scheduleClose = () => {
+      closeTimer = setTimeout(() => { dropdown.classList.remove('nav-dropdown-open'); }, 300);
+    };
+    dropdown.addEventListener('mouseenter', openDropdown);
+    dropdown.addEventListener('mouseleave', scheduleClose);
+    dropdown.addEventListener('focusin', openDropdown);
+    dropdown.addEventListener('focusout', scheduleClose);
+  });
+
+  // ===== Site search (calculator directory) =====
+  const calcDirectory = [
+    { name: 'Transformer Size Calculator', href: 'transformer-size.html' },
+    { name: 'kVA ↔ kW Calculator', href: 'kw-kva.html' },
+    { name: 'HP ↔ kW Calculator', href: 'hp-kw.html' },
+    { name: 'Motor Current Calculator', href: 'motor-current.html' },
+    { name: 'APFC Capacitor Calculator', href: 'apfc.html' },
+    { name: 'kVA ↔ Current Calculator', href: 'kva-current.html' },
+    { name: 'kW ↔ Current Calculator', href: 'kw-current.html' },
+    { name: 'DG Size Calculator', href: 'dg-size.html' },
+    { name: 'Cable Size Calculator', href: 'cable-size.html' },
+    { name: 'Inverter Size Calculator', href: 'inverter-size.html' },
+    { name: 'UPS Calculator', href: 'ups-calculator.html' },
+    { name: 'UPS Size Calculator', href: 'ups-size.html' },
+    { name: 'Solar Panel Size Calculator', href: 'solar-size.html' },
+    { name: 'Bearing Life Calculator', href: 'bearing-life.html' },
+    { name: 'Gear Ratio Calculator', href: 'gear-ratio.html' },
+    { name: 'Pump Head Calculator', href: 'pump-head.html' },
+    { name: 'TDH Calculator', href: 'pump-tdh.html' },
+    { name: 'Cooling Tower Efficiency Calculator', href: 'cooling-tower.html' },
+    { name: 'Belt Length Calculator', href: 'belt-length.html' },
+    { name: 'Unit Converter Pro', href: 'unit-converter-pro.html' },
+    { name: 'Maintenance Pro Cal', href: 'maintenance-pro-cal.html' },
+    { name: 'EPF Calculator', href: 'epf-calculator.html' },
+    { name: 'Gratuity Calculator', href: 'gratuity-calculator.html' },
+    { name: 'SIP & Lump Sum Calculator', href: 'sip-calculator.html' },
+    { name: 'CAGR Calculator', href: 'cagr-calculator.html' },
+    { name: 'Income Tax Calculator', href: 'income-tax-calculator.html' },
+    { name: 'FD Calculator', href: 'fd-calculator.html' },
+    { name: 'RD Calculator', href: 'rd-calculator.html' },
+    { name: 'PPF Calculator', href: 'ppf-calculator.html' },
+    { name: 'NPS Calculator', href: 'nps-calculator.html' }
+  ];
+
+  function wireSearch(inputId, wrapId, resultsId){
+    const input = document.getElementById(inputId);
+    const wrap = document.getElementById(wrapId);
+    const results = document.getElementById(resultsId);
+    if(!input) return;
+
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      if(!q){ wrap.classList.remove('has-results'); results.innerHTML=''; return; }
+      const matches = calcDirectory.filter(c => c.name.toLowerCase().includes(q)).slice(0,8);
+      if(matches.length){
+        results.innerHTML = matches.map(m => `<a href="${m.href}">${m.name}</a>`).join('');
+      } else {
+        results.innerHTML = `<div class="search-empty">No calculators found for "${input.value}".</div>`;
+      }
+      wrap.classList.add('has-results');
+    });
+
+    document.addEventListener('click', (e) => {
+      if(!wrap.contains(e.target)){ wrap.classList.remove('has-results'); }
+    });
+  }
+  wireSearch('siteSearch','searchWrap','searchResults');
+  wireSearch('siteSearchMobile','searchWrapMobile','searchResultsMobile');
+
+  // ===== Currency switcher =====
+  // Note: this only changes the displayed symbol, it does not convert values —
+  // enter your cost inputs directly in whichever currency you select.
+  const currencySymbols = { USD: '$', INR: '₹', EUR: '€', GBP: '£' };
+  let currencySymbol = '$';
+  function changeCurrency(code){
+    currencySymbol = currencySymbols[code] || '$';
+    document.querySelectorAll('.cur-sym').forEach(el => el.textContent = currencySymbol);
+    const activeTab = document.querySelector('.tab-pill.active');
+    const key = activeTab ? activeTab.dataset.cat : 'mtbf';
+    if (calcFns[key]) calcFns[key]();
+  }
+
+  // ===== Maintenance Pro Cal Logic =====
+  const calcListMeta = [
+    { key: 'mtbf', icon: '⏱', name: 'MTBF Calculator' },
+    { key: 'mttr', icon: '🔧', name: 'MTTR Calculator' },
+    { key: 'oee', icon: '📊', name: 'OEE Calculator' },
+    { key: 'downtime', icon: '💸', name: 'Downtime Cost Calculator' },
+    { key: 'pm', icon: '🗓', name: 'PM Interval Calculator' },
+    { key: 'lube', icon: '🛢', name: 'Lubrication Interval Calculator' },
+    { key: 'spares', icon: '📦', name: 'Spare Parts Inventory Calculator' },
+    { key: 'cost', icon: '💰', name: 'Maintenance Cost Calculator' },
+    { key: 'avail', icon: '✅', name: 'Equipment Availability Calculator' },
+    { key: 'reliability', icon: '📈', name: 'Reliability Calculator' }
+  ];
+
+  const calcFns = {
+    mtbf: calcMTBF, mttr: calcMTTR, oee: calcOEE, downtime: calcDowntime,
+    pm: calcPM, lube: calcLube, spares: calcSpares, cost: calcCost,
+    avail: calcAvail, reliability: calcReliability
+  };
+
+  function renderCalcList(activeKey){
+    const list = document.getElementById('calcList');
+    list.innerHTML = calcListMeta.map(c => `
+      <div class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark cursor-pointer${c.key === activeKey ? ' active' : ''}" onclick="switchCalc('${c.key}')">
+        ${c.icon} ${c.name} <span class="text-sky-500">→</span>
+      </div>
+    `).join('');
+  }
+
+  function formatNum(n){
+    if(!isFinite(n)) return '—';
+    if(Math.abs(n) >= 1e9 || (Math.abs(n) < 0.0001 && n !== 0)) return n.toExponential(3);
+    return parseFloat(n.toFixed(3)).toLocaleString('en-US', { maximumFractionDigits: 3 });
+  }
+
+  function setResult(label, value, sub, formula){
+    document.getElementById('rLabel').textContent = label;
+    document.getElementById('rResult').textContent = value;
+    document.getElementById('resultSub').textContent = sub;
+    document.getElementById('rFormula').textContent = formula;
+  }
+
+  function setQuickTable(rows){
+    document.getElementById('quickTable').innerHTML = rows.map(r => `
+      <div class="quick-chip"><span class="qval">${r.v}</span><span class="qunit">${r.l}</span></div>
+    `).join('');
+  }
+
+  function switchCalc(key){
+    document.querySelectorAll('.tab-pill').forEach(btn => btn.classList.toggle('active', btn.dataset.cat === key));
+    document.querySelectorAll('.calc-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + key));
+    renderCalcList(key);
+    calcFns[key]();
+  }
+
+  // ---- MTBF ----
+  function calcMTBF(){
+    const t = parseFloat(document.getElementById('mtbf_time').value) || 0;
+    const f = parseFloat(document.getElementById('mtbf_failures').value) || 0;
+    const mtbf = f > 0 ? t / f : 0;
+    const rate = mtbf > 0 ? 1 / mtbf : 0;
+    setResult('MTBF', formatNum(mtbf) + ' hrs', 'Mean Time Between Failures', 'MTBF = Operating Time ÷ Failures');
+    setQuickTable([
+      { v: formatNum(t), l: 'Operating Hrs' },
+      { v: formatNum(f), l: 'Failures' },
+      { v: formatNum(rate), l: 'Failure Rate /hr' },
+      { v: formatNum(mtbf/24), l: 'MTBF in Days' }
+    ]);
+  }
+
+  // ---- MTTR ----
+  function calcMTTR(){
+    const t = parseFloat(document.getElementById('mttr_time').value) || 0;
+    const r = parseFloat(document.getElementById('mttr_repairs').value) || 0;
+    const mttr = r > 0 ? t / r : 0;
+    const repairRate = mttr > 0 ? 1 / mttr : 0;
+    setResult('MTTR', formatNum(mttr) + ' hrs', 'Mean Time To Repair', 'MTTR = Total Repair Time ÷ Repairs');
+    setQuickTable([
+      { v: formatNum(t), l: 'Repair Hrs' },
+      { v: formatNum(r), l: 'Repairs' },
+      { v: formatNum(mttr*60), l: 'MTTR in Minutes' },
+      { v: formatNum(repairRate), l: 'Repairs/hr Rate' }
+    ]);
+  }
+
+  // ---- OEE ----
+  function calcOEE(){
+    const planned = parseFloat(document.getElementById('oee_planned').value) || 0;
+    const down = parseFloat(document.getElementById('oee_downtime').value) || 0;
+    const cycle = parseFloat(document.getElementById('oee_cycle').value) || 0;
+    const total = parseFloat(document.getElementById('oee_total').value) || 0;
+    const good = parseFloat(document.getElementById('oee_good').value) || 0;
+
+    const opTime = Math.max(planned - down, 0);
+    const availability = planned > 0 ? opTime / planned : 0;
+    const performance = opTime > 0 ? Math.min((cycle * total) / (opTime * 60), 1) : 0;
+    const quality = total > 0 ? Math.min(good / total, 1) : 0;
+    const oee = availability * performance * quality * 100;
+
+    setResult('OEE', formatNum(oee) + ' %', 'Overall Equipment Effectiveness', 'OEE = Availability × Performance × Quality');
+    setQuickTable([
+      { v: formatNum(availability*100)+'%', l: 'Availability' },
+      { v: formatNum(performance*100)+'%', l: 'Performance' },
+      { v: formatNum(quality*100)+'%', l: 'Quality' },
+      { v: formatNum(opTime)+' min', l: 'Run Time' }
+    ]);
+  }
+
+  // ---- Downtime Cost ----
+  function calcDowntime(){
+    const hrs = parseFloat(document.getElementById('dc_hours').value) || 0;
+    const prod = parseFloat(document.getElementById('dc_prod').value) || 0;
+    const labor = parseFloat(document.getElementById('dc_labor').value) || 0;
+    const other = parseFloat(document.getElementById('dc_other').value) || 0;
+    const rate = prod + labor + other;
+    const totalCost = hrs * rate;
+
+    setResult('Total Downtime Cost', currencySymbol + formatNum(totalCost), 'Cost impact of unplanned downtime', 'Cost = Hours × (Lost Production + Labor + Other)');
+    setQuickTable([
+      { v: currencySymbol+formatNum(hrs*prod), l: 'Lost Production' },
+      { v: currencySymbol+formatNum(hrs*labor), l: 'Labor Cost' },
+      { v: currencySymbol+formatNum(hrs*other), l: 'Other Cost' },
+      { v: currencySymbol+formatNum(rate)+'/hr', l: 'Combined Rate' }
+    ]);
+  }
+
+  // ---- PM Interval ----
+  function calcPM(){
+    const mtbf = parseFloat(document.getElementById('pm_mtbf').value) || 0;
+    let factor = parseFloat(document.getElementById('pm_factor').value) || 0;
+    factor = Math.min(Math.max(factor, 0), 1);
+    const annual = parseFloat(document.getElementById('pm_annual').value) || 0;
+    const interval = mtbf * factor;
+    const pmsPerYear = interval > 0 ? annual / interval : 0;
+
+    setResult('Recommended PM Interval', formatNum(interval) + ' hrs', 'Preventive maintenance scheduling interval', 'Interval = MTBF × Safety Factor');
+    setQuickTable([
+      { v: formatNum(interval/24), l: 'Interval in Days' },
+      { v: formatNum(pmsPerYear), l: 'PMs / Year' },
+      { v: formatNum(mtbf), l: 'MTBF (hrs)' },
+      { v: formatNum(factor), l: 'Safety Factor' }
+    ]);
+  }
+
+  // ---- Lubrication Interval ----
+  // Temperature de-rating uses discrete 15°C brackets above 70°C:
+  // 70°C and below -> factor 1 ; 70–85°C -> 0.5 ; 85–100°C -> 0.25 ; and so on,
+  // matching how bearing manufacturers publish these tables (Math.ceil keeps
+  // boundary values like exactly 85°C or 100°C in the correct bracket).
+  function calcLube(){
+    const d = parseFloat(document.getElementById('lube_d').value) || 0;
+    const n = parseFloat(document.getElementById('lube_n').value) || 0;
+    const temp = parseFloat(document.getElementById('lube_temp').value) || 0;
+    const contam = parseFloat(document.getElementById('lube_contam').value) || 1;
+
+    const base = (n > 0 && d > 0) ? 14000000 / (n * Math.sqrt(d)) : 0;
+    let tempFactor = 1;
+    if(temp > 70){
+      const steps = Math.ceil((temp - 70) / 15);
+      tempFactor = Math.pow(0.5, steps);
+    }
+    const interval = base * tempFactor * contam;
+
+    setResult('Relubrication Interval', formatNum(interval) + ' hrs', 'Estimated bearing lubrication interval', 't = (14×10⁶ / (n√d)) × Temp Factor × Contamination Factor');
+    setQuickTable([
+      { v: formatNum(base), l: 'Base Interval (hrs)' },
+      { v: formatNum(tempFactor), l: 'Temp Factor' },
+      { v: formatNum(contam), l: 'Contamination Factor' },
+      { v: formatNum(interval/720), l: 'Interval (months)' }
+    ]);
+  }
+
+  // ---- Spare Parts ----
+  function calcSpares(){
+    const avg = parseFloat(document.getElementById('sp_avg').value) || 0;
+    const max = parseFloat(document.getElementById('sp_max').value) || 0;
+    const lead = parseFloat(document.getElementById('sp_lead').value) || 0;
+    const demand = parseFloat(document.getElementById('sp_demand').value) || 0;
+    const ocost = parseFloat(document.getElementById('sp_ocost').value) || 0;
+    const hcost = parseFloat(document.getElementById('sp_hcost').value) || 0;
+
+    const safetyStock = Math.max((max - avg) * lead, 0);
+    const rop = (avg * lead) + safetyStock;
+    const eoq = hcost > 0 ? Math.sqrt((2 * demand * ocost) / hcost) : 0;
+    const ordersPerYear = eoq > 0 ? demand / eoq : 0;
+
+    setResult('Reorder Point', formatNum(rop) + ' units', 'Stock level that triggers a new order', 'ROP = (Avg Usage × Lead Time) + Safety Stock');
+    setQuickTable([
+      { v: formatNum(safetyStock), l: 'Safety Stock' },
+      { v: formatNum(eoq), l: 'EOQ (units)' },
+      { v: formatNum(avg*lead), l: 'Lead-Time Demand' },
+      { v: formatNum(ordersPerYear), l: 'Orders / Year' }
+    ]);
+  }
+
+  // ---- Maintenance Cost ----
+  function calcCost(){
+    const labor = parseFloat(document.getElementById('mc_labor').value) || 0;
+    const parts = parseFloat(document.getElementById('mc_parts').value) || 0;
+    const contract = parseFloat(document.getElementById('mc_contract').value) || 0;
+    const overhead = parseFloat(document.getElementById('mc_overhead').value) || 0;
+    const rav = parseFloat(document.getElementById('mc_rav').value) || 0;
+
+    const total = labor + parts + contract + overhead;
+    const pctRav = rav > 0 ? (total / rav) * 100 : 0;
+
+    setResult('Total Maintenance Cost', currencySymbol + formatNum(total), 'Combined maintenance spend', 'Total = Labor + Parts + Contractor + Overhead');
+    setQuickTable([
+      { v: formatNum(pctRav)+'%', l: '% of RAV' },
+      { v: currencySymbol+formatNum(labor), l: 'Labor' },
+      { v: currencySymbol+formatNum(parts), l: 'Parts' },
+      { v: currencySymbol+formatNum(contract+overhead), l: 'Contractor+OH' }
+    ]);
+  }
+
+  // ---- Availability ----
+  function calcAvail(){
+    const total = parseFloat(document.getElementById('av_total').value) || 0;
+    const down = parseFloat(document.getElementById('av_down').value) || 0;
+    const uptime = Math.max(total - down, 0);
+    const avail = total > 0 ? (uptime / total) * 100 : 0;
+
+    setResult('Equipment Availability', formatNum(avail) + ' %', 'Share of scheduled time equipment is available', 'Availability = (Total Time − Downtime) ÷ Total Time');
+    setQuickTable([
+      { v: formatNum(uptime)+' hrs', l: 'Uptime' },
+      { v: formatNum(down)+' hrs', l: 'Downtime' },
+      { v: formatNum(total)+' hrs', l: 'Scheduled Time' },
+      { v: formatNum(100-avail)+'%', l: 'Downtime %' }
+    ]);
+  }
+
+  // ---- Reliability ----
+  function calcReliability(){
+    const mtbf = parseFloat(document.getElementById('rel_mtbf').value) || 0;
+    const t = parseFloat(document.getElementById('rel_t').value) || 0;
+    const r = mtbf > 0 ? Math.exp(-t / mtbf) : 0;
+    const f = 1 - r;
+
+    setResult('Reliability R(t)', formatNum(r*100) + ' %', 'Probability of survival to mission time t', 'R(t) = e^(−t / MTBF)');
+    setQuickTable([
+      { v: formatNum(f*100)+'%', l: 'Failure Prob. F(t)' },
+      { v: formatNum(mtbf), l: 'MTBF (hrs)' },
+      { v: formatNum(t), l: 'Mission Time (hrs)' },
+      { v: mtbf>0 ? formatNum(1/mtbf*1000)+'/1000hr' : '—', l: 'Failure Rate λ' }
+    ]);
+  }
+
+  // Init
+  renderCalcList('mtbf');
+  calcMTBF();
+</script>
+
+</body>
+</html>
