@@ -1,6 +1,26 @@
 document.addEventListener("DOMContentLoaded", () => {
   const body = document.body;
 
+  // -----------------------------------------------------------------------
+  // Header is position:fixed (see partials/header.html). Since it's out of
+  // normal flow, push page content down by its actual rendered height so
+  // nothing sits underneath it. Height varies (search bar wraps to its own
+  // row on mobile), so track it live with ResizeObserver instead of a
+  // fixed px guess.
+  // -----------------------------------------------------------------------
+  const siteHeader = document.querySelector(".site-header");
+  if (siteHeader) {
+    const setHeaderOffset = () => {
+      document.documentElement.style.setProperty("--header-height", siteHeader.offsetHeight + "px");
+    };
+    setHeaderOffset();
+    if (window.ResizeObserver) {
+      new ResizeObserver(setHeaderOffset).observe(siteHeader);
+    } else {
+      window.addEventListener("resize", setHeaderOffset);
+    }
+  }
+
   // Desktop + Mobile toggles
   const toggles = document.querySelectorAll(".themeToggle");
   const labels = document.querySelectorAll(".themeLabel");
