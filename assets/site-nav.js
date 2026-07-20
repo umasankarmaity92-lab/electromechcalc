@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Update labels
     labels.forEach(label => {
-      label.textContent = dark ? "Dark Mode" : "Light Mode";
+      label.textContent = dark ? "Light Mode" : "Dark Mode";
     });
 
     // Update icons
@@ -67,12 +67,23 @@ document.addEventListener("DOMContentLoaded", () => {
   if (menuToggle && mobileNav) {
     menuToggle.addEventListener("click", () => {
       mobileNav.classList.toggle("hidden");
-      menuToggle.setAttribute(
-        "aria-expanded",
-        mobileNav.classList.contains("hidden") ? "false" : "true"
-      );
+      const isOpen = !mobileNav.classList.contains("hidden");
+      menuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      document.body.style.overflow = isOpen ? "hidden" : "";
     });
   }
+
+  // ---------------------------------------------------------------------
+  // Active link highlighting (desktop dropdown links + mobile submenu)
+  // ---------------------------------------------------------------------
+  const currentPath = location.pathname.replace(/\/+$/, "") || "/index.html";
+  document.querySelectorAll(".nav-dropdown-link, .mobile-sublink").forEach(link => {
+    const linkPath = link.getAttribute("href").replace(/\/+$/, "");
+    if (linkPath === currentPath) {
+      link.classList.add("active");
+      link.setAttribute("aria-current", "page");
+    }
+  });
 
   // ---------------------------------------------------------------------
   // Desktop nav dropdowns (Electrical / Mechanical / Financial)
