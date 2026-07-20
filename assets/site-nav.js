@@ -150,6 +150,29 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Keyboard: Escape closes any open dropdown (returning focus to its
+  // trigger) or, if none are open, closes the mobile menu overlay.
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+
+    const openDropdown = Array.from(navDropdowns).find(d =>
+      d.classList.contains("nav-dropdown-open")
+    );
+    if (openDropdown) {
+      setDropdownState(openDropdown, false);
+      const trigger = openDropdown.querySelector("[aria-expanded]");
+      if (trigger) trigger.focus();
+      return;
+    }
+
+    if (menuToggle && mobileNav && !mobileNav.classList.contains("hidden")) {
+      mobileNav.classList.add("hidden");
+      menuToggle.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+      menuToggle.focus();
+    }
+  });
+
   // ---------------------------------------------------------------------
   // Search
   //

@@ -312,6 +312,23 @@ body.dark-theme .theme-switch-dot { transform: translateX(18px); }
   --accent: #0ea5e9;
 }
 
+/* html.dark-theme mirrors body.dark-theme's variables. The pre-paint
+   FOUC-prevention script (see _middleware.js) sets this class on
+   <html> synchronously, before <body> exists, so --bg/--text/etc.
+   resolve correctly on first paint instead of waiting for
+   site-nav.js to add the class to <body> on DOMContentLoaded. Keep
+   these two blocks in sync. */
+html.dark-theme {
+  --bg: #0B1220;
+  --surface: #111c2e;
+  --surface-2: #0f172a;
+  --text: #e2e8f0;
+  --text-2: #94a3b8;
+  --border: #1f2f47;
+  --nav: #111c2e;
+  --nav-text: #e2e8f0;
+}
+
 body.dark-theme {
   --bg: #0B1220;
   --surface: #111c2e;
@@ -327,7 +344,18 @@ body {
   background: var(--bg) !important;
   color: var(--text) !important;
   transition: background-color .25s ease, color .25s ease;
+  /* Fallback used before site-nav.js measures the real header via
+     ResizeObserver. Mobile wraps the search bar onto its own row, so
+     the header is taller there than desktop — a single 96px fallback
+     for both breakpoints caused a visible content jump (CLS) on
+     mobile once JS measured the real, taller height. */
   padding-top: var(--header-height, 96px);
+}
+
+@media (max-width: 1023.98px) {
+  body {
+    padding-top: var(--header-height, 148px);
+  }
 }
 
 .site-header {
@@ -359,3 +387,123 @@ body {
 /* Footer intentionally stays dark in both themes — its own
    bg-brandDark / text-gray-400 / text-white classes (set in
    partials/footer.html) are left alone here on purpose. */
+
+/* ================= HEADER (moved from partials/header.html) =================
+   These rules used to live in a <style> block inside header.html, which
+   _middleware.js injects as raw HTML into every single page response.
+   That meant ~120 lines of CSS were re-downloaded, uncached, on every
+   page load (the browser can't cache inline <style>, only external
+   files like this one). Moved here so it's fetched once and cached
+   like the rest of the theme.
+
+   Header is permanently dark (both themes) — solid colors, tightly
+   scoped to .site-header so the rest of the page still toggles
+   normally via body.dark-theme / body.light-theme. */
+.site-header,
+.site-header #mainNav,
+.site-header #mobileNav {
+  background: #0b0e14 !important;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+.site-header .logo-e { color: #38bdf8 !important; }
+.site-header .logo-m { color: #fbbf24 !important; }
+.site-header .logo-c { color: #34d399 !important; }
+.site-header .font-mono.uppercase { color: #ffffff !important; }
+
+.site-header .nav-link,
+.site-header .mobile-link {
+  color: #e5e7eb !important;
+}
+.site-header .nav-link:hover,
+.site-header .mobile-link:hover {
+  color: #38bdf8 !important;
+}
+
+.site-header .themeToggle .themeLabel {
+  color: #e5e7eb !important;
+}
+.site-header .themeToggle .themeIconMoon,
+.site-header .themeToggle .themeIconSun {
+  color: #e5e7eb !important;
+}
+
+.site-header .nav-dropdown-panel {
+  background: #11151c !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 4px 18px rgba(255,255,255,0.10),
+    0 10px 26px rgba(0,0,0,0.35) !important;
+}
+.site-header .nav-dropdown-link {
+  color: #e5e7eb !important;
+  background: transparent !important;
+}
+.site-header .nav-dropdown-link:hover {
+  background: rgba(255,255,255,0.08) !important;
+  color: #ffffff !important;
+}
+
+.site-header .mobile-dropdown { background: #0b0e14 !important; }
+.site-header .mobile-sublink { color: #d1d5db !important; }
+.site-header .mobile-sublink:hover { color: #ffffff !important; }
+
+.site-header .search-input {
+  background: #161b24 !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  color: #e5e7eb !important;
+}
+.site-header .search-input::placeholder { color: #ffffff !important; opacity: 1; }
+.site-header .search-results {
+  background: #11151c !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  box-shadow: 0 4px 18px rgba(255,255,255,0.10), 0 10px 26px rgba(0,0,0,0.35) !important;
+}
+.site-header .search-results a { color: #e5e7eb !important; }
+.site-header .search-icon { color: #ffffff !important; }
+
+.site-header .site-logo {
+  width: 60px !important;
+  height: 60px !important;
+}
+@media (min-width: 1024px) {
+  .site-header .site-logo {
+    width: 44px !important;
+    height: 44px !important;
+  }
+}
+
+@media (max-width: 1023.98px) {
+  #mobileNav:not(.hidden) {
+    display: flex !important;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: #0b0e14 !important;
+    z-index: 100;
+    padding-bottom: 40px;
+  }
+}
+
+.site-header .mobile-link { font-size: 21px; }
+.site-header .mobile-sublink { font-size: 17.5px; }
+.site-header .mobile-sublink.active,
+.site-header .nav-dropdown-link.active {
+  background: rgba(56,189,248,.14) !important;
+  color: #38bdf8 !important;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.site-header .mobile-dropdown summary .plus {
+  font-size: 22px;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.pro-star-icon { color: #f59e0b; }

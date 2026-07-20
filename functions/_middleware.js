@@ -37,6 +37,21 @@ class InsertBefore {
   }
 }
 
+// Appended to the very start of <head>, before any CSS loads. Sets
+// dark/light on <html> synchronously (render-blocking, by design) so
+// the correct theme is painted on the very first frame. Without this,
+// site-nav.js only applies the theme class on DOMContentLoaded, so a
+// user with a saved or OS "dark" preference sees a flash of the light
+// theme on every single page load before JS catches up. Mirrors the
+// same localStorage key / matchMedia fallback that site-nav.js uses.
+const EARLY_THEME_SCRIPT = `<script>(function(){try{var t=localStorage.getItem("emc-theme")||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark-theme":"light-theme");document.documentElement.classList.add(t);}catch(e){}})();</script>`;
+
+class PrependToHead {
+  element(element) {
+    element.prepend(EARLY_THEME_SCRIPT, { html: true });
+  }
+}
+
 function escapeHTML(str) {
   return String(str)
     .replace(/&/g, "&amp;")
@@ -114,9 +129,12 @@ export async function onRequest(context) {
     context.env.ASSETS.fetch(new URL("/search-index.json", url.origin)),
   ]);
 
+  // If the partial fetch itself failed (404/500/etc.), don't inject its
+  // error-page body as if it were real header/footer markup — fall
+  // back to empty string so the rest of the page still renders.
   const [headerHTML, footerHTML] = await Promise.all([
-    headerRes.text(),
-    footerRes.text(),
+    headerRes.ok ? headerRes.text() : Promise.resolve(""),
+    footerRes.ok ? footerRes.text() : Promise.resolve(""),
   ]);
 
   let searchIndex = [];
@@ -133,6 +151,7 @@ export async function onRequest(context) {
   const relatedHTML = buildRelatedCalculatorsHTML(url.pathname, searchIndex);
 
   return new HTMLRewriter()
+    .on("head", new PrependToHead())
     .on("#site-header", new InjectHTML(headerHTML))
     .on("#site-footer", new InsertBefore(relatedHTML))
     .on("#site-footer", new InjectHTML(footerHTML))
