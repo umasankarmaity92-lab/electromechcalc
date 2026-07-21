@@ -10,6 +10,36 @@
 <meta name="description" content="Free kW to current and current to kW calculator. Convert real power to load current and back for single-phase and three-phase circuits, with formula.">
 <link rel="canonical" href="https://www.electromechcalc.com/kw-current.html">
 <link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Structured data: FAQPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why does three-phase power use √3 in the formula?",
+      "acceptedAnswer": { "@type": "Answer", "text": "In a balanced three-phase system, the line-to-line voltage and line current are offset by 120° across the three phases. The √3 (≈1.732) factor accounts for this vector relationship between line voltage and phase voltage, and appears in every standard three-phase power formula." }
+    },
+    {
+      "@type": "Question",
+      "name": "What voltage should I use — line voltage or phase voltage?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This calculator expects line-to-line voltage for three-phase systems (e.g. 415 V) and line-to-neutral voltage for single-phase (e.g. 230 V), which is how supply voltage is normally specified on nameplates and utility connections in most countries." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a lower power factor mean higher current for the same kW load?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Since kW is fixed by the load's actual power demand, a lower PF means the same kW must be delivered through more current, which is why low-PF loads need larger cables and breakers than a PF-1.0 load of the same kW rating." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this calculator suitable for sizing cables or breakers directly?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It gives the correct current or power figure to start from, but final cable and breaker sizing should also account for ambient temperature, installation method, cable length (voltage drop), and a safety margin per local wiring codes — use the Cable Size Calculator as the next step." }
+    }
+  ]
+}
+</script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
@@ -333,6 +363,77 @@
       <p><strong>Worked example:</strong> A 415 V three-phase motor draws 15 A at PF 0.85. Power = (1.732 × 415 × 15 × 0.85) / 1000 ≈ 9.17 kW. Conversely, a 22 kW heater at 230 V single-phase, PF 1.0, draws I = (22 × 1000) / (230 × 1) ≈ 95.65 A.</p>
 
       <p>Always confirm the actual line voltage and power factor for your installation — nominal voltage can vary regionally, and power factor changes with load type and loading percentage — before using the result to size cables, breakers, or protective devices.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Single-Phase vs Three-Phase Current for the Same kW Load</h3>
+      <p>For an identical real-power load, a three-phase supply always draws less current per conductor than an equivalent single-phase supply at the same voltage, because the power is shared across three current-carrying conductors instead of two. This is the main reason three-phase distribution is preferred for loads above a few kW — it keeps conductor sizes, voltage drop, and I²R losses lower for the same delivered power. The table below compares the current drawn for a few common kW loads at PF 0.9, showing single-phase at 230 V against three-phase at 415 V.</p>
+      <div class="overflow-x-auto my-3">
+        <table class="breakdown-table" style="min-width:480px;">
+          <thead>
+            <tr><th style="text-align:left;">Load</th><th style="text-align:left;">Single-phase (230V, PF 0.9)</th><th>Three-phase (415V, PF 0.9)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align:left;">5 kW</td><td style="text-align:left;">24.2 A</td><td>7.7 A</td></tr>
+            <tr><td style="text-align:left;">10 kW</td><td style="text-align:left;">48.3 A</td><td>15.5 A</td></tr>
+            <tr><td style="text-align:left;">20 kW</td><td style="text-align:left;">96.6 A</td><td>30.9 A</td></tr>
+            <tr><td style="text-align:left;">50 kW</td><td style="text-align:left;">241.5 A</td><td>77.3 A</td></tr>
+            <tr><td style="text-align:left;">100 kW</td><td style="text-align:left;">483.1 A</td><td>154.6 A</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">How Power Factor Changes the Current Drawn</h3>
+      <p>For a fixed kW load, current rises as power factor falls, since the same useful power must now be delivered alongside more reactive current. The table below holds a 10 kW three-phase load at 415 V constant and varies only the power factor, to show how much extra current a poorly corrected load pulls compared with a well-corrected one.</p>
+      <div class="overflow-x-auto my-3">
+        <table class="breakdown-table" style="min-width:420px;">
+          <thead>
+            <tr><th style="text-align:left;">Power Factor</th><th style="text-align:left;">Current for 10 kW at 415V (3-phase)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align:left;">1.00 (unity)</td><td style="text-align:left;">13.9 A</td></tr>
+            <tr><td style="text-align:left;">0.95</td><td style="text-align:left;">14.6 A</td></tr>
+            <tr><td style="text-align:left;">0.85</td><td style="text-align:left;">16.4 A</td></tr>
+            <tr><td style="text-align:left;">0.70</td><td style="text-align:left;">19.9 A</td></tr>
+            <tr><td style="text-align:left;">0.50 (poor)</td><td style="text-align:left;">27.8 A</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Dropping from PF 0.95 to PF 0.5 nearly doubles the current for the exact same 10 kW of useful output — this extra current still has to be carried by the cable, breaker, and transformer, which is why utilities penalize poor power factor and why APFC capacitor banks are installed to correct it (see the APFC Calculator for capacitor sizing).</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Copper Cable Selection Examples</h3>
+      <p>Once the load current is known from the kW-to-current conversion, the next step is picking a copper cable with adequate current-carrying capacity, then checking voltage drop over the actual cable run length. The figures below are typical indicative current ratings for PVC-insulated copper cable in free air or standard tray installation — always confirm against the manufacturer's datasheet and local derating factors for grouping, ambient temperature, and installation method before final selection.</p>
+      <div class="overflow-x-auto my-3">
+        <table class="breakdown-table" style="min-width:460px;">
+          <thead>
+            <tr><th style="text-align:left;">Cable Size (Copper)</th><th style="text-align:left;">Typical Current Rating</th><th>Suggested Use Case</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align:left;">2.5 mm²</td><td style="text-align:left;">~20–24 A</td><td>Lighting, small sockets</td></tr>
+            <tr><td style="text-align:left;">4 mm²</td><td style="text-align:left;">~28–32 A</td><td>Small motors, power sockets</td></tr>
+            <tr><td style="text-align:left;">10 mm²</td><td style="text-align:left;">~45–55 A</td><td>Small three-phase motors</td></tr>
+            <tr><td style="text-align:left;">25 mm²</td><td style="text-align:left;">~75–95 A</td><td>Sub-panel feeders</td></tr>
+            <tr><td style="text-align:left;">70 mm²</td><td style="text-align:left;">~150–180 A</td><td>Main distribution feeders</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>For example, a three-phase motor load calculated at roughly 60 A would typically call for at least a 16–25 mm² copper cable, subject to run length, grouping, and ambient derating, plus applying a standard safety margin (often 25% above full-load current, per local code) before finalizing the choice.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Typical Motor Current Chart</h3>
+      <p>Motor nameplates almost always list full-load current (FLA) directly, but when only the kW rating is available, the current can be estimated using the three-phase formula with an assumed motor efficiency and power factor (typically PF 0.8–0.88 and efficiency 88–93% for standard induction motors). The chart below gives typical full-load current at 415 V three-phase for common motor sizes, assuming PF 0.85.</p>
+      <div class="overflow-x-auto my-3">
+        <table class="breakdown-table" style="min-width:420px;">
+          <thead>
+            <tr><th style="text-align:left;">Motor Rating</th><th style="text-align:left;">Approx. FLA at 415V, PF 0.85</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align:left;">1.5 kW (2 HP)</td><td style="text-align:left;">~3.0 A</td></tr>
+            <tr><td style="text-align:left;">3.7 kW (5 HP)</td><td style="text-align:left;">~7.3 A</td></tr>
+            <tr><td style="text-align:left;">7.5 kW (10 HP)</td><td style="text-align:left;">~14.8 A</td></tr>
+            <tr><td style="text-align:left;">18.5 kW (25 HP)</td><td style="text-align:left;">~36.4 A</td></tr>
+            <tr><td style="text-align:left;">37 kW (50 HP)</td><td style="text-align:left;">~72.8 A</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs text-gray-400">Actual FLA varies by manufacturer and motor efficiency class (IE2/IE3/IE4) — always use the nameplate FLA where available; treat this chart as an estimation aid only.</p>
     </div>
   </div>
 </section>

@@ -10,6 +10,36 @@
 <meta name="description" content="Free kVA to kW and kW to kVA calculator. Convert apparent power to real power and back using power factor, with formula and worked example.">
 <link rel="canonical" href="https://www.electromechcalc.com/kw-kva.html">
 <link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Structured data: FAQPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between kVA and kW?",
+      "acceptedAnswer": { "@type": "Answer", "text": "kVA (kilovolt-amps) is apparent power — the total power supplied to a circuit. kW (kilowatts) is real power — the portion of that supply actually converted into useful work such as heat, light, or motion. The difference between them is reactive power, which is needed by inductive loads but does no useful work itself." }
+    },
+    {
+      "@type": "Question",
+      "name": "What power factor should I use if I don't know the exact value?",
+      "acceptedAnswer": { "@type": "Answer", "text": "0.8 lagging is a widely used industry default for mixed industrial loads and diesel generators when the exact figure isn't available. However, always check the equipment nameplate first — resistive loads like heaters run near 1.0 PF, while motor-heavy loads can run as low as 0.6–0.7 without power factor correction." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does a generator's kVA rating matter more than its kW rating?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A generator's alternator windings are current-limited, so its fundamental rating is in kVA. The kW it can actually deliver depends on the connected load's power factor, which is why manufacturers publish both figures — typically kVA at 0.8 PF as the reference kW rating." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I improve a low power factor to reduce my kVA requirement?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Installing APFC (Automatic Power Factor Correction) capacitor banks raises the power factor closer to 1, which reduces the kVA drawn for the same kW load, lowers electricity bills where utilities penalize low PF, and frees up transformer and cable capacity. Use the APFC Capacitor Calculator to size a correction bank for your load." }
+    }
+  ]
+}
+</script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
@@ -268,6 +298,56 @@
       <p><strong>Worked example:</strong> Suppose a generator is rated at 125 kVA with a power factor of 0.8. The real power it can deliver is kW = 125 × 0.8 = 100 kW. Conversely, if a facility's measured real power demand is 100 kW at the same 0.8 power factor, the equivalent apparent power demand is kVA = 100 ÷ 0.8 = 125 kVA — the figure used to confirm the generator or transformer has enough capacity to serve that load.</p>
 
       <p>As with any sizing calculation, always cross-check the power factor against the actual nameplate or measured value for your load rather than assuming a generic 0.8, since a wrong PF can lead to an undersized or oversized selection.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">kW to kVA at Different Power Factors</h3>
+      <p>Because kVA = kW ÷ PF, the same real-power load requires progressively more apparent power capacity as power factor worsens. The table below holds a 100 kW load constant and shows how the equivalent kVA requirement changes across a range of power factors — a useful reference when checking whether an existing generator or transformer has enough headroom for a load whose PF has drifted lower than originally assumed.</p>
+      <div class="overflow-x-auto my-3">
+        <table class="breakdown-table" style="min-width:420px;">
+          <thead>
+            <tr><th style="text-align:left;">Power Factor</th><th style="text-align:left;">Equivalent kVA for 100 kW Load</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align:left;">1.00 (unity)</td><td style="text-align:left;">100.0 kVA</td></tr>
+            <tr><td style="text-align:left;">0.95</td><td style="text-align:left;">105.3 kVA</td></tr>
+            <tr><td style="text-align:left;">0.90</td><td style="text-align:left;">111.1 kVA</td></tr>
+            <tr><td style="text-align:left;">0.80</td><td style="text-align:left;">125.0 kVA</td></tr>
+            <tr><td style="text-align:left;">0.70</td><td style="text-align:left;">142.9 kVA</td></tr>
+            <tr><td style="text-align:left;">0.60</td><td style="text-align:left;">166.7 kVA</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Common Power Factor Values by Load Type</h3>
+      <p>Power factor varies significantly by the type of equipment connected, and using a realistic figure for the load in question gives a far more accurate kVA-kW conversion than a generic assumption. The table below lists typical uncorrected power factor ranges for common load categories.</p>
+      <div class="overflow-x-auto my-3">
+        <table class="breakdown-table" style="min-width:460px;">
+          <thead>
+            <tr><th style="text-align:left;">Load Type</th><th style="text-align:left;">Typical PF (uncorrected)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align:left;">Incandescent/resistive heating</td><td style="text-align:left;">0.95 – 1.0</td></tr>
+            <tr><td style="text-align:left;">LED lighting (with driver)</td><td style="text-align:left;">0.9 – 0.95</td></tr>
+            <tr><td style="text-align:left;">Induction motors (loaded)</td><td style="text-align:left;">0.8 – 0.88</td></tr>
+            <tr><td style="text-align:left;">Induction motors (lightly loaded)</td><td style="text-align:left;">0.5 – 0.7</td></tr>
+            <tr><td style="text-align:left;">Welding equipment</td><td style="text-align:left;">0.4 – 0.6</td></tr>
+            <tr><td style="text-align:left;">Diesel generator (typical rating basis)</td><td style="text-align:left;">0.8</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Generator Sizing Example</h3>
+      <p>A plant needs to run a mixed load of 80 kW at an estimated PF of 0.85. The required generator kVA capacity is kVA = 80 ÷ 0.85 ≈ 94.1 kVA. Rounding up to the nearest standard size and adding a margin for motor starting current, a 125 kVA (100 kW at 0.8 PF) generator would be a sensible practical choice rather than one sized to the bare 94.1 kVA calculated figure, since standard DG sets are manufactured in fixed size steps and headroom protects against starting surges and future load additions.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Transformer Sizing Example</h3>
+      <p>A facility's connected real-power demand is estimated at 315 kW at an assumed PF of 0.9. The transformer must be sized in kVA, since that is the current-limited rating on its nameplate: kVA = 315 ÷ 0.9 = 350 kVA — a standard distribution transformer size. If the same load's PF were only 0.75 instead (say, due to uncorrected motor loads), the requirement would jump to kVA = 315 ÷ 0.75 = 420 kVA, a full size class higher — which is exactly why power factor correction is often more economical than buying a larger transformer.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Industrial Applications</h3>
+      <ul class="list-disc pl-5 space-y-1">
+        <li><strong>UPS and data centre sizing.</strong> UPS systems are rated in kVA; IT load in kW must be divided by the expected PF (often 0.9–0.95 for modern server power supplies) to determine the correct UPS kVA capacity.</li>
+        <li><strong>Utility demand billing.</strong> Many utilities bill industrial and commercial consumers partly on kVA demand, so understanding the kW-kVA-PF relationship helps a plant manager see how power factor correction directly reduces the billed demand.</li>
+        <li><strong>Standby and prime power generator selection.</strong> Genset dealers quote both kVA and kW (at 0.8 PF); converting the actual site load's kW to kVA at its real PF is essential to avoid under- or over-specifying the generator.</li>
+        <li><strong>Panel and switchboard capacity planning.</strong> When adding new kW loads to an existing panel, converting to kVA at the relevant PF shows whether the upstream transformer and incoming breaker still have sufficient apparent-power headroom.</li>
+      </ul>
     </div>
   </div>
 </section>
