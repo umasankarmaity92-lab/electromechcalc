@@ -82,6 +82,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // ---------------------------------------------------------------------
+  // Scroll reveal — any element with class="reveal-on-scroll" (see
+  // theme.css) fades/slides in once it enters the viewport. Uses
+  // IntersectionObserver so it costs nothing until elements are near
+  // the viewport, and unobserves after reveal (one-shot, no re-hide
+  // on scroll back up).
+  // ---------------------------------------------------------------------
+  const revealEls = document.querySelectorAll(".reveal-on-scroll");
+  if (revealEls.length) {
+    if (window.IntersectionObserver) {
+      const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" });
+
+      revealEls.forEach(el => revealObserver.observe(el));
+    } else {
+      // No IntersectionObserver support — just show everything.
+      revealEls.forEach(el => el.classList.add("active"));
+    }
+  }
+
   // Mobile menu
   const menuToggle = document.getElementById("menuToggle");
   const mobileNav = document.getElementById("mobileNav");
