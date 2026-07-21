@@ -44,7 +44,7 @@ class InsertBefore {
 // user with a saved or OS "dark" preference sees a flash of the light
 // theme on every single page load before JS catches up. Mirrors the
 // same localStorage key / matchMedia fallback that site-nav.js uses.
-const EARLY_THEME_SCRIPT = `<script>(function(){try{var t=localStorage.getItem("emc-theme")||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark-theme":"light-theme");document.documentElement.classList.add(t);}catch(e){}})();</script>`;
+const EARLY_THEME_SCRIPT = `<script>(function(){try{var t=localStorage.getItem("emc-theme")||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark-theme":"light-theme");var r=document.documentElement;r.classList.remove("dark-theme","light-theme");r.classList.add(t);}catch(e){}})();</script>`;
 
 class PrependToHead {
   element(element) {
@@ -93,19 +93,19 @@ function buildRelatedCalculatorsHTML(pathname, index) {
   const cards = picks
     .map(
       (e) => `
-      <a href="${escapeHTML(e.url)}" class="calc-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-2">
-        <h3 class="font-display font-semibold text-sm text-brandDark">${escapeHTML(e.title)}</h3>
-        <span class="text-xs text-gray-500">${escapeHTML(e.category || "")}</span>
+      <a href="${escapeHTML(e.url)}" class="calc-card related-calc-card rounded-xl shadow-sm p-5 flex flex-col gap-2">
+        <h3 class="font-display font-semibold text-sm related-calc-title">${escapeHTML(e.title)}</h3>
+        <span class="text-xs related-calc-category">${escapeHTML(e.category || "")}</span>
       </a>`
     )
     .join("");
 
   return `
 <section class="related-calc-section max-w-6xl mx-auto px-4 py-12">
-  <div class="flex items-end justify-between flex-wrap gap-3 border-b border-gray-200 pb-4 mb-8">
+  <div class="flex items-end justify-between flex-wrap gap-3 border-b related-calc-header pb-4 mb-8">
     <div>
       <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">You Might Also Need</span>
-      <h2 class="text-xl md:text-2xl font-display font-bold text-brandDark">Related Calculators</h2>
+      <h2 class="text-xl md:text-2xl font-display font-bold related-calc-heading">Related Calculators</h2>
     </div>
   </div>
   <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">${cards}

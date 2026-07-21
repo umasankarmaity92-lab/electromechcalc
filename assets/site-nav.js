@@ -28,7 +28,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const sunIcons = document.querySelectorAll(".themeIconSun");
 
   function applyTheme(theme) {
+    document.documentElement.classList.remove("dark-theme", "light-theme");
     body.classList.remove("dark-theme", "light-theme");
+    document.documentElement.classList.add(theme);
     body.classList.add(theme);
 
     const dark = theme === "dark-theme";
