@@ -13,6 +13,12 @@
 // on every page, this needs ZERO per-page edits — add/remove/re-tag
 // a calculator in search-index.json and every page's related-widget
 // updates automatically.
+//
+// ALSO injects a breadcrumb (Home / Category / Page Title) into
+// <div id="breadcrumb"></div>, sourced from the same
+// /search-index.json entry — zero per-page edits here either.
+// Renders nothing on the homepage or on pages missing from the
+// index (so the empty placeholder div just collapses).
 
 class InjectHTML {
   constructor(html) {
@@ -113,6 +119,40 @@ function buildRelatedCalculatorsHTML(pathname, index) {
 </section>`;
 }
 
+// Builds the breadcrumb HTML block for the current page from the
+// same /search-index.json used by search and Related Calculators.
+// Returns "" (nothing gets injected, div stays empty) for:
+//   - the homepage (/ or /index.html)
+//   - any URL not found in search-index.json (e.g. a 404)
+function buildBreadcrumbHTML(pathname, index) {
+  if (!Array.isArray(index) || !index.length) return "";
+
+  const normalize = (p) => "/" + p.replace(/^\/+/, "").replace(/\/+$/, "");
+  const currentPath = normalize(pathname);
+
+  if (currentPath === "/index.html" || currentPath === "/") return "";
+
+  const current = index.find((entry) => normalize(entry.url) === currentPath);
+  if (!current) return "";
+
+  const crumbs = [`<a href="/index.html">Home</a>`];
+
+  // "General" pages (About, Contact, Privacy, etc.) skip the category
+  // segment since it isn't a real nav dropdown — go straight to the
+  // page title.
+  if (current.category && current.category !== "General") {
+    crumbs.push(
+      `<span class="breadcrumb-sep">/</span><span>${escapeHTML(current.category)}</span>`
+    );
+  }
+
+  crumbs.push(
+    `<span class="breadcrumb-sep">/</span><span class="breadcrumb-current">${escapeHTML(current.title)}</span>`
+  );
+
+  return `<nav class="breadcrumb-nav" aria-label="Breadcrumb">${crumbs.join("")}</nav>`;
+}
+
 export async function onRequest(context) {
   const response = await context.next();
 
@@ -149,10 +189,12 @@ export async function onRequest(context) {
   }
 
   const relatedHTML = buildRelatedCalculatorsHTML(url.pathname, searchIndex);
+  const breadcrumbHTML = buildBreadcrumbHTML(url.pathname, searchIndex);
 
   return new HTMLRewriter()
     .on("head", new PrependToHead())
     .on("#site-header", new InjectHTML(headerHTML))
+    .on("#breadcrumb", new InjectHTML(breadcrumbHTML))
     .on("#site-footer", new InsertBefore(relatedHTML))
     .on("#site-footer", new InjectHTML(footerHTML))
     .transform(response);
