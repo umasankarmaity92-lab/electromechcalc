@@ -219,6 +219,14 @@ details[open] summary ~ * { animation: detailsSweep .3s ease-in-out; }
   border-radius: 10px;
   box-shadow: 0 14px 30px rgba(11,18,32,0.25);
   z-index: 60;
+  /* Panel is position:absolute with no cap on its own height, so on
+     shorter viewports a long list (e.g. Electrical's 13 links) simply
+     ran past the bottom of the screen with no way to reach the rest —
+     it isn't clipped by any ancestor's overflow, it's just rendered
+     off-screen. Cap it to the remaining viewport height below the
+     header and let it scroll internally instead. */
+  max-height: calc(100vh - var(--header-height, 96px) - 24px);
+  overflow-y: auto;
 }
 
 .nav-dropdown-link {
@@ -634,7 +642,15 @@ body {
     top: 100%;
     left: 0;
     right: 0;
-    height: 100vh;
+    /* Was height:100vh. Since this box starts at top:100% (i.e. already
+       pushed down by the header's own height), a full 100vh box extends
+       that same amount past the bottom of the actual viewport. Content
+       inside that overhang isn't reachable: body scroll is locked while
+       the menu is open (see site-nav.js), and overflow-y:auto here only
+       scrolls once content exceeds the BOX's height, not once content
+       exceeds the visible viewport. Sizing the box to the visible area
+       makes the internal scrollbar cover all the content instead. */
+    height: calc(100vh - var(--header-height, 148px));
     overflow-y: auto;
     background: #0b0e14 !important;
     z-index: 100;
