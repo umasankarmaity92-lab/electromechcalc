@@ -122,16 +122,31 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---------------------------------------------------------------------
-  // Active link highlighting (desktop dropdown links + mobile submenu)
+  // Active link highlighting (all top-level + dropdown + mobile nav links)
+  //
+  // Normalizes "/" and "/index.html" to the same value so the Home link
+  // (which lives outside the dropdown markup) is matched too, not just
+  // .nav-dropdown-link / .mobile-sublink items.
   // ---------------------------------------------------------------------
-  const currentPath = location.pathname.replace(/\/+$/, "") || "/index.html";
-  document.querySelectorAll(".nav-dropdown-link, .mobile-sublink").forEach(link => {
-    const linkPath = link.getAttribute("href").replace(/\/+$/, "");
-    if (linkPath === currentPath) {
-      link.classList.add("active");
-      link.setAttribute("aria-current", "page");
-    }
-  });
+  const normalizePath = path => {
+    const trimmed = path.replace(/\/+$/, "") || "/";
+    return trimmed === "/" ? "/index.html" : trimmed;
+  };
+  const currentPath = normalizePath(location.pathname);
+
+  document
+    .querySelectorAll(".nav-link, .nav-dropdown-link, .mobile-link, .mobile-sublink")
+    .forEach(link => {
+      const href = link.getAttribute("href");
+      // Skip empty/hash/external/protocol-relative links — only compare
+      // same-site page paths.
+      if (!href || href.startsWith("#") || /^([a-z]+:)?\/\//i.test(href)) return;
+
+      if (normalizePath(href) === currentPath) {
+        link.classList.add("active");
+        link.setAttribute("aria-current", "page");
+      }
+    });
 
   // ---------------------------------------------------------------------
   // Desktop nav dropdowns (Electrical / Mechanical / Financial)
@@ -224,6 +239,11 @@ document.addEventListener("DOMContentLoaded", () => {
           })
           .catch(err => {
             console.error("Search index failed to load:", err);
+            // Don't leave a failed fetch cached forever — clear the
+            // promise so the NEXT search attempt retries the fetch
+            // instead of getting stuck on an empty [] result for the
+            // rest of the page's lifetime.
+            searchIndexPromise = null;
             return [];
           });
       }
