@@ -463,7 +463,7 @@
 
       <p>Once the recommended VA is known, this calculator also matches it against the common commercial inverter sizes sold in the market — 650, 850, 1100, 1600, 2000 (2 kVA), 3000, 3500, 5000, 7500, and 10,000 VA — and suggests the smallest standard size that comfortably covers your calculated requirement, since inverters are rarely sold in arbitrary VA ratings.</p>
 
-      <p><span class="font-semibold text-brandDark">Worked example:</span> A home with 1,100 W of continuous load (lights, fans, TV, router) at a 0.8 power factor needs 1,100 ÷ 0.8 = 1,375 VA. Adding a 25% safety margin: 1,375 × 1.25 ≈ 1,719 VA, so a 2 kVA inverter would be selected. If the highest motor load is a 200 W fridge compressor with a 3x surge multiplier, the surge requirement is 200 × 3 = 600 W — comfortably within a 2 kVA inverter's surge capability, which is typically rated well above its continuous VA.</p>
+      <p><span class="font-semibold text-brandDark">Worked example:</span> A home with 1,100 W of continuous load (lights, fans, TV, router) at a 0.8 power factor needs 1,100 ÷ 0.8 = 1,375 VA. Adding a 25% safety margin: 1,375 × 1.25 ≈ 1,719 VA, so the nearest standard size — 1800 VA (1.8 kVA) — would be selected. If the highest motor load is a 200 W fridge compressor with a 3x surge multiplier, the surge requirement is 200 × 3 = 600 W — comfortably within a 1.8 kVA inverter's surge capability, which is typically rated well above its continuous VA.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Continuous VA vs Surge VA: Why Both Matter</h3>
       <p>An inverter's continuous VA rating tells you how much steady-state load it can supply indefinitely, while its surge rating — usually a separate, higher figure specified by the manufacturer — tells you how much it can briefly deliver during a motor's start-up inrush. These two specifications are checked against completely different parts of your load: continuous VA is checked against the sum of everything running at once, while surge is checked against only the single largest motor-driven appliance's start-up demand, since motors rarely all start at the exact same instant. Sizing only for continuous VA and ignoring surge is one of the most common reasons a seemingly well-sized inverter still trips when a fridge or pump compressor kicks in.</p>
@@ -683,27 +683,43 @@
     // Nearest standard commercial inverter size for the CONTINUOUS VA requirement only —
     // surge is a separate manufacturer spec (typically ~2x rated VA for a few seconds)
     // and is not the same quantity as continuous VA, so it is checked independently below.
-    const suggestedSize = standardSizes.find(s => s >= recommendedVA) || standardSizes[standardSizes.length - 1];
+    // If the requirement exceeds the largest listed standard size, do NOT silently fall
+    // back to that (undersized) largest entry — flag it as out of range instead.
+    const maxStandardSize = standardSizes[standardSizes.length - 1];
+    const outOfRange = recommendedVA > maxStandardSize;
+    const suggestedSize = outOfRange ? null : standardSizes.find(s => s >= recommendedVA);
 
-    document.getElementById('rRecommended').textContent = (suggestedSize/1000).toFixed(suggestedSize % 1000 === 0 ? 1 : 2) + ' kVA';
-    document.getElementById('rRecommendedKva').textContent = 'Nearest standard commercial rating';
+    if (outOfRange){
+      document.getElementById('rRecommended').textContent = (recommendedVA/1000).toFixed(2) + ' kVA';
+      document.getElementById('rRecommendedKva').textContent = `Exceeds largest standard single-unit size (${(maxStandardSize/1000).toFixed(0)} kVA) — needs a custom/industrial rating or multiple inverters in parallel.`;
+    } else {
+      document.getElementById('rRecommended').textContent = (suggestedSize/1000).toFixed(suggestedSize % 1000 === 0 ? 1 : 2) + ' kVA';
+      document.getElementById('rRecommendedKva').textContent = 'Nearest standard commercial rating';
+    }
     document.getElementById('rApparent').textContent = (recommendedVA / 1000).toFixed(2) + ' kVA';
     document.getElementById('rSurge').textContent = Math.round(surgeRequirement).toLocaleString('en-IN') + ' W';
     document.getElementById('rLoadKw').textContent = kw.toFixed(2) + ' kW';
     document.getElementById('rAmp').textContent = amp.toFixed(2) + ' A';
     document.getElementById('rBatteryInput').textContent = Math.round(batteryInputWatts).toLocaleString('en-IN') + ' W';
-    document.getElementById('rBatteryVoltage').textContent = minBatteryVoltage(suggestedSize);
+    document.getElementById('rBatteryVoltage').textContent = outOfRange ? '48V (bank)' : minBatteryVoltage(suggestedSize);
 
-    document.getElementById('rStandardSize').textContent =
-      `Choose a ${suggestedSize.toLocaleString('en-IN')} VA (${(suggestedSize/1000).toFixed(suggestedSize % 1000 === 0 ? 1 : 2)} kVA) inverter for the ${Math.round(recommendedVA).toLocaleString('en-IN')} VA continuous requirement — the smallest standard commercial rating that covers it. Verify the manufacturer's surge/peak rating separately against your ${Math.round(surgeRequirement).toLocaleString('en-IN')} W surge load, since surge capacity is a distinct spec from continuous VA.`;
+    if (outOfRange){
+      document.getElementById('rStandardSize').textContent =
+        `Your ${Math.round(recommendedVA).toLocaleString('en-IN')} VA continuous requirement exceeds the largest single standard inverter (${maxStandardSize.toLocaleString('en-IN')} VA). At this scale, use paralleled inverter units or a custom/industrial-rated inverter-charger sized by the manufacturer — a single off-the-shelf unit will not cover this load.`;
+    } else {
+      document.getElementById('rStandardSize').textContent =
+        `Choose a ${suggestedSize.toLocaleString('en-IN')} VA (${(suggestedSize/1000).toFixed(suggestedSize % 1000 === 0 ? 1 : 2)} kVA) inverter for the ${Math.round(recommendedVA).toLocaleString('en-IN')} VA continuous requirement — the smallest standard commercial rating that covers it. Verify the manufacturer's surge/peak rating separately against your ${Math.round(surgeRequirement).toLocaleString('en-IN')} W surge load, since surge capacity is a distinct spec from continuous VA.`;
+    }
 
     // Assume a typical inverter can surge to roughly 2x its continuous VA rating for a
     // few seconds — flag it if the calculated surge load exceeds that rough envelope.
     const surgeWarningBox = document.getElementById('surgeWarningBox');
-    const assumedSurgeCapability = suggestedSize * 2;
+    const assumedSurgeCapability = (outOfRange ? maxStandardSize : suggestedSize) * 2;
     if (surgeRequirement > assumedSurgeCapability){
       surgeWarningBox.classList.remove('hidden');
-      surgeWarningBox.textContent = `Your ${Math.round(surgeRequirement).toLocaleString('en-IN')} W surge load likely exceeds what a ${suggestedSize.toLocaleString('en-IN')} VA inverter can deliver (typical surge capability is roughly 2× continuous VA). Check the manufacturer's peak/surge rating and consider a larger inverter for this motor load.`;
+      surgeWarningBox.textContent = outOfRange
+        ? `Your ${Math.round(surgeRequirement).toLocaleString('en-IN')} W surge load also exceeds what the largest standard single unit (${maxStandardSize.toLocaleString('en-IN')} VA) can deliver — this load needs custom/industrial sizing for both continuous and surge capacity.`
+        : `Your ${Math.round(surgeRequirement).toLocaleString('en-IN')} W surge load likely exceeds what a ${suggestedSize.toLocaleString('en-IN')} VA inverter can deliver (typical surge capability is roughly 2× continuous VA). Check the manufacturer's peak/surge rating and consider a larger inverter for this motor load.`;
     } else {
       surgeWarningBox.classList.add('hidden');
       surgeWarningBox.textContent = '';
