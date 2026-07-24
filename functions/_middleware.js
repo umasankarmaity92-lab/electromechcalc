@@ -153,6 +153,39 @@ function buildBreadcrumbHTML(pathname, index) {
   return `<nav class="breadcrumb-nav" aria-label="Breadcrumb">${crumbs.join("")}</nav>`;
 }
 
+// Fetches /search-index.json through Cloudflare's edge Cache API so
+// that, within a given edge location, the ~500-page index is fetched
+// and parsed from ASSETS at most once every CACHE_TTL_SECONDS instead
+// of on every single HTML request. Falls back to a direct ASSETS
+// fetch (uncached) if caches.default isn't available for some reason
+// (e.g. certain local dev environments).
+const SEARCH_INDEX_CACHE_TTL_SECONDS = 300; // 5 minutes
+
+async function getSearchIndexResponse(context, origin) {
+  const indexURL = new URL("/search-index.json", origin);
+
+  if (typeof caches === "undefined" || !caches.default) {
+    return context.env.ASSETS.fetch(indexURL);
+  }
+
+  const cache = caches.default;
+  const cacheKey = new Request(indexURL.toString());
+
+  let response = await cache.match(cacheKey);
+  if (response) return response;
+
+  response = await context.env.ASSETS.fetch(cacheKey);
+  if (response.ok) {
+    // Clone before caching — a Response body can only be read once,
+    // and we still need to read it below (as .json()) after this.
+    const cached = new Response(response.body, response);
+    cached.headers.set("Cache-Control", `s-maxage=${SEARCH_INDEX_CACHE_TTL_SECONDS}`);
+    context.waitUntil(cache.put(cacheKey, cached.clone()));
+    response = cached;
+  }
+  return response;
+}
+
 export async function onRequest(context) {
   const response = await context.next();
 
@@ -166,7 +199,7 @@ export async function onRequest(context) {
   const [headerRes, footerRes, searchIndexRes] = await Promise.all([
     context.env.ASSETS.fetch(new URL("/partials/header.html", url.origin)),
     context.env.ASSETS.fetch(new URL("/partials/footer.html", url.origin)),
-    context.env.ASSETS.fetch(new URL("/search-index.json", url.origin)),
+    getSearchIndexResponse(context, url.origin),
   ]);
 
   // If the partial fetch itself failed (404/500/etc.), don't inject its
