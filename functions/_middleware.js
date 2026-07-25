@@ -150,19 +150,19 @@ function buildBreadcrumbHTML(pathname, index) {
   const current = index.find((entry) => normalizePath(entry.url) === currentPath);
   if (!current) return "";
 
-  const crumbs = [`<a href="/index.html" style="color:#0284c7;font-weight:600;text-decoration:none;">Home</a>`];
+  const crumbs = [`<a href="/index.html" class="breadcrumb-home">Home</a>`];
 
   // "General" pages (About, Contact, Privacy, etc.) skip the category
   // segment since it isn't a real nav dropdown — go straight to the
   // page title.
   if (current.category && current.category !== "General") {
     crumbs.push(
-      `<span class="breadcrumb-sep" style="color:#0ea5e9;font-weight:700;margin:0 4px;">&rarr;</span><span style="color:#475569;font-weight:500;">${escapeHTML(current.category)}</span>`
+      `<span class="breadcrumb-sep">&rarr;</span><span class="breadcrumb-category">${escapeHTML(current.category)}</span>`
     );
   }
 
   crumbs.push(
-    `<span class="breadcrumb-sep" style="color:#0ea5e9;font-weight:700;margin:0 4px;">&rarr;</span><span class="breadcrumb-current" style="color:#0B1220;font-weight:700;">${escapeHTML(current.title)}</span>`
+    `<span class="breadcrumb-sep">&rarr;</span><span class="breadcrumb-current">${escapeHTML(current.title)}</span>`
   );
 
   return `<!-- BREADCRUMB_BUILD_v2 --><nav class="breadcrumb-nav" aria-label="Breadcrumb">${crumbs.join("")}</nav>`;
