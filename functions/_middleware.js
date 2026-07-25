@@ -157,12 +157,12 @@ function buildBreadcrumbHTML(pathname, index) {
   // page title.
   if (current.category && current.category !== "General") {
     crumbs.push(
-      `<span class="breadcrumb-sep">&rarr;</span><span class="breadcrumb-category">${escapeHTML(current.category)}</span>`
+      `<span class="breadcrumb-sep" style="color:#0ea5e9 !important;">&rarr;</span><span class="breadcrumb-category">${escapeHTML(current.category)}</span>`
     );
   }
 
   crumbs.push(
-    `<span class="breadcrumb-sep">&rarr;</span><span class="breadcrumb-current">${escapeHTML(current.title)}</span>`
+    `<span class="breadcrumb-sep" style="color:#0ea5e9 !important;">&rarr;</span><span class="breadcrumb-current">${escapeHTML(current.title)}</span>`
   );
 
   return `<!-- BREADCRUMB_BUILD_v2 --><nav class="breadcrumb-nav" aria-label="Breadcrumb">${crumbs.join("")}</nav>`;
