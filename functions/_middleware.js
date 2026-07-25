@@ -58,6 +58,20 @@ class PrependToHead {
   }
 }
 
+// Normalizes a URL path for matching against search-index.json entries.
+// Strips leading/trailing slashes AND the .html extension, and folds
+// "/index" down to "/", so that:
+//   - Cloudflare Pages' live request pathname (which has .html
+//     stripped by its automatic clean-URL redirect, e.g. "/apfc")
+//   - search-index.json entries (stored with .html, e.g. "/apfc.html")
+// both normalize to the same value ("/apfc") and match correctly.
+function normalizePath(p) {
+  let s = "/" + String(p).replace(/^\/+/, "").replace(/\/+$/, "");
+  s = s.replace(/\.html$/i, "");
+  if (s === "" || s === "/index") s = "/";
+  return s;
+}
+
 function escapeHTML(str) {
   return String(str)
     .replace(/&/g, "&amp;")
@@ -74,11 +88,13 @@ function buildRelatedCalculatorsHTML(pathname, index) {
   if (!Array.isArray(index) || !index.length) return "";
 
   // Normalize: "/transformer-size.html" style matching, tolerant of
-  // trailing slash / missing leading slash differences in the index.
-  const normalize = (p) => "/" + p.replace(/^\/+/, "").replace(/\/+$/, "");
-  const currentPath = normalize(pathname);
+  // trailing slash / missing leading slash differences in the index,
+  // AND tolerant of Cloudflare Pages stripping the .html extension
+  // from the live request URL (search-index.json still stores the
+  // .html form, so without this the two never match).
+  const currentPath = normalizePath(pathname);
 
-  const current = index.find((entry) => normalize(entry.url) === currentPath);
+  const current = index.find((entry) => normalizePath(entry.url) === currentPath);
   if (!current) return ""; // Not a calculator page — don't inject anything.
 
   const MAX_ITEMS = 4;
@@ -127,12 +143,11 @@ function buildRelatedCalculatorsHTML(pathname, index) {
 function buildBreadcrumbHTML(pathname, index) {
   if (!Array.isArray(index) || !index.length) return "";
 
-  const normalize = (p) => "/" + p.replace(/^\/+/, "").replace(/\/+$/, "");
-  const currentPath = normalize(pathname);
+  const currentPath = normalizePath(pathname);
 
-  if (currentPath === "/index.html" || currentPath === "/") return "";
+  if (currentPath === "/") return ""; // homepage — normalizePath already folds "/index.html" to "/"
 
-  const current = index.find((entry) => normalize(entry.url) === currentPath);
+  const current = index.find((entry) => normalizePath(entry.url) === currentPath);
   if (!current) return "";
 
   const crumbs = [`<a href="/index.html">Home</a>`];
