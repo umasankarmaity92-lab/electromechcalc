@@ -150,7 +150,7 @@ function buildBreadcrumbHTML(pathname, index) {
     `<span class="breadcrumb-sep">/</span><span class="breadcrumb-current">${escapeHTML(current.title)}</span>`
   );
 
-  return `<nav class="breadcrumb-nav" aria-label="Breadcrumb">${crumbs.join("")}</nav>`;
+  return `<!-- BREADCRUMB_BUILD_v2 --><nav class="breadcrumb-nav" aria-label="Breadcrumb">${crumbs.join("")}</nav>`;
 }
 
 // Fetches /search-index.json through Cloudflare's edge Cache API so
