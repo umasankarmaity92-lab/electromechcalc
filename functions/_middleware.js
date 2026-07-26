@@ -19,6 +19,13 @@
 // /search-index.json entry — zero per-page edits here either.
 // Renders nothing on the homepage or on pages missing from the
 // index (so the empty placeholder div just collapses).
+//
+// ALSO wraps everything between #site-header and #site-footer in a
+// <main> landmark (opened right after #site-header, closed right
+// before #site-footer, so breadcrumb + page content + Related
+// Calculators all end up inside it). Fixes the "Document does not
+// have a main landmark" accessibility error site-wide — zero
+// per-page edits needed here either.
 
 class InjectHTML {
   constructor(html) {
@@ -39,6 +46,23 @@ class InsertBefore {
   element(element) {
     if (this.html) {
       element.before(this.html, { html: true });
+    }
+  }
+}
+
+// Inserts HTML immediately AFTER the matched element (used to open the
+// <main> landmark right after #site-header, and to close it right
+// before #site-footer via InsertBefore above). Fixes the Lighthouse/
+// axe "Document does not have a main landmark" accessibility error
+// on every page with zero per-page edits — same pattern as the
+// Related Calculators / breadcrumb widgets above.
+class InsertAfter {
+  constructor(html) {
+    this.html = html;
+  }
+  element(element) {
+    if (this.html) {
+      element.after(this.html, { html: true });
     }
   }
 }
@@ -242,8 +266,10 @@ export async function onRequest(context) {
   return new HTMLRewriter()
     .on("head", new PrependToHead())
     .on("#site-header", new InjectHTML(headerHTML))
+    .on("#site-header", new InsertAfter('<main id="main-content">'))
     .on("#breadcrumb", new InjectHTML(breadcrumbHTML))
     .on("#site-footer", new InsertBefore(relatedHTML))
+    .on("#site-footer", new InsertBefore("</main>"))
     .on("#site-footer", new InjectHTML(footerHTML))
     .transform(response);
 }

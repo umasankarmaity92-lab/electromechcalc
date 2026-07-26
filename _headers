@@ -1,2 +1,35 @@
+# Cloudflare Pages _headers file
+# Long-lived, immutable caching for static assets that are safe to
+# cache aggressively (images, compiled CSS/JS). Fixes the PageSpeed
+# Insights "Use efficient cache lifetimes" audit.
+#
+# NOTE: if you ever update /assets/theme.css, /assets/site-nav.js, or
+# /assets/tailwind.min.css *without* changing the filename, browsers
+# and Cloudflare's edge will keep serving the old cached copy for a
+# full year. Either version these filenames on change (e.g.
+# theme.v2.css) or bump them via a cache purge in the Cloudflare
+# dashboard after deploying an update.
+
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/logo.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/favicon.png
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML pages should NOT be cached this aggressively — they're
+# rewritten per-request by _middleware.js (header/footer/breadcrumb/
+# related-calculators), and search-index.json changes should show up
+# without a hard purge. Leave these to Cloudflare Pages' defaults
+# (short/no cache) rather than overriding here.
+
+# search-index.json: kept short (5 min) to match SEARCH_INDEX_CACHE_TTL_SECONDS
+# in _middleware.js, so client-side search (site-nav.js fetch) and the
+# server-side edge Cache API copy go stale at roughly the same time.
 /search-index.json
   Cache-Control: public, max-age=300, s-maxage=300

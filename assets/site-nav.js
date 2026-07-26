@@ -48,7 +48,10 @@ document.addEventListener("DOMContentLoaded", () => {
       playHeroLottie();
     } else {
       const lottieScript = document.createElement("script");
-      lottieScript.src = "https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js";
+      // lottie_light: SVG-renderer-only build (no expressions/interactivity
+      // support we don't use for a simple looping hero animation) — much
+      // smaller download than the full lottie.min.js bundle.
+      lottieScript.src = "https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie_light.min.js";
       lottieScript.onload = playHeroLottie;
       document.head.appendChild(lottieScript);
     }
