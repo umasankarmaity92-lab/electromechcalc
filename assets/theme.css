@@ -547,18 +547,13 @@ body {
   background: var(--bg) !important;
   color: var(--text) !important;
   transition: background-color .25s ease, color .25s ease;
-  /* Fallback used before site-nav.js measures the real header via
-     ResizeObserver. Mobile wraps the search bar onto its own row, so
-     the header is taller there than desktop — a single 96px fallback
-     for both breakpoints caused a visible content jump (CLS) on
-     mobile once JS measured the real, taller height. */
-  padding-top: var(--header-height, 96px);
-}
-
-@media (max-width: 1023.98px) {
-  body {
-    padding-top: var(--header-height, 148px);
-  }
+  /* No padding-top needed: .site-header is position:sticky, so it
+     occupies its own real space in normal document flow on first
+     paint and simply sticks once scrolled. This replaces the old
+     "position:fixed header + JS-measured height pushed onto body"
+     approach, which was a major CLS source — the page rendered with
+     an approximate fallback padding, then jumped once
+     site-nav.js's ResizeObserver corrected it to the real height. */
 }
 
 .site-header {

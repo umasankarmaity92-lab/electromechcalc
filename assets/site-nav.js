@@ -2,11 +2,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const body = document.body;
 
   // -----------------------------------------------------------------------
-  // Header is position:fixed (see partials/header.html). Since it's out of
-  // normal flow, push page content down by its actual rendered height so
-  // nothing sits underneath it. Height varies (search bar wraps to its own
-  // row on mobile), so track it live with ResizeObserver instead of a
-  // fixed px guess.
+  // Header is position:sticky (see partials/header.html), so it already
+  // occupies real space in normal document flow — no page-content push
+  // needed. --header-height is still tracked live via ResizeObserver
+  // purely to size the mobile menu overlay and desktop dropdown-panel
+  // max-height caps in theme.css (both height varies with breakpoint,
+  // since mobile wraps the search bar onto its own row).
   // -----------------------------------------------------------------------
   const siteHeader = document.querySelector(".site-header");
   if (siteHeader) {
