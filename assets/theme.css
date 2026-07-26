@@ -37,9 +37,12 @@ h1, h2, h3, .font-display { font-family: 'Space Grotesk', system-ui, sans-serif;
 
 .feedback-btn { transition: .15s ease; }
 .feedback-btn.selected {
-  background: #0ea5e9;
+  /* was background:#0ea5e9 with white text -> only ~2.77:1, fails
+     AA. var(--accent-contrast) as the background keeps white text
+     readable (~5.9:1) while staying the same brand blue family. */
+  background: var(--accent-contrast);
   color: #fff;
-  border-color: #0ea5e9;
+  border-color: var(--accent-contrast);
 }
 
 .formula-block {
@@ -94,6 +97,22 @@ h1, h2, h3, .font-display { font-family: 'Space Grotesk', system-ui, sans-serif;
 }
 .blog-prose li { margin-bottom: 0.4rem; }
 
+/* Inline links inside article prose had no dedicated rule, so they
+   likely fell back to a plain colored anchor with no underline —
+   distinguishable from surrounding paragraph text by color alone,
+   which fails Lighthouse's "links rely on color" audit. Underline +
+   offset gives a non-color cue too, on top of a contrast-safe color. */
+.blog-prose a,
+.page-prose a {
+  color: var(--accent-contrast);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.blog-prose a:hover,
+.page-prose a:hover {
+  text-decoration-thickness: 2px;
+}
+
 .factor-table {
   width: 100%;
   border-collapse: collapse;
@@ -136,14 +155,18 @@ h1, h2, h3, .font-display { font-family: 'Space Grotesk', system-ui, sans-serif;
   font-weight: 600;
   text-decoration: none;
 }
-.breadcrumb-nav a:hover { color: #0ea5e9 !important; }
+.breadcrumb-nav a:hover { color: var(--accent-contrast) !important; }
 .breadcrumb-nav .breadcrumb-category {
   color: var(--text) !important;
   font-weight: 500;
 }
 .breadcrumb-nav .breadcrumb-sep {
   margin: 0 6px;
-  color: #0ea5e9 !important;
+  /* was #0ea5e9, which is only ~2.77:1 on a light --bg and fails
+     WCAG AA (4.5:1 required). --accent-contrast is a darker shade
+     that passes in light theme while staying the original brand
+     accent in dark theme (see :root / html.dark-theme). */
+  color: var(--accent-contrast) !important;
   font-weight: 700;
   opacity: 1;
 }
@@ -269,11 +292,11 @@ details[open] summary ~ * { animation: detailsSweep .3s ease-in-out; }
 }
 .nav-dropdown-link:hover {
   background: rgba(14,165,233,.10);
-  color: var(--accent);
+  color: var(--accent-contrast);
 }
 .nav-dropdown-link.active {
   background: rgba(14,165,233,.14);
-  color: var(--accent);
+  color: var(--accent-contrast);
   font-weight: 600;
 }
 
@@ -299,12 +322,12 @@ details[open] summary ~ * { animation: detailsSweep .3s ease-in-out; }
 }
 .mobile-sublink:hover {
   background: rgba(14,165,233,.12);
-  color: var(--accent);
+  color: var(--accent-contrast);
   opacity: 1;
 }
 .mobile-sublink.active {
   background: rgba(14,165,233,.14);
-  color: var(--accent);
+  color: var(--accent-contrast);
   font-weight: 600;
   font-size: 18px;
   opacity: 1;
@@ -513,6 +536,15 @@ body.dark-theme .theme-switch-dot { transform: translateX(18px); }
   --nav: #ffffff;
   --nav-text: #111827;
   --accent: #0ea5e9;
+  /* --accent (#0ea5e9) only clears WCAG AA contrast against DARK
+     backgrounds (~6.75:1). Used as literal text color (or as a
+     background under white text) on light surfaces — e.g. the
+     breadcrumb separator, active nav links, .feedback-btn.selected —
+     it drops to ~2.77:1 and fails. --accent-contrast is a darker
+     shade reserved for those text/foreground-on-light cases; --accent
+     itself is left untouched so backgrounds/borders/hover-tints keep
+     their original brand color. */
+  --accent-contrast: #0369a1;
 }
 
 /* html.dark-theme mirrors body.dark-theme's variables. The pre-paint
@@ -530,6 +562,7 @@ html.dark-theme {
   --border: #1f2f47;
   --nav: #111c2e;
   --nav-text: #e2e8f0;
+  --accent-contrast: #0ea5e9;
 }
 
 body.dark-theme {
@@ -541,6 +574,7 @@ body.dark-theme {
   --border: #1f2f47;
   --nav: #111c2e;
   --nav-text: #e2e8f0;
+  --accent-contrast: #0ea5e9;
 }
 
 body {
@@ -574,11 +608,11 @@ body {
 }
 .nav-link:hover, .mobile-link:hover {
   background: rgba(14,165,233,.12);
-  color: var(--accent) !important;
+  color: var(--accent-contrast) !important;
 }
 .nav-link.active, .mobile-link.active {
   background: rgba(14,165,233,.14);
-  color: var(--accent) !important;
+  color: var(--accent-contrast) !important;
   font-weight: 600;
 }
 
