@@ -21,6 +21,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // ---------------------------------------------------------------------
+  // Hero Lottie animation — centralized so every page just needs a
+  // <div id="hero-lottie"></div> in its hero section. Loads the
+  // lottie-web library once (only when a hero-lottie element is
+  // actually present on the page), then plays the shared animation
+  // JSON inside it. Adding the animation to a new page is now a
+  // one-line HTML change — no per-page <script> block needed.
+  // ---------------------------------------------------------------------
+  const heroLottieEl = document.getElementById("hero-lottie");
+  if (heroLottieEl) {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const playHeroLottie = () => {
+      lottie.loadAnimation({
+        container: heroLottieEl,
+        renderer: "svg",
+        loop: true,
+        autoplay: !prefersReducedMotion,
+        path: "/assets/electromechcalc-hero.json"
+      });
+    };
+
+    if (typeof lottie !== "undefined") {
+      playHeroLottie();
+    } else {
+      const lottieScript = document.createElement("script");
+      lottieScript.src = "https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js";
+      lottieScript.onload = playHeroLottie;
+      document.head.appendChild(lottieScript);
+    }
+  }
+
   // Desktop + Mobile toggles
   const toggles = document.querySelectorAll(".themeToggle");
   const labels = document.querySelectorAll(".themeLabel");
