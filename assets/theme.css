@@ -623,7 +623,45 @@ body {
 
 /* Footer intentionally stays dark in both themes — its own
    bg-brandDark / text-gray-400 / text-white classes (set in
-   partials/footer.html) are left alone here on purpose. */
+   partials/footer.html) are left alone here on purpose.
+
+   BUT: the blanket ".text-gray-500 { color: var(--text-2) }" rule
+   above doesn't know that — it still matches any text-gray-500
+   element inside the footer or the other permanently-dark
+   bg-brandDark bar (the "MOST USED:" quick-links strip). In light
+   theme, var(--text-2) resolves to #475569 (a dark slate meant for
+   LIGHT surfaces), so on these permanently-dark backgrounds it
+   rendered as ~2.5:1 contrast — a near-invisible-text accessibility
+   fail (Lighthouse: "insufficient color contrast" on "MOST USED:",
+   the footer tagline/editorial-policy paragraphs, and the copyright
+   bar). Restoring a fixed, dark-bg-safe gray here (same value used
+   for --text-2 in dark theme, ~7.3:1 on these backgrounds) fixes it
+   regardless of which theme the visitor has toggled. */
+.bg-brandDark .text-gray-500, .bg-brandDark .text-gray-600, .bg-brandDark .text-gray-700,
+footer .text-gray-500, footer .text-gray-600, footer .text-gray-700 {
+  color: #94a3b8 !important;
+}
+
+/* text-sky-600 (#0284c7) on white/gray-50 section backgrounds — e.g.
+   the "05 — FAQ" / "06 — ABOUT..." eyebrow labels and the "...
+   editorial team" byline link — measures ~4.1:1, just under the
+   4.5:1 AA threshold. var(--accent-contrast) is the same brand blue
+   family but verified to pass (~5.4:1) on light surfaces; in dark
+   theme it resolves to the brighter #0ea5e9, which also passes. */
+.text-sky-600 { color: var(--accent-contrast) !important; }
+
+/* "Explore Electrical/Mechanical Calculators" CTA buttons: white
+   text on bg-brandBlue measured ~2.77:1 (same underlying color as
+   the --accent contrast issue fixed earlier). Scoped to this
+   specific button combo so other bg-brandBlue uses (non-text,
+   decorative) are untouched. Hover gets its own safe, slightly
+   darker shade so the hover effect isn't lost to !important. */
+.btn-arrow-wrap.bg-brandBlue {
+  background-color: var(--accent-contrast) !important;
+}
+.btn-arrow-wrap.bg-brandBlue:hover {
+  background-color: #075985 !important;
+}
 
 /* ================= HEADER (moved from partials/header.html) =================
    These rules used to live in a <style> block inside header.html, which
