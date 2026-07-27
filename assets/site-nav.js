@@ -35,6 +35,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const playHeroLottie = () => {
+      // Clear the static SVG poster right before Lottie takes over the
+      // container, so there's no double-render flash.
+      heroLottieEl.innerHTML = "";
       lottie.loadAnimation({
         container: heroLottieEl,
         renderer: "svg",
@@ -44,9 +47,11 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     };
 
-    if (typeof lottie !== "undefined") {
-      playHeroLottie();
-    } else {
+    const loadLottieScript = () => {
+      if (typeof lottie !== "undefined") {
+        playHeroLottie();
+        return;
+      }
       const lottieScript = document.createElement("script");
       // lottie_light: SVG-renderer-only build (no expressions/interactivity
       // support we don't use for a simple looping hero animation) — much
@@ -54,6 +59,19 @@ document.addEventListener("DOMContentLoaded", () => {
       lottieScript.src = "https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie_light.min.js";
       lottieScript.onload = playHeroLottie;
       document.head.appendChild(lottieScript);
+    };
+
+    // A static SVG poster is already painted inside #hero-lottie by the
+    // server-rendered HTML, so it's safe to push the real animation off
+    // the critical path entirely — start it once the browser is idle
+    // (falls back to window "load" on browsers without
+    // requestIdleCallback, e.g. Safari) instead of on DOMContentLoaded.
+    // This stops the CDN script fetch + JSON fetch chain from competing
+    // with LCP-critical resources on first paint.
+    if (window.requestIdleCallback) {
+      requestIdleCallback(loadLottieScript, { timeout: 3000 });
+    } else {
+      window.addEventListener("load", loadLottieScript);
     }
   }
 
