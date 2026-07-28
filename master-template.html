@@ -1,3 +1,58 @@
+<!--
+  NEW-PAGE PUBLISHING CHECKLIST — do all of these for every new
+  calculator page, not just filling in this template:
+
+  0. FOLDER-BY-CATEGORY STRUCTURE (current standard, going forward):
+     every new calculator lives under its category folder, and the
+     LIVE URL now includes that folder — this is a deliberate change
+     from older pages (transformer-size, bearing-life, etc.) which
+     still sit flat at the root. Do not move/rewrite old pages just
+     to match this; this checklist is for NEW pages only.
+       electrical  -> /electrical/<slug>
+       mechanical  -> /mechanical/<slug>
+       financial   -> /financial/<slug>
+     {{PAGE_CATEGORY}} = one of electrical | mechanical | financial
+     (no slashes, lowercase). {{PAGE_SLUG}} = extensionless slug only
+     (e.g. "cable-derating"), no category prefix, no ".html" anywhere.
+  1. Fill in every {{PLACEHOLDER}} below, including {{PAGE_CATEGORY}}
+     and {{PAGE_SLUG}}.
+  2. Save the actual file as <category>/<slug>.html on disk (e.g.
+     electrical/cable-derating.html) — the source FILE keeps the
+     .html extension and lives inside its category folder. Only the
+     URLs inside it (canonical/og:url/JSON-LD) and everywhere else
+     must be extensionless. Cloudflare Pages serves it at
+     /<category>/<slug> and 308-redirects /<category>/<slug>.html ->
+     /<category>/<slug> automatically, same as it always has.
+  3. Add one entry to sitemap.xml:
+       <url><loc>https://www.electromechcalc.com/<category>/<slug></loc></url>
+     (extensionless — no .html)
+  4. Add one entry to search-index.json (or just re-run
+     build-search-index.js, which now emits extensionless urls):
+       { "title": "...", "url": "/<category>/<slug>", "category": "...", "keywords": "..." }
+     This one entry is also what feeds the breadcrumb + Related
+     Calculators widget for the new page automatically — no
+     _middleware.js edit needed FOR THIS PART. But: if
+     _middleware.js's breadcrumb logic parses the URL path itself
+     (rather than only reading the "category" field from this JSON
+     entry), it needs a one-time check/update to handle the new
+     /<category>/<slug> path shape — verify this before the first
+     folder-based page goes live.
+  5. Internal links: if you ever hardcode a link to another calculator
+     inside {{EXPLANATION_CONTENT}}, {{EXAMPLE_CONTENT}}, or
+     {{RELATED_CALCULATOR_LINKS}}, write it as href="/<category>/<slug>"
+     — never href="/<slug>.html" and never omit the category folder,
+     even when linking to an OLD flat-URL page (use that page's real,
+     current flat URL as-is; don't invent a folder for it).
+  6. Nav dropdown: add the new link to header.html inside the correct
+     category's dropdown (desktop nav-dropdown-panel AND mobile
+     mobile-dropdown block), with href="/<category>/<slug>" and the
+     NEXT sequential number in that category's list (e.g. if
+     Electrical currently ends at "13. Solar Panel Size", a new
+     electrical calculator becomes "14. <name>", inserted above the
+     Pro Max divider; the Pro Max/featured link always stays last).
+  7. Deploy, then in GSC: Sitemaps -> resubmit sitemap.xml, and
+     URL Inspection -> Request Indexing on the new page's clean URL.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +70,13 @@
 <meta name="description" content="{{META_DESCRIPTION}}">
 <meta name="keywords" content="{{META_KEYWORDS}}">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://www.electromechcalc.com/{{PAGE_SLUG}}.html">
+<!-- {{PAGE_CATEGORY}} = electrical | mechanical | financial (no slashes).
+     {{PAGE_SLUG}} = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/{{PAGE_CATEGORY}}/{{PAGE_SLUG}}">
 <link rel="icon" href="/favicon.png" type="image/png">
 
 <!-- Open Graph -->
@@ -23,7 +84,7 @@
 <meta property="og:site_name" content="ElectroMechCalc">
 <meta property="og:title" content="{{OG_TITLE}}">
 <meta property="og:description" content="{{OG_DESCRIPTION}}">
-<meta property="og:url" content="https://www.electromechcalc.com/{{PAGE_SLUG}}.html">
+<meta property="og:url" content="https://www.electromechcalc.com/{{PAGE_CATEGORY}}/{{PAGE_SLUG}}">
 <meta property="og:image" content="https://www.electromechcalc.com/logo.png">
 <meta property="og:locale" content="en_IN">
 
@@ -39,7 +100,7 @@
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "{{TOOL_NAME}}",
-  "url": "https://www.electromechcalc.com/{{PAGE_SLUG}}.html",
+  "url": "https://www.electromechcalc.com/{{PAGE_CATEGORY}}/{{PAGE_SLUG}}",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
