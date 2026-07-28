@@ -183,8 +183,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // .nav-dropdown-link / .mobile-sublink items.
   // ---------------------------------------------------------------------
   const normalizePath = path => {
-    const trimmed = path.replace(/\/+$/, "") || "/";
-    return trimmed === "/" ? "/index.html" : trimmed;
+    let trimmed = (path.replace(/\/+$/, "") || "/").replace(/\.html$/i, "");
+    if (trimmed === "" || trimmed === "/index") trimmed = "/";
+    return trimmed;
   };
   const currentPath = normalizePath(location.pathname);
 

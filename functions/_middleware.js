@@ -174,7 +174,7 @@ function buildBreadcrumbHTML(pathname, index) {
   const current = index.find((entry) => normalizePath(entry.url) === currentPath);
   if (!current) return "";
 
-  const crumbs = [`<a href="/index.html" class="breadcrumb-home">Home</a>`];
+  const crumbs = [`<a href="/" class="breadcrumb-home">Home</a>`];
 
   // "General" pages (About, Contact, Privacy, etc.) skip the category
   // segment since it isn't a real nav dropdown — go straight to the

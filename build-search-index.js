@@ -173,7 +173,16 @@ function extractFormulaChips(html) {
 
 function toUrl(rootRelativePath) {
   const normalized = rootRelativePath.split(path.sep).join("/");
-  return "/" + normalized.replace(/^\.\//, "");
+  let url = "/" + normalized.replace(/^\.\//, "");
+  // Cloudflare Pages serves clean URLs and 308-redirects any .html
+  // request to its extensionless counterpart (index.html -> /,
+  // foo.html -> /foo). search-index.json / sitemap.xml / canonical
+  // tags must describe the URL that's actually served, not the
+  // source filename, or Google logs "Page with redirect" and won't
+  // index the page.
+  url = url.replace(/\/index\.html$/i, "/");
+  url = url.replace(/\.html$/i, "");
+  return url;
 }
 
 function walk(dir, acc = []) {
