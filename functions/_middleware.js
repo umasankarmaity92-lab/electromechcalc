@@ -146,12 +146,16 @@ function buildRelatedCalculatorsHTML(pathname, index) {
     )
     .join("");
 
+  const isGeneral = current.category === "General";
+  const kicker = isGeneral ? "You Might Also Need" : "You Might Also Need";
+  const heading = isGeneral ? "Related Pages" : "Related Calculators";
+
   return `
 <section class="related-calc-section max-w-6xl mx-auto px-4 py-12">
   <div class="flex items-end justify-between flex-wrap gap-3 border-b related-calc-header pb-4 mb-8">
     <div>
-      <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">You Might Also Need</span>
-      <h2 class="text-xl md:text-2xl font-display font-bold related-calc-heading">Related Calculators</h2>
+      <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">${kicker}</span>
+      <h2 class="text-xl md:text-2xl font-display font-bold related-calc-heading">${heading}</h2>
     </div>
   </div>
   <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">${cards}
