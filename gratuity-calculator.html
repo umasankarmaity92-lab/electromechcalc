@@ -159,6 +159,23 @@
     user-select:none;
   }
 
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+
   .input-field{
     width:100%;
     background:#f8fafc;
@@ -339,7 +356,7 @@
 </section>
 
 <!-- ===================== CALCULATOR ===================== -->
-<section class="max-w-6xl mx-auto px-4 py-14">
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
   <div class="grid lg:grid-cols-5 gap-6">
 
     <!-- INPUT PANEL -->
@@ -435,17 +452,53 @@
   </div>
 </section>
 
+<!-- ===================== SHARE / FEEDBACK / LIKE-DISLIKE BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center justify-between gap-3 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500 mr-1">Share:</span>
+      <button class="action-icon-btn" onclick="navigator.clipboard.writeText(window.location.href)">🔗 Copy Link</button>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://wa.me/?text='+encodeURIComponent(window.location.href)">🟢 WhatsApp</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)">🐦 X</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href)">📘 Facebook</a>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="likeBtn" class="action-icon-btn" onclick="toggleReaction('like')">👍 <span id="likeCount">0</span></button>
+      <button id="dislikeBtn" class="action-icon-btn" onclick="toggleReaction('dislike')">👎</button>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Gratuity%20Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding gratuity</a></li>
+      <li><a href="#gr-mistakes" class="hover:underline">3. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">4. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
 <!-- ===================== EXPLANATION ===================== -->
-<section class="bg-white border-y border-gray-100 py-16">
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
   <div class="max-w-3xl mx-auto px-4">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding Gratuity Calculation</h2>
 
 
-    <div class="not-prose bg-white border border-gray-200 rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
-      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
-      <p>Reviewed by the <a href="https://www.electromechcalc.com/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
-      <p>Last reviewed: July 2026 &nbsp;|&nbsp; Standards referenced: EPFO / Income Tax Act / RBI compounding conventions</p>
+    <div class="not-prose bg-white border border-gray-200 rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600">
+      Reviewed by <a href="/about" class="text-sky-600 underline">Umasankar Maity, Electrical Engineer (B.Tech, 11+ years industrial experience)</a>
+      &nbsp;|&nbsp; Last reviewed: July 2026
+      &nbsp;|&nbsp; Standards used: EPFO / Income Tax Act / RBI compounding conventions
     </div>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
       <p>Gratuity is a lump-sum benefit paid by an employer to an employee as a token of appreciation for continuous service, typically at retirement, resignation, or termination after at least five years of service (the five-year rule is relaxed in case of death or disability). It is governed in India by the Payment of Gratuity Act, 1972, for most establishments with ten or more employees.</p>
@@ -467,8 +520,21 @@
   </div>
 </section>
 
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="gr-mistakes" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Estimating Gratuity</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p><strong>1. Using gross salary instead of Basic + DA.</strong> Gratuity is calculated only on your last drawn Basic + Dearness Allowance, not your full CTC or gross monthly salary — using the wrong base significantly overstates the estimate.</p>
+    <p><strong>2. Assuming the 5-year rule applies to all employees equally.</strong> As covered above, fixed-term/contract employees now qualify after just 1 year under the Code on Social Security, 2020 — using the old uniform 5-year assumption for a contract employee understates their entitlement.</p>
+    <p><strong>3. Forgetting the ₹20 lakh statutory cap.</strong> A long-tenured, high-salary employee's raw formula result can exceed ₹20,00,000 — the Act caps the statutory, tax-exempt payout at this figure regardless of what the formula computes.</p>
+    <p><strong>4. Rounding years of service incorrectly.</strong> The 6-month rounding rule (6+ months rounds up, less than 6 months is dropped) is easy to apply wrong — double-check your exact tenure in years and months before finalizing an estimate.</p>
+    <p><strong>5. Not accounting for the 50% wage rule's knock-on effect.</strong> If your employer restructures your CTC to meet the new 50% Basic+DA requirement, your gratuity base (and therefore payout) changes even without any change to your tenure — re-check your estimate after any salary restructuring.</p>
+  </div>
+</section>
+
 <!-- ===================== FAQ ===================== -->
-<section class="max-w-3xl mx-auto px-4 py-16">
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
   <div class="text-center mb-10">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
@@ -506,6 +572,69 @@
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">Gratuity received by government employees is fully exempt from tax. For other employees covered under the Act, gratuity is exempt up to the statutory limit; any amount above that limit is taxable as per applicable income tax rules. Please consult a tax professional for your specific situation.</p>
     </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What counts as "Basic + DA" for the gratuity formula?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It's your last drawn Basic salary plus Dearness Allowance only — not HRA, special allowances, bonuses, or other components of your CTC. Check your latest payslip for the exact Basic + DA figure rather than using your gross or in-hand salary.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Do I lose my gratuity if I resign instead of being terminated?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — gratuity is payable on resignation too, as long as you've completed the minimum qualifying service (5 years for permanent employees, 1 year for fixed-term employees under the new code). The reason for leaving doesn't affect eligibility, except in cases of termination for proven misconduct, which can forfeit the payout under specific provisions of the Act.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does this calculator apply to employees in establishments with fewer than 10 employees?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The Payment of Gratuity Act, 1972 statutorily applies to establishments with 10 or more employees. Smaller establishments aren't legally required to pay gratuity under the Act, though many still do voluntarily under their own HR policy — check your employment contract or company policy if your establishment has fewer than 10 employees.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is nominee/family gratuity treated differently in case of death?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">If an employee dies while in service, gratuity is payable to the nominee or legal heir regardless of how long they'd been employed — the 5-year (or 1-year for fixed-term) minimum service requirement is waived entirely in case of death or disablement, and the same formula and ₹20 lakh cap otherwise apply.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== EXPLORE MORE CALCULATORS ===================== -->
+<section id="explore-more" class="max-w-6xl mx-auto px-4 pb-16">
+  <h2 class="font-display font-semibold text-brandDark text-xl mb-5">Explore More Calculators</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+    <a href="/electrical-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#e0f2fe">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Electrical Calculators</h3>
+      <p class="text-sm text-gray-500">Cable size, transformer size, motor current, DG size, solar sizing &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="/mechanical-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#fef3c7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Mechanical Calculators</h3>
+      <p class="text-sm text-gray-500">Belt length, bearing life, cooling tower efficiency &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="/financial-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#dcfce7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Financial Calculators</h3>
+      <p class="text-sm text-gray-500">EPF, PPF, SIP, income tax, CAGR, FD &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
   </div>
 </section>
 
@@ -515,6 +644,27 @@
 <script src="/assets/site-nav.js"></script>
 
 <script>
+  // ===== Share / Feedback / Like-Dislike bar =====
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+  let reacted = null;
+  function toggleReaction(type){
+    const likeBtn = document.getElementById('likeBtn');
+    const dislikeBtn = document.getElementById('dislikeBtn');
+    const likeCount = document.getElementById('likeCount');
+    let count = parseInt(likeCount.textContent, 10);
+    if(type === 'like'){
+      if(reacted === 'like'){ count--; reacted = null; likeBtn.classList.remove('active-like'); }
+      else { if(reacted === 'dislike'){ dislikeBtn.classList.remove('active-dislike'); } count++; reacted = 'like'; likeBtn.classList.add('active-like'); }
+    } else {
+      if(reacted === 'dislike'){ reacted = null; dislikeBtn.classList.remove('active-dislike'); }
+      else { if(reacted === 'like'){ count--; likeBtn.classList.remove('active-like'); } reacted = 'dislike'; dislikeBtn.classList.add('active-dislike'); }
+    }
+    likeCount.textContent = count;
+  }
+
   // ===== Gratuity Calculator Logic =====
   const GRATUITY_DIVISOR = 26;
   const GRATUITY_CAP = 2000000; // ₹20,00,000 statutory / tax-exempt cap
