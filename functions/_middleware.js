@@ -196,37 +196,110 @@ function buildBreadcrumbHTML(pathname, index) {
   return `<!-- BREADCRUMB_BUILD_v2 --><nav class="breadcrumb-nav" aria-label="Breadcrumb">${crumbs.join("")}</nav>`;
 }
 
+// ---------------------------------------------------------------------
+// Header nav dropdown links (Electrical / Mechanical / Finance) — both
+// the desktop dropdown panels and the mobile accordion sublinks are
+// built here from search-index.json, numbered in the curated order
+// defined in nav-order.json. Any calculator not yet listed in
+// nav-order.json still shows up (appended alphabetically, before the
+// featured item) so a brand-new page is never silently missing from
+// the nav — just add it to nav-order.json later to control its exact
+// position.
+// ---------------------------------------------------------------------
+
+const PRO_STAR_SVG = `<svg class="pro-star-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:-1px;margin-right:2px"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.2 21 12 17.4 5.8 21 7 14.14l-5-4.87 7.1-1.01L12 2z"/></svg>`;
+
+function orderedEntriesForCategory(categoryName, index, navOrder) {
+  const cfg = (navOrder && navOrder[categoryName]) || { order: [], featured: null };
+  const entries = index.filter((e) => e.category === categoryName && e.url !== cfg.featured);
+  const byUrl = new Map(entries.map((e) => [e.url, e]));
+
+  const orderedUrls = cfg.order.filter((u) => byUrl.has(u));
+  const extraUrls = [...byUrl.keys()]
+    .filter((u) => !orderedUrls.includes(u))
+    .sort((a, b) => byUrl.get(a).title.localeCompare(byUrl.get(b).title));
+
+  const mainEntries = [...orderedUrls, ...extraUrls].map((u) => byUrl.get(u));
+  const featuredEntry = cfg.featured ? index.find((e) => e.url === cfg.featured && e.category === categoryName) : null;
+
+  return { mainEntries, featuredEntry };
+}
+
+function buildDesktopNavLinksHTML(categoryName, index, navOrder) {
+  if (!Array.isArray(index) || !index.length) return "";
+  const { mainEntries, featuredEntry } = orderedEntriesForCategory(categoryName, index, navOrder);
+
+  let html = mainEntries
+    .map((e, i) => `<a href="${escapeHTML(e.url)}" class="nav-dropdown-link">${i + 1}. ${escapeHTML(e.title)}</a>`)
+    .join("");
+
+  if (featuredEntry) {
+    const n = mainEntries.length + 1;
+    html += `<div class="border-t border-[var(--border)] mt-1 pt-1"><a href="${escapeHTML(featuredEntry.url)}" class="nav-dropdown-link text-amber-500 font-semibold">${PRO_STAR_SVG} ${n}. ${escapeHTML(featuredEntry.title)}</a></div>`;
+  }
+  return html;
+}
+
+function buildMobileNavLinksHTML(categoryName, index, navOrder) {
+  if (!Array.isArray(index) || !index.length) return "";
+  const { mainEntries, featuredEntry } = orderedEntriesForCategory(categoryName, index, navOrder);
+
+  let html = mainEntries
+    .map((e, i) => `<a href="${escapeHTML(e.url)}" class="mobile-sublink">${i + 1}. ${escapeHTML(e.title)}</a>`)
+    .join("");
+
+  if (featuredEntry) {
+    const n = mainEntries.length + 1;
+    html += `<a href="${escapeHTML(featuredEntry.url)}" class="mobile-sublink text-amber-400 font-semibold">${PRO_STAR_SVG} ${n}. ${escapeHTML(featuredEntry.title)}</a>`;
+  }
+  return html;
+}
+
+// Fetches any /*.json asset (search-index.json, nav-order.json, ...)
+// through Cloudflare's edge Cache API so that, within a given edge
+// location, each file is fetched and parsed from ASSETS at most once
+// every CACHE_TTL_SECONDS instead of on every single HTML request.
+// Falls back to a direct ASSETS fetch (uncached) if caches.default
+// isn't available for some reason (e.g. certain local dev environments).
+async function getCachedJSON(context, origin, assetPath, ttlSeconds) {
+  const assetURL = new URL(assetPath, origin);
+
+  const fetchFresh = () => context.env.ASSETS.fetch(new Request(assetURL.toString()));
+
+  if (typeof caches === "undefined" || !caches.default) {
+    return fetchFresh();
+  }
+
+  const cache = caches.default;
+  const cacheKey = new Request(assetURL.toString());
+
+  let response = await cache.match(cacheKey);
+  if (response) return response;
+
+  response = await fetchFresh();
+  if (response.ok) {
+    const cached = new Response(response.body, response);
+    cached.headers.set("Cache-Control", `s-maxage=${ttlSeconds}`);
+    context.waitUntil(cache.put(cacheKey, cached.clone()));
+    response = cached;
+  }
+  return response;
+}
+
+const NAV_ORDER_CACHE_TTL_SECONDS = 300; // 5 minutes — same window as search-index.json
+
 // Fetches /search-index.json through Cloudflare's edge Cache API so
 // that, within a given edge location, the ~500-page index is fetched
 // and parsed from ASSETS at most once every CACHE_TTL_SECONDS instead
 // of on every single HTML request. Falls back to a direct ASSETS
 // fetch (uncached) if caches.default isn't available for some reason
-// (e.g. certain local dev environments).
+// (e.g. certain local dev environments). Superseded by the generic
+// getCachedJSON() helper above (used for both search-index.json and
+// nav-order.json) — kept as a thin wrapper so nothing else has to change.
 const SEARCH_INDEX_CACHE_TTL_SECONDS = 300; // 5 minutes
 
-async function getSearchIndexResponse(context, origin) {
-  const indexURL = new URL("/search-index.json", origin);
-
-  if (typeof caches === "undefined" || !caches.default) {
-    return context.env.ASSETS.fetch(indexURL);
-  }
-
-  const cache = caches.default;
-  const cacheKey = new Request(indexURL.toString());
-
-  let response = await cache.match(cacheKey);
-  if (response) return response;
-
-  response = await context.env.ASSETS.fetch(cacheKey);
-  if (response.ok) {
-    // Clone before caching — a Response body can only be read once,
-    // and we still need to read it below (as .json()) after this.
-    const cached = new Response(response.body, response);
-    cached.headers.set("Cache-Control", `s-maxage=${SEARCH_INDEX_CACHE_TTL_SECONDS}`);
-    context.waitUntil(cache.put(cacheKey, cached.clone()));
-    response = cached;
-  }
-  return response;
+function getSearchIndexResponse(context, origin) {
+  return getCachedJSON(context, origin, "/search-index.json", SEARCH_INDEX_CACHE_TTL_SECONDS);
 }
 
 export async function onRequest(context) {
@@ -239,16 +312,17 @@ export async function onRequest(context) {
 
   const url = new URL(context.request.url);
 
-  const [headerRes, footerRes, searchIndexRes] = await Promise.all([
+  const [headerRes, footerRes, searchIndexRes, navOrderRes] = await Promise.all([
     context.env.ASSETS.fetch(new URL("/partials/header.html", url.origin)),
     context.env.ASSETS.fetch(new URL("/partials/footer.html", url.origin)),
     getSearchIndexResponse(context, url.origin),
+    getCachedJSON(context, url.origin, "/nav-order.json", NAV_ORDER_CACHE_TTL_SECONDS),
   ]);
 
   // If the partial fetch itself failed (404/500/etc.), don't inject its
   // error-page body as if it were real header/footer markup — fall
   // back to empty string so the rest of the page still renders.
-  const [headerHTML, footerHTML] = await Promise.all([
+  let [headerHTML, footerHTML] = await Promise.all([
     headerRes.ok ? headerRes.text() : Promise.resolve(""),
     footerRes.ok ? footerRes.text() : Promise.resolve(""),
   ]);
@@ -262,6 +336,37 @@ export async function onRequest(context) {
     // If the index is missing/malformed, just skip the related-widget
     // for this request rather than breaking the whole page.
     searchIndex = [];
+  }
+
+  let navOrder = {};
+  try {
+    if (navOrderRes.ok) {
+      navOrder = await navOrderRes.json();
+    }
+  } catch (err) {
+    // Missing/malformed nav-order.json just means every category falls
+    // back to alphabetical order with no featured item — not a reason
+    // to break the header.
+    navOrder = {};
+  }
+
+  // Splice the numbered nav dropdown links into header.html's own
+  // placeholder divs BEFORE header.html is handed to InjectHTML below —
+  // plain string substitution here avoids depending on whether
+  // HTMLRewriter re-scans content that was itself just inserted via
+  // setInnerContent (desktop panel + mobile accordion, x3 categories).
+  if (headerHTML) {
+    const navFills = [
+      ["nav-links-electrical", buildDesktopNavLinksHTML("Electrical", searchIndex, navOrder)],
+      ["nav-links-mechanical", buildDesktopNavLinksHTML("Mechanical", searchIndex, navOrder)],
+      ["nav-links-finance", buildDesktopNavLinksHTML("Financial", searchIndex, navOrder)],
+      ["mobile-links-electrical", buildMobileNavLinksHTML("Electrical", searchIndex, navOrder)],
+      ["mobile-links-mechanical", buildMobileNavLinksHTML("Mechanical", searchIndex, navOrder)],
+      ["mobile-links-finance", buildMobileNavLinksHTML("Financial", searchIndex, navOrder)],
+    ];
+    for (const [id, html] of navFills) {
+      headerHTML = headerHTML.replace(`id="${id}"></div>`, `id="${id}">${html}</div>`);
+    }
   }
 
   const relatedHTML = buildRelatedCalculatorsHTML(url.pathname, searchIndex);
