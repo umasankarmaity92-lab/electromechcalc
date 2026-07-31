@@ -159,6 +159,23 @@
     user-select:none;
   }
 
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+
   .input-field{
     width:100%;
     background:#f8fafc;
@@ -339,7 +356,7 @@
 </section>
 
 <!-- ===================== CALCULATOR ===================== -->
-<section class="max-w-6xl mx-auto px-4 py-14">
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
   <div class="grid lg:grid-cols-5 gap-6">
 
     <!-- INPUT PANEL -->
@@ -437,28 +454,238 @@
   </div>
 </section>
 
+<!-- ===================== SHARE / FEEDBACK / LIKE-DISLIKE BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center justify-between gap-3 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500 mr-1">Share:</span>
+      <button class="action-icon-btn" onclick="navigator.clipboard.writeText(window.location.href)">🔗 Copy Link</button>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://wa.me/?text='+encodeURIComponent(window.location.href)">🟢 WhatsApp</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)">🐦 X</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href)">📘 Facebook</a>
+    </div>
+
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="likeBtn" class="action-icon-btn" onclick="toggleReaction('like')">👍 <span id="likeCount">0</span></button>
+      <button id="dislikeBtn" class="action-icon-btn" onclick="toggleReaction('dislike')">👎</button>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20FD%20Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding FD maturity</a></li>
+      <li><a href="#fd-types" class="hover:underline">3. Types of FDs &amp; tax rules</a></li>
+      <li><a href="#fd-compare" class="hover:underline">4. FD vs RD vs PPF vs SIP</a></li>
+      <li><a href="#fd-mistakes" class="hover:underline">5. Common FD mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">6. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
 <!-- ===================== EXPLANATION ===================== -->
-<section class="bg-white border-y border-gray-100 py-16">
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
   <div class="max-w-3xl mx-auto px-4">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding FD (Fixed Deposit) Maturity</h2>
 
+    <div class="not-prose bg-white border border-gray-200 rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="https://www.electromechcalc.com/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: July 2026 &nbsp;|&nbsp; Standards referenced: EPFO / Income Tax Act / RBI compounding conventions</p>
+    </div>
+
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-      <p>A Fixed Deposit is one of the simplest and safest investment options, where you deposit a lump sum with a bank or NBFC for a fixed tenure at a fixed interest rate. This calculator computes the maturity value of a cumulative FD, where interest is reinvested and paid out only at maturity, rather than a non-cumulative FD that pays interest periodically.</p>
+      <p>A Fixed Deposit is one of the simplest and safest investment options available in India, where you deposit a lump sum with a bank or NBFC for a fixed tenure at a fixed, pre-agreed interest rate. Because the rate is locked in for the whole tenure, an FD's return doesn't move with the market the way a mutual fund or stock investment does — this predictability is the main reason FDs remain the default parking spot for a large share of Indian household savings, from a retiree's monthly-income plan to a young earner's short-term goal fund. Unlike a savings account, where the bank can change the interest rate at any time, an FD's rate is contractually fixed the moment you book it, which is exactly what makes it useful for planning around a known future need. This calculator computes the maturity value of a <strong>cumulative FD</strong>, where interest is reinvested every compounding period and paid out only at maturity, rather than a <strong>non-cumulative FD</strong> that pays interest out periodically as income.</p>
 
-      <p><strong>Formula used:</strong> A = P × (1 + r/(100×n))^(n×t), where P is your principal, r is the annual interest rate, n is the number of times interest is compounded per year, and t is the tenure in years. Most Indian banks compound FD interest quarterly, though yearly, half-yearly, and monthly options also exist.</p>
+      <p><strong>Formula used:</strong> A = P × (1 + r/(100×n))^(n×t), where P is your principal, r is the annual interest rate, n is the number of times interest is compounded per year, and t is the tenure in years. Most Indian banks compound FD interest quarterly by default, though yearly, half-yearly, and monthly compounding options also exist depending on the bank and scheme.</p>
 
-      <p><strong>Worked example:</strong> a principal of ₹1,00,000 at 7% p.a. for 5 years, compounded quarterly, grows to approximately ₹1,41,478 — an interest earning of about ₹41,478 over the tenure. The higher the compounding frequency, the marginally higher your effective return, since interest starts earning interest sooner.</p>
+      <p><strong>Worked example:</strong> a principal of ₹1,00,000 at 7% p.a. for 5 years, compounded quarterly, grows to approximately ₹1,41,478 — an interest earning of about ₹41,478 over the tenure. The same principal and rate compounded monthly instead grows to roughly ₹1,41,763, a small but real difference purely from how often the bank credits interest.</p>
 
-      <p>Premature withdrawal of an FD typically results in a lower effective interest rate and sometimes a penalty, so FDs work best as a fixed, do-not-touch part of your savings for the chosen tenure. Senior citizens usually get a slightly higher interest rate than the standard rate quoted by banks.</p>
+      <h3>How compounding frequency changes your return</h3>
+      <p>The compounding frequency matters more than people usually expect over long tenures, because each time interest is credited, it starts earning interest of its own. The table below shows the maturity value of the same ₹1,00,000 deposit at 7% p.a. for 5 years, varying only the compounding frequency, so you can see the effect in isolation:</p>
+
+      <div class="not-prose overflow-x-auto my-4">
+        <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+          <thead class="bg-gray-50 text-gray-600">
+            <tr>
+              <th class="text-left px-4 py-2 font-semibold">Compounding</th>
+              <th class="text-left px-4 py-2 font-semibold">Periods/Year</th>
+              <th class="text-left px-4 py-2 font-semibold">Maturity Value</th>
+              <th class="text-left px-4 py-2 font-semibold">Interest Earned</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr><td class="px-4 py-2">Annual</td><td class="px-4 py-2">1</td><td class="px-4 py-2">₹1,40,255</td><td class="px-4 py-2">₹40,255</td></tr>
+            <tr><td class="px-4 py-2">Half-yearly</td><td class="px-4 py-2">2</td><td class="px-4 py-2">₹1,40,710</td><td class="px-4 py-2">₹40,710</td></tr>
+            <tr><td class="px-4 py-2">Quarterly</td><td class="px-4 py-2">4</td><td class="px-4 py-2">₹1,41,478</td><td class="px-4 py-2">₹41,478</td></tr>
+            <tr><td class="px-4 py-2">Monthly</td><td class="px-4 py-2">12</td><td class="px-4 py-2">₹1,41,763</td><td class="px-4 py-2">₹41,763</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>The gap between annual and monthly compounding on this example is about ₹1,508 — roughly 3.7% more interest just from compounding more often, with everything else held constant. Over larger principal amounts or longer tenures, this gap widens proportionally, which is why it's worth checking a bank's compounding convention before comparing two FD offers that quote similar headline rates.</p>
+
+      <p>Premature withdrawal of an FD typically results in a lower effective interest rate — the bank usually pays the rate applicable for the period the deposit was actually held, minus a penalty of roughly 0.5%–1% — so FDs work best as a fixed, do-not-touch part of your savings for the chosen tenure. Senior citizens usually get a slightly higher interest rate, typically 0.25%–0.75% above the standard card rate, on the same tenure.</p>
+      <p>A 4% Health &amp; Education Cess is not applicable here (that's income tax specific), but do remember that FD interest is added to your <em>total</em> income before your slab rate is applied — so a large FD interest payout in a single year can nudge you into a higher slab than your salary alone would, which is worth factoring in if you're timing when to book or renew a large deposit.</p>
     </div>
 
     <p class="text-xs text-gray-400 mt-6">This calculator is for educational planning purposes only. Actual maturity value depends on your bank's specific compounding convention and any applicable TDS; please confirm with your bank for the precise figure.</p>
   </div>
 </section>
 
+<!-- ===================== FD TYPES & TAX ===================== -->
+<section id="fd-types" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Types &amp; Taxation</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Types of FDs and How They're Taxed</h2>
+
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Not every FD works the same way underneath the headline rate — the tenure, the payout schedule, and who's issuing it all change what you actually walk away with, and picking the wrong variant for your situation is one of the most common ways people leave money on the table without realizing it.</p>
+    <h3>Common FD variants</h3>
+    <p><strong>Cumulative FD</strong> reinvests interest and pays everything at maturity — best if you don't need periodic income and want the maximum compounding benefit. <strong>Non-cumulative FD</strong> pays interest out monthly, quarterly, or annually, suited to retirees or anyone who wants regular cash flow instead of a lump sum at the end; the trade-off is a lower total maturity payout since interest isn't reinvested. <strong>Tax-saving FD</strong> has a mandatory 5-year lock-in with no premature withdrawal allowed under any circumstance, and qualifies for a deduction under Section 80C up to ₹1.5 lakh on the principal — but the interest earned is still fully taxable every year on an accrual basis, whether or not you've received it. <strong>Senior citizen FD</strong> offers a preferential rate, usually 0.25%–0.75% higher, for depositors above 60, along with a higher TDS exemption threshold. <strong>NRE/NRO/FCNR FDs</strong> are variants for NRIs — NRE FD interest is tax-free in India and fully repatriable, NRO FD interest is taxable, and FCNR lets you hold the deposit in a foreign currency to avoid exchange-rate risk; these fall outside what this calculator estimates and are worth discussing directly with your bank's NRI desk.</p>
+
+    <h3>Step-by-step: how to book an FD</h3>
+    <ol>
+      <li><strong>Compare rates across 3–4 banks</strong> for your intended tenure — small NBFCs and small finance banks often quote 0.5%–1.5% higher than large public-sector banks, in exchange for slightly higher (though still regulated) risk.</li>
+      <li><strong>Decide cumulative vs non-cumulative</strong> based on whether you need periodic income or are comfortable letting interest compound to maturity.</li>
+      <li><strong>Check the premature withdrawal penalty and minimum lock-in</strong> before committing, especially if there's any chance you'll need the money before maturity.</li>
+      <li><strong>Book online via net banking/app</strong> for an existing account, or visit a branch with KYC documents (PAN, address proof) if you're a new customer.</li>
+      <li><strong>Submit Form 15G/15H upfront</strong> if your income is below the taxable threshold, to avoid TDS being deducted and having to claim it back later.</li>
+      <li><strong>Note the maturity date and instructions</strong> — most banks auto-renew an FD on maturity unless you specify otherwise, so set a reminder if you want the funds released instead.</li>
+    </ol>
+
+    <h3>How FD interest is taxed</h3>
+    <p>FD interest is added to your total income and taxed at your applicable income tax slab rate — there's no separate, lower "capital gains"-style rate for FD interest the way there is for some other investments. Banks deduct TDS at 10% if the total interest you earn from all your FDs with that bank in a financial year exceeds ₹40,000 (₹50,000 for senior citizens). If your total income is below the taxable threshold, you can submit Form 15G (or Form 15H if you're a senior citizen) to the bank to avoid TDS deduction — though the interest itself remains taxable and must still be declared in your return; TDS is only about who deducts it upfront, not whether it's owed.</p>
+    <h3>How FD rates differ by issuer type</h3>
+    <p>Not all FDs are alike even before you touch tenure or compounding — who you deposit with changes the rate, the risk, and the insurance cover. Broadly:</p>
+    <div class="not-prose overflow-x-auto my-4">
+      <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-4 py-2 font-semibold">Issuer</th>
+            <th class="text-left px-4 py-2 font-semibold">Typical Rate</th>
+            <th class="text-left px-4 py-2 font-semibold">DICGC Insured</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr><td class="px-4 py-2">PSU banks (SBI, PNB, etc.)</td><td class="px-4 py-2">6.5–7.2%</td><td class="px-4 py-2">Yes, up to ₹5L</td></tr>
+          <tr><td class="px-4 py-2">Private banks (HDFC, ICICI, etc.)</td><td class="px-4 py-2">6.75–7.5%</td><td class="px-4 py-2">Yes, up to ₹5L</td></tr>
+          <tr><td class="px-4 py-2">Small finance banks</td><td class="px-4 py-2">7.5–8.5%</td><td class="px-4 py-2">Yes, up to ₹5L</td></tr>
+          <tr><td class="px-4 py-2">Post Office Time Deposit</td><td class="px-4 py-2">6.9–7.5% (govt-set)</td><td class="px-4 py-2">Sovereign guarantee</td></tr>
+          <tr><td class="px-4 py-2">Corporate/NBFC FDs</td><td class="px-4 py-2">7.5–9%+</td><td class="px-4 py-2">Not DICGC-insured</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Small finance banks and corporate FDs quote higher rates specifically because they carry more credit risk than a large public-sector bank — always check the issuer's credit rating (CRISIL/ICRA/CARE) before chasing the highest number on offer, and remember that DICGC's ₹5 lakh insurance cover applies per depositor per bank, not per FD, so spreading large sums across multiple banks reduces your exposure if any single issuer runs into trouble.</p>
+
+    <h3>Who is an FD actually suited for</h3>
+    <p><strong>Retirees and those needing regular income</strong> often prefer a non-cumulative FD laddered across a few banks, generating a predictable monthly or quarterly payout without market risk. <strong>Anyone building a short-term goal fund</strong> — a wedding, a down payment, a planned purchase 1–3 years out — benefits from an FD's certainty, since there's no risk of the amount falling short right when it's needed, unlike an equity investment. <strong>Risk-averse savers</strong> use FDs as the "safe" portion of a diversified portfolio, sitting alongside equity or debt mutual funds rather than replacing them. FDs are generally a poor fit for <strong>long-term wealth building</strong> (10+ year horizons), where the post-tax, post-inflation real return is often flat or negative — for those goals, a mix of PPF, EPF, and equity SIPs typically serves better, with FDs reserved for the portion of savings you genuinely cannot afford to see fluctuate in value.</p>
+  </div>
+</section>
+<section id="fd-compare" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Comparison</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">FD vs RD vs PPF vs SIP — Where Does FD Fit?</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4 mb-4">
+      <p>FDs sit at the conservative end of the savings spectrum — a fixed, government-insured-up-to-₹5-lakh (via DICGC) return with zero market risk, in exchange for a return that usually trails long-term equity and often barely beats inflation after tax. Here's how it stacks up against the other common options:</p>
+    </div>
+    <div class="not-prose overflow-x-auto">
+      <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-4 py-2 font-semibold">Instrument</th>
+            <th class="text-left px-4 py-2 font-semibold">Typical Return</th>
+            <th class="text-left px-4 py-2 font-semibold">Risk</th>
+            <th class="text-left px-4 py-2 font-semibold">Lock-in</th>
+            <th class="text-left px-4 py-2 font-semibold">Taxation</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr><td class="px-4 py-2 font-medium">FD</td><td class="px-4 py-2">6–7.5% p.a.</td><td class="px-4 py-2">Very low</td><td class="px-4 py-2">Flexible (7 days+)</td><td class="px-4 py-2">Slab rate</td></tr>
+          <tr><td class="px-4 py-2 font-medium">RD</td><td class="px-4 py-2">6–7.5% p.a.</td><td class="px-4 py-2">Very low</td><td class="px-4 py-2">Flexible (6 months+)</td><td class="px-4 py-2">Slab rate</td></tr>
+          <tr><td class="px-4 py-2 font-medium">PPF</td><td class="px-4 py-2">~7.1% p.a. (govt-set)</td><td class="px-4 py-2">None (sovereign)</td><td class="px-4 py-2">15 years</td><td class="px-4 py-2">Exempt (EEE)</td></tr>
+          <tr><td class="px-4 py-2 font-medium">SIP (equity fund)</td><td class="px-4 py-2">10–14% p.a. (long-term, variable)</td><td class="px-4 py-2">Market-linked</td><td class="px-4 py-2">None (open-ended)</td><td class="px-4 py-2">LTCG/STCG rules</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-gray-400 mt-4">Return figures are indicative ranges, not guarantees — check current rates with your bank/AMC. Use our <a href="/rd-calculator" class="text-sky-600 underline">RD</a>, <a href="/ppf-calculator" class="text-sky-600 underline">PPF</a>, or <a href="/sip-calculator" class="text-sky-600 underline">SIP</a> calculators to compare exact numbers for your own amounts.</p>
+
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4 mt-8">
+      <h3>What your FD actually earns after tax and inflation</h3>
+      <p>The headline FD rate isn't what lands in your pocket in real terms — you need to subtract both income tax and inflation to see the true return on your money. Take a ₹1,00,000 FD at 7% p.a., quarterly compounding, for a depositor in the 30% tax slab, with inflation running at 6%:</p>
+    </div>
+    <div class="not-prose overflow-x-auto my-4">
+      <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-4 py-2 font-semibold">Step</th>
+            <th class="text-left px-4 py-2 font-semibold">Value</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr><td class="px-4 py-2">Nominal interest rate</td><td class="px-4 py-2">7.00% p.a.</td></tr>
+          <tr><td class="px-4 py-2">Tax at 30% slab (on interest)</td><td class="px-4 py-2">−2.10%</td></tr>
+          <tr><td class="px-4 py-2">Post-tax effective rate</td><td class="px-4 py-2">4.90% p.a.</td></tr>
+          <tr><td class="px-4 py-2">Inflation (assumed)</td><td class="px-4 py-2">−6.00%</td></tr>
+          <tr><td class="px-4 py-2 font-medium">Real (inflation-adjusted) return</td><td class="px-4 py-2 font-medium text-red-600">≈ −1.10%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>At a high tax slab and typical inflation, a standard FD can actually lose purchasing power in real terms even while the nominal balance grows — this is precisely why financial planners suggest treating FDs as a safety and liquidity tool rather than a wealth-building one, and pairing them with equity-linked instruments like SIPs for long-term goals where some volatility is acceptable in exchange for a real, inflation-beating return.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="fd-mistakes" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Mistakes to Avoid When Booking an FD</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p><strong>1. Ignoring the compounding frequency when comparing banks.</strong> Two FDs quoting the same headline rate can pay meaningfully different maturity amounts if one compounds quarterly and the other annually — always check the fine print, not just the advertised rate.</p>
+    <p><strong>2. Locking the entire amount into one long tenure.</strong> "Laddering" — splitting your money across FDs of different maturities — keeps some funds accessible without breaking a large deposit early and losing the penalty-adjusted interest.</p>
+
+    <div class="not-prose bg-sky-50 border border-sky-100 rounded-xl p-5 my-4">
+      <p class="text-sm font-semibold text-brandDark mb-2">Example: laddering ₹4,00,000 instead of one 4-year FD</p>
+      <table class="w-full text-sm">
+        <thead class="text-gray-600">
+          <tr><th class="text-left py-1">Tranche</th><th class="text-left py-1">Amount</th><th class="text-left py-1">Tenure</th><th class="text-left py-1">Matures</th></tr>
+        </thead>
+        <tbody class="divide-y divide-sky-100">
+          <tr><td class="py-1">A</td><td class="py-1">₹1,00,000</td><td class="py-1">1 year</td><td class="py-1">Year 1</td></tr>
+          <tr><td class="py-1">B</td><td class="py-1">₹1,00,000</td><td class="py-1">2 years</td><td class="py-1">Year 2</td></tr>
+          <tr><td class="py-1">C</td><td class="py-1">₹1,00,000</td><td class="py-1">3 years</td><td class="py-1">Year 3</td></tr>
+          <tr><td class="py-1">D</td><td class="py-1">₹1,00,000</td><td class="py-1">4 years</td><td class="py-1">Year 4</td></tr>
+        </tbody>
+      </table>
+      <p class="text-xs text-gray-500 mt-2">One tranche matures every year, giving you either liquidity or the option to reinvest at the then-current rate — instead of a single ₹4,00,000 FD that's entirely locked for 4 years, or entirely exposed to breaking penalties if you need part of it early.</p>
+    </div>
+    <p><strong>3. Forgetting about TDS and Form 15G/15H.</strong> If your income is below the taxable limit, not submitting these forms means the bank deducts TDS anyway, and you have to claim it back only when you file your return — a needless cash-flow hit.</p>
+    <p><strong>4. Not comparing the post-tax, inflation-adjusted return.</strong> A 7% FD taxed at 30% slab nets under 5% — often close to or below inflation. Compare the real return, not just the quoted rate, before deciding how much to allocate to FDs versus other instruments.</p>
+    <p><strong>5. Overlooking senior citizen or special-tenure rate bumps.</strong> Many banks run limited-period "special" FD tenures (like 400 or 444 days) at a slightly higher rate than their standard slabs — it's worth checking current special schemes before booking a regular tenure.</p>
+    <p><strong>6. Putting all your emergency fund into a long-tenure FD.</strong> A 1–3 year FD with an early-withdrawal penalty isn't a true emergency fund — keep at least a few months of expenses in a savings account or a liquid/overnight fund that has no lock-in penalty.</p>
+    <p><strong>7. Not accounting for TDS when planning cash flow.</strong> If you're relying on FD interest as income (a non-cumulative FD), remember the bank deducts TDS before payout once the threshold is crossed, so the amount credited will be lower than the gross interest calculated.</p>
+
+    <div class="not-prose bg-gray-50 border border-gray-200 rounded-xl p-5 mt-6">
+      <p class="text-sm font-semibold text-brandDark mb-2">Bottom line</p>
+      <p class="text-sm text-gray-600 leading-relaxed">An FD is a tool for certainty, not for maximizing returns — use it for money you cannot risk and need on a known date, ladder it across tenures and issuers for flexibility and safety, check the compounding frequency and TDS threshold before booking, and route your longer-horizon savings toward instruments like PPF, EPF, or equity SIPs where a real, inflation-beating return actually matters.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== FAQ ===================== -->
-<section class="max-w-3xl mx-auto px-4 py-16">
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
   <div class="text-center mb-10">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
@@ -470,7 +697,7 @@
         Which compounding frequency should I choose?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Most Indian banks compound FD interest quarterly by default. Check your bank's FD terms to see which frequency applies to your specific deposit, since this can slightly change your effective returns.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Most Indian banks compound FD interest quarterly by default. Check your bank's FD terms to see which frequency applies to your specific deposit, since more frequent compounding gives a marginally higher effective return.</p>
     </details>
 
     <details class="py-5">
@@ -478,7 +705,7 @@
         Is FD interest taxable?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, FD interest is fully taxable as per your income tax slab, and banks deduct TDS if the total interest earned across your FDs with that bank crosses the prescribed annual threshold.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, FD interest is fully taxable as per your income tax slab, and banks deduct TDS at 10% if the total interest earned across your FDs with that bank crosses ₹40,000 (₹50,000 for senior citizens) in a financial year.</p>
     </details>
 
     <details class="py-5">
@@ -486,7 +713,7 @@
         What's the difference between cumulative and non-cumulative FDs?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A cumulative FD reinvests the interest and pays it out along with the principal at maturity, which is what this calculator estimates. A non-cumulative FD instead pays out interest periodically — monthly, quarterly, or annually — as regular income, resulting in a lower total payout at maturity.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A cumulative FD reinvests the interest and pays it out along with the principal at maturity, which is what this calculator estimates. A non-cumulative FD instead pays out interest periodically — monthly, quarterly, or annually — as regular income, resulting in a lower total payout at maturity for the same principal and rate.</p>
     </details>
 
     <details class="py-5">
@@ -494,8 +721,83 @@
         Can I break my FD before maturity?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, most FDs allow premature withdrawal, but banks usually apply a penalty of around 0.5%–1% on the applicable interest rate, and you earn interest only for the period the deposit was actually held.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, most FDs allow premature withdrawal, but banks usually apply a penalty of around 0.5%–1% on the applicable interest rate, and you earn interest only for the period the deposit was actually held, not the full quoted tenure rate.</p>
     </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I avoid TDS on my FD interest?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">If your total taxable income is below the exemption limit, you can submit Form 15G (Form 15H if you're a senior citizen) to your bank at the start of the financial year, which instructs the bank not to deduct TDS on your FD interest.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is a tax-saving FD the same as a regular FD?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No. A tax-saving FD has a mandatory 5-year lock-in with no premature withdrawal allowed, and the principal (up to ₹1.5 lakh) qualifies for a deduction under Section 80C. The interest earned is still fully taxable, unlike the principal deduction.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Do senior citizens get a better FD rate?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, most banks offer senior citizens (60+) an additional 0.25%–0.75% p.a. over the standard card rate on the same tenure, along with a higher TDS threshold of ₹50,000 instead of ₹40,000.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is my FD amount insured if the bank fails?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Deposits (including FDs) with a bank are insured by DICGC up to ₹5 lakh per depositor per bank, covering both principal and interest. Amounts above that limit are not covered, which is one reason to split large deposits across banks.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What happens to my FD if I don't withdraw it at maturity?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Most banks auto-renew the FD for the same tenure at the interest rate applicable on the maturity date, unless you've given standing instructions otherwise at the time of booking. Some banks instead move the matured amount to a savings account if no renewal instruction exists — check your specific bank's default policy so you're not surprised by either outcome.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== EXPLORE MORE CALCULATORS ===================== -->
+<section id="explore-more" class="max-w-6xl mx-auto px-4 pb-16">
+  <h2 class="font-display font-semibold text-brandDark text-xl mb-5">Explore More Calculators</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+
+    <a href="/electrical-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#e0f2fe">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Electrical Calculators</h3>
+      <p class="text-sm text-gray-500">Cable size, transformer size, motor current, DG size, solar sizing &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+
+    <a href="/mechanical-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#fef3c7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Mechanical Calculators</h3>
+      <p class="text-sm text-gray-500">Belt length, bearing life, cooling tower efficiency &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+
+    <a href="/financial-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#dcfce7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Financial Calculators</h3>
+      <p class="text-sm text-gray-500">EPF, PPF, SIP, gratuity, income tax, CAGR &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+
   </div>
 </section>
 
@@ -505,6 +807,27 @@
 <script src="/assets/site-nav.js"></script>
 
 <script>
+  // ===== Share / Feedback / Like-Dislike bar =====
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+  let reacted = null;
+  function toggleReaction(type){
+    const likeBtn = document.getElementById('likeBtn');
+    const dislikeBtn = document.getElementById('dislikeBtn');
+    const likeCount = document.getElementById('likeCount');
+    let count = parseInt(likeCount.textContent, 10);
+    if(type === 'like'){
+      if(reacted === 'like'){ count--; reacted = null; likeBtn.classList.remove('active-like'); }
+      else { if(reacted === 'dislike'){ dislikeBtn.classList.remove('active-dislike'); } count++; reacted = 'like'; likeBtn.classList.add('active-like'); }
+    } else {
+      if(reacted === 'dislike'){ reacted = null; dislikeBtn.classList.remove('active-dislike'); }
+      else { if(reacted === 'like'){ count--; likeBtn.classList.remove('active-like'); } reacted = 'dislike'; dislikeBtn.classList.add('active-dislike'); }
+    }
+    likeCount.textContent = count;
+  }
+
   // ===== FD Calculator Logic =====
   let compoundFreq = 2;
 

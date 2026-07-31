@@ -145,6 +145,23 @@
     user-select:none;
   }
 
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+
   .input-field{
     width:100%;
     background:#f8fafc;
@@ -267,7 +284,7 @@
 </section>
 
 <!-- ===================== CALCULATOR ===================== -->
-<section class="max-w-6xl mx-auto px-4 py-14">
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
   <div class="grid lg:grid-cols-5 gap-6">
 
     <!-- INPUT PANEL -->
@@ -359,26 +376,160 @@
   </div>
 </section>
 
+<!-- ===================== SHARE / FEEDBACK / LIKE-DISLIKE BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center justify-between gap-3 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500 mr-1">Share:</span>
+      <button class="action-icon-btn" onclick="navigator.clipboard.writeText(window.location.href)">🔗 Copy Link</button>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://wa.me/?text='+encodeURIComponent(window.location.href)">🟢 WhatsApp</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)">🐦 X</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href)">📘 Facebook</a>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="likeBtn" class="action-icon-btn" onclick="toggleReaction('like')">👍 <span id="likeCount">0</span></button>
+      <button id="dislikeBtn" class="action-icon-btn" onclick="toggleReaction('dislike')">👎</button>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Cooling%20Tower%20Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding tower efficiency</a></li>
+      <li><a href="#ct-factors" class="hover:underline">3. What drives approach &amp; efficiency</a></li>
+      <li><a href="#ct-mistakes" class="hover:underline">4. Common mistakes &amp; maintenance</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
 <!-- ===================== EXPLANATION ===================== -->
-<section class="bg-white border-y border-gray-100 py-16">
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
   <div class="max-w-3xl mx-auto px-4">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding Cooling Tower Efficiency</h2>
 
+
+    <div class="not-prose bg-white border border-gray-200 rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="https://www.electromechcalc.com/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: July 2026 &nbsp;|&nbsp; Standards referenced: ISO / DIN / manufacturer bearing & belt data</p>
+    </div>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-      <p>A cooling tower works by rejecting heat from a process, typically a chiller condenser, an industrial process, or a power plant condenser, into the atmosphere by evaporating a portion of the circulating water. The performance of a cooling tower is judged not by how cold it makes the water in absolute terms, but by how close it gets the outgoing cold water temperature to the theoretical best possible limit, which is the ambient wet bulb temperature. This is why cooling tower efficiency is always expressed relative to wet bulb temperature rather than dry bulb (ordinary air) temperature — the wet bulb reading already accounts for the cooling effect of evaporation, which is exactly the mechanism a cooling tower relies on.</p>
+      <p>A cooling tower works by rejecting heat from a process, typically a chiller condenser, an industrial process, or a power plant condenser, into the atmosphere by evaporating a portion of the circulating water. The performance of a cooling tower is judged not by how cold it makes the water in absolute terms, but by how close it gets the outgoing cold water temperature to the theoretical best possible limit, which is the ambient wet bulb temperature. This is why cooling tower efficiency is always expressed relative to wet bulb temperature rather than dry bulb (ordinary air) temperature — the wet bulb reading already accounts for the cooling effect of evaporation, which is exactly the mechanism a cooling tower relies on. Getting this one input right is the single biggest factor in getting a trustworthy efficiency number: a wet bulb reading taken from a distant airport weather station instead of near the tower's actual air intake can easily be off by several degrees, especially on a site with nearby heat sources, paving, or other equipment discharging warm air.</p>
 
-      <p>Two terms describe how a cooling tower is performing. The range is simply the temperature drop the tower achieves: the difference between the hot water entering the tower and the cold water leaving it. A larger range generally means the tower is rejecting more heat. The approach is the difference between the cold water leaving the tower and the wet bulb temperature of the surrounding air, and this is the figure that really tells you how close the tower is running to its theoretical limit. A smaller approach means a more efficient tower, since it means the outgoing water temperature is very close to the lowest temperature physically achievable given the current weather conditions; a larger approach signals fouled fill media, poor air distribution, undersized fans, or a tower that is simply oversized or undersized for the current heat load.</p>
+      <p>It's worth being precise about what "efficiency" means here, because the term gets used loosely in the field. This calculator's efficiency is a <em>thermal effectiveness</em> figure — how close the tower gets to the theoretical best outcome for the current weather — not an energy-efficiency figure like kW per ton, which would additionally depend on fan and pump power consumption. A tower can have excellent thermal effectiveness (a small approach) while still being an energy hog if its fans are oversized or poorly controlled, so this calculator answers "is the tower doing its thermal job well" rather than "is the tower saving me money on power," which is a related but separate question.</p>
 
-      <p>Cooling tower efficiency combines the range and the approach into a single percentage: it expresses the actual temperature drop achieved as a fraction of the maximum theoretically possible temperature drop, which would occur if the cold water left the tower at exactly the wet bulb temperature. This calculation is used constantly by facility and HVAC engineers to benchmark how a tower is performing against its design specification, to decide when fill media needs cleaning or replacement, and to verify that a tower is correctly sized for the building's actual cooling load, especially during commissioning or after a maintenance shutdown.</p>
+      <p>Two terms describe how a cooling tower is performing. The <strong>range</strong> is simply the temperature drop the tower achieves: the difference between the hot water entering the tower and the cold water leaving it. A larger range generally means the tower is rejecting more heat. The <strong>approach</strong> is the difference between the cold water leaving the tower and the wet bulb temperature of the surrounding air, and this is the figure that really tells you how close the tower is running to its theoretical limit. A smaller approach means a more efficient tower, since it means the outgoing water temperature is very close to the lowest temperature physically achievable given the current weather conditions; a larger approach signals fouled fill media, poor air distribution, undersized fans, or a tower that is simply oversized or undersized for the current heat load.</p>
 
-      <p><strong>Worked example:</strong> Suppose a cooling tower receives hot water at 38°C and returns it cooled to 30°C, while the ambient wet bulb temperature on that day is 27°C. First, the range: Range = 38 − 30 = 8°C. Next, the approach: Approach = 30 − 27 = 3°C. Applying the efficiency formula: Efficiency = 8 ÷ (8 + 3) × 100 = 8 ÷ 11 × 100 ≈ 72.7%. This tells the engineer the tower is currently operating at roughly 73% of its theoretical maximum cooling potential for the prevailing weather conditions, a reasonable but improvable figure, since well-maintained towers with clean fill and properly functioning fans commonly achieve efficiencies in the 80–90% range under similar wet bulb conditions.</p>
+      <p>Cooling tower efficiency combines the range and the approach into a single percentage: it expresses the actual temperature drop achieved as a fraction of the maximum theoretically possible temperature drop, which would occur if the cold water left the tower at exactly the wet bulb temperature.</p>
+
+      <h3>The formula</h3>
+      <p><strong>Efficiency (%) = Range ÷ (Range + Approach) × 100</strong>, where Range = Hot water in − Cold water out, and Approach = Cold water out − Wet bulb temperature. This calculation is used constantly by facility and HVAC engineers to benchmark how a tower is performing against its design specification, to decide when fill media needs cleaning or replacement, and to verify that a tower is correctly sized for the building's actual cooling load, especially during commissioning or after a maintenance shutdown.</p>
+
+      <p><strong>Worked example:</strong> Suppose a cooling tower receives hot water at 38°C and returns it cooled to 30°C, while the ambient wet bulb temperature on that day is 27°C. First, the range: Range = 38 − 30 = 8°C. Next, the approach: Approach = 30 − 27 = 3°C. Applying the efficiency formula: Efficiency = 8 ÷ (8 + 3) × 100 = 8 ÷ 11 × 100 ≈ 72.7%. This tells the engineer the tower is currently operating at roughly 73% of its theoretical maximum cooling potential for the prevailing weather conditions.</p>
+
+      <h3>A second worked example — a poorly performing tower</h3>
+      <p>Now compare a tower that receives water at 40°C and returns it at 34°C, with the same 27°C wet bulb: Range = 40 − 34 = 6°C, Approach = 34 − 27 = 7°C, Efficiency = 6 ÷ (6+7) × 100 ≈ 46.2%. Despite a similar-looking temperature drop, this tower is running at barely half of its theoretical potential — a clear sign of a maintenance or sizing problem worth investigating rather than a healthy operating point.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Reference: CTI ATC-105 test code and ASHRAE cooling tower performance guidelines. This calculator is for educational and preliminary diagnostic use; commissioning-grade measurements should use calibrated instruments per CTI/ASHRAE test procedures. Note that this calculator estimates thermal effectiveness only and does not account for fan/pump energy consumption, water treatment chemistry, or structural condition of the tower.</p>
+  </div>
+</section>
+
+<!-- ===================== WHAT DRIVES APPROACH & EFFICIENCY ===================== -->
+<section id="ct-factors" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Design Factors</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">What Drives Approach and Efficiency</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>A cooling tower's approach isn't a fixed property of the tower — it depends on a handful of design and operating variables working together, and understanding each one helps diagnose why a tower's efficiency has drifted from its commissioning value.</p>
+  </div>
+  <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Factor</th>
+          <th class="text-left px-4 py-2 font-semibold">Effect on Approach</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">Fill media surface area / condition</td><td class="px-4 py-2">More/cleaner surface area lowers approach; scaled or fouled fill raises it</td></tr>
+        <tr><td class="px-4 py-2">Air-to-water flow ratio (L/G)</td><td class="px-4 py-2">Higher airflow relative to water flow lowers approach</td></tr>
+        <tr><td class="px-4 py-2">Water distribution uniformity</td><td class="px-4 py-2">Uneven spray/nozzle clogging raises approach</td></tr>
+        <tr><td class="px-4 py-2">Fan performance / belt condition</td><td class="px-4 py-2">Worn belts or fan blade fouling reduce airflow, raising approach</td></tr>
+        <tr><td class="px-4 py-2">Tower sizing vs. actual heat load</td><td class="px-4 py-2">Undersized tower for the load struggles to hit design approach</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Most cooling towers are designed for a specific approach at a specific design wet bulb temperature — commonly a 5°C (9°F) approach at the local 0.4% or 1% design wet bulb condition. A well-maintained tower running near its design approach at the current wet bulb is doing its job; a tower whose approach has crept up well past its design figure, with no change in load or weather, is telling you something in the airflow or water-distribution path needs attention.</p>
+
+    <h3>Tower types and how they affect achievable approach</h3>
+    <p><strong>Counterflow towers</strong> move air vertically upward against the downward flow of water, giving the best possible thermal contact and typically the lowest achievable approach for a given footprint, but requiring more fan power. <strong>Crossflow towers</strong> move air horizontally across the falling water and are generally easier to maintain (fill and nozzles are more accessible) at a slightly higher approach for the same size. <strong>Induced-draft towers</strong> pull air through with a fan mounted at the top, discharging warm moist air upward away from the tower — the dominant design in HVAC and industrial applications today. <strong>Forced-draft towers</strong> push air in from the bottom with a fan at the base, which is mechanically simpler but more prone to recirculation of the warm, humid discharge air back into the intake, silently raising the effective entering wet bulb and hurting real-world performance even though the tower's rated approach hasn't changed.</p>
+
+    <h3>Cycles of concentration and its indirect effect on efficiency</h3>
+    <p>Cycles of concentration (COC) — how many times the dissolved solids in the make-up water are concentrated before blowdown — isn't part of the range/approach/efficiency formula directly, but it drives everything that eventually shows up as a rising approach: low COC wastes water and chemicals, while COC pushed too high without proper water treatment accelerates scale formation on fill media, which is one of the most common root causes of gradually rising approach over a cooling season.</p>
+
+    <h3>Maintenance checklist to keep approach near design</h3>
+    <ul>
+      <li><strong>Weekly:</strong> Visual check of spray pattern, basin water level, and audible fan/motor noise.</li>
+      <li><strong>Monthly:</strong> Log range, approach, and wet bulb together to build a trend; check belt tension on belt-driven fans.</li>
+      <li><strong>Quarterly:</strong> Inspect fill media for scale, algae, or debris; check water treatment dosing and blowdown rate against target COC.</li>
+      <li><strong>Annually:</strong> Full fill clean or replacement if fouled beyond cleaning, fan/gearbox service, and nozzle inspection for clogging or wear.</li>
+    </ul>
+
+    <h3>Sizing basics: matching tower capacity to heat load</h3>
+    <p>Cooling towers are rated in "tons" of refrigeration equivalent, where one ton of cooling tower capacity is conventionally defined as rejecting 15,000 BTU/hr while cooling 3 GPM of water by 10°F (roughly a 5.5°C range) at a standard 78°F (25.6°C) design wet bulb. A tower undersized for its actual heat load will never hit its design approach regardless of how well it's maintained — the calculator and the maintenance checklist above only help once the tower is correctly sized for the job.</p>
+    <div class="not-prose overflow-x-auto my-4">
+      <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-4 py-2 font-semibold">Application</th>
+            <th class="text-left px-4 py-2 font-semibold">Typical Design Approach</th>
+            <th class="text-left px-4 py-2 font-semibold">Typical Design Range</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr><td class="px-4 py-2">Comfort HVAC chiller plant</td><td class="px-4 py-2">4–6°C</td><td class="px-4 py-2">5–6°C</td></tr>
+          <tr><td class="px-4 py-2">Industrial process cooling</td><td class="px-4 py-2">3–5°C</td><td class="px-4 py-2">8–12°C</td></tr>
+          <tr><td class="px-4 py-2">Power plant condenser</td><td class="px-4 py-2">3–4°C</td><td class="px-4 py-2">8–10°C</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Notice that a tighter approach (a "harder" duty) generally requires a physically larger tower — more fill volume and/or more airflow — for the same heat load, which is why process and power-plant towers, which demand a tighter approach, tend to be proportionally larger than comfort-cooling towers rejecting a similar amount of heat with a more relaxed approach target.</p>
+
+    <h3>Recirculation and wind effects</h3>
+    <p>Even a correctly sized, well-maintained tower can show poor real-world approach if warm, humid discharge air re-enters the air intake — a problem called recirculation. This is common with forced-draft towers placed too close to walls or adjacent equipment, or with multiple towers arranged so one tower's exhaust plume drifts into a neighboring tower's intake under certain wind directions. Recirculation effectively raises the "seen" wet bulb temperature above the true ambient wet bulb, which the tower has no way to overcome — no amount of fill cleaning fixes a layout problem, which is why tower placement and minimum clearances from walls and other towers matter as much as mechanical condition when troubleshooting a chronically high approach.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="ct-mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Assessing Tower Performance</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p><strong>1. Comparing efficiency across different days without normalizing for wet bulb.</strong> A tower can show 85% efficiency on a dry day and 70% on a humid day while performing identically in absolute terms — always compare approach values at similar wet bulb conditions, or track approach directly rather than the percentage.</p>
+      <p><strong>2. Using dry bulb temperature by mistake.</strong> Plugging in the ambient (dry bulb) air temperature instead of wet bulb temperature will produce a misleadingly optimistic efficiency figure, since dry bulb is almost always higher than wet bulb in anything but saturated air.</p>
+      <p><strong>3. Ignoring fill media condition during routine checks.</strong> Scale buildup, algae growth, or debris in the fill is the single most common cause of rising approach over time, and it's often missed because the tower still "looks fine" from the outside while airflow and water distribution quietly degrade.</p>
+      <p><strong>4. Not tracking approach trend over time.</strong> A single reading tells you where you are today; a monthly or quarterly log of range, approach, and wet bulb tells you whether the tower is degrading, and lets you schedule fill cleaning or fan maintenance before efficiency drops enough to affect the process it serves.</p>
+      <p><strong>5. Overlooking water treatment and cycles of concentration.</strong> Poor water treatment accelerates scaling on fill media and heat-transfer surfaces, directly raising approach over months even without any mechanical fault — this is a chemistry problem as much as a mechanical one.</p>
     </div>
   </div>
 </section>
 
 <!-- ===================== FAQ ===================== -->
-<section class="max-w-3xl mx-auto px-4 py-16">
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
   <div class="text-center mb-10">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
@@ -398,7 +549,7 @@
         What's a good approach value for a well-performing tower?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A smaller approach is better. Well-designed and well-maintained towers commonly run with an approach in the 3–5°C range, while a rising approach over time, without any change in weather, usually points to fouled fill media, reduced airflow, or a fan or pump issue.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A smaller approach is better. Well-designed and well-maintained towers commonly run with an approach in the 3–5°C range at design wet bulb conditions, while a rising approach over time, without any change in weather, usually points to fouled fill media, reduced airflow, or a fan or pump issue.</p>
     </details>
 
     <details class="py-5">
@@ -422,17 +573,101 @@
         Are these results accurate enough for professional use?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This calculator uses the standard range/approach/efficiency formulas taught in HVAC and mechanical engineering coursework. For commissioning reports, warranty claims, or performance guarantees, always cross-check readings against calibrated instruments and, where required, have results reviewed by a qualified engineer.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This calculator uses the standard range/approach/efficiency formulas taught in HVAC and mechanical engineering coursework. For commissioning reports, warranty claims, or performance guarantees, always cross-check readings against calibrated instruments and, where required, have results reviewed by a qualified engineer per CTI ATC-105.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How often should fill media be inspected or cleaned?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A general guideline is a visual inspection every 3–6 months and a full clean annually, though towers in hard-water, dusty, or algae-prone environments may need more frequent attention. Rising approach readings over consecutive checks are the clearest sign it's time to inspect the fill sooner.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I use this calculator for a chiller condenser water system?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — the range/approach/efficiency method applies to any open evaporative cooling tower, whether it's serving a chiller condenser loop, an industrial process, or a power plant condenser. Just make sure the wet bulb reading is taken close to the tower's air intake, not from a distant weather station.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What causes a sudden drop in efficiency rather than a gradual one?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A sudden drop usually points to a discrete failure rather than gradual fouling — a tripped or slipping fan belt, a clogged distribution nozzle, a stuck damper, or a pump running below its rated flow. Gradual declines over weeks or months are more typically fouling, scaling, or algae growth.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is an induced-draft or forced-draft tower better for avoiding recirculation?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Induced-draft towers generally handle recirculation better, since the fan discharges warm, humid air upward at high velocity, carrying it away from the intake. Forced-draft towers discharge at lower level and velocity, making them more susceptible to the exhaust plume drifting back into the intake, especially in tight layouts or gusty wind conditions.</p>
     </details>
   </div>
 </section>
 
 <!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<!-- ===================== EXPLORE MORE CALCULATORS ===================== -->
+<section id="explore-more" class="max-w-6xl mx-auto px-4 pb-16">
+  <h2 class="font-display font-semibold text-brandDark text-xl mb-5">Explore More Calculators</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+    <a href="/electrical-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#e0f2fe">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Electrical Calculators</h3>
+      <p class="text-sm text-gray-500">Cable size, transformer size, motor current, DG size, solar sizing &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="/mechanical-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#fef3c7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Mechanical Calculators</h3>
+      <p class="text-sm text-gray-500">Belt length, bearing life, cooling tower efficiency &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="/financial-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#dcfce7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Financial Calculators</h3>
+      <p class="text-sm text-gray-500">EPF, PPF, SIP, gratuity, income tax, CAGR &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+  </div>
+</section>
+
 <div id="site-footer"></div>
 
 <script src="/assets/site-nav.js"></script>
 
 <script>
+  // ===== Share / Feedback / Like-Dislike bar =====
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+  let reacted = null;
+  function toggleReaction(type){
+    const likeBtn = document.getElementById('likeBtn');
+    const dislikeBtn = document.getElementById('dislikeBtn');
+    const likeCount = document.getElementById('likeCount');
+    let count = parseInt(likeCount.textContent, 10);
+    if(type === 'like'){
+      if(reacted === 'like'){ count--; reacted = null; likeBtn.classList.remove('active-like'); }
+      else { if(reacted === 'dislike'){ dislikeBtn.classList.remove('active-dislike'); } count++; reacted = 'like'; likeBtn.classList.add('active-like'); }
+    } else {
+      if(reacted === 'dislike'){ reacted = null; dislikeBtn.classList.remove('active-dislike'); }
+      else { if(reacted === 'like'){ count--; likeBtn.classList.remove('active-like'); } reacted = 'dislike'; dislikeBtn.classList.add('active-dislike'); }
+    }
+    likeCount.textContent = count;
+  }
+
   // ===== Cooling Tower Efficiency Calculator Logic =====
   function calculate(){
     const hotWater = parseFloat(document.getElementById('hotWater').value);

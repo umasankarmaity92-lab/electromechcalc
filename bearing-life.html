@@ -124,6 +124,10 @@
   .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
 
   .premium-disabled{ cursor:not-allowed; opacity:0.55; pointer-events:none; user-select:none; }
+  .action-icon-btn{ display:inline-flex; align-items:center; gap:6px; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; font-size:13px; color:#334155; background:#fff; cursor:pointer; transition:.15s ease; }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
 
   .input-field{
     width:100%;
@@ -217,7 +221,7 @@
 </section>
 
 <!-- ===================== CALCULATOR ===================== -->
-<section class="max-w-6xl mx-auto px-4 py-14">
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
   <div class="grid lg:grid-cols-5 gap-6">
 
     <!-- INPUT PANEL -->
@@ -313,20 +317,61 @@
   </div>
 </section>
 
+<!-- ===================== SHARE / FEEDBACK / LIKE-DISLIKE BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center justify-between gap-3 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500 mr-1">Share:</span>
+      <button class="action-icon-btn" onclick="navigator.clipboard.writeText(window.location.href)">🔗 Copy Link</button>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://wa.me/?text='+encodeURIComponent(window.location.href)">🟢 WhatsApp</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)">🐦 X</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href)">📘 Facebook</a>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="likeBtn" class="action-icon-btn" onclick="toggleReaction('like')">👍 <span id="likeCount">0</span></button>
+      <button id="dislikeBtn" class="action-icon-btn" onclick="toggleReaction('dislike')">👎</button>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Bearing%20Life%20Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding L10 life</a></li>
+      <li><a href="#bl-factors" class="hover:underline">3. Beyond basic L10 — ISO 281 modified life</a></li>
+      <li><a href="#bl-failure" class="hover:underline">4. Failure modes &amp; mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
 <!-- ===================== EXPLANATION ===================== -->
-<section class="bg-white border-y border-gray-100 py-16">
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
   <div class="max-w-3xl mx-auto px-4">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding Bearing Life (L10)</h2>
 
+
+    <div class="not-prose bg-white border border-gray-200 rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="https://www.electromechcalc.com/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: July 2026 &nbsp;|&nbsp; Standards referenced: ISO / DIN / manufacturer bearing & belt data</p>
+    </div>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-      <p>Bearing life is one of the most critical parameters in rotating machinery design, since a bearing is almost always the component that determines how long a motor, pump, gearbox, or fan can run before it needs maintenance. The L10 life is the industry-standard way to express this: it is the number of revolutions, or operating hours, that 90% of a population of identical bearings will complete or exceed before the first signs of fatigue failure appear. Only 10% of bearings are statistically expected to fail before reaching the L10 life, which is why manufacturers and reliability teams treat it as the baseline figure for planning replacement intervals.</p>
+      <p>Bearing life is one of the most critical parameters in rotating machinery design, since a bearing is almost always the component that determines how long a motor, pump, gearbox, or fan can run before it needs maintenance. The L10 life is the industry-standard way to express this: it is the number of revolutions, or operating hours, that 90% of a population of identical bearings will complete or exceed before the first signs of fatigue failure appear. Only 10% of bearings are statistically expected to fail before reaching the L10 life, which is why manufacturers and reliability teams treat it as the baseline figure for planning replacement intervals — it's a conservative, statistical number, not a guarantee for any single bearing.</p>
 
       <p>The calculation depends on two load values: the dynamic load rating C, a fixed value the manufacturer assigns to that specific bearing based on its internal geometry and material, and the equivalent dynamic load P, the actual combined radial and axial load the bearing experiences in service. The ratio of C to P is raised to a power of 3 for ball bearings, or roughly 10/3 for roller bearings, since roller bearings have a different fatigue-load relationship due to their line-contact geometry rather than the point contact of ball bearings.</p>
 
       <p><strong>Continuous-duty estimate.</strong> Alongside the raw hours figure, this calculator also converts the life into years assuming the bearing runs continuously (24 hours a day, every day), which is a useful sanity check for planning long-interval maintenance schedules on equipment that runs around the clock, such as process pumps or continuously-running fans.</p>
-
-      <p>This calculator is used constantly by mechanical and maintenance engineers when selecting a bearing for a new design, verifying whether an existing bearing is adequately rated for a higher load or speed, or estimating the remaining service interval before a scheduled bearing replacement.</p>
 
       <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mt-2">Formulas Used</h6>
       <div class="formula-chip block w-fit whitespace-pre-line">L10 (Million Revolutions) = (C / P)^k
@@ -335,15 +380,86 @@ Bearing Life (Hours) = (L10 × 1,000,000) ÷ (60 × RPM)
 Where: C = Dynamic Load Rating (N), P = Equivalent Dynamic Load (N),
 RPM = Bearing operating speed, k = 3 (ball) or 10/3 (roller)</div>
 
-      <p><span class="font-semibold text-amber-600">Example:</span> Ball bearing with C = 25,000 N, P = 5,000 N, speed = 1,450 RPM. Load ratio C/P = 5. L10 = 5³ = 125 million revolutions. Bearing Life = (125 × 1,000,000) ÷ (60 × 1,450) ≈ <strong>1,437 hours</strong>, or roughly 2 months of continuous 24/7 running. This means 90% of such bearings will run at least this long before fatigue failure.</p>
+      <p><span class="font-semibold text-amber-600">Example 1 (ball bearing):</span> C = 25,000 N, P = 5,000 N, speed = 1,450 RPM. Load ratio C/P = 5. L10 = 5³ = 125 million revolutions. Bearing Life = (125 × 1,000,000) ÷ (60 × 1,450) ≈ <strong>1,437 hours</strong>, or roughly 60 days of continuous 24/7 running.</p>
+
+      <p><span class="font-semibold text-amber-600">Example 2 (roller bearing, same numbers):</span> C = 25,000 N, P = 5,000 N, speed = 1,450 RPM, k = 10/3. L10 = 5^(10/3) ≈ 214.5 million revolutions — nearly double the ball bearing result at the same load ratio, illustrating how the roller bearing's flatter load-life curve makes it comparatively more forgiving at moderate overload, though the two bearing types aren't directly interchangeable for a given application.</p>
+
+      <h3>Sensitivity to load — why overloading is expensive</h3>
+      <p>Because life scales with (C/P) raised to the 3rd (or 10/3) power, a seemingly small increase in load produces a large drop in expected life. Doubling the equivalent load P on a ball bearing cuts L10 life to 1/8th of its original value (since 2³ = 8); a 25% overload cuts life to roughly half. This cubic (or near-cubic) relationship is why "just a bit more load than spec" on a bearing is a far bigger reliability risk than intuition suggests, and why correctly calculating P — including any misalignment or shock-load factors — matters more than most other steps in bearing selection.</p>
     </div>
 
     <p class="text-xs text-gray-400 mt-6">Reference: The L10 life equation is the standard ISO 281 fatigue-life relationship used across mechanical and maintenance engineering for rolling-element bearing selection. This calculator is for preliminary, educational sizing only and does not account for lubrication, contamination, or temperature-based life adjustment factors used in a full ISO 281 modified life calculation.</p>
   </div>
 </section>
 
+<!-- ===================== ISO 281 MODIFIED LIFE ===================== -->
+<section id="bl-factors" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Beyond Basic L10</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">ISO 281 Modified Life (L10m)</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>The basic L10 rating life this calculator computes assumes ideal conditions: clean lubrication, correct alignment, and no contamination. Real installations rarely match that ideal exactly, so ISO 281 defines a modified life, L10m, that applies correction factors on top of the basic L10:</p>
+  </div>
+  <div class="formula-chip block w-fit whitespace-pre-line mb-4">L10m = a1 × a23 × L10</div>
+  <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Factor</th>
+          <th class="text-left px-4 py-2 font-semibold">Accounts For</th>
+          <th class="text-left px-4 py-2 font-semibold">Typical Range</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">a1 (reliability)</td><td class="px-4 py-2">Reliability level other than 90% (e.g. L5, L1)</td><td class="px-4 py-2">0.21–1.0</td></tr>
+        <tr><td class="px-4 py-2">a23 (lubrication/contamination)</td><td class="px-4 py-2">Lubricant film quality, cleanliness, temperature</td><td class="px-4 py-2">0.1–3 or more</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>In practice, the a23 factor is the one that moves the needle most in real plants: a bearing running with contaminated or degraded lubricant can see its practical life drop to a fraction of the basic L10 calculation, while a bearing with excellent filtration, correct viscosity, and a clean environment can significantly exceed it. This is why two identical bearings, rated identically on paper, can show wildly different actual field lives — the mechanical calculation is only half the story; lubrication and contamination control account for the other half.</p>
+
+    <h3>Choosing between ball and roller bearings</h3>
+  </div>
+  <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Attribute</th>
+          <th class="text-left px-4 py-2 font-semibold">Ball Bearing</th>
+          <th class="text-left px-4 py-2 font-semibold">Roller Bearing</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">Contact type</td><td class="px-4 py-2">Point contact</td><td class="px-4 py-2">Line contact</td></tr>
+        <tr><td class="px-4 py-2">Load capacity (same size)</td><td class="px-4 py-2">Lower</td><td class="px-4 py-2">Higher</td></tr>
+        <tr><td class="px-4 py-2">High-speed suitability</td><td class="px-4 py-2">Better</td><td class="px-4 py-2">Moderate</td></tr>
+        <tr><td class="px-4 py-2">Friction / heat generation</td><td class="px-4 py-2">Lower</td><td class="px-4 py-2">Higher</td></tr>
+        <tr><td class="px-4 py-2">Typical use</td><td class="px-4 py-2">Motors, fans, light-to-moderate loads</td><td class="px-4 py-2">Gearboxes, rolling mills, heavy radial/thrust loads</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>As a rough rule of thumb, ball bearings are the default choice for general-purpose rotating equipment — motors, fans, pumps — where speed matters and loads are moderate, while roller bearings (cylindrical, tapered, or spherical) take over where load capacity per unit size becomes the limiting factor, such as gearbox shafts, rolling mill rolls, or heavy conveyor pulleys. The calculator's exponent switch between k=3 and k=10/3 reflects exactly this trade-off in how each geometry accumulates fatigue damage under load.</p>
+  </div>
+</section>
+
+<!-- ===================== FAILURE MODES & MISTAKES ===================== -->
+<section id="bl-failure" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Failure Modes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Bearing Failure Modes and Mistakes</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p><strong>1. Using the wrong P calculation.</strong> Plugging in the radial load alone when there's a meaningful axial component (as in angular contact or tapered roller bearings under thrust) understates P and dramatically overstates the calculated life — always use the manufacturer's X/Y factor combination when axial load is present.</p>
+      <p><strong>2. Ignoring misalignment.</strong> Shaft or housing misalignment concentrates load on one edge of the rolling elements rather than distributing it evenly, effectively raising the real equivalent load far above the theoretical P used in the calculation — this is one of the most common causes of bearings failing well short of their calculated L10 life.</p>
+      <p><strong>3. Contaminated or wrong-viscosity lubricant.</strong> Water ingress, dirt, or metal particles in the lubricant accelerate surface fatigue and can reduce actual life to a small fraction of the calculated value — this is captured by the a23 factor in a full ISO 281 calculation but is invisible in the basic L10 number alone.</p>
+      <p><strong>4. Treating L10 as a guaranteed replacement interval.</strong> L10 is a 90% survival statistic across a population, not a promise for any individual bearing — sound maintenance practice pairs the L10 estimate with condition monitoring (vibration analysis, temperature trending) rather than relying on the calculated hours alone.</p>
+      <p><strong>5. Ignoring shock and vibration loads.</strong> Sudden shock loads — from misaligned couplings, cavitating pumps, or belt-drive shock — impose instantaneous loads far above the steady-state P used in the calculation, and repeated shock loading causes brinelling and premature fatigue that a static load calculation won't predict.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== FAQ ===================== -->
-<section class="max-w-3xl mx-auto px-4 py-16">
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
   <div class="text-center mb-10">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
@@ -389,6 +505,61 @@ RPM = Bearing operating speed, k = 3 (ball) or 10/3 (roller)</div>
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — this calculator gives the basic L10 rating life only. A full modified life calculation (L10m or Lnm per ISO 281) also applies reliability, lubrication, and contamination adjustment factors that can significantly increase or decrease the practical service life beyond this basic estimate.</p>
     </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why did my bearing fail well before its calculated L10 life?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Early failure almost always traces back to something outside the basic load-life formula: misalignment, contaminated or incorrect lubrication, shock loading, incorrect fitting/mounting, or electrical fluting from stray currents through the bearing on a VFD-driven motor. The L10 number assumes none of these issues are present.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What's the practical difference between L10 and average bearing life?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Average (mean) life is typically about 5 times the L10 life for a normal bearing fatigue distribution, since L10 is deliberately a conservative, low-percentile figure. Reliability and maintenance planning use L10 precisely because it's conservative — planning around the mean would mean accepting a much higher failure rate before the "planned" replacement point.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I use this calculator for a bearing running at variable speed or load?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This calculator assumes constant load and speed. For duty cycles with varying load/speed segments, engineers typically calculate an equivalent constant load/speed using time-weighted cubic mean methods before applying the L10 formula — a more involved calculation outside the scope of this basic tool.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== EXPLORE MORE CALCULATORS ===================== -->
+<section id="explore-more" class="max-w-6xl mx-auto px-4 pb-16">
+  <h2 class="font-display font-semibold text-brandDark text-xl mb-5">Explore More Calculators</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+    <a href="/electrical-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#e0f2fe">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Electrical Calculators</h3>
+      <p class="text-sm text-gray-500">Cable size, transformer size, motor current, DG size, solar sizing &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="/mechanical-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#fef3c7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Mechanical Calculators</h3>
+      <p class="text-sm text-gray-500">Belt length, cooling tower efficiency &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="/financial-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#dcfce7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Financial Calculators</h3>
+      <p class="text-sm text-gray-500">EPF, PPF, SIP, gratuity, income tax, CAGR &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
   </div>
 </section>
 
@@ -398,6 +569,27 @@ RPM = Bearing operating speed, k = 3 (ball) or 10/3 (roller)</div>
 <script src="/assets/site-nav.js"></script>
 
 <script>
+  // ===== Share / Feedback / Like-Dislike bar =====
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+  let reacted = null;
+  function toggleReaction(type){
+    const likeBtn = document.getElementById('likeBtn');
+    const dislikeBtn = document.getElementById('dislikeBtn');
+    const likeCount = document.getElementById('likeCount');
+    let count = parseInt(likeCount.textContent, 10);
+    if(type === 'like'){
+      if(reacted === 'like'){ count--; reacted = null; likeBtn.classList.remove('active-like'); }
+      else { if(reacted === 'dislike'){ dislikeBtn.classList.remove('active-dislike'); } count++; reacted = 'like'; likeBtn.classList.add('active-like'); }
+    } else {
+      if(reacted === 'dislike'){ reacted = null; dislikeBtn.classList.remove('active-dislike'); }
+      else { if(reacted === 'like'){ count--; likeBtn.classList.remove('active-like'); } reacted = 'dislike'; dislikeBtn.classList.add('active-dislike'); }
+    }
+    likeCount.textContent = count;
+  }
+
   // ===== Bearing Life Calculator Logic =====
   let bearingType = 'ball';
 
