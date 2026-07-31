@@ -47,6 +47,7 @@ const CARD_DESCRIPTIONS = {
   '/ups-calculator': 'Estimate UPS battery backup runtime from the Ah rating and load.',
   '/ups-size': 'Size a UPS in kVA from input current, load, and power factor.',
   '/solar-size': 'Work out how big a solar PV array you need for your daily load.',
+  '/battery-backup': 'Estimate battery backup runtime from your load, battery Ah rating, and system voltage.',
   '/electrical-pro-max': 'An all-in-one toolkit for cable sizing, voltage drop, fault current, and load balancing.',
 
   '/bearing-life': "Estimate the L10 life of a bearing from its dynamic load rating and operating speed.",
