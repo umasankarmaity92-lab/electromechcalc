@@ -391,12 +391,31 @@
 
       <div id="percentFields" class="grid sm:grid-cols-2 gap-4 mb-5">
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Employee Contribution (%)</label>
-          <input id="empContribution" type="number" value="12" step="0.01" placeholder="e.g. 12" class="input-field mt-2">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Employee Contribution</label>
+          <div class="flex gap-2 mt-2">
+            <select id="empMode" onchange="onContribModeChange('emp')" class="input-field w-[72px] shrink-0 px-2">
+              <option value="percent">%</option>
+              <option value="amount">₹</option>
+            </select>
+            <input id="empContribution" type="number" value="12" step="0.01" placeholder="e.g. 12" class="input-field">
+          </div>
         </div>
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Employer EPF Contribution (%)</label>
-          <input id="employerContribution" type="number" value="3.67" step="0.01" placeholder="e.g. 3.67" class="input-field mt-2">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5">
+            Employer EPF Contribution
+            <button type="button" id="epsInfoBtn" onclick="toggleEpsInfo()" aria-label="Why isn't EPS included here?" class="w-4 h-4 rounded-full bg-gray-200 text-gray-500 hover:bg-sky-100 hover:text-sky-600 text-[10px] font-bold leading-4 text-center normal-case tracking-normal">i</button>
+          </label>
+          <div class="flex gap-2 mt-2">
+            <select id="emplrMode" onchange="onContribModeChange('emplr')" class="input-field w-[72px] shrink-0 px-2">
+              <option value="percent">%</option>
+              <option value="amount">₹</option>
+            </select>
+            <input id="employerContribution" type="number" value="3.67" step="0.01" placeholder="e.g. 3.67" class="input-field">
+          </div>
+          <div id="epsInfoBox" class="hidden mt-2 text-[11px] leading-relaxed text-gray-500 bg-sky-50 border border-sky-100 rounded-lg p-3">
+            Only the Employer EPF portion is included here. The EPS (Pension) contribution is not part of the EPF corpus.
+            <br>Example — Employee: 12%, Employer EPF: 3.67%, Employer EPS: 8.33% (subject to statutory wage ceiling).
+          </div>
         </div>
       </div>
 
@@ -562,6 +581,32 @@
   // ===== EPF Calculator Logic =====
   let salaryType = 'basicDA';
 
+  // Per-field %/₹ mode state. Remembers the last-entered value in each
+  // mode so switching back and forth doesn't lose what the user typed.
+  const contribState = {
+    emp:   { percent: 12,   amount: 3000, mode: 'percent' },
+    emplr: { percent: 3.67, amount: 918,  mode: 'percent' }
+  };
+
+  function onContribModeChange(key){
+    const inputId = key === 'emp' ? 'empContribution' : 'employerContribution';
+    const input  = document.getElementById(inputId);
+    const select = document.getElementById(key === 'emp' ? 'empMode' : 'emplrMode');
+    const state  = contribState[key];
+
+    const currentVal = parseFloat(input.value);
+    if(!isNaN(currentVal)) state[state.mode] = currentVal;
+
+    state.mode = select.value;
+    input.value = state[state.mode];
+    input.step = state.mode === 'percent' ? '0.01' : '100';
+    input.placeholder = state.mode === 'percent' ? 'e.g. 12' : 'e.g. 3000';
+  }
+
+  function toggleEpsInfo(){
+    document.getElementById('epsInfoBox').classList.toggle('hidden');
+  }
+
   function setSalaryType(type){
     salaryType = type;
     document.getElementById('typeBasicDA').classList.toggle('active', type === 'basicDA');
@@ -580,7 +625,9 @@
 
     const useFixedAmount = (salaryType === 'fixedAmount');
 
-    let basic, empPct, emplrPct, fixedAmount;
+    let basic, empVal, emplrVal, fixedAmount;
+    const empMode = contribState.emp.mode;
+    const emplrMode = contribState.emplr.mode;
     const validationBox = document.getElementById('validationBox');
     const errors = [];
 
@@ -589,10 +636,11 @@
       if(isNaN(fixedAmount) || fixedAmount <= 0){ errors.push('Enter a valid fixed monthly contribution amount greater than 0.'); }
     } else {
       basic = parseFloat(document.getElementById('basicSalary').value);
-      empPct = parseFloat(document.getElementById('empContribution').value);
-      emplrPct = parseFloat(document.getElementById('employerContribution').value);
+      empVal = parseFloat(document.getElementById('empContribution').value);
+      emplrVal = parseFloat(document.getElementById('employerContribution').value);
       if(isNaN(basic) || basic <= 0){ errors.push('Enter a valid monthly Basic + DA greater than 0.'); }
-      if(isNaN(empPct) || isNaN(emplrPct)){ errors.push('Enter valid employee and employer contribution percentages.'); }
+      if(isNaN(empVal) || empVal < 0){ errors.push('Enter a valid employee contribution.'); }
+      if(isNaN(emplrVal) || emplrVal < 0){ errors.push('Enter a valid employer contribution.'); }
     }
 
     if(isNaN(currentAge) || isNaN(retireAge)){ errors.push('Enter valid current and retirement age values.'); }
@@ -614,7 +662,6 @@
     }
 
     const totalYears = Math.round(retireAge - currentAge);
-    const totalContributionPct = useFixedAmount ? null : (empPct + emplrPct) / 100;
     const monthlyRate = rate / 100 / 12;
 
     // EPFO official method: interest is calculated on the OPENING balance
@@ -638,7 +685,10 @@
         monthlyBasicDisplay = monthlyContribution;
       } else {
         const monthlyBasic = basic * Math.pow(1 + stepUp/100, y - 1);
-        monthlyContribution = monthlyBasic * totalContributionPct;
+        const stepFactor = Math.pow(1 + stepUp/100, y - 1);
+        const empAmt = empMode === 'percent' ? monthlyBasic * empVal / 100 : empVal * stepFactor;
+        const emplrAmt = emplrMode === 'percent' ? monthlyBasic * emplrVal / 100 : emplrVal * stepFactor;
+        monthlyContribution = empAmt + emplrAmt;
         monthlyBasicDisplay = monthlyBasic;
       }
 
