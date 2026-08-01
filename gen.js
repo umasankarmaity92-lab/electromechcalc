@@ -69,6 +69,17 @@ const CARD_DESCRIPTIONS = {
   '/ppf-calculator': 'Project your PPF maturity value over the 15-year lock-in.',
   '/nps-calculator': 'Estimate your NPS retirement corpus and expected monthly annuity.',
   '/inflation-calculator': 'See how inflation erodes purchasing power, or what a future value really costs today.',
+
+  '/emi-calculator': 'Calculate your monthly EMI, total interest, and full amortization schedule for any loan.',
+  '/home-loan-emi-calculator': 'Work out your home loan EMI and tax benefits under Section 80C and 24(b).',
+  '/personal-loan-emi-calculator': 'Get the monthly EMI and total interest on a personal loan, amortization included.',
+  '/car-loan-emi-calculator': 'Calculate your car loan EMI from on-road price, down payment, rate, and tenure.',
+  '/education-loan-emi-calculator': "Account for the moratorium period and see your education loan's post-course EMI.",
+  '/compound-interest-calculator': 'Find the maturity amount and interest earned for any compounding frequency.',
+  '/simple-interest-calculator': 'Calculate simple interest and total amount, with a year-wise breakdown.',
+  '/gst-calculator': 'Add or remove GST from any amount, with a CGST/SGST or IGST split for every slab.',
+  '/hra-exemption-calculator': 'Work out your exempt and taxable HRA under the Income Tax Act.',
+  '/salary-ctc-calculator': 'Break your CTC down into basic, HRA, PF, and gratuity to see your monthly take-home.',
 };
 
 // Curated ordering + which URL gets the "Featured" badge — loaded from

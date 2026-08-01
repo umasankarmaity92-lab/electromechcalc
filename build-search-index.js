@@ -102,7 +102,8 @@ const CATEGORY_KEYWORDS = [
     category: "Financial",
     match: ["epf", "sip", "cagr", "emi", "interest", "investment",
             "retirement", "tax", "gratuity", "fd", "rd", "ppf", "nps",
-            "inflation"],
+            "inflation", "gst", "hra", "exemption", "ctc", "salary",
+            "loan"],
   },
 ];
 
