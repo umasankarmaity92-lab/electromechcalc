@@ -158,6 +158,24 @@
     user-select:none;
   }
 
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
   .input-field{
     width:100%;
     background:#f8fafc;
@@ -290,6 +308,15 @@
     font-size:12.5px;
     color:#94a3b8;
   }
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -338,7 +365,7 @@
 </section>
 
 <!-- ===================== CALCULATOR ===================== -->
-<section class="max-w-6xl mx-auto px-4 py-14">
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
   <div class="grid lg:grid-cols-5 gap-6">
 
     <!-- INPUT PANEL -->
@@ -429,26 +456,67 @@
   </div>
 </section>
 
+<!-- ===================== SHARE / FEEDBACK / LIKE-DISLIKE BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center justify-between gap-3 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500 mr-1">Share:</span>
+      <button class="action-icon-btn" onclick="navigator.clipboard.writeText(window.location.href)">🔗 Copy Link</button>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://wa.me/?text='+encodeURIComponent(window.location.href)">🟢 WhatsApp</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)">🐦 X</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href)">📘 Facebook</a>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="likeBtn" class="action-icon-btn" onclick="toggleReaction('like')">👍 <span id="likeCount">0</span></button>
+      <button id="dislikeBtn" class="action-icon-btn" onclick="toggleReaction('dislike')">👎</button>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20PPF%20Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding PPF</a></li>
+      <li><a href="#ppf-compare" class="hover:underline">3. PPF vs EPF vs NPS</a></li>
+      <li><a href="#ppf-mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
 <!-- ===================== EXPLANATION ===================== -->
-<section class="bg-white border-y border-gray-100 py-16">
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
   <div class="max-w-3xl mx-auto px-4">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding PPF (Public Provident Fund)</h2>
 
 
-    <div class="not-prose bg-white border border-gray-200 rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
-      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
-      <p>Reviewed by the <a href="https://www.electromechcalc.com/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
-      <p>Last reviewed: July 2026 &nbsp;|&nbsp; Standards referenced: EPFO / Income Tax Act / RBI compounding conventions</p>
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: EPFO / Income Tax Act / RBI compounding conventions</p>
     </div>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
       <p>The Public Provident Fund is a government-backed, long-term savings scheme popular for its "EEE" tax status — your contribution, the interest earned, and the maturity amount are all exempt from tax. It comes with a mandatory lock-in of 15 years, after which it can be extended indefinitely in blocks of 5 years, with or without further contributions.</p>
 
       <p><strong>How interest is calculated:</strong> PPF interest is computed monthly on the lowest balance between the 5th and last day of the month, but credited to your account at the end of the financial year. For simplicity, this calculator assumes the full yearly contribution is made at the start of the financial year and compounds annually — this represents the maximum possible benefit and is close to actual returns if you deposit early each year.</p>
 
+      <p><strong>Why depositing before the 5th of the month matters:</strong> because interest is calculated on the lowest balance between the 5th and the last day of each month, a deposit made on the 6th or later effectively earns no interest for that entire month — it's treated as if it wasn't in the account until the following month's calculation window. Depositing your annual lump sum (or monthly installment) before the 5th of April each year, rather than later in the year, maximizes the actual interest you earn relative to what this calculator's simplified annual model shows.</p>
+
       <p><strong>Contribution limits:</strong> You can invest a minimum of ₹500 and a maximum of ₹1,50,000 in a PPF account per financial year, and this combined limit applies across all your PPF accounts (self plus any minor accounts you operate). Contributions above ₹1,50,000 do not earn interest and are not eligible for tax deduction.</p>
 
       <p><strong>Worked example:</strong> depositing ₹1,50,000 every year for 15 years at 7.1% p.a. compounded annually grows to approximately ₹40.68 lakh, of which your own contribution is ₹22.5 lakh and the rest, about ₹18.18 lakh, is interest — entirely tax-free.</p>
+
+      <p><strong>A second example — extending beyond 15 years:</strong> the same ₹1,50,000/year continued for a 5-year extension block (20 years total) grows to roughly ₹63.4 lakh at the same 7.1% rate — illustrating why many PPF holders choose to extend rather than close the account at the 15-year mark, since the compounding benefit accelerates the longer the account stays open.</p>
 
       <p>PPF also offers partial withdrawal facility from the 7th financial year onward and a loan facility between the 3rd and 6th year, making it more liquid than it first appears despite the long lock-in.</p>
     </div>
@@ -457,8 +525,49 @@
   </div>
 </section>
 
+<!-- ===================== PPF VS EPF VS NPS ===================== -->
+<section id="ppf-compare" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Comparison</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">PPF vs EPF vs NPS</h2>
+  <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Scheme</th>
+          <th class="text-left px-4 py-2 font-semibold">Eligibility</th>
+          <th class="text-left px-4 py-2 font-semibold">Lock-in</th>
+          <th class="text-left px-4 py-2 font-semibold">Tax Treatment</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2 font-medium">PPF</td><td class="px-4 py-2">Any Indian citizen</td><td class="px-4 py-2">15 years</td><td class="px-4 py-2">EEE (fully exempt)</td></tr>
+        <tr><td class="px-4 py-2 font-medium">EPF</td><td class="px-4 py-2">Salaried employees</td><td class="px-4 py-2">Until retirement/job change</td><td class="px-4 py-2">EEE (mostly, with limits)</td></tr>
+        <tr><td class="px-4 py-2 font-medium">NPS</td><td class="px-4 py-2">Any Indian citizen, 18-70</td><td class="px-4 py-2">Until 60 (partial exit rules)</td><td class="px-4 py-2">EET (annuity/pension taxable)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>PPF is available to anyone, including the self-employed, unlike EPF which is tied to salaried employment. PPF's fixed, government-set rate makes it fully predictable, unlike NPS which is market-linked and can outperform or underperform PPF depending on market conditions and your chosen asset allocation. Many savers use PPF as the safe, guaranteed core of their retirement savings, alongside EPF (if salaried) and NPS or equity investments for additional growth potential.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="ppf-mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes With PPF</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p><strong>1. Depositing after the 5th of the month.</strong> As covered above, a late deposit misses that entire month's interest calculation window — depositing before the 5th, especially for the April lump sum, maximizes actual interest earned.</p>
+      <p><strong>2. Exceeding the ₹1,50,000 annual limit across accounts.</strong> The limit applies combined across your own account and any minor accounts you operate — contributions beyond this earn no interest and aren't eligible for the 80C deduction, so track your total contributions carefully if you manage multiple PPF accounts.</p>
+      <p><strong>3. Forgetting to submit the extension form.</strong> If you want to continue contributing after the initial 15-year term, you must submit Form H (the extension-with-contribution form) within one year of maturity — missing this deadline converts your account to a without-contribution extension by default.</p>
+      <p><strong>4. Choosing the New Tax Regime and still expecting the 80C deduction.</strong> Section 80C, which covers PPF contributions, is only available under the Old Tax Regime — under the New Regime, the PPF interest and maturity remain tax-free, but the contribution itself gets no upfront deduction.</p>
+      <p><strong>5. Treating PPF as fully illiquid.</strong> Many people avoid PPF assuming the money is locked for 15 years with no access at all, missing that partial withdrawal is allowed from year 7 and a loan facility exists between years 3-6 — useful to know before ruling PPF out for a goal that might need partial access.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== FAQ ===================== -->
-<section class="max-w-3xl mx-auto px-4 py-16">
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
   <div class="text-center mb-10">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
@@ -496,6 +605,69 @@
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">Partial withdrawal is allowed from the 7th financial year of account opening, subject to a cap based on your balance. Premature closure is allowed only in specific circumstances such as medical emergencies or higher education, and attracts a small interest penalty.</p>
     </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does depositing before the 5th of the month matter?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">PPF interest is calculated on the lowest balance between the 5th and last day of each month. A deposit made after the 5th misses that month's interest calculation entirely, effectively losing about a month of interest on that deposit compared to depositing before the 5th.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I have more than one PPF account?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">You can have only one PPF account in your own name (opening a second is not permitted), though you can also operate an account on behalf of a minor child. The ₹1,50,000 annual contribution limit applies combined across your own account and any minor accounts you manage.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What happens if I don't deposit anything in a year?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">If you miss the minimum ₹500 annual deposit, the account becomes inactive (dormant). You can reactivate it by paying the minimum deposit for each missed year plus a small penalty per missed year — the account isn't closed, just paused until reactivated.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is PPF better than a fixed deposit for long-term savings?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For long-term, tax-efficient savings, PPF is usually better than an FD of similar tenure, since PPF's interest and maturity are fully tax-free while FD interest is taxed at your income slab rate — a PPF's lower headline rate can still produce a higher post-tax return than a higher-rate FD, especially for taxpayers in higher slabs.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== EXPLORE MORE CALCULATORS ===================== -->
+<section id="explore-more" class="max-w-6xl mx-auto px-4 pb-16">
+  <h2 class="font-display font-semibold text-brandDark text-xl mb-5">Explore More Calculators</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+    <a href="electrical-calculators.html" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#e0f2fe">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Electrical Calculators</h3>
+      <p class="text-sm text-gray-500">Cable size, transformer size, motor current, DG size, solar sizing &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="mechanical-calculators.html" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#fef3c7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Mechanical Calculators</h3>
+      <p class="text-sm text-gray-500">Belt length, bearing life, cooling tower efficiency &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="financial-calculators.html" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#dcfce7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Financial Calculators</h3>
+      <p class="text-sm text-gray-500">EPF, SIP, gratuity, income tax, CAGR, FD &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
   </div>
 </section>
 
@@ -506,6 +678,27 @@
 
 
 <script>
+  // ===== Share / Feedback / Like-Dislike bar =====
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+  let reacted = null;
+  function toggleReaction(type){
+    const likeBtn = document.getElementById('likeBtn');
+    const dislikeBtn = document.getElementById('dislikeBtn');
+    const likeCount = document.getElementById('likeCount');
+    let count = parseInt(likeCount.textContent, 10);
+    if(type === 'like'){
+      if(reacted === 'like'){ count--; reacted = null; likeBtn.classList.remove('active-like'); }
+      else { if(reacted === 'dislike'){ dislikeBtn.classList.remove('active-dislike'); } count++; reacted = 'like'; likeBtn.classList.add('active-like'); }
+    } else {
+      if(reacted === 'dislike'){ reacted = null; dislikeBtn.classList.remove('active-dislike'); }
+      else { if(reacted === 'like'){ count--; likeBtn.classList.remove('active-like'); } reacted = 'dislike'; dislikeBtn.classList.add('active-dislike'); }
+    }
+    likeCount.textContent = count;
+  }
+
   // ===== PPF Calculator Logic =====
   function calculatePPF(){
     const yearly = parseFloat(document.getElementById('ppfYearly').value);

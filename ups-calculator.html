@@ -77,6 +77,24 @@ href="https://www.electromechcalc.com/ups-calculator">
     user-select:none;
   }
 
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
   .calc-card{
     transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
   }
@@ -230,6 +248,15 @@ href="https://www.electromechcalc.com/ups-calculator">
   @media (prefers-reduced-motion: reduce){
     *{transition:none !important;}
   }
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
 </style>
 </head>
 
@@ -267,7 +294,7 @@ href="https://www.electromechcalc.com/ups-calculator">
 </section>
 
 <!-- ===================== BATTERY RUNTIME CALCULATOR (moved to top) ===================== -->
-<section class="max-w-6xl mx-auto px-4 py-14">
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
   <div class="grid lg:grid-cols-5 gap-6">
 
     <!-- INPUT PANEL -->
@@ -380,14 +407,49 @@ href="https://www.electromechcalc.com/ups-calculator">
 </div>
 ===================== END AD SPACE -->
 
+<!-- ===================== SHARE / FEEDBACK / LIKE-DISLIKE BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center justify-between gap-3 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500 mr-1">Share:</span>
+      <button class="action-icon-btn" onclick="navigator.clipboard.writeText(window.location.href)">🔗 Copy Link</button>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://wa.me/?text='+encodeURIComponent(window.location.href)">🟢 WhatsApp</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)">🐦 X</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href)">📘 Facebook</a>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="likeBtn" class="action-icon-btn" onclick="toggleReaction('like')">👍 <span id="likeCount">0</span></button>
+      <button id="dislikeBtn" class="action-icon-btn" onclick="toggleReaction('dislike')">👎</button>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20UPS%20Sizing%20Guide">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-8" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. kVA vs Watts vs Runtime</a></li>
+      <li><a href="#faqs" class="hover:underline">3. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
 <!-- ===================== ARTICLE BODY ===================== -->
-<article class="max-w-3xl mx-auto px-6 py-12 bg-white blog-prose">
+<article id="how-it-works" class="max-w-3xl mx-auto px-6 py-12 bg-white blog-prose">
 
 
-    <div class="not-prose bg-white border border-gray-200 rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
-      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
-      <p>Reviewed by the <a href="https://www.electromechcalc.com/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
-      <p>Last reviewed: July 2026 &nbsp;|&nbsp; Standards referenced: IEC / IEEE / BIS / NEC</p>
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IEC / IEEE / BIS / NEC</p>
     </div>
   <p>
     It's a common assumption: buy a bigger UPS, get longer backup time. In reality, a 5 kVA UPS with a small internal battery pack can run out of power faster than a 1.5 kVA unit with a larger external battery bank. The reason comes down to a distinction that's easy to overlook — kVA tells you how much load the UPS's inverter can <strong>support</strong>, while runtime is governed almost entirely by a completely different number: the battery's amp-hour (Ah) capacity. Mixing these two up is one of the most common — and most expensive — UPS sizing mistakes.
@@ -452,6 +514,80 @@ at roughly 80% of nameplate capacity)</div>
 
 </article>
 
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does a bigger kVA UPS not always mean longer runtime?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">kVA/Watts describes how much load the inverter can support, while runtime is governed by battery Ah capacity, voltage, and inverter efficiency — a completely separate set of variables. A high-kVA UPS with a small battery can run out faster than a lower-kVA unit paired with a larger battery bank.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What's the difference between VA and Watts on a UPS nameplate?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">VA (apparent power) is the inverter's maximum physical output capacity; Watts is the real, usable power after the UPS's own output power factor (often 0.6-0.9) is applied. A load's Watt draw, not its VA-equivalent, is what actually limits how much equipment you can safely connect.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does real-world runtime often fall short of the calculated figure?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Battery aging (losing roughly 20% capacity over 5-7 years), temperature derating, high discharge rate losses (the Peukert effect), and depth-of-discharge limits all reduce usable capacity below the simple nameplate Ah × Voltage figure — build margin into any runtime target rather than relying on the theoretical maximum.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the correct order for sizing a UPS and battery bank?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">First, total the load's real Watts and convert to VA, then size the UPS with 20-30% headroom for inrush and growth. Second and separately, define your target runtime and size the battery Ah using the runtime formula with aging and efficiency margins. Treating these as two independent steps avoids the common mismatch of a UPS that handles the load but dies in minutes during an outage.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What aging factor should I use when sizing a battery bank?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A commonly used aging factor is 0.8, reflecting that most lead-acid batteries are considered end-of-life once they drop to roughly 80% of nameplate capacity. Using this factor when sizing ensures the battery still meets your target runtime even after several years of service, not just when brand new.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How does inverter efficiency affect runtime?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Inverter efficiency (typically 85-95%) represents the portion of battery energy actually delivered as usable AC output — the rest is lost as heat during DC-to-AC conversion. A lower efficiency figure directly reduces calculated runtime for the same battery capacity and load.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does temperature affect UPS and battery performance?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — both UPS output capacity and battery capacity derate outside their optimal temperature range (typically around 25°C for lead-acid batteries). Installations in hot plant rooms or unconditioned spaces should account for this derating rather than relying on nameplate figures measured at ideal lab conditions.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I use this calculator for lithium-ion battery banks too?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, the same Ah/Voltage/Efficiency runtime formula applies to lithium-ion. The main difference is the safe depth-of-discharge and aging assumptions — lithium chemistries typically tolerate deeper, more frequent discharge than lead-acid, so a lower aging/derating margin may be appropriate; check your specific battery's datasheet.</p>
+    </details>
+  </div>
+</section>
+
 <!-- ===================== RELATED CALCULATORS ===================== -->
 <section class="max-w-5xl mx-auto px-6 py-12">
 
@@ -502,6 +638,27 @@ at roughly 80% of nameplate capacity)</div>
 
 
 <script>
+  // ===== Share / Feedback / Like-Dislike bar =====
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+  let reacted = null;
+  function toggleReaction(type){
+    const likeBtn = document.getElementById('likeBtn');
+    const dislikeBtn = document.getElementById('dislikeBtn');
+    const likeCount = document.getElementById('likeCount');
+    let count = parseInt(likeCount.textContent, 10);
+    if(type === 'like'){
+      if(reacted === 'like'){ count--; reacted = null; likeBtn.classList.remove('active-like'); }
+      else { if(reacted === 'dislike'){ dislikeBtn.classList.remove('active-dislike'); } count++; reacted = 'like'; likeBtn.classList.add('active-like'); }
+    } else {
+      if(reacted === 'dislike'){ reacted = null; dislikeBtn.classList.remove('active-dislike'); }
+      else { if(reacted === 'like'){ count--; likeBtn.classList.remove('active-like'); } reacted = 'dislike'; dislikeBtn.classList.add('active-dislike'); }
+    }
+    likeCount.textContent = count;
+  }
+
   // ===== Battery Runtime Calculator Logic =====
   let calcMode = 'runtime';
 

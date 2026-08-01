@@ -166,6 +166,24 @@
     user-select:none;
   }
 
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
   .input-field{
     width:100%;
     background:#f8fafc;
@@ -259,6 +277,15 @@
     font-size:12.5px;
     color:#94a3b8;
   }
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -307,7 +334,7 @@
 </section>
 
 <!-- ===================== CALCULATOR ===================== -->
-<section class="max-w-6xl mx-auto px-4 py-10">
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-10">
   <div class="grid lg:grid-cols-5 gap-6">
 
     <!-- INPUT PANEL -->
@@ -472,23 +499,59 @@
 </section>
 
 <!-- ===================== EXPLANATION ===================== -->
-<section class="bg-white border-y border-gray-100 py-12">
+<!-- ===================== SHARE / FEEDBACK / LIKE-DISLIKE BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center justify-between gap-3 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500 mr-1">Share:</span>
+      <button class="action-icon-btn" onclick="navigator.clipboard.writeText(window.location.href)">🔗 Copy Link</button>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://wa.me/?text='+encodeURIComponent(window.location.href)">🟢 WhatsApp</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)">🐦 X</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href)">📘 Facebook</a>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="likeBtn" class="action-icon-btn" onclick="toggleReaction('like')">👍 <span id="likeCount">0</span></button>
+      <button id="dislikeBtn" class="action-icon-btn" onclick="toggleReaction('dislike')">👎</button>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Pump%20TDH%20Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding TDH</a></li>
+      <li><a href="#tdh-mistakes" class="hover:underline">3. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">4. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-12">
   <div class="max-w-3xl mx-auto px-4">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-5">Understanding Total Dynamic Head (TDH)</h2>
 
 
-    <div class="not-prose bg-white border border-gray-200 rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
-      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
-      <p>Reviewed by the <a href="https://www.electromechcalc.com/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
-      <p>Last reviewed: July 2026 &nbsp;|&nbsp; Standards referenced: ISO / DIN / manufacturer bearing & belt data</p>
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: ISO / DIN / manufacturer bearing & belt data</p>
     </div>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-      <p>Total Dynamic Head is the single most important number when selecting a centrifugal pump for any application — water supply, irrigation, drainage, firefighting, or industrial process water. Pump manufacturers publish a head-versus-flow performance curve for every model, and TDH is the value you match against that curve at your required flow rate. Get TDH wrong and the pump will either deliver far less flow than expected once it fights real system resistance, or it will run oversized and inefficient off its best-efficiency point — both the <a href="https://www.pumpsandsystems.com/" target="_blank" rel="noopener" class="text-sky-600 underline">Pumps &amp; Systems</a> trade literature and the Hydraulic Institute's pump standards treat accurate TDH calculation as the starting point of any pump selection exercise.</p>
+      <p>Total Dynamic Head is the single most important number when selecting a centrifugal pump for any application — water supply, irrigation, drainage, firefighting, or industrial process water. Pump manufacturers publish a head-versus-flow performance curve for every model, and TDH is the value you match against that curve at your required flow rate. Get TDH wrong and the pump will either deliver far less flow than expected once it fights real system resistance, or it will run oversized and inefficient off its best-efficiency point — accurate TDH calculation is treated as the starting point of any pump selection exercise across pump industry trade literature and Hydraulic Institute standards.</p>
 
       <p>TDH is built from four components in this calculator. The <strong>static head</strong> is the net vertical lift between the water source and the discharge point. If the pump sits above the water level, it has to overcome a suction lift, which adds directly to the head the pump must supply. If instead the source is above the pump (flooded suction, common on tanks and sumps feeding a pump below them), that head actually assists the pump and is subtracted: <strong>Static Head = Discharge Head + Suction Lift</strong> or <strong>Static Head = Discharge Head − Suction Head (flooded)</strong>.</p>
 
-      <p>The <strong>friction loss</strong> accounts for energy lost to resistance inside the pipework — pipe wall roughness, bends, valves, strainers, and fittings on both the suction and discharge runs. This loss grows roughly with the square of flow velocity, which is why oversizing a pipe by even one size can meaningfully cut friction head, a relationship explained in detail by resources such as the <a href="https://www.engineeringtoolbox.com/major-loss-ducts-tubes-d_459.html" target="_blank" rel="noopener" class="text-sky-600 underline">Engineering ToolBox</a> friction loss references and the classic Hazen-Williams and Darcy-Weisbach equations used industry-wide. In the field, friction loss is usually taken from pipe friction charts or pump-house hydraulic calculations for the pipe size, length, and fittings involved, then entered directly here.</p>
+      <p>The <strong>friction loss</strong> accounts for energy lost to resistance inside the pipework — pipe wall roughness, bends, valves, strainers, and fittings on both the suction and discharge runs. This loss grows roughly with the square of flow velocity, which is why oversizing a pipe by even one size can meaningfully cut friction head, a relationship captured by the classic Hazen-Williams and Darcy-Weisbach equations used industry-wide. In the field, friction loss is usually taken from pipe friction charts or pump-house hydraulic calculations for the pipe size, length, and fittings involved, then entered directly here.</p>
 
       <p>The <strong>velocity head</strong> represents the kinetic energy of the moving fluid at the discharge point, calculated as <strong>hv = V² ÷ (2 × g)</strong>, where V is flow velocity in m/s (from flow rate ÷ pipe cross-sectional area) and g is 9.81 m/s². Velocity head is usually small for typical pipe velocities of 1–3 m/s but is included here for completeness, consistent with the full energy-balance form of the pump head equation covered in standard fluid mechanics references such as Cengel &amp; Cimbala's <em>Fluid Mechanics: Fundamentals and Applications</em>.</p>
 
@@ -498,11 +561,26 @@
 
       <p>As with any sizing calculator, treat the result as an engineering starting point. Site-specific pipe condition, actual fitting counts, water temperature, and elevation changes over the pump's service life all shift the real-world number, so always confirm final TDH against as-built pipe layouts and verify the selected pump's published curve before purchase and installation.</p>
     </div>
+
+    <p class="text-xs text-gray-400 mt-6">Reference: Hydraulic Institute pump standards and standard fluid mechanics conventions. This calculator is for preliminary, educational sizing only and does not replace a full system curve analysis or manufacturer pump selection software.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="tdh-mistakes" class="max-w-3xl mx-auto px-4 py-12">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-5">Common Mistakes When Calculating TDH</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p><strong>1. Ignoring suction-side friction loss.</strong> It's easy to only account for friction on the discharge run and forget the suction pipe also has its own losses — both sides must be included in total friction loss.</p>
+    <p><strong>2. Mixing up suction lift and flooded suction sign convention.</strong> A pump lifting water from below adds the suction lift to static head; a pump fed from an elevated tank (flooded suction) subtracts that head instead — using the wrong sign produces a badly wrong TDH.</p>
+    <p><strong>3. Using nominal pipe diameter instead of actual internal diameter for velocity/friction calculations.</strong> Nominal pipe size and actual internal bore differ, especially with thick-walled or lined pipe — using nominal size understates velocity and friction loss.</p>
+    <p><strong>4. Forgetting fitting losses.</strong> Elbows, tees, valves, strainers, and reducers each add friction loss beyond straight pipe — a system with many fittings needs their equivalent length or K-factor losses added, not just the straight-run pipe friction.</p>
+    <p><strong>5. Sizing the motor on hydraulic power rather than shaft power.</strong> Hydraulic power is what's delivered to the fluid; shaft power (hydraulic power ÷ pump efficiency) is what the motor must supply — always size the motor on shaft power, with margin.</p>
   </div>
 </section>
 
 <!-- ===================== FAQ ===================== -->
-<section class="max-w-3xl mx-auto px-4 py-12">
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-12">
   <div class="text-center mb-8">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
@@ -548,6 +626,61 @@
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">Take the calculated TDH and your required flow rate, then find a pump whose published head-versus-flow performance curve passes through or above that point, ideally close to its best efficiency point (BEP) rather than at the extreme ends of the curve. Use the shaft power figure to confirm the driving motor is rated with adequate margin above that requirement.</p>
     </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What's the difference between TDH and simple pump head?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">TDH is the full, complete calculation — static head, friction loss, velocity head, and pressure head all combined. A simpler "pump head" figure (like our Pump Head calculator) may cover only elevation and friction, or convert a single pressure reading, without the pressure-head term for discharging into a pressurized system. TDH is the more complete figure for final pump selection.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does pipe material affect friction loss significantly?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — pipe roughness (a key input to the Hazen-Williams or Darcy-Weisbach friction equations) varies by material and age. Smooth PVC/HDPE pipe has notably lower friction loss than old, corroded steel or cast iron pipe of the same diameter, which is why friction charts specify a roughness coefficient (C-factor) per material and condition.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I add a safety margin to the calculated TDH?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Many engineers add a modest margin (commonly 10%) to account for pipe aging, minor fitting miscounts, and future system changes — but avoid excessive over-margining, since an oversized pump running well off its best efficiency point wastes energy and can cause its own operational problems (excess wear, throttling losses).</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== EXPLORE MORE CALCULATORS ===================== -->
+<section id="explore-more" class="max-w-6xl mx-auto px-4 pb-16">
+  <h2 class="font-display font-semibold text-brandDark text-xl mb-5">Explore More Calculators</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+    <a href="electrical-calculators.html" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#e0f2fe">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Electrical Calculators</h3>
+      <p class="text-sm text-gray-500">Cable size, transformer size, motor current, DG size &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="mechanical-calculators.html" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#fef3c7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Mechanical Calculators</h3>
+      <p class="text-sm text-gray-500">Bearing life, belt length, pump head, cooling tower efficiency &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="financial-calculators.html" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#dcfce7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Financial Calculators</h3>
+      <p class="text-sm text-gray-500">EPF, PPF, SIP, gratuity, income tax, CAGR &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
   </div>
 </section>
 
@@ -558,6 +691,27 @@
 
 
 <script>
+  // ===== Share / Feedback / Like-Dislike bar =====
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+  let reacted = null;
+  function toggleReaction(type){
+    const likeBtn = document.getElementById('likeBtn');
+    const dislikeBtn = document.getElementById('dislikeBtn');
+    const likeCount = document.getElementById('likeCount');
+    let count = parseInt(likeCount.textContent, 10);
+    if(type === 'like'){
+      if(reacted === 'like'){ count--; reacted = null; likeBtn.classList.remove('active-like'); }
+      else { if(reacted === 'dislike'){ dislikeBtn.classList.remove('active-dislike'); } count++; reacted = 'like'; likeBtn.classList.add('active-like'); }
+    } else {
+      if(reacted === 'dislike'){ reacted = null; dislikeBtn.classList.remove('active-dislike'); }
+      else { if(reacted === 'like'){ count--; likeBtn.classList.remove('active-like'); } reacted = 'dislike'; dislikeBtn.classList.add('active-dislike'); }
+    }
+    likeCount.textContent = count;
+  }
+
   // ===== Pump TDH Calculator Logic =====
   let suctionType = 'lift';
 

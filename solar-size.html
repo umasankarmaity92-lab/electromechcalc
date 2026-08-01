@@ -149,6 +149,24 @@
     user-select:none;
   }
 
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
   .input-field{
     width:100%;
     background:#f8fafc;
@@ -242,6 +260,15 @@
     font-size:12.5px;
     color:#94a3b8;
   }
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -290,7 +317,7 @@
 </section>
 
 <!-- ===================== CALCULATOR ===================== -->
-<section class="max-w-6xl mx-auto px-4 py-14">
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
   <div class="grid lg:grid-cols-5 gap-6">
 
     <!-- INPUT PANEL -->
@@ -517,16 +544,52 @@
 </section>
 
 <!-- ===================== EXPLANATION ===================== -->
-<section class="bg-white border-y border-gray-100 py-16">
+<!-- ===================== SHARE / FEEDBACK / LIKE-DISLIKE BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center justify-between gap-3 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500 mr-1">Share:</span>
+      <button class="action-icon-btn" onclick="navigator.clipboard.writeText(window.location.href)">🔗 Copy Link</button>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://wa.me/?text='+encodeURIComponent(window.location.href)">🟢 WhatsApp</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)">🐦 X</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href)">📘 Facebook</a>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="likeBtn" class="action-icon-btn" onclick="toggleReaction('like')">👍 <span id="likeCount">0</span></button>
+      <button id="dislikeBtn" class="action-icon-btn" onclick="toggleReaction('dislike')">👎</button>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Solar%20Size%20Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding solar sizing</a></li>
+      <li><a href="#solar-types" class="hover:underline">3. On-grid vs off-grid vs hybrid</a></li>
+      <li><a href="#faqs" class="hover:underline">4. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
   <div class="max-w-3xl mx-auto px-4">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding Solar Panel Sizing</h2>
 
 
-    <div class="not-prose bg-white border border-gray-200 rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
-      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
-      <p>Reviewed by the <a href="https://www.electromechcalc.com/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
-      <p>Last reviewed: July 2026 &nbsp;|&nbsp; Standards referenced: IEC / IEEE / BIS / NEC</p>
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IEC / IEEE / BIS / NEC</p>
     </div>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
       <p>Sizing a solar power system correctly is one of the most common questions technicians, electricians, and homeowners run into once they decide to move part of their load off the grid. Undersize the array and the system will never fully charge the battery bank on a cloudy day; oversize it and you have spent money on panels that spend most of the afternoon doing nothing. This calculator walks through the same method used by solar installers in the field — start from the connected load, convert it to real power in kilowatts, work out how much energy that load consumes across a day, and then divide by how much usable sunlight your location actually receives.</p>
@@ -574,11 +637,39 @@
       </div>
       <p class="text-xs text-gray-400">Figures are indicative planning estimates only. Enter your exact load, usage hours, and local sun-hour data in the calculator above for a precise recommendation.</p>
     </div>
+
+    <p class="text-xs text-gray-400 mt-6">Reference: Standard solar PV sizing conventions used across MNRE/state solar guidelines and industry design practice. This calculator is for preliminary, educational sizing only.</p>
+  </div>
+</section>
+
+<!-- ===================== SYSTEM TYPES ===================== -->
+<section id="solar-types" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">System Types</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">On-Grid vs Off-Grid vs Hybrid Solar</h2>
+  <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">System Type</th>
+          <th class="text-left px-4 py-2 font-semibold">Battery Storage</th>
+          <th class="text-left px-4 py-2 font-semibold">Works During Grid Outage</th>
+          <th class="text-left px-4 py-2 font-semibold">Best For</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2 font-medium">On-grid (grid-tied)</td><td class="px-4 py-2">No</td><td class="px-4 py-2">No (safety shutdown)</td><td class="px-4 py-2">Lowest cost, maximum bill savings, reliable grid areas</td></tr>
+        <tr><td class="px-4 py-2 font-medium">Off-grid</td><td class="px-4 py-2">Yes (essential)</td><td class="px-4 py-2">Yes (independent)</td><td class="px-4 py-2">No grid access, remote sites</td></tr>
+        <tr><td class="px-4 py-2 font-medium">Hybrid</td><td class="px-4 py-2">Yes (optional/scalable)</td><td class="px-4 py-2">Yes (via battery)</td><td class="px-4 py-2">Frequent outages, want backup + grid savings</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>An on-grid system is the simplest and cheapest to install since it needs no battery bank, feeding excess generation back to the grid (often via net metering) — but by design it shuts down during a grid outage for safety, so it provides zero backup power. An off-grid system is fully independent of the utility, requiring battery storage sized for your full load, making it considerably more expensive per kW but essential where no reliable grid connection exists. A hybrid system combines both — it can feed the grid and reduce bills like an on-grid system, while also charging a battery bank that kicks in automatically during an outage, at a cost between the other two options. This calculator's daily energy and panel sizing applies to all three types; battery sizing (for off-grid or hybrid) is a separate calculation — see the Battery Backup Calculator for that step.</p>
   </div>
 </section>
 
 <!-- ===================== FAQ ===================== -->
-<section class="max-w-3xl mx-auto px-4 py-16">
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
   <div class="text-center mb-10">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
@@ -633,6 +724,53 @@
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">When the load is entered directly in kW, array sizing depends only on the energy consumed (kWh), which is the same regardless of whether that power is drawn through a single-phase or three-phase supply — this is correct, not an error. The phase selection matters when the load is entered in Amps, since converting current to kW requires the appropriate single-phase or three-phase formula, and switching phase in Amp mode will change the calculated load.</p>
     </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What's the difference between on-grid, off-grid, and hybrid solar?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">On-grid systems have no battery and shut down during outages for safety; off-grid systems run entirely on battery storage with no grid connection; hybrid systems combine both, feeding the grid for savings while also charging a battery for backup. This calculator's panel/energy sizing applies to all three — battery sizing for off-grid/hybrid is a separate calculation.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does panel efficiency or degradation affect long-term output?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — solar panels degrade gradually, typically 0.5-0.8% per year, meaning a system sized to exactly meet today's load may fall slightly short after 10-15 years. Many designers add a small margin (5-10%) to the initial array size specifically to account for this long-term degradation over the panel's 25+ year warranted life.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== EXPLORE MORE CALCULATORS ===================== -->
+<section id="explore-more" class="max-w-6xl mx-auto px-4 pb-16">
+  <h2 class="font-display font-semibold text-brandDark text-xl mb-5">Explore More Calculators</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+    <a href="electrical-calculators.html" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#e0f2fe">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Electrical Calculators</h3>
+      <p class="text-sm text-gray-500">Cable size, transformer size, motor current, DG size &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="mechanical-calculators.html" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#fef3c7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Mechanical Calculators</h3>
+      <p class="text-sm text-gray-500">Belt length, bearing life, cooling tower efficiency &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="financial-calculators.html" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#dcfce7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Financial Calculators</h3>
+      <p class="text-sm text-gray-500">EPF, PPF, SIP, gratuity, income tax, CAGR &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
   </div>
 </section>
 
@@ -643,6 +781,27 @@
 
 
 <script>
+  // ===== Share / Feedback / Like-Dislike bar =====
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+  let reacted = null;
+  function toggleReaction(type){
+    const likeBtn = document.getElementById('likeBtn');
+    const dislikeBtn = document.getElementById('dislikeBtn');
+    const likeCount = document.getElementById('likeCount');
+    let count = parseInt(likeCount.textContent, 10);
+    if(type === 'like'){
+      if(reacted === 'like'){ count--; reacted = null; likeBtn.classList.remove('active-like'); }
+      else { if(reacted === 'dislike'){ dislikeBtn.classList.remove('active-dislike'); } count++; reacted = 'like'; likeBtn.classList.add('active-like'); }
+    } else {
+      if(reacted === 'dislike'){ reacted = null; dislikeBtn.classList.remove('active-dislike'); }
+      else { if(reacted === 'like'){ count--; likeBtn.classList.remove('active-like'); } reacted = 'dislike'; dislikeBtn.classList.add('active-dislike'); }
+    }
+    likeCount.textContent = count;
+  }
+
   // ===== Solar Calculator Logic =====
   let currentPhase = 'single';
 

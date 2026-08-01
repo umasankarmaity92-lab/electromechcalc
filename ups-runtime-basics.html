@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <meta name="theme-color" content="#ffffff">
-<title>UPS Sizing: kVA Isn't the Whole Story | ElectroMechCalc</title>
+<title>UPS Runtime Basics: How Long Will Your Backup Last? | ElectroMechCalc</title>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
      crossorigin="anonymous"></script>
 
 <meta name="description"
-content="Why a bigger kVA UPS doesn't always mean longer runtime. Understand kVA vs Watts, battery Ah capacity, the runtime formula, and how to size a UPS correctly for your backup time needs.">
+content="A practical guide to UPS backup runtime — what determines it, typical runtime for common home and office loads, lead-acid vs lithium battery differences, and how to estimate your own backup time.">
 
 <meta name="keywords"
 content="UPS sizing, UPS runtime, battery Ah capacity, kVA vs watts UPS, UPS battery backup time, VRLA battery sizing">
@@ -23,16 +23,16 @@ href="https://www.electromechcalc.com/ups-runtime-basics">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ElectroMechCalc">
-<meta property="og:title" content="UPS Sizing: kVA Isn't the Whole Story">
-<meta property="og:description" content="Why a bigger kVA UPS doesn't always mean longer runtime. Understand kVA vs Watts, battery Ah capacity, the runtime formula, and how to size a UPS correctly for your backup time needs.">
+<meta property="og:title" content="UPS Runtime Basics: How Long Will Your Backup Last?">
+<meta property="og:description" content="A practical guide to UPS backup runtime — what determines it, typical runtime for common home and office loads, lead-acid vs lithium battery differences, and how to estimate your own backup time.">
 <meta property="og:url" content="https://www.electromechcalc.com/ups-runtime-basics">
 <meta property="og:image" content="https://www.electromechcalc.com/logo.png">
 <meta property="og:locale" content="en_IN">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="UPS Sizing: kVA Isn't the Whole Story">
-<meta name="twitter:description" content="Why a bigger kVA UPS doesn't always mean longer runtime. Understand kVA vs Watts, battery Ah capacity, the runtime formula, and how to size a UPS correctly for your backup time needs.">
+<meta name="twitter:title" content="UPS Runtime Basics: How Long Will Your Backup Last?">
+<meta name="twitter:description" content="A practical guide to UPS backup runtime — what determines it, typical runtime for common home and office loads, lead-acid vs lithium battery differences, and how to estimate your own backup time.">
 <meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
 
 
@@ -41,12 +41,12 @@ href="https://www.electromechcalc.com/ups-runtime-basics">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "UPS Sizing: kVA Isn't the Whole Story",
+  "name": "UPS Runtime Basics: How Long Will Your Backup Last?",
   "url": "https://www.electromechcalc.com/ups-runtime-basics",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
-  "description": "Why a bigger kVA UPS doesn't always mean longer runtime. Understand kVA vs Watts, battery Ah capacity, the runtime formula, and how to size a UPS correctly for your backup time needs.",
+  "description": "A practical guide to UPS backup runtime — what determines it, typical runtime for common home and office loads, lead-acid vs lithium battery differences, and how to estimate your own backup time.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
 </script>
@@ -76,6 +76,24 @@ href="https://www.electromechcalc.com/ups-runtime-basics">
     pointer-events:none;
     user-select:none;
   }
+
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
 
   .calc-card{
     transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
@@ -230,6 +248,15 @@ href="https://www.electromechcalc.com/ups-runtime-basics">
   @media (prefers-reduced-motion: reduce){
     *{transition:none !important;}
   }
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
 </style>
 </head>
 
@@ -256,18 +283,18 @@ href="https://www.electromechcalc.com/ups-runtime-basics">
     </span>
 
     <h1 class="text-3xl md:text-5xl font-display font-bold text-white leading-tight mb-5">
-      UPS Sizing: kVA Isn't the Whole Story
+      UPS Runtime Basics: How Long Will Your Backup Last?
     </h1>
 
     <p class="text-gray-400 max-w-2xl mx-auto">
-      Battery runtime depends on Ah capacity too — a bigger kVA UPS won't always run longer. Here's how the two ratings actually relate, and how to size both correctly.
+      Wondering how long your UPS or inverter will actually keep the lights on? Here's a practical look at what determines runtime, typical backup times for common loads, and how lead-acid and lithium batteries compare.
     </p>
 
   </div>
 </section>
 
 <!-- ===================== BATTERY RUNTIME CALCULATOR (moved to top) ===================== -->
-<section class="max-w-6xl mx-auto px-4 py-14">
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
   <div class="grid lg:grid-cols-5 gap-6">
 
     <!-- INPUT PANEL -->
@@ -380,27 +407,59 @@ href="https://www.electromechcalc.com/ups-runtime-basics">
 </div>
 ===================== END AD SPACE -->
 
+<!-- ===================== SHARE / FEEDBACK / LIKE-DISLIKE BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center justify-between gap-3 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500 mr-1">Share:</span>
+      <button class="action-icon-btn" onclick="navigator.clipboard.writeText(window.location.href)">🔗 Copy Link</button>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://wa.me/?text='+encodeURIComponent(window.location.href)">🟢 WhatsApp</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)">🐦 X</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href)">📘 Facebook</a>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="likeBtn" class="action-icon-btn" onclick="toggleReaction('like')">👍 <span id="likeCount">0</span></button>
+      <button id="dislikeBtn" class="action-icon-btn" onclick="toggleReaction('dislike')">👎</button>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20UPS%20Runtime%20Basics">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-8" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. What determines runtime</a></li>
+      <li><a href="#typical-runtime" class="hover:underline">3. Typical runtime by load</a></li>
+      <li><a href="#chemistry" class="hover:underline">4. Lead-acid vs lithium</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
 <!-- ===================== ARTICLE BODY ===================== -->
-<article class="max-w-3xl mx-auto px-6 py-12 bg-white blog-prose">
+<article id="how-it-works" class="max-w-3xl mx-auto px-6 py-12 bg-white blog-prose">
 
 
-    <div class="not-prose bg-white border border-gray-200 rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
-      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
-      <p>Reviewed by the <a href="https://www.electromechcalc.com/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
-      <p>Last reviewed: July 2026 &nbsp;|&nbsp; Standards referenced: IEC / IEEE / BIS / NEC</p>
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IEC / IEEE / BIS / NEC</p>
     </div>
   <p>
-    It's a common assumption: buy a bigger UPS, get longer backup time. In reality, a 5 kVA UPS with a small internal battery pack can run out of power faster than a 1.5 kVA unit with a larger external battery bank. The reason comes down to a distinction that's easy to overlook — kVA tells you how much load the UPS's inverter can <strong>support</strong>, while runtime is governed almost entirely by a completely different number: the battery's amp-hour (Ah) capacity. Mixing these two up is one of the most common — and most expensive — UPS sizing mistakes.
+    "How long will my UPS last?" is one of the most common questions people ask before buying a backup power system, and it's also one of the easiest to get wrong, because runtime isn't printed anywhere on most UPS boxes the way VA rating is. Runtime depends on your specific load and battery combination, not on the UPS model alone — the same UPS can run for 5 minutes or 5 hours depending entirely on what's plugged in and what battery is attached. This guide walks through what actually determines runtime, gives realistic ballpark figures for common household and office loads, and compares how lead-acid and lithium batteries behave differently under the same runtime math.
   </p>
 
-  <h2>kVA vs. Watts: Two Different Limits</h2>
+  <h2>The Runtime Formula, in Plain Terms</h2>
   <p>
-    Every UPS carries two ratings: VA (or kVA) and Watts. The VA rating defines the maximum apparent power the inverter can physically deliver, while the Watts rating reflects the real, usable power after accounting for the UPS output power factor — typically 0.7 to 0.9 for many consumer and line-interactive units. A 1500VA UPS at a 0.6 output power factor only delivers 900W of real capacity, not 1500W. Connecting a load that draws more than the Watt rating will overload the UPS even though the VA headroom looks fine on paper, so the Watt figure — not the VA figure — is what actually limits how much equipment you can safely connect.
-  </p>
-
-  <h2>Runtime Is a Battery Question, Not a kVA Question</h2>
-  <p>
-    Once the UPS can support your load's real power draw, the next question — how long will it last on battery — depends on a separate set of variables entirely: battery voltage, amp-hour (Ah) capacity, and inverter efficiency. A UPS with a small internal battery might support a large load comfortably from a kVA standpoint but only bridge a few minutes of backup, while a smaller-kVA unit paired with an external battery bank can sustain a modest load for an hour or more. This is exactly why a "bigger" UPS by kVA rating doesn't automatically mean longer runtime — the two numbers answer different questions.
+    Runtime comes down to a simple energy balance: how much energy the battery holds, versus how fast the load draws it down. In formula form:
   </p>
 
   <div class="formula-block">Runtime (hours) = (Battery Ah × Battery Voltage × Efficiency) ÷ Load (Watts)
@@ -412,45 +471,109 @@ Efficiency = Inverter efficiency, typically 0.85–0.95
 Load (Watts) = Real power drawn by the connected equipment</div>
 
   <p>
-    <span style="font-weight:600;color:#0B1220;">Worked example:</span> A 48V battery bank rated at 100 Ah, running at 90% inverter efficiency, supplying a 600W load: Runtime = (100 × 48 × 0.9) ÷ 600 = 7.2 hours. Halve the load to 300W and the same battery bank stretches to roughly 14.4 hours — runtime scales with load and battery energy, completely independent of the UPS's kVA rating, as long as the kVA rating is large enough to support the load in the first place. Try your own numbers in the calculator above.
+    <span style="font-weight:600;color:#0B1220;">Worked example:</span> A 48V, 100 Ah battery bank at 90% inverter efficiency, supplying a 600W load, runs for (100 × 48 × 0.9) ÷ 600 = 7.2 hours. Cut the load in half to 300W and the same battery stretches to about 14.4 hours — runtime is inversely proportional to load, so trimming what's plugged in during an outage is often the fastest way to extend backup time without buying more battery. Try the calculator above with your own battery and load figures.
   </p>
 
-  <h2>Sizing the Battery for a Target Runtime</h2>
+  <h2 id="typical-runtime">Typical Runtime for Common Loads</h2>
   <p>
-    When the requirement is a specific backup window — say, 30 minutes for a graceful shutdown, or several hours for a critical process — the formula runs in reverse to find the required Ah capacity, with extra margin built in for battery aging and depth-of-discharge limits. Switch the calculator above to "Find Required Ah" to run this in reverse.
-  </p>
-
-  <div class="formula-block">Required Battery Capacity (Ah) = (Load Watts × Runtime hours) ÷ (Battery Voltage × Efficiency × Aging Factor)
-
-Typical Aging Factor: 0.8 (accounts for batteries reaching end-of-life
-at roughly 80% of nameplate capacity)</div>
-
-  <p>
-    For a 1,000W load needing 30 minutes (0.5 hours) of runtime from a 48V battery bank at 90% efficiency and an aging factor of 0.8: Ah = (1,000 × 0.5) ÷ (48 × 0.9 × 0.8) ≈ 14.5 Ah — and in practice, a battery rated somewhat above this figure would be selected to leave margin for real-world conditions.
-  </p>
-
-  <h2>Why Real Runtime Often Falls Short of the Formula</h2>
-  <p>
-    The basic runtime formula assumes ideal conditions, but several real-world factors reduce usable capacity below the nameplate number:
+    To make the formula concrete, here's roughly what a mid-sized home inverter battery setup (a single 150 Ah, 12V battery, a common home inverter configuration) delivers at different load levels, assuming 85% inverter efficiency:
   </p>
   <ul>
-    <li><strong>Battery aging</strong> — lead-acid batteries typically lose around 20% of their capacity over a 5–7 year service life, so sizing only for day-one capacity leaves no margin near end of life.</li>
-    <li><strong>Temperature</strong> — both UPS output capacity and battery capacity derate in hot or cold environments; a UPS rated for full output at 25°C may deliver noticeably less at 35°C.</li>
-    <li><strong>High discharge rates</strong> — batteries deliver less total energy when discharged quickly (the Peukert effect) than the simple Ah × Voltage figure suggests.</li>
-    <li><strong>Depth of discharge limits</strong> — most lead-acid designs are sized for shallow, regular discharge (around 20%) with only occasional deep discharge, which affects how much of the rated Ah is safely usable.</li>
+    <li><strong>A few LED lights + a fan (~100W):</strong> roughly 15 hours — enough to comfortably cover an evening or overnight outage.</li>
+    <li><strong>LED lights + fan + TV + Wi-Fi router (~250W):</strong> roughly 6 hours — a typical "keep the essentials running" scenario.</li>
+    <li><strong>Adding a refrigerator's average draw (~400W combined):</strong> roughly 3.8 hours — refrigerators cycle on and off, so actual runtime is usually somewhat longer than this steady-load estimate suggests.</li>
+    <li><strong>A single window AC unit (~1200W):</strong> roughly 1.3 hours — air conditioning is by far the fastest way to drain a home battery bank, which is why most home backup setups are sized to skip AC entirely and cover only lighting, fans, and electronics.</li>
+  </ul>
+  <p class="text-sm text-gray-500">These are illustrative estimates for one common battery size — enter your own battery Ah, voltage, and load in the calculator above for a figure specific to your setup.</p>
+
+  <h2 id="chemistry">Lead-Acid vs Lithium: How Runtime Behaves Differently</h2>
+  <p>
+    The runtime formula itself is the same for both chemistries, but two practical differences change what you can actually get out of a given Ah rating in real use. First, <strong>usable capacity</strong>: lead-acid batteries are typically only discharged to about 50% depth of discharge (DoD) for a reasonable service life, meaning only half the rated Ah is realistically usable day to day, while lithium (especially LiFePO4) chemistries tolerate 80–90% DoD, so a lithium battery delivers noticeably more usable runtime per rated Ah than an equivalent lead-acid battery. Second, <strong>voltage sag under load</strong>: lead-acid voltage drops more as the battery discharges and as load increases, which can trip a low-voltage cutoff earlier than the simple formula suggests, while lithium holds a flatter voltage curve through most of its discharge, delivering runtime closer to the calculated figure. In practice, this means a lithium battery rated at a lower Ah than a lead-acid battery can still deliver comparable or longer real-world runtime, once usable DoD is accounted for — worth factoring in when comparing battery options by Ah rating alone.
+  </p>
+
+  <h2>Practical Tips for Getting the Runtime You Expect</h2>
+  <ul>
+    <li><strong>Size for your actual essential load, not everything in the house.</strong> Identify what genuinely needs to stay on during an outage (lights, fans, router, a few devices) and size around that, rather than trying to cover every appliance.</li>
+    <li><strong>Account for battery aging.</strong> A 3-year-old lead-acid battery may deliver noticeably less than its original rated Ah — don't rely on day-one nameplate figures for long-term planning.</li>
+    <li><strong>Avoid deep, repeated discharge on lead-acid.</strong> Routinely draining below the recommended DoD shortens battery life significantly faster than shallow, regular cycling.</li>
+    <li><strong>Check inverter efficiency, not just battery Ah.</strong> A less efficient inverter wastes more energy as heat during conversion, directly reducing usable runtime for the same battery.</li>
   </ul>
 
-  <h2>The Sizing Sequence That Avoids This Mistake</h2>
-  <p>
-    A reliable UPS specification follows the load all the way through, rather than jumping straight to a single VA number. First, total the real Watts of every device that must stay powered, and convert to VA using each device's power factor. Second, size the UPS kVA/Watt rating with headroom for inrush current and future growth — typically 20–30% above the calculated steady-state load. Third, and separately, define the required backup runtime and size the battery Ah using the runtime formula with aging and efficiency margins included. Treating these as two distinct sizing steps — UPS capacity for the load, battery capacity for the runtime — is what prevents the classic mismatch of a UPS that handles the load fine but dies in minutes when the power actually goes out.
-  </p>
-
-  <h2>Conclusion</h2>
-  <p>
-    kVA and battery Ah answer two different engineering questions, and conflating them is how oversized-on-paper UPS systems end up underperforming in the field. Size the UPS's VA/Watt rating to comfortably support the connected load with margin for inrush and growth, then size the battery bank's Ah capacity separately against your actual target runtime, with realistic allowances for aging, temperature, and discharge rate. Get both right independently, and the backup system will behave the way the spec sheet promised when the power actually fails.
-  </p>
-
 </article>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How long will a typical home UPS/inverter last during a power cut?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It depends entirely on your battery size and what's plugged in — a common home setup (150 Ah, 12V battery) running lights, fans, and a router (~250W) typically lasts around 6 hours, while adding an AC unit can cut that to under 90 minutes. Use the calculator above with your specific battery and load for an accurate figure.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does my battery seem to last less than the calculator predicts?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Battery aging, high discharge rate losses (the Peukert effect), voltage sag under load, and temperature all reduce real-world runtime below the simple formula's ideal-conditions estimate. This gap is normal and widens as the battery ages — build in a safety margin rather than expecting the exact calculated figure every time.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does a lithium battery really give more runtime than lead-acid at the same Ah rating?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Often yes, in practical terms. Lead-acid is typically limited to about 50% depth of discharge for reasonable battery life, while lithium tolerates 80-90% — so a lithium battery delivers more of its rated Ah as genuinely usable energy, even before accounting for lithium's flatter voltage curve under load.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What's the fastest way to extend my backup runtime without buying a new battery?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Reduce the connected load. Since runtime is inversely proportional to load, turning off non-essential devices (especially high-draw ones like AC units, water heaters, or irons) during an outage can multiply your remaining backup time significantly, often more effectively than any battery upgrade.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does running an AC drain a home battery so much faster than lights and fans?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Air conditioning compressors draw a large amount of continuous power (often 1000W+) compared to lighting and fans (a few hundred watts combined), and since runtime is inversely proportional to load, this alone can cut backup time by 5-10× — which is why most home battery backup systems are deliberately sized to exclude AC and cover only essential loads.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How much does battery age affect runtime?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Lead-acid batteries typically lose around 20% of their rated capacity over a 5-7 year service life, meaning a battery that delivered 7 hours of runtime when new might only deliver 5-6 hours a few years later. Planning around day-one nameplate capacity alone can leave you short as the battery ages.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I round up my runtime target when sizing a battery?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — building in margin for battery aging, temperature effects, and discharge-rate losses is standard practice. Many installers size the battery for 20-30% more runtime than the bare calculated target, so the system still meets your actual need once the battery has aged a few years.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does inverter efficiency matter much for runtime?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — a less efficient inverter wastes more battery energy as heat during DC-to-AC conversion. Moving from an 80% efficient inverter to a 95% efficient one directly increases usable runtime by roughly the same proportion for the same battery and load, so efficiency is worth checking alongside the battery's Ah rating.</p>
+    </details>
+  </div>
+</section>
 
 <!-- ===================== RELATED CALCULATORS ===================== -->
 <section class="max-w-5xl mx-auto px-6 py-12">
@@ -502,6 +625,27 @@ at roughly 80% of nameplate capacity)</div>
 
 
 <script>
+  // ===== Share / Feedback / Like-Dislike bar =====
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+  let reacted = null;
+  function toggleReaction(type){
+    const likeBtn = document.getElementById('likeBtn');
+    const dislikeBtn = document.getElementById('dislikeBtn');
+    const likeCount = document.getElementById('likeCount');
+    let count = parseInt(likeCount.textContent, 10);
+    if(type === 'like'){
+      if(reacted === 'like'){ count--; reacted = null; likeBtn.classList.remove('active-like'); }
+      else { if(reacted === 'dislike'){ dislikeBtn.classList.remove('active-dislike'); } count++; reacted = 'like'; likeBtn.classList.add('active-like'); }
+    } else {
+      if(reacted === 'dislike'){ reacted = null; dislikeBtn.classList.remove('active-dislike'); }
+      else { if(reacted === 'like'){ count--; likeBtn.classList.remove('active-like'); } reacted = 'dislike'; dislikeBtn.classList.add('active-dislike'); }
+    }
+    likeCount.textContent = count;
+  }
+
   // ===== Battery Runtime Calculator Logic =====
   let calcMode = 'runtime';
 

@@ -166,6 +166,24 @@
     user-select:none;
   }
 
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
   .input-field{
     width:100%;
     background:#f8fafc;
@@ -259,6 +277,15 @@
     font-size:12.5px;
     color:#94a3b8;
   }
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -307,7 +334,7 @@
 </section>
 
 <!-- ===================== CALCULATOR ===================== -->
-<section class="max-w-6xl mx-auto px-4 py-10">
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-10">
   <div class="grid lg:grid-cols-5 gap-6">
 
     <!-- INPUT PANEL -->
@@ -457,34 +484,100 @@
   </div>
 </section>
 
+<!-- ===================== SHARE / FEEDBACK / LIKE-DISLIKE BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center justify-between gap-3 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500 mr-1">Share:</span>
+      <button class="action-icon-btn" onclick="navigator.clipboard.writeText(window.location.href)">🔗 Copy Link</button>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://wa.me/?text='+encodeURIComponent(window.location.href)">🟢 WhatsApp</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)">🐦 X</a>
+      <a class="action-icon-btn" href="#" target="_blank" rel="noopener" onclick="this.href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href)">📘 Facebook</a>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="likeBtn" class="action-icon-btn" onclick="toggleReaction('like')">👍 <span id="likeCount">0</span></button>
+      <button id="dislikeBtn" class="action-icon-btn" onclick="toggleReaction('dislike')">👎</button>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Pump%20Head%20Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding pump head</a></li>
+      <li><a href="#ph-npsh" class="hover:underline">3. NPSH &amp; cavitation risk</a></li>
+      <li><a href="#ph-mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
 <!-- ===================== EXPLANATION ===================== -->
-<section class="bg-white border-y border-gray-100 py-12">
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-12">
   <div class="max-w-3xl mx-auto px-4">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-5">Understanding Pump Head</h2>
 
 
-    <div class="not-prose bg-white border border-gray-200 rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
-      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
-      <p>Reviewed by the <a href="https://www.electromechcalc.com/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
-      <p>Last reviewed: July 2026 &nbsp;|&nbsp; Standards referenced: ISO / DIN / manufacturer bearing & belt data</p>
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: ISO / DIN / manufacturer bearing & belt data</p>
     </div>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
       <p>Pump head is the amount of energy a pump imparts to a fluid, expressed as an equivalent height of water column rather than as a pressure — this is the standard convention used across pump manufacturer catalogues and referenced throughout the Hydraulic Institute's pump standards and general fluid mechanics texts such as Cengel &amp; Cimbala's <em>Fluid Mechanics: Fundamentals and Applications</em>. Expressing energy as head rather than pressure has a practical advantage: the same pump curve applies regardless of the fluid's density, since head is purely a function of the pump's mechanical work, while pressure is not.</p>
 
-      <p>This calculator supports two common ways engineers arrive at head. The first, <strong>Pressure → Head</strong>, is used when a system is already running and a pressure gauge is mounted on the discharge line — this is the fastest way to check an installed pump against its rated performance curve. The conversion uses the standard relationship <strong>Head (m) = Pressure (bar) × 10.197</strong>, derived from the density of water and gravitational acceleration, and is the same conversion factor published by references such as the <a href="https://www.engineeringtoolbox.com/pressure-head-units-converter-d_1442.html" target="_blank" rel="noopener" class="text-sky-600 underline">Engineering ToolBox</a> pressure-to-head converter.</p>
+      <p>This calculator supports two common ways engineers arrive at head. The first, <strong>Pressure → Head</strong>, is used when a system is already running and a pressure gauge is mounted on the discharge line — this is the fastest way to check an installed pump against its rated performance curve. The conversion uses the standard relationship <strong>Head (m) = Pressure (bar) × 10.197</strong>, derived from the density of water and gravitational acceleration, and matches the standard pressure-to-head conversion used across fluid mechanics references.</p>
 
       <p>The second method, <strong>Elevation + Friction → Head</strong>, is used at the design stage, before a pump is even installed, when the physical layout of the piping system is known but no pressure gauge exists yet. Here the total head a pump must generate is built from three physical components: the <strong>static elevation</strong> the water must be lifted vertically, the <strong>friction loss</strong> from resistance inside the pipe, fittings, and valves along the route, and the <strong>velocity head</strong>, a small but real term representing the kinetic energy needed to keep the water moving at its discharge velocity, calculated as <strong>hv = V² ÷ (2 × g)</strong> with g = 9.81 m/s². Adding these three terms gives the head the pump must be rated for: <strong>Head = Elevation + Friction Loss + Velocity Head</strong>.</p>
 
       <p>Once head and flow rate are known, the hydraulic power the pump imparts to the fluid is <strong>P(kW) = (Q × H × ρ × g) ÷ 3,600,000</strong>, with Q in m³/hr, H in metres, and ρ = 1000 kg/m³ for water. Dividing by the pump's overall efficiency gives the shaft power the driving motor must deliver, which is what determines the correct motor rating for the installation.</p>
 
+      <p><strong>Worked example:</strong> a system needs to lift water 12 m in elevation, with an estimated 3 m of friction loss through the piping and 0.3 m of velocity head at the discharge — total head = 12 + 3 + 0.3 = 15.3 m. At a flow rate of 20 m³/hr and 70% pump efficiency, hydraulic power = (20 × 15.3 × 1000 × 9.81) ÷ 3,600,000 ≈ 0.833 kW, and shaft power = 0.833 ÷ 0.70 ≈ 1.19 kW — the figure used to select the driving motor, generally rounded up to the next standard motor size (commonly 1.5 kW) for margin.</p>
+
       <p>As with any sizing calculator, treat the output as an engineering estimate. Real friction loss depends on exact pipe condition, fitting count, and water temperature, so always confirm final figures against as-built drawings or a live pressure reading, and check the result against the selected pump's published head-versus-flow curve before purchase.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Reference: Hydraulic Institute pump standards and standard fluid mechanics conventions. This calculator is for preliminary, educational sizing only and does not replace a full system curve analysis or manufacturer pump selection software.</p>
+  </div>
+</section>
+
+<!-- ===================== NPSH & CAVITATION ===================== -->
+<section id="ph-npsh" class="max-w-3xl mx-auto px-4 py-12">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">NPSH</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-5">NPSH and Why Suction-Side Design Matters</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Total head (what this calculator computes) tells you how much energy the pump must add, but it says nothing about whether the pump can safely draw fluid in from the suction side without cavitating. That's governed by <strong>Net Positive Suction Head (NPSH)</strong> — the margin between the pressure at the pump's suction and the fluid's vapor pressure at that temperature. Every pump has a manufacturer-published NPSH<sub>required</sub> curve; the system must deliver at least that much NPSH<sub>available</sub>, or the fluid locally boils inside the impeller (cavitation), causing noise, vibration, pitting damage, and a sharp drop in pump performance over time.</p>
+    <p>NPSH problems are most common when a pump is mounted high above the water source (a large suction lift), when suction-side piping is long or has many fittings (adding friction loss on the suction side specifically), when pumping hot water (higher vapor pressure reduces available margin), or at high altitude (lower atmospheric pressure reduces available margin). If your installation has any of these characteristics, check NPSH<sub>available</sub> against the pump's NPSH<sub>required</sub> curve at your operating flow rate — this calculator's total head figure alone does not confirm cavitation-free operation.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="ph-mistakes" class="bg-white border-y border-gray-100 py-12">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-5">Common Mistakes in Pump Head Calculations</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p><strong>1. Ignoring friction loss and sizing on elevation alone.</strong> Especially on long pipe runs or systems with many valves and fittings, friction loss can be a large fraction of total head — a pump sized on elevation alone will underperform once installed.</p>
+      <p><strong>2. Confusing pressure head with total dynamic head.</strong> Reading a discharge pressure gauge and converting it to head (using this calculator's Pressure → Head mode) only tells you the pressure at that one point — it doesn't automatically capture suction-side losses or static lift if the gauge is mid-system rather than at the pump discharge.</p>
+      <p><strong>3. Not checking NPSH on suction-lift installations.</strong> A pump can be correctly sized for total head and still cavitate destructively if the suction side doesn't provide adequate NPSH — this is a completely separate check from the head calculation.</p>
+      <p><strong>4. Forgetting to include fitting losses, not just straight pipe.</strong> Elbows, valves, strainers, and reducers each add their own friction loss (often expressed as "equivalent length" of straight pipe) — a system with many fittings can have friction loss well above what straight-pipe length alone suggests.</p>
+      <p><strong>5. Sizing the motor to hydraulic power instead of shaft power.</strong> Hydraulic power is the energy delivered to the fluid; shaft power (hydraulic power ÷ pump efficiency) is what the motor must actually supply — using hydraulic power alone undersizes the motor, since pump efficiency is always below 100%.</p>
     </div>
   </div>
 </section>
 
 <!-- ===================== FAQ ===================== -->
-<section class="max-w-3xl mx-auto px-4 py-12">
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-12">
   <div class="text-center mb-8">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
@@ -530,6 +623,61 @@
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">Take the calculated head and your required flow rate, then choose a pump whose published head-versus-flow performance curve passes through or above that point, ideally near its best efficiency point (BEP). Use the shaft power figure to confirm the driving motor has adequate rated capacity.</p>
     </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is NPSH and why isn't it covered by this calculator?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">NPSH (Net Positive Suction Head) governs whether a pump can draw fluid in without cavitating — a separate check from total head. It depends on suction-side piping losses, elevation, fluid vapor pressure, and altitude, and must be compared against the specific pump's NPSH<sub>required</sub> curve, which isn't part of a generic head calculation.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does velocity head matter if it's usually a small number?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Velocity head is often small (a fraction of a metre) for typical flow velocities, but including it keeps the calculation complete and accurate, especially for systems with high discharge velocity or where every bit of head margin matters, such as a pump operating close to its performance limit.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does this calculator work for fluids other than water?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The head figure itself (in metres) is fluid-independent, since head is a measure of energy per unit weight. However, the power calculation uses water's density (1000 kg/m³) — for a different fluid, scale the power result by the ratio of that fluid's density to water's density to get an accurate power requirement.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== EXPLORE MORE CALCULATORS ===================== -->
+<section id="explore-more" class="max-w-6xl mx-auto px-4 pb-16">
+  <h2 class="font-display font-semibold text-brandDark text-xl mb-5">Explore More Calculators</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+    <a href="electrical-calculators.html" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#e0f2fe">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Electrical Calculators</h3>
+      <p class="text-sm text-gray-500">Cable size, transformer size, motor current, DG size &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="mechanical-calculators.html" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#fef3c7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Mechanical Calculators</h3>
+      <p class="text-sm text-gray-500">Bearing life, belt length, cooling tower efficiency, TDH &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="financial-calculators.html" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#dcfce7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Financial Calculators</h3>
+      <p class="text-sm text-gray-500">EPF, PPF, SIP, gratuity, income tax, CAGR &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
   </div>
 </section>
 
@@ -540,6 +688,27 @@
 
 
 <script>
+  // ===== Share / Feedback / Like-Dislike bar =====
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+  let reacted = null;
+  function toggleReaction(type){
+    const likeBtn = document.getElementById('likeBtn');
+    const dislikeBtn = document.getElementById('dislikeBtn');
+    const likeCount = document.getElementById('likeCount');
+    let count = parseInt(likeCount.textContent, 10);
+    if(type === 'like'){
+      if(reacted === 'like'){ count--; reacted = null; likeBtn.classList.remove('active-like'); }
+      else { if(reacted === 'dislike'){ dislikeBtn.classList.remove('active-dislike'); } count++; reacted = 'like'; likeBtn.classList.add('active-like'); }
+    } else {
+      if(reacted === 'dislike'){ reacted = null; dislikeBtn.classList.remove('active-dislike'); }
+      else { if(reacted === 'like'){ count--; likeBtn.classList.remove('active-like'); } reacted = 'dislike'; dislikeBtn.classList.add('active-dislike'); }
+    }
+    likeCount.textContent = count;
+  }
+
   // ===== Pump Head Calculator Logic =====
   let calcMode = 'pressure';
 
