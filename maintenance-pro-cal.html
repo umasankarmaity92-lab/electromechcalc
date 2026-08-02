@@ -326,7 +326,7 @@
   <div class="grid lg:grid-cols-5 gap-6">
 
     <!-- INPUT PANEL -->
-    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
 
       <!-- MTBF -->
       <div class="calc-panel active" id="panel-mtbf">
@@ -560,10 +560,18 @@
         </div>
       </div>
 
+      <!-- All 10 panels above already recalculate live on every keystroke
+           (oninput/onchange) — this button re-runs whichever calculator
+           is currently active and scrolls the result into view, mainly
+           for mobile where the result panel sits below the fold. -->
+      <button onclick="calculateActive()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition mt-6">
+        Calculate
+      </button>
+
     </div>
 
     <!-- RESULT PANEL -->
-    <div class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
 
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
@@ -1419,11 +1427,26 @@
     `).join('');
   }
 
+  function calculateActive(){
+    const activeTab = document.querySelector('.tab-pill.active');
+    const key = activeTab ? activeTab.dataset.cat : 'mtbf';
+    if (calcFns[key]) calcFns[key]();
+  }
+  // Note: no manual scrollToResult() call here on purpose — the onclick
+  // attribute below starts with "calculate", so _middleware.js's
+  // button[onclick^="calculate"] rule auto-appends "; scrollToResult();"
+  // to it at the edge, same as every other calculator on the site.
+
   function switchCalc(key){
     document.querySelectorAll('.tab-pill').forEach(btn => btn.classList.toggle('active', btn.dataset.cat === key));
     document.querySelectorAll('.calc-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + key));
     renderCalcList(key);
     calcFns[key]();
+    // Covers both entry points: the top tab-pills and the "All 10
+    // Calculators" list in the result panel — the latter sits well
+    // below the input panel on mobile, so without this the user
+    // switches tools but doesn't see the new inputs appear.
+    if (typeof scrollToCalculator === 'function') scrollToCalculator();
   }
 
   // ---- MTBF ----

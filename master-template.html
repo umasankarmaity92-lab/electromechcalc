@@ -15,7 +15,13 @@
      (no slashes, lowercase). {{PAGE_SLUG}} = extensionless slug only
      (e.g. "cable-derating"), no category prefix, no ".html" anywhere.
   1. Fill in every {{PLACEHOLDER}} below, including {{PAGE_CATEGORY}}
-     and {{PAGE_SLUG}}.
+     and {{PAGE_SLUG}}. This now includes the structural placeholders
+     added for content-depth consistency: {{TOC_HOW_IT_WORKS_LABEL}},
+     {{TOC_SECOND_LABEL}}, {{LAST_REVIEWED_MONTH_YEAR}},
+     {{STANDARDS_REFERENCED}}, {{SECOND_SECTION_EYEBROW}},
+     {{SECOND_SECTION_HEADING}}, {{SECOND_SECTION_CONTENT}},
+     {{MISTAKES_HEADING}}, {{MISTAKES_CONTENT}}, and FAQ_Q6/A6
+     through FAQ_Q8/A8 (8 FAQ entries minimum, not 5).
   2. Save the actual file as <category>/<slug>.html on disk (e.g.
      electrical/cable-derating.html) — the source FILE keeps the
      .html extension and lives inside its category folder. Only the
@@ -52,6 +58,27 @@
      Pro Max divider; the Pro Max/featured link always stays last).
   7. Deploy, then in GSC: Sitemaps -> resubmit sitemap.xml, and
      URL Inspection -> Request Indexing on the new page's clean URL.
+  8. Input panel border (black light / white dark) and auto-scroll-
+     to-result on Calculate are now SITE-WIDE via _middleware.js +
+     theme.css — no per-page edit needed, AS LONG AS you keep:
+       - the INPUT PANEL div's classes as-is (middleware matches on
+         "lg:col-span-3" + "border-gray-100" substrings)
+       - the RESULT PANEL div's classes as-is (middleware matches on
+         "lg:col-span-2" + "flex-col" + "gap-4" substrings) — this
+         template already carries id="resultPanel" directly too, as
+         a belt-and-suspenders fallback in case a future markup
+         tweak ever breaks the middleware's class-substring match
+       - your Calculate button's onclick starting with "calculate",
+         e.g. onclick="calculateCableSize()" (middleware matches
+         button[onclick^="calculate"] and appends "; scrollToResult();"
+         to it automatically — don't add scrollToResult() yourself,
+         middleware skips buttons that already call it, but there's
+         no need to)
+     /assets/common.js (holds scrollToResult()) is likewise
+     auto-injected into <head> by middleware — do not add a
+     <script src="/assets/common.js"> tag manually in
+     {{PAGE_EXTRA_STYLES}} or {{CALCULATOR_JS}}, it would just be a
+     harmless but redundant duplicate.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -94,7 +121,12 @@
 <meta name="twitter:description" content="{{OG_DESCRIPTION}}">
 <meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
 
-<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<!-- ===================== [PER-PAGE] STRUCTURED DATA =====================
+     Minimum 8 FAQ entries (Q1-Q8) — matches the site-wide standard set
+     across all published calculators. Add more (Q9, Q10...) as needed;
+     never ship fewer than 8, and keep this JSON-LD block in sync with
+     the visible {{FAQ_ITEMS}} accordion below (same questions, same
+     order) so structured data never diverges from on-page content. -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -138,6 +170,21 @@
       "@type": "Question",
       "name": "{{FAQ_Q5}}",
       "acceptedAnswer": { "@type": "Answer", "text": "{{FAQ_A5}}" }
+    },
+    {
+      "@type": "Question",
+      "name": "{{FAQ_Q6}}",
+      "acceptedAnswer": { "@type": "Answer", "text": "{{FAQ_A6}}" }
+    },
+    {
+      "@type": "Question",
+      "name": "{{FAQ_Q7}}",
+      "acceptedAnswer": { "@type": "Answer", "text": "{{FAQ_A7}}" }
+    },
+    {
+      "@type": "Question",
+      "name": "{{FAQ_Q8}}",
+      "acceptedAnswer": { "@type": "Answer", "text": "{{FAQ_A8}}" }
     }
   ]
 }
@@ -374,16 +421,16 @@
 </section>
 
 <!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
-<section class="max-w-6xl mx-auto px-4 py-14">
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
   <div class="grid lg:grid-cols-5 gap-6">
 
     <!-- INPUT PANEL -->
-    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
       {{CALCULATOR_INPUTS}}
     </div>
 
     <!-- RESULT PANEL -->
-    <div class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
       {{CALCULATOR_RESULTS}}
 
       <!-- related calculators -->
@@ -398,8 +445,32 @@
   </div>
 </section>
 
-<!-- ===================== [PER-PAGE] EXPLANATION ===================== -->
-<section class="bg-white border-y border-gray-100 py-16">
+<!-- ===================== TABLE OF CONTENTS =====================
+     Standard 5-row TOC used across every published calculator.
+     Keep the anchors (#calculator, #how-it-works, #second, #mistakes,
+     #faqs) in sync with the actual section ids below — if a page
+     skips the optional {{SECOND_SECTION}} block, remove that <li> too
+     and renumber the rest. -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. {{TOC_HOW_IT_WORKS_LABEL}}</a></li>
+      <li><a href="#second" class="hover:underline">3. {{TOC_SECOND_LABEL}}</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== [PER-PAGE] EXPLANATION =====================
+     Target length across how-it-works + second + mistakes + FAQ
+     combined: 3000+ words of genuine, non-duplicated content (this is
+     the site-wide content-depth standard, not just a suggestion —
+     thin pages are the #1 AdSense/SEO risk on this site). Include a
+     worked numeric example with real figures, not just the formula. -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
   <div class="max-w-3xl mx-auto px-4">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">{{EXPLANATION_HEADING}}</h2>
@@ -408,7 +479,7 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
       <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IEC / IEEE / BIS</p>
+      <p>Last reviewed: {{LAST_REVIEWED_MONTH_YEAR}} &nbsp;|&nbsp; Standards referenced: {{STANDARDS_REFERENCED}}</p>
     </div>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
       {{EXPLANATION_CONTENT}}
@@ -423,8 +494,38 @@
   </div>
 </section>
 
-<!-- ===================== [PER-PAGE] FAQ ===================== -->
-<section class="max-w-3xl mx-auto px-4 py-16">
+<!-- ===================== SECOND SECTION (optional but standard) =====================
+     Every published calculator carries a second content block here —
+     a comparison table, a second worked scenario, a rate/limit
+     reference table, or a related-topic deep-dive (e.g. "how tenure
+     changes total interest", "GST slabs at a glance"). Drop the whole
+     <section> and its TOC <li> only if there is genuinely nothing
+     page-specific to add — don't leave it thin just to check the box. -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">{{SECOND_SECTION_EYEBROW}}</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">{{SECOND_SECTION_HEADING}}</h2>
+  {{SECOND_SECTION_CONTENT}}
+</section>
+
+<!-- ===================== COMMON MISTAKES =====================
+     Standard section on every published calculator. Minimum 5
+     numbered mistakes, each 1-2 sentences: state the mistake, then
+     why it's wrong / what it costs the user. -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">{{MISTAKES_HEADING}}</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      {{MISTAKES_CONTENT}}
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] FAQ =====================
+     Minimum 8 <details> items, matching the 8 JSON-LD entries above
+     1-for-1 (same question text, same order) — schema and visible
+     content must never diverge. First item gets the `open` attribute. -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
   <div class="text-center mb-10">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
