@@ -40,3 +40,22 @@ function scrollToHashOnLoad(){
   requestAnimationFrame(() => scrollToElement(el, false));
 }
 document.addEventListener('DOMContentLoaded', scrollToHashOnLoad);
+
+// Same-page anchor clicks (Table of Contents links, "Jump to FAQ" etc.)
+// use the browser's native instant jump by default, which — like the
+// two cases above — lands the target flush under the sticky header.
+// Delegated click handler intercepts any in-page `<a href="#...">` and
+// re-does the jump through scrollToElement() instead. Site-wide via
+// common.js, so every calculator's Table of Contents gets this for
+// free without a per-page change.
+document.addEventListener('click', function(e){
+  const a = e.target.closest('a[href^="#"]');
+  if(!a) return;
+  const id = a.getAttribute('href').slice(1);
+  if(!id) return;
+  const el = document.getElementById(id);
+  if(!el) return;
+  e.preventDefault();
+  scrollToElement(el, true);
+  if (history.pushState) history.pushState(null, '', '#' + id);
+});
