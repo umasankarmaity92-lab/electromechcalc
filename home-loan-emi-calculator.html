@@ -45,10 +45,10 @@
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    { "@type": "Question", "name": "How is EMI calculated?", "acceptedAnswer": { "@type": "Answer", "text": "EMI is calculated using the reducing-balance formula EMI = P × r × (1+r)^n / ((1+r)^n − 1), where P is the loan principal, r is the monthly interest rate (annual rate ÷ 12 ÷ 100), and n is the tenure in months." } },
-    { "@type": "Question", "name": "Does EMI stay the same throughout the loan?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, for a standard fixed-rate reducing-balance loan the EMI amount stays constant every month, though the split between principal and interest within each EMI changes over time — early EMIs are interest-heavy, later ones are principal-heavy." } },
-    { "@type": "Question", "name": "Why do I pay more interest in the early months?", "acceptedAnswer": { "@type": "Answer", "text": "Interest for each month is calculated on the outstanding principal, which is highest at the start of the loan. As you pay down principal, the interest portion of each EMI shrinks and the principal portion grows, even though the total EMI stays the same." } },
-    { "@type": "Question", "name": "Can I reduce my total interest by prepaying?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, prepaying reduces the outstanding principal, which reduces the interest calculated on all future EMIs. Prepaying early in the loan tenure saves more total interest than prepaying the same amount later, since more interest-bearing months remain." } }
+    { "@type": "Question", "name": "How is home loan EMI calculated?", "acceptedAnswer": { "@type": "Answer", "text": "Home loan EMI follows the standard reducing-balance formula EMI = P × r × (1+r)^n / ((1+r)^n − 1), where P is the sanctioned loan amount, r is the monthly interest rate (annual rate ÷ 12 ÷ 100), and n is the tenure in months. Because home loan tenures run up to 30 years, even a small rate difference has an outsized effect on lifetime interest compared to shorter loans." } },
+    { "@type": "Question", "name": "Why does a home loan carry the lowest interest rate among retail loans?", "acceptedAnswer": { "@type": "Answer", "text": "The property itself is mortgaged to the lender as collateral until the loan is repaid, which sharply lowers the lender's risk compared to an unsecured product. That lower risk, combined with the priority-sector and long-tenure nature of housing finance, is why home loan rates sit well below personal loan or credit card rates." } },
+    { "@type": "Question", "name": "How does a floating home loan rate change over the tenure?", "acceptedAnswer": { "@type": "Answer", "text": "Most floating-rate home loans are now linked to an External Benchmark Lending Rate (EBLR), typically the RBI repo rate plus a lender-specific spread. When the RBI changes the repo rate, your lender is required to pass the change through within a set period, which either adjusts your EMI or your remaining tenure depending on the lender's policy and your instructions." } },
+    { "@type": "Question", "name": "Does prepaying a home loan actually save meaningful money?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, and the saving is proportionally larger on home loans than shorter loans precisely because the tenure is so long — a lump-sum prepayment in year 3 of a 20-year loan removes two decades of future interest on that principal. RBI rules also bar banks from charging a foreclosure or prepayment penalty on floating-rate home loans taken by individual borrowers." } }
   ]
 }
 </script>
@@ -190,7 +190,7 @@
 <section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
   <div class="grid lg:grid-cols-5 gap-6">
 
-    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm calc-input-panel p-6 md:p-8">
       <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Home Loan Details</h2>
       <p class="text-xs text-gray-500 mb-6">Enter your home loan amount, interest rate, and tenure to calculate the EMI.</p>
 
@@ -212,7 +212,7 @@
 
       <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
-      <button onclick="calculateEMI()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+      <button onclick="calculateEMI(); scrollToResult();" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate
       </button>
 
@@ -221,7 +221,7 @@
       </div>
     </div>
 
-    <div class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Monthly EMI</span>
@@ -384,58 +384,58 @@
   <div class="divide-y divide-gray-200">
     <details class="py-5" open>
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        How is EMI calculated?
+        How is home loan EMI calculated?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">EMI is calculated using the reducing-balance formula EMI = P × r × (1+r)ⁿ ÷ ((1+r)ⁿ − 1), where P is the loan principal, r is the monthly interest rate, and n is the tenure in months. This is the standard formula used by banks and NBFCs across India.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Home loan EMI follows the standard reducing-balance formula EMI = P × r × (1+r)ⁿ ÷ ((1+r)ⁿ − 1), where P is the sanctioned loan amount, r is the monthly interest rate, and n is the tenure in months. Because home loan tenures run up to 30 years, even a small rate difference has an outsized effect on lifetime interest compared to shorter loans.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Does EMI stay the same throughout the loan?
+        Why does a home loan carry the lowest interest rate among retail loans?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, for a standard fixed-rate loan the EMI amount stays constant every month, though the split between principal and interest within each EMI changes — early EMIs are interest-heavy, later ones are principal-heavy.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The property itself is mortgaged to the lender as collateral until the loan is fully repaid, which sharply lowers the lender's risk compared to an unsecured product like a personal loan. That lower risk, combined with the priority-sector and long-tenure nature of housing finance, is why home loan rates sit well below most other retail loan categories.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Why do I pay more interest in the early months?
+        How does a floating home loan rate change over a 20-30 year tenure?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Interest for each month is calculated on the outstanding principal, which is highest at the start of the loan. As you pay down principal, the interest portion of each EMI shrinks and the principal portion grows, even though the total EMI stays the same.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Most floating-rate home loans today are linked to an External Benchmark Lending Rate (EBLR) — usually the RBI repo rate plus a lender-specific spread. When the RBI revises the repo rate, lenders are required to pass the change through within a set period, which then adjusts either your EMI or your remaining tenure, depending on the lender's policy and any standing instruction you've given.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Can I reduce my total interest by prepaying?
+        Does prepaying a home loan actually save meaningful money?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, prepaying reduces the outstanding principal, which reduces the interest calculated on all future EMIs. Prepaying early in the loan tenure saves more total interest than prepaying the same amount later, since more interest-bearing months remain.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, and the saving is proportionally larger on home loans than on shorter loans precisely because the tenure is so long — a lump-sum prepayment in year 3 of a 20-year loan removes nearly two decades of future interest on that principal. RBI rules also bar lenders from charging a foreclosure or prepayment penalty on floating-rate home loans taken by individual borrowers.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        What happens if I miss an EMI payment?
+        What happens if I miss a home loan EMI payment?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Missing an EMI typically triggers a late payment fee, negatively affects your credit score, and the missed interest is usually added to the outstanding balance, increasing future interest — repeated defaults can lead to loan recall or asset repossession for secured loans.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A missed home loan EMI attracts a late payment fee and dents your credit score, and the account is typically classified as a Special Mention Account (SMA) if payments stay overdue. Continued default for 90 days can see the loan classified as a Non-Performing Asset (NPA), after which the lender can initiate recovery proceedings against the mortgaged property under the SARFAESI Act.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Is a fixed or floating interest rate better for EMI planning?
+        Fixed or floating rate — which suits a long home loan tenure better?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A fixed rate keeps your EMI constant and predictable for the entire tenure. A floating rate can rise or fall with market conditions, changing your EMI (or tenure, depending on the lender's policy) — floating rates are often lower initially but carry rate-change risk over a long tenure.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Very few Indian lenders now offer a truly fixed rate for the entire 20-30 year home loan tenure — most "fixed" options are actually fixed for an initial 2-5 years before reverting to floating. Given that a home loan runs for decades, most borrowers end up on a floating/EBLR-linked rate and instead manage rate risk through periodic prepayment rather than rate-locking.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Should I choose a shorter tenure with a higher EMI if I can afford it?
+        Should I stretch my home loan to 30 years to keep the EMI low?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">If your monthly budget comfortably allows it, a shorter tenure significantly reduces total interest paid, as shown in the comparison table above. The trade-off is a higher monthly outflow, so balance this against your other financial goals and emergency fund needs.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A 30-year tenure keeps the EMI affordable but, as the comparison table above shows, can add tens of lakhs in extra interest versus a 20-year tenure on the same loan. A common middle path is taking the longer tenure for eligibility and cash-flow comfort, then prepaying opportunistically each year to cut the effective payoff period.</p>
     </details>
 
     <details class="py-5">

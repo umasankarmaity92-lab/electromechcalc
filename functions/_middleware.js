@@ -82,6 +82,61 @@ class PrependToHead {
   }
 }
 
+// ---------------------------------------------------------------------
+// Site-wide calculator UX (border, auto-scroll-to-result, shared JS).
+// Targets the same class/attribute patterns every calculator page's
+// template already emits, so this needs ZERO per-page edits — add a
+// new calculator with the same template and it picks these up
+// automatically. If a page's markup drifts from the template (e.g. a
+// custom layout), it simply won't match and is left untouched.
+// ---------------------------------------------------------------------
+
+// <script src="/assets/common.js"> (holds scrollToResult()) — appended
+// once to <head> on every page. `defer` means load order relative to
+// other head tags doesn't matter.
+const COMMON_JS_TAG = '<script src="/assets/common.js" defer></script>';
+class AppendCommonScriptToHead {
+  element(element) {
+    element.append(COMMON_JS_TAG, { html: true });
+  }
+}
+
+// Calculator input panel: adds .calc-input-panel (border color rule
+// lives in theme.css) without disturbing any existing classes.
+class AddCalcInputPanelClass {
+  element(element) {
+    const cls = element.getAttribute("class") || "";
+    if (!cls.includes("calc-input-panel")) {
+      element.setAttribute("class", `${cls} calc-input-panel`.trim());
+    }
+  }
+}
+
+// Result panel: tags it with id="resultPanel" (if not already set) so
+// scrollToResult() in common.js has something to scroll to.
+class AddResultPanelId {
+  element(element) {
+    if (!element.getAttribute("id")) {
+      element.setAttribute("id", "resultPanel");
+    }
+  }
+}
+
+// Calculate button: appends a scrollToResult() call onto whatever
+// calculateXxx() the button already runs, e.g.
+//   onclick="calculateEMI()"  ->  onclick="calculateEMI(); scrollToResult();"
+// Idempotent — skips buttons that already call scrollToResult (e.g.
+// pages that were hand-edited before this middleware rule existed).
+class AddScrollToResultOnClick {
+  element(element) {
+    const onclick = element.getAttribute("onclick") || "";
+    if (onclick && !onclick.includes("scrollToResult")) {
+      element.setAttribute("onclick", `${onclick.trim().replace(/;\s*$/, "")}; scrollToResult();`);
+    }
+  }
+}
+
+
 // Normalizes a URL path for matching against search-index.json entries.
 // Strips leading/trailing slashes AND the .html extension, and folds
 // "/index" down to "/", so that:
@@ -374,6 +429,10 @@ export async function onRequest(context) {
 
   return new HTMLRewriter()
     .on("head", new PrependToHead())
+    .on("head", new AppendCommonScriptToHead())
+    .on('div[class*="lg:col-span-3"][class*="border-gray-100"]', new AddCalcInputPanelClass())
+    .on('div[class*="lg:col-span-2"][class*="flex-col"][class*="gap-4"]', new AddResultPanelId())
+    .on('button[onclick^="calculate"]', new AddScrollToResultOnClick())
     .on("#site-header", new InjectHTML(headerHTML))
     .on("#site-header", new InsertAfter('<main id="main-content">'))
     .on("#breadcrumb", new InjectHTML(breadcrumbHTML))

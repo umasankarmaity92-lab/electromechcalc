@@ -49,7 +49,10 @@
     {"@type": "Question", "name": "How does compounding frequency affect returns?", "acceptedAnswer": {"@type": "Answer", "text": "The more frequently interest compounds (monthly vs annually, for example), the higher the effective return on the same nominal annual rate, since interest starts earning interest sooner. The difference is usually modest for short periods but becomes more noticeable over longer durations."}},
     {"@type": "Question", "name": "What is the difference between simple interest and compound interest?", "acceptedAnswer": {"@type": "Answer", "text": "Simple interest is calculated only on the original principal throughout the term, so it grows linearly. Compound interest is calculated on the principal plus previously accumulated interest, so it grows exponentially — compound interest always equals or exceeds simple interest for the same principal, rate, and time."}},
     {"@type": "Question", "name": "Which bank products typically use compound interest?", "acceptedAnswer": {"@type": "Answer", "text": "Fixed deposits (FDs), recurring deposits (RDs), and most savings account products in India use compound interest, usually compounded quarterly for FDs and monthly or quarterly for savings accounts, though conventions vary by bank."}},
-    {"@type": "Question", "name": "Does a higher compounding frequency always mean noticeably higher returns?", "acceptedAnswer": {"@type": "Answer", "text": "The gain from higher compounding frequency (e.g., monthly vs annually) is generally small for typical interest rates and shorter durations, but the effect compounds meaningfully over long time horizons (10+ years) or at higher interest rates."}}
+    {"@type": "Question", "name": "Does a higher compounding frequency always mean noticeably higher returns?", "acceptedAnswer": {"@type": "Answer", "text": "The gain from higher compounding frequency (e.g., monthly vs annually) is generally small for typical interest rates and shorter durations, but the effect compounds meaningfully over long time horizons (10+ years) or at higher interest rates."}},
+    {"@type": "Question", "name": "What is the Rule of 72 and how accurate is it?", "acceptedAnswer": {"@type": "Answer", "text": "The Rule of 72 approximates the years for an investment to double by dividing 72 by the annual interest rate. It's reasonably accurate between roughly 6% and 10%, and less precise outside that range."}},
+    {"@type": "Question", "name": "How is CAGR different from compound interest?", "acceptedAnswer": {"@type": "Answer", "text": "This calculator projects forward from a fixed rate to a future value. CAGR works backward — given a known starting and ending value, it derives the constant annual rate connecting them, useful for summarizing fluctuating investment returns."}},
+    {"@type": "Question", "name": "Should I compare FD returns against inflation?", "acceptedAnswer": {"@type": "Answer", "text": "Yes — the maturity amount shown is nominal and doesn't account for inflation eroding purchasing power. Subtracting the prevailing inflation rate from your nominal return gives a more meaningful real return for long-term planning."}}
   ]
 }
 </script>
@@ -191,7 +194,7 @@
 <section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
   <div class="grid lg:grid-cols-5 gap-6">
 
-    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm calc-input-panel p-6 md:p-8">
 
       <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Investment Details</h2>
       <p class="text-xs text-gray-500 mb-6">Enter your principal, interest rate, time period, and compounding frequency.</p>
@@ -224,7 +227,7 @@
 
       <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
-      <button onclick="calculateCI()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+      <button onclick="calculateCI(); scrollToResult();" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate
       </button>
 
@@ -233,7 +236,7 @@
       </div>
     </div>
 
-    <div class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Maturity Amount</span>
@@ -311,8 +314,9 @@
       <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
       <li><a href="#how-it-works" class="hover:underline">2. Understanding compound interest</a></li>
       <li><a href="#second" class="hover:underline">3. Compounding frequency impact</a></li>
-      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
-      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+      <li><a href="#rule72" class="hover:underline">4. Rule of 72, CAGR &amp; real returns</a></li>
+      <li><a href="#mistakes" class="hover:underline">5. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">6. FAQs</a></li>
     </ul>
   </div>
 </nav>
@@ -369,6 +373,17 @@
   </div>
 </section>
 
+<!-- ===================== RULE OF 72 ===================== -->
+<section id="rule72" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Quick Estimation</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">The Rule of 72, CAGR, and Real (Inflation-Adjusted) Returns</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p><strong>Rule of 72 — a quick mental shortcut:</strong> dividing 72 by the annual interest rate gives an approximate number of years for your money to double under compound interest. At 8% p.a., money roughly doubles in 72 ÷ 8 = 9 years; at 12% p.a., in about 6 years. It's an approximation (most accurate in the 6-10% range), not a substitute for the exact formula this calculator uses, but it's handy for quick back-of-envelope comparisons between products.</p>
+    <p><strong>CAGR vs compound interest:</strong> Compound Annual Growth Rate (CAGR) is essentially the same mathematical idea applied backward — given a starting value, an ending value, and a time period, CAGR tells you the constant annual compounding rate that would connect the two. It's commonly used to compare mutual fund or stock returns over multi-year periods, since actual year-to-year returns are rarely uniform, unlike the fixed-rate compounding this calculator assumes for FDs and RDs.</p>
+    <p><strong>Nominal vs real (inflation-adjusted) return:</strong> the maturity amount this calculator shows is your nominal return — it doesn't account for inflation eroding purchasing power over the same period. A rough real return estimate is nominal rate minus inflation rate; at 7.5% nominal interest and 5% inflation, your real return is closer to 2.5% per year, which matters a great deal when comparing a "safe" FD against equity-linked options over long horizons.</p>
+  </div>
+</section>
+
 <!-- ===================== COMMON MISTAKES ===================== -->
 <section id="mistakes" class="bg-white border-y border-gray-100 py-16">
   <div class="max-w-3xl mx-auto px-4">
@@ -380,6 +395,7 @@
       <p><strong>3. Ignoring tax on interest earned.</strong> Interest from fixed deposits and most compound-interest instruments is taxable as per your income slab (with TDS often deducted at source) — the post-tax return is lower than the calculated maturity amount suggests.</p>
       <p><strong>4. Assuming compounding frequency alone determines the best product.</strong> A slightly lower nominal rate with more frequent compounding can sometimes underperform a higher nominal rate with less frequent compounding — always compare the actual maturity amount, not just the compounding label.</p>
       <p><strong>5. Not accounting for premature withdrawal penalties.</strong> Many compound-interest products (like FDs) charge a penalty or reduced rate on premature withdrawal, which changes your actual realized return versus the full-term calculation.</p>
+          <p><strong>6. Ignoring inflation when judging whether a "good" rate is actually good.</strong> An 8% FD return sounds attractive until you net out 5-6% inflation — always think in terms of real, inflation-adjusted return when comparing long-term investment options, not just the nominal quoted rate.</p>
     </div>
   </div>
 </section>
@@ -430,6 +446,30 @@
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">The gain from higher compounding frequency (e.g., monthly vs annually) is generally small for typical interest rates and shorter durations, but the effect compounds meaningfully over long time horizons (10+ years) or at higher interest rates.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the Rule of 72 and how accurate is it?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The Rule of 72 approximates the number of years for an investment to double by dividing 72 by the annual interest rate. It's reasonably accurate for rates between roughly 6% and 10%, and becomes progressively less precise outside that range — use this calculator's exact formula for a precise doubling period.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How is CAGR different from the compound interest this calculator computes?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This calculator projects forward from a fixed rate to a future value. CAGR works backward — given a known starting and ending value over a period, it derives the constant annual rate that connects them, which is why it's commonly used to summarize the effective annual return of investments (like mutual funds) whose actual year-to-year returns fluctuate.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I compare FD returns against inflation?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — the maturity amount this calculator shows is a nominal figure and doesn't account for inflation eroding your money's purchasing power over the same period. Subtracting the prevailing inflation rate from your nominal return gives a rough real return, which is a more meaningful number for long-term financial planning.</p>
     </details>
   </div>
 </section>
