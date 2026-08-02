@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Belt Speed Calculator (Pulley Diameter & RPM) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Belt Speed Calculator. Enter pulley diameter and rotational speed (RPM) to get belt linear speed in m/s and m/min instantly, with formula and worked example.">
+<meta name="keywords" content="belt speed calculator, pulley belt speed formula, conveyor belt speed calculator, linear belt velocity, pulley diameter rpm belt speed">
+<meta name="robots" content="index, follow">
+<!-- mechanical = electrical | mechanical | financial (no slashes).
+     belt-speed = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/belt-speed">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Belt Speed Calculator">
+<meta property="og:description" content="Free Belt Speed Calculator — enter pulley diameter and RPM to get belt linear speed in m/s and m/min instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/belt-speed">
+<meta property="og:image" content="https://www.electromechcalc.com/logo.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Belt Speed Calculator">
+<meta name="twitter:description" content="Free Belt Speed Calculator — enter pulley diameter and RPM to get belt linear speed in m/s and m/min instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Belt Speed Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/belt-speed",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Belt Speed Calculator. Enter pulley diameter and rotational speed (RPM) to get belt linear speed in m/s and m/min instantly, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for belt speed?",
+      "acceptedAnswer": { "@type": "Answer", "text": "V = π × D × N ÷ 60, where V is belt linear speed, D is pulley diameter, and N is rotational speed in RPM. With D in metres, V comes out in metres per second (m/s)." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does the formula use diameter, not radius?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Belt speed equals the pulley's circumference (πD) traveled per revolution, multiplied by revolutions per second — circumference uses diameter directly (πD), not radius, which is different from many rotational formulas (like torque or kinetic energy) that use radius." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the belt speed differ between the driver and driven pulley?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — in an ideal (no-slip) belt drive, the belt itself moves at one single linear speed throughout its length, so belt speed calculated from either the driver or driven pulley's own diameter and RPM gives the same answer, as long as you use that specific pulley's own diameter and its own RPM together." }
+    },
+    {
+      "@type": "Question",
+      "name": "How much does real-world belt slip affect actual speed?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Typically 1-2% for a properly tensioned V-belt under normal load, though slip increases under heavy load, with belt wear, or if tension is inadequate — for applications where precise speed or synchronization matters (like some conveyor or timing applications), a toothed/synchronous belt eliminates slip entirely, or actual speed should be measured rather than assumed equal to the calculated theoretical value." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I convert belt speed from m/s to feet per minute (FPM)?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Multiply m/s by 196.85 to get feet per minute, or multiply m/min by 3.281 — FPM is a common unit in US conveyor and belt literature, while m/s and m/min are standard in most Indian/metric engineering contexts." }
+    },
+    {
+      "@type": "Question",
+      "name": "What's a typical belt speed for a conveyor?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It varies hugely by application — bulk material handling conveyors often run 1-3 m/s, while light unit-handling or packaging conveyors might run faster (2-5 m/s or more), and precision assembly-line conveyors often run much slower (well under 1 m/s) for process/handling reasons. There's no single universal figure; belt speed is chosen based on the specific process requirement." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does belt speed affect pulley RPM if the diameter changes?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For a fixed belt speed (set by the driving pulley), yes — a smaller-diameter driven pulley must spin at a proportionally higher RPM to match the same belt speed, and a larger driven pulley spins proportionally slower. This is exactly the relationship the Pulley Ratio Calculator on this site computes directly." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does belt speed matter for selecting a V-belt cross-section?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Belt manufacturers rate different V-belt cross-sections (A, B, C, etc.) partly by their safe operating speed range — running a belt above its rated maximum speed increases centrifugal effects that reduce the belt's effective grip and can shorten belt life or cause slipping, so checking calculated belt speed against the selected belt section's rated range is a standard part of belt drive design." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="stylesheet" href="/assets/tailwind.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Belts & Pulleys
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Belt Speed <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Linear belt speed from pulley diameter and rotational speed — in m/s and m/min, with the formula shown.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Belt Speed Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter the pulley diameter and its rotational speed.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Pulley Diameter, D (mm)</label>
+          <input id="pulleyDia" type="number" value="200" step="1" min="0" placeholder="e.g. 200" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Rotational Speed, N (RPM)</label>
+          <input id="beltRpm" type="number" value="1440" step="1" min="0" placeholder="e.g. 1440" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateBeltSpeed()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">V = πDN / 60</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Belt Speed</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Speed (m/min)</span>
+            <span id="rMmin" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Speed (ft/min)</span>
+            <span id="rFpm" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="mechanical/pulley-ratio.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Pulley Ratio Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/chain-length.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Chain Length Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/shaft-torque.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Shaft Torque Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/flywheel-energy.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Flywheel Energy Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding belt speed</a></li>
+      <li><a href="#second" class="hover:underline">3. Belt speed at common pulley sizes</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Belt Speed Is Calculated from Pulley Diameter and RPM</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard belt/pulley kinematics (V = πDN/60)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>Belt speed is the linear (straight-line) speed at which a belt travels around its pulleys — a single number that describes how fast material moves on a conveyor, or how fast a belt-driven pump, fan, or compressor's driven pulley is being turned. It depends only on the diameter of whichever pulley you're measuring at, and that pulley's own rotational speed.</p>
+
+      <p><strong>Formula used:</strong> V = π × D × N ÷ 60, where D is pulley diameter and N is rotational speed in RPM. This comes directly from the pulley's circumference (πD, the distance the belt travels for one full revolution) multiplied by revolutions per second (N/60) — with D in metres, V comes out in metres per second.</p>
+
+      <p><strong>Worked example:</strong> a 200 mm (0.2 m) diameter motor pulley spinning at 1440 RPM: V = π × 0.2 × 1440 ÷ 60 ≈ 15.08 m/s, which is roughly 905 m/min, or about 2969 ft/min. Since belt speed is the same throughout an ideal, no-slip belt loop, this is also the speed at which the belt passes over the driven pulley, regardless of that driven pulley's own diameter.</p>
+
+      <p><strong>Belt speed vs pulley RPM — not the same thing:</strong> two pulleys of different diameters on the same belt spin at different RPMs, but share the same belt speed — a smaller driven pulley spins faster (higher RPM) than a larger one, precisely so that both maintain the same linear belt speed at their respective diameters. This is the relationship the companion Pulley Ratio Calculator uses to work out driven-pulley RPM from a known driver RPM and the two pulley diameters.</p>
+
+      <p><strong>Why belt speed matters in drive selection:</strong> V-belt sections are rated for a maximum safe operating speed (beyond which centrifugal effects reduce grip and shorten belt life), and conveyor, fan, and pump applications each have process-driven target belt or peripheral speeds. Calculating belt speed from your actual pulley diameter and motor RPM is the standard first check when selecting a belt drive ratio, verifying it against the selected belt's rated speed range, or confirming a conveyor will move material at the intended rate.</p>
+
+      <p><strong>Belt speed and process rate on a conveyor:</strong> for a conveyor, belt speed directly sets the linear rate at which material moves — knowing belt speed lets you calculate throughput (items or mass per minute, given item spacing or bulk density and cross-sectional loading), residence time on the belt (useful for process steps that need a minimum dwell time, like cooling, drying, or inspection), and whether a downstream process can actually keep pace with the conveyor's delivery rate. Getting belt speed right is often the starting point for an entire line's throughput calculation, not just a standalone mechanical figure.</p>
+
+      <p><strong>Motor speed options and their effect on belt speed choices:</strong> standard induction motors run at one of a handful of common synchronous-minus-slip speeds depending on pole count — roughly 2900 RPM (2-pole), 1440 RPM (4-pole), 960 RPM (6-pole), or 720 RPM (8-pole) on a 50 Hz supply. Since belt speed for a fixed pulley diameter scales directly with motor RPM, choosing a motor pole count is often the first design decision in setting an achievable belt speed range, before pulley diameter is used to fine-tune the exact target within whatever range the chosen motor speed allows.</p>
+
+      <p><strong>Using a VFD to adjust belt speed without changing pulleys:</strong> a variable frequency drive lets you adjust motor RPM continuously (within the motor and drive's rated range) rather than being locked to a fixed synchronous speed, which in turn lets you fine-tune belt speed without swapping pulleys — increasingly common for conveyors and process equipment where operating speed needs to be adjustable in service (matching upstream/downstream rate changes) rather than fixed at commissioning.</p>
+
+      <p><strong>Peripheral speed in other rotating equipment:</strong> the same V = πDN/60 relationship that gives belt speed also gives peripheral (tip) speed for any rotating component — a fan blade tip, a grinding wheel's rim, a centrifugal pump impeller's outer edge. Peripheral speed matters for these applications for different reasons than belt speed does: grinding wheel peripheral speed is safety-limited by the wheel's maximum rated surface speed (exceeding it risks wheel disintegration), fan blade tip speed affects both aerodynamic efficiency and noise generation, and pump impeller tip speed relates directly to the head the pump can develop. Recognizing that this calculator's underlying formula applies broadly to any rotating component's surface speed, not just belts specifically, makes it a more generally useful tool than its name alone suggests.</p>
+
+      <p><strong>Measuring actual belt speed in the field:</strong> when calculated theoretical belt speed needs to be verified against reality (troubleshooting a process rate discrepancy, or commissioning a new drive), a handheld tachometer measuring pulley RPM directly, combined with the known pulley diameter, gives a quick field check against the calculated value — alternatively, some tachometers can measure belt surface speed directly via a contact wheel or non-contact optical method, bypassing the need for a separate RPM-to-speed conversion entirely.</p>
+
+      <p><strong>Belt speed and drive efficiency:</strong> very low belt speeds (for a given power being transmitted) require proportionally higher belt tension and torque to transmit that power, which increases bearing loads and can reduce belt and bearing life; very high belt speeds increase centrifugal effects that can reduce a V-belt's effective grip on the pulley, requiring more careful attention to belt selection and tensioning. Most belt drive applications have a reasonably wide acceptable speed range where neither extreme is a significant concern, but pushing toward either the very low or very high end of a belt section's rated range deserves closer attention to these secondary effects beyond the basic speed calculation itself.</p>
+
+      <p><strong>Timing (synchronous) belts versus V-belts for speed accuracy:</strong> everything discussed here about slip applies to friction-drive V-belts, not toothed/synchronous timing belts, which engage via meshing teeth rather than friction and therefore transmit speed with essentially zero slip (aside from manufacturing tolerance in tooth pitch). For applications where calculated and actual belt speed must match precisely — indexing conveyors, printing equipment, some packaging machinery — a timing belt drive removes the slip uncertainty entirely, at the cost of higher component cost and stricter alignment requirements compared to a V-belt.</p>
+
+      <p><strong>Summary:</strong> use V = πDN/60 with diameter (not radius) and RPM to get theoretical belt speed, remember this is a no-slip theoretical figure that real V-belts typically undershoot by 1-2% under load, use the same relationship for peripheral speed on other rotating components beyond just belts, and verify calculated speed against actual measurement for any application where the precise figure genuinely matters to the process.</p>
+
+      <p><strong>Worked comparison across drive types:</strong> consider a target belt speed of roughly 10 m/s. Achieving this with a 4-pole motor (1440 RPM) needs a pulley diameter of about 133 mm; the same target with a 6-pole motor (960 RPM) needs a larger 199 mm pulley; and with an 8-pole motor (720 RPM), a 265 mm pulley. This illustrates the practical trade-off in drive design — a faster motor lets you use a smaller, more compact pulley for the same target belt speed, while a slower motor needs a proportionally larger pulley, which affects everything from guard sizing to available mounting space around the drive.</p>
+
+      <p><strong>Why this calculator matters beyond a single number:</strong> belt speed sits at the intersection of several practical decisions — motor selection, pulley sizing, process rate requirements, and belt section selection all depend on getting this figure right early in a drive design. A quick, reliable way to move between diameter, RPM, and speed (in either direction) is genuinely useful throughout that whole design process, not just as a final verification step once other decisions have already been locked in.</p>
+
+      <p>Whether you're commissioning a new conveyor line, troubleshooting an existing drive's throughput, or specifying a new motor-pulley combination from scratch, the same three variables (diameter, speed, belt speed) and the same simple relationship connecting them are what you'll keep coming back to — worth having memorized, or at least bookmarked.</p>
+
+      <p>The reference table and worked examples above are designed to build that intuition quickly, so the formula becomes a tool you reach for automatically rather than something you have to look up each time a drive design question comes up.</p>
+
+      <p>Keep this page bookmarked alongside the Pulley Ratio Calculator for the next drive sizing question that comes up.</p>
+
+      <p>Together, belt speed and pulley ratio cover most of the day-to-day questions that come up when specifying, troubleshooting, or modifying a belt-and-pulley drive on a motor, pump, fan, or conveyor.</p>
+
+      <p>If your specific situation also involves a chain-and-sprocket drive rather than belt-and-pulley, the same underlying kinematics apply with tooth counts replacing pulley diameters — see the Chain Length Calculator for the sizing side of that related problem.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">D = 200 mm, N = 1440 RPM: V = π × 0.2 × 1440 ÷ 60 ≈ <strong>15.08 m/s</strong> (≈ <strong>904.8 m/min</strong>, ≈ <strong>2969 ft/min</strong>).</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator gives theoretical belt speed assuming zero slip between the belt and pulley. Real V-belt and flat-belt drives typically experience 1-2% slip under load, meaning actual belt (and driven equipment) speed is slightly lower than this calculated value — for precise timing or speed-critical applications, use a synchronous (toothed) belt, which does not slip, or measure actual speed directly.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Quick Reference</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Belt Speed at Common Pulley Diameters and Speeds</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Pulley Diameter</th>
+          <th class="text-left px-4 py-2 font-semibold">1000 RPM</th>
+          <th class="text-left px-4 py-2 font-semibold">1440 RPM</th>
+          <th class="text-left px-4 py-2 font-semibold">2900 RPM</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">100 mm</td><td class="px-4 py-2">5.24 m/s</td><td class="px-4 py-2">7.54 m/s</td><td class="px-4 py-2">15.19 m/s</td></tr>
+        <tr><td class="px-4 py-2">150 mm</td><td class="px-4 py-2">7.85 m/s</td><td class="px-4 py-2">11.31 m/s</td><td class="px-4 py-2">22.78 m/s</td></tr>
+        <tr><td class="px-4 py-2">200 mm</td><td class="px-4 py-2">10.47 m/s</td><td class="px-4 py-2">15.08 m/s</td><td class="px-4 py-2">30.37 m/s</td></tr>
+        <tr><td class="px-4 py-2">300 mm</td><td class="px-4 py-2">15.71 m/s</td><td class="px-4 py-2">22.62 m/s</td><td class="px-4 py-2">45.55 m/s</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Belt speed scales directly (linearly) with both pulley diameter and RPM — doubling either one doubles belt speed. This table is a quick sanity check when selecting a motor pulley size: for a fixed motor RPM (a standard induction motor typically runs at one of a handful of synchronous-minus-slip speeds — roughly 2900, 1440, 960, or 720 RPM),     <p>Note also that these are theoretical no-slip figures — expect real V-belt drives to run slightly slower under normal working load, and always verify actual belt speed by direct measurement for any application where the exact figure genuinely matters,     <p>Selecting a motor pole count and pulley combination together, rather than fixing one and working around it, generally gives more flexibility to land close to a target belt speed using standard, readily available pulley sizes rather than needing a custom-machined pulley diameter to hit an awkward target exactly.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Belt Speed</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Using radius instead of diameter.</strong> The formula needs diameter (D), not radius — using radius directly understates belt speed by exactly half.</p>
+      <p><strong>2. Mixing mm and m without converting.</strong> If pulley diameter is measured in mm, convert to metres (÷1000) before applying the formula for a result in m/s — skipping this conversion overstates the calculated speed by 1000×.</p>
+      <p><strong>3. Assuming zero belt slip in a heavily loaded V-belt drive.</strong> Real V-belts typically slip 1-2% under normal load, more under heavy or shock loading — for speed-critical applications, either use a synchronous (toothed) belt, which doesn't slip, or verify actual speed rather than assuming the theoretical no-slip value exactly.</p>
+      <p><strong>4. Using the wrong pulley's diameter with the wrong pulley's RPM.</strong> Belt speed must be calculated using ONE pulley's diameter together with THAT SAME pulley's own RPM — mixing the driver pulley's diameter with the driven pulley's RPM (or vice versa) gives a meaningless number, not actual belt speed.</p>
+      <p><strong>5. Forgetting that belt speed, not RPM, is what should match across pulleys.</strong> Two pulleys of different sizes on the same belt run at different RPMs by design — checking whether "RPMs match" between pulleys is the wrong question; belt speed (not RPM) is what stays consistent throughout an ideal belt loop.</p>
+      <p><strong>6. Exceeding a V-belt section's rated maximum speed.</strong> Standard V-belt cross-sections have a manufacturer-rated safe speed range — running a belt faster than its rated maximum increases centrifugal effects that reduce grip and shorten belt life; always check calculated belt speed against your selected belt section's published rating.</p>
+      <p><strong>7. Not accounting for motor pole count when estimating achievable belt speed range.</strong> The available motor speed options (roughly 720, 960, 1440, or 2900 RPM for standard induction motors) set the practical range of belt speeds achievable with a given pulley size — assuming any arbitrary RPM is available without checking standard motor speed options can lead to specifying an unrealistic combination.</p>
+      <p><strong>8. Relying on calculated belt speed alone for a process rate calculation without verifying it in operation.</strong> Theoretical belt speed is a starting point for throughput and dwell-time calculations, but actual measured speed (accounting for slip, tension variation, and load) should be verified against the calculated figure for any process where the exact rate genuinely matters.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for belt speed?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">V = π × D × N ÷ 60, where V is belt linear speed, D is pulley diameter, and N is rotational speed in RPM. With D in metres, V comes out in metres per second (m/s).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does the formula use diameter, not radius?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Belt speed equals the pulley's circumference (πD) traveled per revolution, multiplied by revolutions per second — circumference uses diameter directly (πD), not radius, which is different from many rotational formulas (like torque or kinetic energy) that use radius.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does the belt speed differ between the driver and driven pulley?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — in an ideal (no-slip) belt drive, the belt itself moves at one single linear speed throughout its length, so belt speed calculated from either the driver or driven pulley's own diameter and RPM gives the same answer, as long as you use that specific pulley's own diameter and its own RPM together.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How much does real-world belt slip affect actual speed?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Typically 1-2% for a properly tensioned V-belt under normal load, though slip increases under heavy load, with belt wear, or if tension is inadequate — for applications where precise speed or synchronization matters (like some conveyor or timing applications), a toothed/synchronous belt eliminates slip entirely, or actual speed should be measured rather than assumed equal to the calculated theoretical value.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I convert belt speed from m/s to feet per minute (FPM)?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Multiply m/s by 196.85 to get feet per minute, or multiply m/min by 3.281 — FPM is a common unit in US conveyor and belt literature, while m/s and m/min are standard in most Indian/metric engineering contexts.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What's a typical belt speed for a conveyor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It varies hugely by application — bulk material handling conveyors often run 1-3 m/s, while light unit-handling or packaging conveyors might run faster (2-5 m/s or more), and precision assembly-line conveyors often run much slower (well under 1 m/s) for process/handling reasons. There's no single universal figure; belt speed is chosen based on the specific process requirement.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does belt speed affect pulley RPM if the diameter changes?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For a fixed belt speed (set by the driving pulley), yes — a smaller-diameter driven pulley must spin at a proportionally higher RPM to match the same belt speed, and a larger driven pulley spins proportionally slower. This is exactly the relationship the Pulley Ratio Calculator on this site computes directly.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does belt speed matter for selecting a V-belt cross-section?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Belt manufacturers rate different V-belt cross-sections (A, B, C, etc.) partly by their safe operating speed range — running a belt above its rated maximum speed increases centrifugal effects that reduce the belt's effective grip and can shorten belt life or cause slipping, so checking calculated belt speed against the selected belt section's rated range is a standard part of belt drive design.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I use a VFD to change belt speed without changing pulleys?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — a variable frequency drive adjusts motor RPM continuously within its rated range, which directly changes belt speed for a fixed pulley diameter without needing to physically swap pulleys, making it a common choice for applications needing adjustable operating speed in service.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateBeltSpeed(){
+    const dMm = parseFloat(document.getElementById('pulleyDia').value);
+    const rpm = parseFloat(document.getElementById('beltRpm').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(dMm) || dMm <= 0){ errors.push('Enter a valid pulley diameter greater than 0.'); }
+    if(isNaN(rpm) || rpm <= 0){ errors.push('Enter a valid rotational speed greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rMmin').textContent = '\u2014';
+      document.getElementById('rFpm').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const dM = dMm / 1000;
+    const vMs = (Math.PI * dM * rpm) / 60;
+    const vMmin = vMs * 60;
+    const vFpm = vMmin * 3.28084;
+
+    document.getElementById('rResult').textContent = vMs.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' m/s';
+    document.getElementById('resultSub').textContent = 'D=' + dMm + 'mm at ' + rpm.toLocaleString('en-IN') + ' RPM';
+    document.getElementById('rMmin').textContent = vMmin.toLocaleString('en-IN', {maximumFractionDigits:1});
+    document.getElementById('rFpm').textContent = vFpm.toLocaleString('en-IN', {maximumFractionDigits:0});
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Pulley Diameter (D)</td><td>${dMm} mm</td></tr>
+                <tr><td>Rotational Speed (N)</td><td>${rpm.toLocaleString('en-IN')} RPM</td></tr>
+                <tr><td>Pulley Circumference</td><td>${(Math.PI*dMm).toFixed(1)} mm</td></tr>
+                <tr><td><strong>Belt Speed</strong></td><td><strong>${vMs.toFixed(3)} m/s</strong></td></tr>
+                <tr><td>Belt Speed (m/min)</td><td>${vMmin.toFixed(1)} m/min</td></tr>
+                <tr><td>Belt Speed (ft/min)</td><td>${vFpm.toFixed(0)} ft/min</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateBeltSpeed();
+</script>
+
+</body>
+</html>

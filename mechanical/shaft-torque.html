@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Shaft Torque Calculator (Power & RPM) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Shaft Torque Calculator. Enter power (kW or HP) and rotational speed (RPM) to instantly get shaft torque in Nm, kgf·m, and lb·ft, with the full formula and a worked example.">
+<meta name="keywords" content="shaft torque calculator, torque from power and rpm, motor shaft torque, torque formula Nm, power to torque conversion">
+<meta name="robots" content="index, follow">
+<!-- mechanical = electrical | mechanical | financial (no slashes).
+     shaft-torque = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/shaft-torque">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Shaft Torque Calculator">
+<meta property="og:description" content="Free Shaft Torque Calculator. Enter power and RPM to get shaft torque in Nm, kgf·m, and lb·ft instantly, with formula and worked example.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/shaft-torque">
+<meta property="og:image" content="https://www.electromechcalc.com/logo.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Shaft Torque Calculator">
+<meta name="twitter:description" content="Free Shaft Torque Calculator. Enter power and RPM to get shaft torque in Nm, kgf·m, and lb·ft instantly, with formula and worked example.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Shaft Torque Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/shaft-torque",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Shaft Torque Calculator. Enter power (kW or HP) and rotational speed (RPM) to instantly get shaft torque in Nm, kgf·m, and lb·ft, with the full formula and a worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for shaft torque from power and RPM?",
+      "acceptedAnswer": { "@type": "Answer", "text": "T (Nm) = 9550 × P (kW) ÷ N (rpm). This comes from the power-torque relationship P = T×ω, where ω (rad/s) = 2πN/60, rearranged and simplified with the constant 9550 (more precisely 60000/2π ≈ 9549.3)." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this the motor's rated torque or the actual running torque?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It's the steady-state torque corresponding to the power and speed you enter — effectively the rated or full-load torque if you enter rated power and rated speed. Starting torque, peak torque, and torque under a fluctuating load can differ significantly and aren't covered by this simple relation." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I convert horsepower (HP) to torque instead of kW?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Select HP as the power unit — internally this calculator converts HP to kW (1 HP = 0.7457 kW) before applying the same T = 9550 × P(kW) ÷ N formula, so you get the identical result either way." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does torque go down as RPM goes up, for the same power?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Because power is the product of torque and angular speed (P = T × ω) — for a fixed power output, torque and speed are inversely proportional. A motor delivering the same kW at a higher RPM does so with proportionally lower torque, and vice versa." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this calculator account for gearbox reduction?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — it calculates torque directly at the power and RPM you enter. If you have a gearbox, apply the gear ratio to your RPM first (output RPM = input RPM ÷ ratio) if you want output-shaft torque, since torque increases roughly in proportion to the speed reduction (minus gearbox losses)." }
+    },
+    {
+      "@type": "Question",
+      "name": "What torque unit should I use for coupling or key design?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Most Indian and international mechanical design references (couplings, keys, shaft calculations) use Nm or Nmm — this calculator shows Nm by default, and Nmm (Nm × 1000) is easy to derive from the Nm figure shown for use directly in shaft diameter/key sizing formulas." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do I need a service factor on top of this calculated torque?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The raw T = 9550P/N figure is the average, steady running torque. Real drives see startup surges, shock loads, and cyclic variation — a service factor (typically 1.25–2.0+ depending on the application, per manufacturer/ASME guidance) is applied on top of this base torque before sizing shafts, keys, or couplings, to avoid undersizing for real-world conditions." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is kgf·m or lb·ft ever used instead of Nm?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — kgf·m is still common on older Indian nameplates and some technical literature, and lb·ft (or ft·lb) is standard in US/imperial contexts. This calculator shows all three (Nm, kgf·m, lb·ft) so you can match whichever your datasheet or drawing uses." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="stylesheet" href="/assets/tailwind.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Shafts & Drives
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Shaft Torque <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Convert motor or shaft power and rotational speed into torque — Nm, kgf·m, and lb·ft — with the exact formula shown.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Shaft Torque Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter power and rotational speed to get shaft torque instantly.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Power Unit</label>
+          <select id="powerUnit" class="input-field mt-2">
+            <option value="kw" selected>Kilowatts (kW)</option>
+            <option value="hp">Horsepower (HP)</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Power</label>
+          <input id="power" type="number" value="15" step="0.1" min="0" placeholder="e.g. 15" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Shaft Speed (RPM)</label>
+          <input id="rpm" type="number" value="1440" step="1" min="0" placeholder="e.g. 1440" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateShaftTorque()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">T (Nm) = 9550 × P(kW) ÷ N(rpm)</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Shaft Torque</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Torque (kgf·m)</span>
+            <span id="rKgfm" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Torque (lb·ft)</span>
+            <span id="rLbft" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="mechanical/shaft-diameter.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Shaft Diameter Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/flywheel-energy.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Flywheel Energy Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/belt-speed.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Belt Speed Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/pulley-ratio.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Pulley Ratio Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding shaft torque</a></li>
+      <li><a href="#second" class="hover:underline">3. Torque at a glance (reference table)</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Shaft Torque Is Calculated from Power and Speed</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard mechanical engineering power-torque relation (SI units, IS/IEC motor rating conventions)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>Every rotating shaft transmits power as a combination of torque (twisting force) and rotational speed — the same power can be delivered as high torque at low speed, or low torque at high speed, and shaft torque is the number that actually matters when you're sizing the shaft diameter, selecting a coupling, choosing a key, or specifying a chain or belt drive downstream of a motor or gearbox.</p>
+
+      <p><strong>Formula used:</strong> T (Nm) = 9550 × P (kW) ÷ N (rpm). The constant 9550 comes directly from the fundamental relationship between power, torque, and angular velocity: P = T × ω, where angular velocity ω (in radians per second) equals 2πN/60 for a speed of N revolutions per minute. Rearranging P = T × (2πN/60) for T gives T = 60P/(2πN) = 9549.3P/N, which is rounded to 9550 in virtually every mechanical engineering handbook and textbook.</p>
+
+      <p><strong>Worked example:</strong> a 15 kW three-phase induction motor running at its rated speed of 1440 RPM (a common rated speed for a 4-pole motor on a 50 Hz supply, after accounting for typical slip) delivers a shaft torque of T = 9550 × 15 ÷ 1440 ≈ 99.5 Nm. That same motor at a slower 720 RPM (an 8-pole equivalent) would deliver roughly double the torque — about 199 Nm — for the identical 15 kW power rating, which is exactly why lower-speed motors are physically larger and heavier for the same power output.</p>
+
+      <p><strong>Why speed and torque trade off inversely:</strong> since power is fixed by the motor's electrical rating (or by whatever mechanical power source you're working from), and power equals torque multiplied by angular speed, any increase in speed at constant power necessarily means a proportional decrease in torque, and vice versa. This is the same underlying principle that makes a bicycle's lower gear feel "harder to spin but easier to push" — lower gear ratio, lower speed, higher torque at the wheel for the same rider power output.</p>
+
+      <p><strong>From electrical input power to mechanical shaft power:</strong> if the power figure you have is the motor's electrical input rating (as read from a nameplate's kW figure, which for an induction motor is typically already the rated mechanical output, not electrical input — check your specific nameplate), remember that gearbox, belt, or coupling losses downstream will reduce the torque actually available at the far end of the drive train. This calculator computes torque at the point where you apply the power and speed figures you enter — it does not automatically apply any efficiency loss.</p>
+
+      <p><strong>Torque and current in an induction motor:</strong> at a given voltage, motor current draw is roughly proportional to the load torque demanded of it (up to the motor's rated torque, beyond which slip and current rise disproportionately) — this is why a torque calculation from power and speed is often the missing link engineers need when troubleshooting why a motor is drawing more current than its nameplate rating suggests it should for a given process. If your calculated required torque exceeds the motor's rated torque at its rated speed, the motor will draw excess current, run hot, and eventually trip on overload — a strong signal the motor is undersized for the actual mechanical demand, not a wiring or supply fault.</p>
+
+      <p><strong>Starting torque vs running torque:</strong> everything in this calculator describes steady-state running torque at a given power and speed — it says nothing about the torque needed to start a stationary load from rest. Starting torque requirements can be dramatically higher than running torque for high-inertia loads (large fans, crushers, ball mills) or loads that start under full load (positive-displacement pumps, some conveyors) — motor and drive selection for these applications needs a separate starting-torque analysis, since a motor correctly sized for running torque alone can stall or trip on starting current if starting torque demand is underestimated.</p>
+
+      <p><strong>Variable frequency drives and torque at reduced speed:</strong> a VFD-controlled induction motor run below its rated (base) frequency typically maintains roughly constant torque capability down to a low speed threshold, meaning available torque stays close to the motor's rated torque even as RPM drops — quite different from simply reading torque off the T = 9550P/N curve at reduced power, which would show torque rising as speed falls for a fixed power. Understanding whether your application is more naturally described by "constant torque" (most conveyors, positive-displacement pumps) or "variable torque" (most centrifugal fans and pumps, where torque falls with the square of speed) affects both motor/VFD sizing and how you interpret a torque figure calculated at a non-rated speed.</p>
+
+      <p><strong>Practical uses of a torque figure once you have it:</strong> beyond motor/drive selection, this number feeds directly into several downstream calculations — the Shaft Diameter Calculator on this site takes torque as its primary input to size a shaft against allowable shear stress; coupling selection catalogs specify a maximum torque rating that the calculated (and appropriately factored) torque must stay under; and key/keyway sizing standards (like IS 2048) use shaft torque as the starting point for determining key dimensions. In each of these downstream steps, remember to apply an appropriate service or design factor on top of the raw calculated torque, since none of them are designed around the bare average running torque alone.</p>
+
+      <p><strong>A note on multi-cylinder engines and pulsating torque:</strong> for reciprocating engines (as opposed to smooth electric motors), instantaneous torque actually fluctuates significantly through each combustion cycle even at constant average power and speed — the T = 9550P/N formula gives the mean torque over a full cycle, not the peak instantaneous torque, which can be considerably higher for a single- or few-cylinder engine. This is exactly why engines carry a flywheel: to smooth out this pulsating torque delivery into something closer to the steady mean value this formula describes, which is also why an engine's flywheel energy calculation (see the Flywheel Energy Calculator) is a closely related design consideration whenever torque uniformity matters for the driven equipment.</p>
+
+      <p><strong>Reading torque and speed off a nameplate correctly:</strong> a typical Indian three-phase induction motor nameplate lists rated output power (kW), rated speed (RPM), rated voltage, rated current, and sometimes rated torque directly. If rated torque isn't printed, this calculator reproduces exactly what you'd get from those two other nameplate figures — but always double check whether the printed "speed" is the synchronous speed (a round number like 1500 or 3000 RPM) or the actual rated/full-load speed (a slightly lower number reflecting slip, like 1440 or 2900 RPM); using synchronous speed instead of actual rated speed introduces a small underestimate of torque, typically in the 2-4% range for a standard-efficiency motor.</p>
+
+      <p><strong>Torque requirements across common industrial applications:</strong> different classes of driven equipment have characteristically different torque-speed profiles that are worth knowing when sanity-checking a calculated figure. Centrifugal pumps and fans need relatively low starting torque (roughly 20-30% of full-load torque) that rises with the square of speed, making them relatively easy to start. Positive-displacement pumps, compressors, and crushers typically need close to full torque right from standstill, since they're doing mechanical work (compressing, crushing, displacing fluid) regardless of speed. Conveyors fall in between, with starting torque requirements depending heavily on whether they start loaded or empty. Recognizing which category your application falls into helps validate whether a calculated running torque figure, on its own, is likely to be sufficient information for motor selection or whether a separate starting-torque check is essential.</p>
+
+      <p><strong>Summary — using this calculator as part of a larger drive-sizing workflow:</strong> shaft torque from power and speed is usually the first of several linked calculations in mechanical drive design — it feeds shaft diameter sizing, coupling and key selection, belt or chain drive tension calculations, and gearbox torque ratings. Because it sits at the start of that chain, an error here (wrong units, wrong speed, ignoring starting torque) propagates through every downstream calculation that depends on it — which is exactly why the common mistakes below are worth reading carefully before using a calculated torque figure for anything safety- or cost-critical.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">A 15 kW motor running at 1440 RPM: T = 9550 × 15 ÷ 1440 = <strong>99.48 Nm</strong> ≈ <strong>10.14 kgf·m</strong> ≈ <strong>73.38 lb·ft</strong>. Halving the speed to 720 RPM (same 15 kW power) roughly doubles the torque to about 198.96 Nm.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator assumes 100% mechanical efficiency between the power rating entered and the shaft — actual output shaft torque on a geared or belt-driven system will be lower once transmission losses are accounted for, typically by a few percent per gear stage or belt drive. For safety-critical shaft design, apply an appropriate service/design factor and verify against the relevant standard (IS 210 / ASME) before finalizing, and cross-check any starting-torque-sensitive application separately from this steady-state running torque figure.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Quick Reference</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Typical Shaft Torque at Common Power & Speed Combinations</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Power</th>
+          <th class="text-left px-4 py-2 font-semibold">1440 RPM (4-pole)</th>
+          <th class="text-left px-4 py-2 font-semibold">960 RPM (6-pole)</th>
+          <th class="text-left px-4 py-2 font-semibold">720 RPM (8-pole)</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">3.7 kW</td><td class="px-4 py-2">24.5 Nm</td><td class="px-4 py-2">36.8 Nm</td><td class="px-4 py-2">49.1 Nm</td></tr>
+        <tr><td class="px-4 py-2">7.5 kW</td><td class="px-4 py-2">49.7 Nm</td><td class="px-4 py-2">74.6 Nm</td><td class="px-4 py-2">99.5 Nm</td></tr>
+        <tr><td class="px-4 py-2">15 kW</td><td class="px-4 py-2">99.5 Nm</td><td class="px-4 py-2">149.2 Nm</td><td class="px-4 py-2">199.0 Nm</td></tr>
+        <tr><td class="px-4 py-2">37 kW</td><td class="px-4 py-2">245.4 Nm</td><td class="px-4 py-2">368.1 Nm</td><td class="px-4 py-2">490.8 Nm</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>This table shows why a lower-speed (higher pole count) motor of the same power rating is always the higher-torque, physically larger option — for identical power, an 8-pole (720 RPM nominal) motor delivers exactly double the torque of a 4-pole (1440 RPM nominal) motor, since torque is inversely proportional to speed at constant power. This is a key consideration when selecting a motor for a direct-drive, high-torque, low-speed application (like a slow conveyor or an agitator) versus using a higher-speed motor with a gearbox to achieve the same output torque more compactly.</p>
+      <p>This is also why direct-drive, low-speed, high-torque applications (large slow-turning agitators, some conveyor drives, certain mill drives) often favor purpose-built low-pole-count-equivalent or geared motors over trying to run a standard high-speed motor at very low frequency on a VFD — running a 4-pole motor at, say, 10 Hz (roughly 288 RPM) to chase a low-speed, high-torque requirement can push it outside its efficient cooling and torque-capability range, since standard induction motors rely partly on shaft speed for self-cooling via their integral fan.</p>
+    <p>The broader lesson from this table is that "power" alone never fully describes a drive requirement — the same kW rating can mean very different torque depending on shaft speed, so motor selection always needs both figures together, not power in isolation. When comparing motor options or quotations, always confirm whether quoted torque is at the motor's rated speed, a specific reduced speed, or peak/starting torque, since these are three different numbers that are easy to conflate.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Shaft Torque</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Using electrical input power instead of mechanical shaft power.</strong> For an induction motor, the nameplate kW rating is normally already the rated mechanical output — but if you're working from an electrical measurement (line power, calculated from V×I×PF×√3), that figure includes motor losses and overstates shaft torque unless you multiply by the motor's efficiency first.</p>
+      <p><strong>2. Forgetting motor slip when assuming synchronous speed.</strong> A "1500 RPM" 4-pole motor on 50 Hz actually runs at roughly 1440-1480 RPM under load due to slip — using the synchronous speed (1500) instead of the actual running speed introduces a small but real error in the torque figure.</p>
+      <p><strong>3. Mixing up HP and kW without converting.</strong> Plugging a horsepower figure directly into the kW-based formula (T = 9550P/N) without converting HP to kW first (1 HP = 0.7457 kW) overstates torque by roughly 34% — always convert units before applying the formula, or use this calculator's unit selector.</p>
+      <p><strong>4. Applying this torque figure directly to shaft or key design without a service factor.</strong> This is the steady, average running torque — real drives experience starting torque spikes, shock loads, and cyclic variation that can be 1.5-3x higher momentarily; downstream component sizing (shaft, key, coupling) should apply an appropriate service factor on top of this base figure.</p>
+      <p><strong>5. Ignoring gearbox or belt-drive losses when calculating output-shaft torque.</strong> If power and RPM are measured at the motor but you need torque at a gearbox output shaft, apply the reduced RPM (input RPM ÷ gear ratio) and account for gearbox efficiency (typically 92-98% for a single-stage helical gearbox) — using motor-side RPM with output-side torque expectations gives the wrong number.</p>
+      <p><strong>6. Confusing torque units when reading old or imported equipment documentation.</strong> Older Indian technical literature and some imported equipment nameplates use kgf·m rather than Nm — 1 kgf·m ≈ 9.807 Nm — mixing these up by a factor of ~9.8x is a common and consequential unit error in shaft and coupling design.</p>
+      <p><strong>7. Assuming running torque covers starting torque requirements.</strong> High-inertia or full-load-start applications can demand starting torque well above the steady running torque this formula describes — sizing a motor or drive purely from running torque can lead to stalling or nuisance tripping on start-up for these loads.</p>
+      <p><strong>8. Not distinguishing constant-torque from variable-torque load behavior on a VFD.</strong> Centrifugal loads (fans, pumps) see torque fall with the square of speed reduction, while constant-torque loads (conveyors, positive-displacement pumps, hoists) need close to full torque even at low speed — using a single T = 9550P/N figure calculated at rated speed to judge performance across a VFD's whole speed range can be misleading for either load type.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for shaft torque from power and RPM?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">T (Nm) = 9550 × P (kW) ÷ N (rpm). This comes from the power-torque relationship P = T×ω, where ω (rad/s) = 2πN/60, rearranged and simplified with the constant 9550 (more precisely 60000/2π ≈ 9549.3).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is this the motor's rated torque or the actual running torque?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It's the steady-state torque corresponding to the power and speed you enter — effectively the rated or full-load torque if you enter rated power and rated speed. Starting torque, peak torque, and torque under a fluctuating load can differ significantly and aren't covered by this simple relation.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I convert horsepower (HP) to torque instead of kW?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Select HP as the power unit — internally this calculator converts HP to kW (1 HP = 0.7457 kW) before applying the same T = 9550 × P(kW) ÷ N formula, so you get the identical result either way.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does torque go down as RPM goes up, for the same power?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Because power is the product of torque and angular speed (P = T × ω) — for a fixed power output, torque and speed are inversely proportional. A motor delivering the same kW at a higher RPM does so with proportionally lower torque, and vice versa.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does this calculator account for gearbox reduction?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — it calculates torque directly at the power and RPM you enter. If you have a gearbox, apply the gear ratio to your RPM first (output RPM = input RPM ÷ ratio) if you want output-shaft torque, since torque increases roughly in proportion to the speed reduction (minus gearbox losses).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What torque unit should I use for coupling or key design?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Most Indian and international mechanical design references (couplings, keys, shaft calculations) use Nm or Nmm — this calculator shows Nm by default, and Nmm (Nm × 1000) is easy to derive from the Nm figure shown for use directly in shaft diameter/key sizing formulas.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why do I need a service factor on top of this calculated torque?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The raw T = 9550P/N figure is the average, steady running torque. Real drives see startup surges, shock loads, and cyclic variation — a service factor (typically 1.25–2.0+ depending on the application, per manufacturer/ASME guidance) is applied on top of this base torque before sizing shafts, keys, or couplings, to avoid undersizing for real-world conditions.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is kgf·m or lb·ft ever used instead of Nm?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — kgf·m is still common on older Indian nameplates and some technical literature, and lb·ft (or ft·lb) is standard in US/imperial contexts. This calculator shows all three (Nm, kgf·m, lb·ft) so you can match whichever your datasheet or drawing uses.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does starting torque need a separate calculation from this running torque?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes for many loads — this calculator gives steady-state running torque only. High-inertia loads (large fans, ball mills) or loads that must start under full load (positive-displacement pumps) can need substantially more starting torque than running torque, and should be checked separately using the driven equipment manufacturer's starting torque specification rather than assuming the running torque figure is sufficient for motor starting capability.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function convertToKW(power, unit){
+    return unit === 'hp' ? power * 0.745699872 : power;
+  }
+
+  function calculateShaftTorque(){
+    const unit = document.getElementById('powerUnit').value;
+    const powerRaw = parseFloat(document.getElementById('power').value);
+    const rpm = parseFloat(document.getElementById('rpm').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(powerRaw) || powerRaw <= 0){ errors.push('Enter a valid power greater than 0.'); }
+    if(isNaN(rpm) || rpm <= 0){ errors.push('Enter a valid shaft speed (RPM) greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rKgfm').textContent = '\u2014';
+      document.getElementById('rLbft').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const powerKW = convertToKW(powerRaw, unit);
+    const torqueNm = 9550 * powerKW / rpm;
+    const torqueKgfm = torqueNm / 9.80665;
+    const torqueLbft = torqueNm * 0.737562;
+    const torqueNmm = torqueNm * 1000;
+    const omega = 2 * Math.PI * rpm / 60;
+
+    document.getElementById('rResult').textContent = torqueNm.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' Nm';
+    document.getElementById('resultSub').textContent = powerKW.toFixed(2) + ' kW at ' + rpm.toLocaleString('en-IN') + ' RPM';
+    document.getElementById('rKgfm').textContent = torqueKgfm.toLocaleString('en-IN', {maximumFractionDigits:2});
+    document.getElementById('rLbft').textContent = torqueLbft.toLocaleString('en-IN', {maximumFractionDigits:2});
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Power (input)</td><td>${powerRaw.toLocaleString('en-IN')} ${unit === 'hp' ? 'HP' : 'kW'}</td></tr>
+                <tr><td>Power (kW, converted)</td><td>${powerKW.toFixed(3)} kW</td></tr>
+                <tr><td>Shaft Speed</td><td>${rpm.toLocaleString('en-IN')} RPM</td></tr>
+                <tr><td>Angular Velocity (\u03c9)</td><td>${omega.toFixed(3)} rad/s</td></tr>
+                <tr><td><strong>Torque</strong></td><td><strong>${torqueNm.toFixed(3)} Nm</strong></td></tr>
+                <tr><td>Torque (Nmm)</td><td>${torqueNmm.toLocaleString('en-IN', {maximumFractionDigits:0})} Nmm</td></tr>
+                <tr><td>Torque (kgf\u00b7m)</td><td>${torqueKgfm.toFixed(3)} kgf\u00b7m</td></tr>
+                <tr><td>Torque (lb\u00b7ft)</td><td>${torqueLbft.toFixed(3)} lb\u00b7ft</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateShaftTorque();
+</script>
+
+</body>
+</html>

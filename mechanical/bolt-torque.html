@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Bolt Torque Calculator (Torque-to-Preload) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Bolt Torque Calculator. Enter bolt diameter, desired clamp force (preload), and the nut/friction factor K to get the required tightening torque instantly, with formula and reference K-factor table.">
+<meta name="keywords" content="bolt torque calculator, torque to preload formula, tightening torque calculator, nut factor K bolt, bolt clamp force calculator">
+<meta name="robots" content="index, follow">
+<!-- mechanical = electrical | mechanical | financial (no slashes).
+     bolt-torque = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/bolt-torque">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Bolt Torque Calculator">
+<meta property="og:description" content="Free Bolt Torque Calculator — enter bolt diameter, clamp force and friction factor K to get the required tightening torque instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/bolt-torque">
+<meta property="og:image" content="https://www.electromechcalc.com/logo.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bolt Torque Calculator">
+<meta name="twitter:description" content="Free Bolt Torque Calculator — enter bolt diameter, clamp force and friction factor K to get the required tightening torque instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Bolt Torque Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/bolt-torque",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Bolt Torque Calculator. Enter bolt diameter, desired clamp force (preload), and the nut/friction factor K to get the required tightening torque instantly, with formula and reference K-factor table.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for bolt tightening torque?",
+      "acceptedAnswer": { "@type": "Answer", "text": "T = K × D × F, where T is tightening torque, K is the nut factor (a dimensionless friction/geometry coefficient, commonly around 0.15-0.20 for standard steel bolts), D is the nominal bolt diameter, and F is the desired clamp force (preload)." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the nut factor K and why does it vary so much?",
+      "acceptedAnswer": { "@type": "Answer", "text": "K bundles together thread friction, underhead (washer/bearing surface) friction, and thread geometry into a single empirical coefficient. It varies with lubrication (dry vs oiled vs specific anti-seize compounds), surface finish (plain, zinc-plated, galvanized), and thread condition (clean vs rusty/dirty) — which is why K can range from about 0.10 (well-lubricated) to 0.30+ (dry, rough, or corroded) for the same bolt." }
+    },
+    {
+      "@type": "Question",
+      "name": "What K value should I use if I don't know the exact condition?",
+      "acceptedAnswer": { "@type": "Answer", "text": "K = 0.2 is the most commonly cited default for dry, non-plated, non-lubricated standard steel fasteners, and is a reasonable starting assumption when the exact surface/lubrication condition isn't specified — but for any critical joint, look up the fastener or coating manufacturer's specific published K-factor rather than relying on this default." }
+    },
+    {
+      "@type": "Question",
+      "name": "How accurate is torque as a way to control clamp force?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not very, in absolute terms — even with a known, tested K-factor, torque-based tightening on a real joint typically has a scatter of ±25–30% in the actual achieved clamp force, because friction (not torque itself) is what actually varies between individual bolted joints. For high-precision or safety-critical preload requirements, methods like turn-of-nut, direct tension indicators, or ultrasonic bolt elongation measurement are more accurate than torque alone." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is proof load and how does it relate to the clamp force I should target?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Proof load is the maximum load a bolt can sustain without permanent (plastic) deformation, and is a property of the bolt's material grade and size. Target clamp force for a properly preloaded joint is commonly specified as 60–75% of proof load, giving margin against overload while still achieving a strong, fatigue-resistant clamped joint — the specific target depends on the joint's design requirements and applicable standard." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a lubricated bolt need more or less torque for the same clamp force?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Less torque — lubrication reduces friction (and therefore K), meaning less torque is needed to achieve the same clamp force. This is exactly why using a lubricated K-factor with a dry-condition torque spec (or vice versa) is such a common and consequential mistake: applying a dry-condition torque to a lubricated bolt can significantly over-tighten it, risking bolt yield or thread stripping." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I just tighten a bolt as hard as possible to be safe?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — over-tightening past the bolt's yield point permanently stretches the bolt, reducing its clamping ability and fatigue life, and can strip threads or crack the clamped material. Both under- and over-torquing are failure modes; the goal is to hit the specific target clamp force the joint was designed for, not simply &quot;as tight as possible.&quot;" }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do critical joints (engine, structural, pressure vessel) specify torque AND angle (torque-to-yield)?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Because torque alone has significant scatter in achieved clamp force (as noted above) — torque-to-yield or torque-plus-angle methods tighten to a specified torque first, then rotate a further specified angle into the bolt's elastic-to-plastic transition, which controls clamp force far more precisely and consistently than torque alone, which is why it's standard on many automotive and structural connections." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="stylesheet" href="/assets/tailwind.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Fasteners
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Bolt Torque <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Required tightening torque for a target bolt clamp force (preload), using the standard torque-tension relationship T = K×D×F.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Bolt Torque Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter bolt diameter, target clamp force, and the nut factor K.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Bolt Nominal Diameter, D (mm)</label>
+          <input id="boltDia" type="number" value="12" step="0.5" min="0" placeholder="e.g. 12" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Target Clamp Force, F (N)</label>
+          <input id="clampForce" type="number" value="20000" step="100" min="0" placeholder="e.g. 20000" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Nut Factor, K</label>
+          <select id="kFactor" class="input-field mt-2">
+            <option value="0.10">0.10 — Well lubricated / waxed</option>
+            <option value="0.15">0.15 — Lightly oiled</option>
+            <option value="0.20" selected>0.20 — Dry, plain steel (typical default)</option>
+            <option value="0.24">0.24 — Zinc plated, dry</option>
+            <option value="0.30">0.30 — Dry, rough / galvanized</option>
+            <option value="custom">Custom — enter below</option>
+          </select>
+        </div>
+        <div id="customKField" class="hidden-field">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Custom K Value</label>
+          <input id="kCustom" type="number" value="0.20" step="0.01" min="0.05" max="0.6" placeholder="e.g. 0.18" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateBoltTorque()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">T = K × D × F</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Required Torque</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Torque (kgf\u00b7cm)</span>
+            <span id="rKgfcm" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Torque (lb\u00b7ft)</span>
+            <span id="rLbft" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="mechanical/shaft-diameter.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Shaft Diameter Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/spring-rate.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Spring Rate Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/beam-stress.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Beam Stress Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/chain-length.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Chain Length Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding torque-to-preload</a></li>
+      <li><a href="#second" class="hover:underline">3. Typical K-factor by condition</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Bolt Tightening Torque Relates to Clamp Force</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard torque-tension formula T = K×D×F (VDI 2230 / general fastener engineering practice)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>Bolted joints work by clamping two or more parts together with tension in the bolt — that clamping tension (preload/clamp force) is what actually keeps a joint from slipping, separating, or loosening under vibration, not the torque itself. Torque is simply the practical, measurable input used on the shop floor or assembly line to achieve a target clamp force, via the well-established (if approximate) torque-tension relationship.</p>
+
+      <p><strong>Formula used:</strong> T = K × D × F, where T is the tightening torque, K is the dimensionless nut factor (accounting for thread and underhead friction), D is the bolt's nominal diameter, and F is the target clamp force (preload). With D in metres and F in Newtons, T comes out directly in Newton-metres.</p>
+
+      <p><strong>Worked example:</strong> an M12 bolt (D = 12 mm = 0.012 m) needs to achieve a clamp force of 20,000 N, using a typical dry-condition nut factor K = 0.20: T = 0.20 × 0.012 × 20,000 = 48 Nm. If the same bolt and joint were lubricated instead (K drops to roughly 0.10-0.15), the same 20,000 N clamp force would need only about 24-36 Nm — nearly half the torque — which is exactly why torque specs always assume a specific lubrication condition.</p>
+
+      <p><strong>Where the nut factor K comes from:</strong> roughly 90% of applied torque is consumed overcoming friction — about 50% in thread friction and 40% in friction under the bolt head or nut face — with only around 10% actually going into stretching the bolt to create clamp force. K bundles all of this friction behavior into one number, which is why it's so sensitive to lubrication, plating, surface finish, and thread condition: any of these change how much of the applied torque is "wasted" on friction versus converted into useful clamp force.</p>
+
+      <p><strong>Why torque is only an approximation of clamp force:</strong> because K is an empirical average, and real bolted joints show real variation in surface condition even within the same batch of fasteners, torque-controlled tightening typically achieves the target clamp force only within roughly ±25–30% — acceptable for the vast majority of general mechanical assembly, but not precise enough for the most safety- or fatigue-critical joints (aerospace fasteners, engine head bolts, pressure vessel flanges), which often use torque-plus-angle, direct tension indicators, or bolt elongation measurement instead.</p>
+
+      <p><strong>Where friction actually goes:</strong> a commonly cited breakdown of applied tightening torque is roughly 50% consumed by thread friction, 40% by friction under the bolt head or nut face, and only about 10% actually converted into bolt stretch (clamp force). This is why K is so friction-sensitive, and also why washer condition and material matter almost as much as thread condition — a rough or dirty washer face, or a washer material with high friction against the joint surface, can shift the underhead friction component significantly even when thread lubrication is unchanged.</p>
+
+      <p><strong>Bolt grade and proof load:</strong> the target clamp force this calculator uses as an input should be chosen with reference to the bolt's material grade and its proof load — a higher-grade bolt (say, property class 10.9 vs 8.8 in metric grading) can safely sustain a higher preload, but only if it's actually the grade you specify and install. Mixing bolt grades on a critical joint, or substituting a lower-grade bolt for a specified higher-grade one, is a serious and surprisingly common field error that undermines a torque specification calculated for the correct, higher-grade bolt.</p>
+
+      <p><strong>Reused fasteners and relaxation:</strong> clamp force in a bolted joint isn't necessarily permanent at the value achieved during initial tightening — gasket creep, embedment of surface irregularities, thermal cycling, and vibration can all cause some loss of clamp force (relaxation) over time or reuse cycles. Critical joints (engine assemblies, pressure-retaining flanges, structural connections) often specify a re-torque check after initial run-in, or specify single-use fasteners that shouldn't be reused after removal, precisely because the torque-tension relationship assumed at first installation may not hold reliably for a reused, previously-yielded, or relaxed fastener.</p>
+
+      <p><strong>Torque wrench types and calibration:</strong> achieving a calculated target torque in practice requires a properly calibrated torque tool — click-type torque wrenches, beam-type wrenches, and digital/electronic torque wrenches each have their own accuracy characteristics and calibration requirements. A click-type wrench that hasn't been calibrated recently (most manufacturers recommend annual calibration, or more frequently for high-use tools) can drift from its indicated setting by an amount that's often larger than the underlying torque-tension relationship's own inherent scatter — meaning tool calibration can easily become the dominant source of error in an otherwise carefully calculated torque specification.</p>
+
+      <p><strong>Pattern and sequence for multi-bolt joints:</strong> for a joint with several bolts (a flange, a cover plate, an engine head), the tightening sequence and number of passes matters as much as the torque value on any individual bolt — a standard practice is to tighten in a criss-cross or star pattern in two or three progressively increasing torque passes (for example, 50% of target, then 75%, then 100%) rather than fully torquing each bolt in sequence around the joint, since sequential full-torque tightening can unevenly load the joint, cause gasket extrusion, or warp a flange face. This calculator gives the target torque for one bolt — achieving that target reliably across a multi-bolt joint is a separate procedural consideration.</p>
+
+      <p><strong>Summary:</strong> use T = K×D×F to find required torque for a target clamp force, choose K carefully based on the actual thread lubrication and coating condition (not a generic default, if the real condition is known), confirm the target clamp force is appropriate for the bolt's material grade and proof load, use a calibrated torque tool, and for multi-bolt joints follow a proper tightening sequence and pass pattern rather than relying on torque value alone.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">M12 bolt (D = 12 mm), target clamp force F = 20,000 N, K = 0.20 (dry, plain steel): T = 0.20 × 0.012 m × 20,000 N = <strong>48 Nm</strong>. Lubricated (K = 0.12): T ≈ <strong>28.8 Nm</strong> for the same clamp force.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">The torque-tension relationship (T = K×D×F) is a widely used engineering approximation — the actual relationship between applied torque and achieved clamp force is affected by thread condition, lubrication, surface finish, and washer friction, and can vary ±25–30% even for a nominally identical K-factor in practice. For safety-critical or high-preload joints, verify with a calibrated torque wrench and, where critical, direct tension measurement (load cells, ultrasonic bolt elongation, or turn-of-nut method) rather than relying on torque alone. Always confirm the correct bolt grade, target clamp force, and lubrication condition with the joint designer or applicable assembly specification before torquing a safety-critical connection, and treat every figure on this page as a starting reference for further engineering review rather than a final, sign-off-ready specification, especially on any joint where failure could cause injury or significant cost.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Quick Reference</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Typical Nut Factor (K) by Thread Condition</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Condition</th>
+          <th class="text-left px-4 py-2 font-semibold">Typical K</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">Well lubricated / waxed threads</td><td class="px-4 py-2">0.10–0.12</td></tr>
+        <tr><td class="px-4 py-2">Lightly oiled threads</td><td class="px-4 py-2">0.14–0.16</td></tr>
+        <tr><td class="px-4 py-2">Dry, plain (uncoated) steel — typical default</td><td class="px-4 py-2">0.18–0.22</td></tr>
+        <tr><td class="px-4 py-2">Zinc-plated, dry</td><td class="px-4 py-2">0.20–0.28</td></tr>
+        <tr><td class="px-4 py-2">Dry, rough / galvanized / slightly corroded</td><td class="px-4 py-2">0.28–0.35</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>These are widely-cited general ranges, not a substitute for the fastener or coating manufacturer's specific tested K-factor, which should always be used for a critical or safety-related joint when available. Note how much the required torque swings for the exact same clamp force just from surface condition alone — nearly 3x between the best-lubricated and worst dry/rough conditions — which is the     <p>Manufacturer-published K-factors for specific thread coatings, platings, and lubricants (where available) should always be preferred over these general ranges for anything beyond a rough estimate — fastener and coating suppliers frequently publish tested K-factor data for their specific products,     <p>It's also worth noting that K-factor testing is typically done under controlled laboratory conditions with new, clean fasteners — field conditions (dirt, minor corrosion, repeated assembly/disassembly, inconsistent lubricant application) tend to push actual friction toward the higher end of a given condition's typical range, so     <p>For a genuinely critical or high-consequence joint, consider budgeting for periodic K-factor verification testing on your actual fastener/coating/lubricant combination rather than relying solely on published general ranges —     <p>Direct tension indicators (DTIs, such as load-indicating washers that visibly deform to a specified gap at a known clamp force) and ultrasonic bolt elongation measurement are two commonly used alternatives to torque control for applications where the roughly ±25-30% uncertainty of torque alone isn't acceptable — both directly measure or infer actual achieved clamp force rather than relying on an assumed friction coefficient, at the cost of additional equipment or specialized hardware compared to a standard torque wrench.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Bolt Torque</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Using a dry-condition K-factor on a lubricated or coated bolt (or vice versa).</strong> This is the single biggest source of over- or under-tightened joints — applying a dry K = 0.2 torque spec to a well-lubricated bolt can significantly over-tighten it (risking yield or thread stripping), while applying a lubricated torque spec to a dry bolt under-clamps the joint.</p>
+      <p><strong>2. Assuming torque alone guarantees a precise clamp force.</strong> Even with a correct K-factor, real-world scatter in surface condition typically gives ±25–30% variation in actual achieved clamp force from torque control alone — fine for most general assembly, not precise enough for the most critical joints.</p>
+      <p><strong>3. Reusing a bolt/nut that has already reached its designed clamp force without accounting for relaxation or re-torque needs.</strong> Repeated tightening cycles, gasket creep, or thread galling can change the effective friction and clamp-force relationship on a reused fastener — critical joints often specify fastener replacement rather than reuse for exactly this reason.</p>
+      <p><strong>4. Ignoring washer or bearing-surface friction contribution.</strong> The K-factor already assumes a normal flat washer/bearing surface — a domed washer, spring washer, or unusually rough bearing surface changes the actual friction behavior and can make a standard K-factor inaccurate for that specific joint.</p>
+      <p><strong>5. Confusing target clamp force with proof load or ultimate tensile strength.</strong> Target clamp force is normally set well below the bolt's proof load (often 60–75% of it) to leave margin — calculating torque for a clamp force close to or above proof load risks permanently yielding the bolt during tightening, before the joint even sees service load.</p>
+      <p><strong>6. Using an impact wrench or "feel" instead of a calibrated torque wrench for a specified torque value.</strong> This calculator gives you the target number — achieving it in practice needs a properly calibrated torque wrench (or an equivalent controlled tightening method); tightening "by feel" or with an uncontrolled impact tool introduces far more scatter than the torque-tension relationship itself.</p>
+      <p><strong>7. Substituting a lower bolt grade than specified.</strong> Target clamp force and torque calculations are only valid for the specific bolt grade they were calculated for — installing a lower-grade bolt than specified, even at the "correct" calculated torque, risks exceeding that weaker bolt's actual proof load and yielding it during tightening.</p>
+      <p><strong>8. Reusing a fastener that has previously been torqued to near its yield point.</strong> Some bolts (particularly torque-to-yield automotive head bolts) are explicitly single-use, since they've already been stretched into their plastic range once — reusing them and retorquing to the same specification does not reliably reproduce the original clamp force and can lead to premature failure.</p>
+      <p><strong>9. Applying the same torque spec across different bolt sizes without recalculating.</strong> Torque scales with diameter (T = K×D×F) — a torque value correctly calculated for an M10 bolt does not carry over to an M12 or M8 bolt targeting the same clamp force; each bolt size needs its own calculation.</p>
+      <p><strong>10. Assuming a torque figure calculated for a steel bolt applies directly to other materials.</strong> Bolts made from titanium, brass, or high-strength alloys have different proof loads and sometimes different friction characteristics than standard steel fasteners — always confirm target clamp force and K-factor assumptions are appropriate for the actual bolt material, not just its nominal size.</p>
+      <p>Finally, remember that this calculator solves for torque given a target clamp force and an assumed friction coefficient — it does not verify that the bolt, thread engagement length, or clamped material can actually sustain that clamp force safely, which are separate checks belonging to the overall joint design rather than to the torque calculation alone.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for bolt tightening torque?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">T = K × D × F, where T is tightening torque, K is the nut factor (a dimensionless friction/geometry coefficient, commonly around 0.15-0.20 for standard steel bolts), D is the nominal bolt diameter, and F is the desired clamp force (preload).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the nut factor K and why does it vary so much?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">K bundles together thread friction, underhead (washer/bearing surface) friction, and thread geometry into a single empirical coefficient. It varies with lubrication (dry vs oiled vs specific anti-seize compounds), surface finish (plain, zinc-plated, galvanized), and thread condition (clean vs rusty/dirty) — which is why K can range from about 0.10 (well-lubricated) to 0.30+ (dry, rough, or corroded) for the same bolt.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What K value should I use if I don't know the exact condition?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">K = 0.2 is the most commonly cited default for dry, non-plated, non-lubricated standard steel fasteners, and is a reasonable starting assumption when the exact surface/lubrication condition isn't specified — but for any critical joint, look up the fastener or coating manufacturer's specific published K-factor rather than relying on this default.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How accurate is torque as a way to control clamp force?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Not very, in absolute terms — even with a known, tested K-factor, torque-based tightening on a real joint typically has a scatter of ±25–30% in the actual achieved clamp force, because friction (not torque itself) is what actually varies between individual bolted joints. For high-precision or safety-critical preload requirements, methods like turn-of-nut, direct tension indicators, or ultrasonic bolt elongation measurement are more accurate than torque alone.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is proof load and how does it relate to the clamp force I should target?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Proof load is the maximum load a bolt can sustain without permanent (plastic) deformation, and is a property of the bolt's material grade and size. Target clamp force for a properly preloaded joint is commonly specified as 60–75% of proof load, giving margin against overload while still achieving a strong, fatigue-resistant clamped joint — the specific target depends on the joint's design requirements and applicable standard.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does a lubricated bolt need more or less torque for the same clamp force?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Less torque — lubrication reduces friction (and therefore K), meaning less torque is needed to achieve the same clamp force. This is exactly why using a lubricated K-factor with a dry-condition torque spec (or vice versa) is such a common and consequential mistake: applying a dry-condition torque to a lubricated bolt can significantly over-tighten it, risking bolt yield or thread stripping.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I just tighten a bolt as hard as possible to be safe?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — over-tightening past the bolt's yield point permanently stretches the bolt, reducing its clamping ability and fatigue life, and can strip threads or crack the clamped material. Both under- and over-torquing are failure modes; the goal is to hit the specific target clamp force the joint was designed for, not simply "as tight as possible."</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why do critical joints (engine, structural, pressure vessel) specify torque AND angle (torque-to-yield)?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Because torque alone has significant scatter in achieved clamp force (as noted above) — torque-to-yield or torque-plus-angle methods tighten to a specified torque first, then rotate a further specified angle into the bolt's elastic-to-plastic transition, which controls clamp force far more precisely and consistently than torque alone, which is why it's standard on many automotive and structural connections.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can clamp force relax over time after correct initial tightening?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — gasket creep, embedment of surface irregularities, thermal cycling, and vibration can all reduce clamp force after installation even without any change in the applied torque. Critical joints often specify a re-torque check after an initial run-in period specifically to account for this relaxation.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function toggleCustomK(){
+    const sel = document.getElementById('kFactor').value;
+    document.getElementById('customKField').classList.toggle('hidden-field', sel !== 'custom');
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    document.getElementById('kFactor').addEventListener('change', toggleCustomK);
+  });
+
+  function calculateBoltTorque(){
+    const D = parseFloat(document.getElementById('boltDia').value);
+    const F = parseFloat(document.getElementById('clampForce').value);
+    const kSel = document.getElementById('kFactor').value;
+    const K = kSel === 'custom' ? parseFloat(document.getElementById('kCustom').value) : parseFloat(kSel);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(D) || D <= 0){ errors.push('Enter a valid bolt diameter greater than 0.'); }
+    if(isNaN(F) || F <= 0){ errors.push('Enter a valid target clamp force greater than 0.'); }
+    if(isNaN(K) || K <= 0){ errors.push('Enter a valid nut factor K greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rKgfcm').textContent = '\u2014';
+      document.getElementById('rLbft').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const Dm = D / 1000;
+    const torqueNm = K * Dm * F;
+    const torqueKgfcm = torqueNm * 10.19716;
+    const torqueLbft = torqueNm * 0.737562;
+
+    document.getElementById('rResult').textContent = torqueNm.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' Nm';
+    document.getElementById('resultSub').textContent = 'M' + D + ' bolt, K = ' + K + ', F = ' + F.toLocaleString('en-IN') + ' N';
+    document.getElementById('rKgfcm').textContent = torqueKgfcm.toLocaleString('en-IN', {maximumFractionDigits:1});
+    document.getElementById('rLbft').textContent = torqueLbft.toLocaleString('en-IN', {maximumFractionDigits:2});
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Bolt Diameter (D)</td><td>${D} mm</td></tr>
+                <tr><td>Target Clamp Force (F)</td><td>${F.toLocaleString('en-IN')} N</td></tr>
+                <tr><td>Nut Factor (K)</td><td>${K}</td></tr>
+                <tr><td><strong>Required Torque</strong></td><td><strong>${torqueNm.toFixed(2)} Nm</strong></td></tr>
+                <tr><td>Torque (kgf\u00b7cm)</td><td>${torqueKgfcm.toFixed(1)} kgf\u00b7cm</td></tr>
+                <tr><td>Torque (lb\u00b7ft)</td><td>${torqueLbft.toFixed(2)} lb\u00b7ft</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateBoltTorque();
+</script>
+
+</body>
+</html>

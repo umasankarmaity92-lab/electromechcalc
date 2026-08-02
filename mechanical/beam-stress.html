@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Beam Bending Stress Calculator (Rectangular Section) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Beam Bending Stress Calculator for a rectangular cross-section. Enter bending moment, width and depth to get maximum bending stress instantly, with formula and worked example.">
+<meta name="keywords" content="beam stress calculator, bending stress formula, section modulus calculator, rectangular beam stress, maximum bending stress">
+<meta name="robots" content="index, follow">
+<!-- mechanical = electrical | mechanical | financial (no slashes).
+     beam-stress = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/beam-stress">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Beam Bending Stress Calculator">
+<meta property="og:description" content="Free Beam Bending Stress Calculator for a rectangular section — enter moment, width and depth for instant maximum bending stress.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/beam-stress">
+<meta property="og:image" content="https://www.electromechcalc.com/logo.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Beam Bending Stress Calculator">
+<meta name="twitter:description" content="Free Beam Bending Stress Calculator for a rectangular section — enter moment, width and depth for instant maximum bending stress.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Beam Bending Stress Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/beam-stress",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Beam Bending Stress Calculator for a rectangular cross-section. Enter bending moment, width and depth to get maximum bending stress instantly, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for maximum bending stress in a beam?",
+      "acceptedAnswer": { "@type": "Answer", "text": "σ = M / Z, where M is the bending moment at the section being checked and Z is the section modulus. For a solid rectangular section, Z = bd²/6, where b is the width and d is the depth (both perpendicular to the neutral axis, with d being the dimension in the direction of bending)." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is section modulus and why does it matter?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Section modulus (Z) combines a cross-section's shape and size into a single number that directly relates bending moment to maximum stress — a larger Z means the same bending moment produces lower stress, which is why increasing beam depth (which increases Z faster than increasing width does) is such an effective way to reduce bending stress." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does depth affect bending stress more than width?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Because Z for a rectangular section is bd²/6 — depth is squared, width is linear. Doubling depth quadruples Z (and roughly quarters the stress for the same moment), while doubling width only doubles Z (roughly halving the stress) — this is why beams are almost always oriented and sized to be deep rather than wide." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I calculate stress for an I-beam or channel section instead of a rectangle?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The same σ = M/Z formula applies, but Z for a standard structural section (I-beam, channel, angle) isn't calculated from simple b and d — it's a published property specific to each section size, found in structural steel section tables/handbooks. Look up the Z value for your exact section and use σ = M/Z directly with that published number instead of this rectangular-section calculator." }
+    },
+    {
+      "@type": "Question",
+      "name": "What's the difference between bending stress and shear stress in a beam?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Bending stress (calculated here) results from the bending moment and varies linearly across the section depth, maximum at the extreme fibers and zero at the neutral axis. Shear stress results from the shear force and varies parabolically, typically maximum at the neutral axis — both need to be checked independently, and for short, deep beams under heavy point loads, shear can sometimes govern the design." }
+    },
+    {
+      "@type": "Question",
+      "name": "What allowable bending stress should I use for mild steel?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For general structural mild steel (Fe410/E250 grade, common in Indian structural practice), allowable bending stress under IS 800 working-stress principles is commonly around 0.66 × yield strength, giving roughly 150-165 MPa depending on the specific grade and section classification — always confirm against the current applicable code rather than a rule of thumb for a final design." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a higher calculated stress always mean the beam will fail?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not necessarily immediately — failure depends on comparing the calculated stress against the material's actual yield or allowable stress, and on whether the loading is static or repeated (fatigue). A calculated stress above the allowable stress means the design doesn't meet the safety margin required by the code, which should be corrected before use, but it isn't the same as the immediate fracture/yield point unless it also exceeds the raw yield strength." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this the same as checking deflection?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — bending stress (strength) and deflection (stiffness/serviceability) are two separate checks. A beam can pass a stress check comfortably while still deflecting more than acceptable for serviceability, or vice versa — use this calculator alongside the Beam Deflection Calculator, since a complete beam design needs both checks to pass." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="stylesheet" href="/assets/tailwind.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Structural
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Beam Bending Stress <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Maximum bending stress in a rectangular-section beam from bending moment, width, and depth — formula shown alongside the result.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Beam Stress Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Rectangular cross-section — enter the bending moment and section dimensions.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Bending Moment, M (Nm)</label>
+          <input id="moment" type="number" value="2500" step="10" min="0" placeholder="e.g. 2500" class="input-field mt-2">
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Width, b (mm)</label>
+            <input id="width" type="number" value="50" step="1" min="0" placeholder="e.g. 50" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Depth, d (mm)</label>
+            <input id="depth" type="number" value="100" step="1" min="0" placeholder="e.g. 100" class="input-field mt-2">
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Allowable Stress <span class="normal-case text-gray-400">(optional, for comparison)</span></label>
+          <input id="allowStress" type="number" value="150" step="1" min="0" placeholder="e.g. 150" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateBeamStress()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">σ = M/Z, Z = bd²/6</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Max. Bending Stress</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Section Modulus (Z)</span>
+            <span id="rZ" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Status</span>
+            <span id="rStatus" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="mechanical/beam-deflection.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Beam Deflection Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/shaft-diameter.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Shaft Diameter Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/bolt-torque.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Bolt Torque Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/spring-rate.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Spring Rate Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding bending stress</a></li>
+      <li><a href="#second" class="hover:underline">3. Allowable stress reference (structural steel grades)</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Maximum Bending Stress Is Calculated</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard flexure formula (σ = M/Z), IS 800 / general structural and machine design practice</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>Bending stress is the internal stress a beam experiences as it resists a bending moment — the top fiber compresses, the bottom fiber stretches (or vice versa, depending on the direction of bending), and the stress is highest at the outer surfaces and zero at the beam's neutral axis. This calculator computes the maximum bending stress for a solid rectangular cross-section, the standard flexure check used to verify a beam won't yield or fracture under a given bending load.</p>
+
+      <p><strong>Formula used:</strong> σ = M / Z, where M is the bending moment and Z is the section modulus. For a solid rectangular section, Z = bd²/6, where b is the section width and d is the section depth (the dimension aligned with the direction of bending — make sure b and d aren't swapped for your beam's actual orientation).</p>
+
+      <p><strong>Worked example:</strong> a rectangular beam 50 mm wide and 100 mm deep, subjected to a bending moment of 2500 Nm (2,500,000 Nmm): Z = (50 × 100²) / 6 = 83,333 mm³. σ = 2,500,000 / 83,333 ≈ 30 MPa — comfortably below a typical mild-steel allowable bending stress of around 150-165 MPa, giving a healthy margin.</p>
+
+      <p><strong>Why beam orientation matters so much:</strong> since Z = bd²/6, depth is squared in the formula while width is linear — the exact same beam turned on its side (swapping which dimension is "depth" and which is "width") has a dramatically different, much weaker section modulus. A 50×100 mm beam oriented with the 100 mm dimension vertical (bending about the strong axis) has Z = 83,333 mm³, but the same beam turned flat, with the 50 mm dimension vertical, has Z = (100 × 50²)/6 = 41,667 mm³ — exactly half. This is why joists, beams, and rafters are always installed with their deeper dimension vertical, in the direction of the load.</p>
+
+      <p><strong>Comparing calculated stress to allowable stress:</strong> the calculated σ needs to be compared against the material's allowable bending stress (not raw yield strength — allowable stress already has a design safety factor built in per the applicable structural code). If calculated stress exceeds allowable stress, the section is undersized and needs to be made deeper, wider, or changed to a stiffer/stronger material or section shape; if it's well below allowable stress, there may be room to reduce material (and cost) — subject to also passing the separate deflection check.</p>
+
+      <p><strong>Stress distribution across the section depth:</strong> bending stress isn't uniform across a beam's cross-section — it's zero at the neutral axis (the horizontal line through the section's centroid) and increases linearly to a maximum at the outermost fibers, top and bottom. This calculator gives that maximum outer-fiber stress, which is the value that matters for a strength check, since it's the first point in the section to reach the material's yield or allowable stress limit as load increases. This linear stress distribution is also why the section modulus (Z), not the raw moment of inertia (I), is the direct link between moment and maximum stress — Z already incorporates the distance from the neutral axis to the extreme fiber (c = d/2 for a symmetric rectangular section).</p>
+
+      <p><strong>Asymmetric sections and why the neutral axis matters:</strong> for a rectangular (or any symmetric) section, the neutral axis sits exactly at mid-depth, so the distance to the extreme fiber is the same on both the tension and compression sides. For an asymmetric section (a T-section or unequal-flange channel, for example), the neutral axis sits off-center, meaning the distance to the extreme fiber — and therefore the maximum stress — differs between the tension and compression sides, requiring two separate section modulus values (Z_top and Z_bottom) rather than the single Z this rectangular-section calculator uses. Always confirm whether your section is symmetric before applying this calculator's single-Z approach.</p>
+
+      <p><strong>Combined bending and axial load:</strong> this calculator checks pure bending stress only. A beam or column that also carries a significant axial (tension or compression) load in addition to bending needs a combined-stress check (σ_total = σ_axial + σ_bending), since the two stress components add algebraically at the extreme fibers — treating a combined-load member as if it only bends can significantly understate peak stress on the side where axial and bending stresses reinforce each other.</p>
+
+      <p><strong>Material yield strength reference values:</strong> allowable bending stress calculations trace back to a material's yield strength, which varies substantially by grade. Common structural mild steel (Fe410/E250) has a yield strength around 250 MPa; higher-strength structural steels (E350, E450) reach 350-450 MPa; medium-carbon shaft steels like EN8 typically fall in the 280-350 MPa range depending on heat treatment. Always confirm the certified yield strength of your actual material batch (from a mill test certificate where available) rather than assuming a generic figure for the nominal grade, since real material properties can vary within a grade's specified range.</p>
+
+      <p><strong>Practical design workflow using this calculator:</strong> a typical structural or machine element sizing process starts with the applied loads, works out the resulting bending moment at the critical section (the point of maximum moment along the beam's length), then uses this calculator to check whether a trial section (chosen by experience, by a preliminary estimate, or from a standard size table) keeps stress within the allowable limit. If the trial section fails, increase depth first (since Z scales with d², depth is the most efficient single lever), then width, or switch to a stronger material grade, then recheck — this iterative trial-and-check approach is standard practice for both structural beam sizing and machine element (shaft, lever, bracket) design.</p>
+
+      <p><strong>Why bending stress checks matter even when deflection looks fine:</strong> a shallow, wide beam can sometimes satisfy a deflection limit (which depends on the full moment of inertia I) while still being marginal or failing on bending stress (which depends on section modulus Z) — the two properties don't scale identically with section proportions, so a beam optimized purely to minimize deflection isn't automatically safe in bending, and vice versa. This is precisely why both checks are always run independently rather than treating a pass on one as implying a pass on the other.</p>
+
+      <p><strong>Summary:</strong> use σ = M/Z with Z = bd²/6 for a solid rectangular section, always double-check that b and d are assigned to the correct physical dimensions of your actual beam orientation, keep units consistent (Nmm and mm for a result in MPa), compare the calculated stress against your material's allowable stress from the applicable design code rather than raw yield strength, and remember this checks bending only — shear, deflection, and any combined axial loading need their own separate checks before a design is considered complete.</p>
+
+      <p>Finally, treat any stress result that comes out very close to the allowable limit (within, say, 5-10%) as a signal to double-check your inputs and assumptions rather than a marginal pass — small errors in moment calculation, section dimension measurement, or material grade assumption can easily shift a "just passing" result into an actual failure once real-world tolerances and load variability are accounted for.</p>
+
+      <p>A design margin of at least 15-20% below allowable stress is generally considered prudent practice for a first-pass design, leaving room for the inevitable small discrepancies between calculated and as-built or as-loaded reality, rather than sizing a section to sit exactly at the calculated allowable stress limit.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">M = 2500 Nm, b = 50 mm, d = 100 mm: Z = (50 × 100²) ÷ 6 = 83,333 mm³. σ = 2,500,000 Nmm ÷ 83,333 mm³ ≈ <strong>30 MPa</strong> — well within a typical 150 MPa allowable stress for mild steel.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator computes maximum bending (flexural) stress for a solid rectangular cross-section only — it does not cover I-beams, channels, or other standard structural profiles (which need the section's published Z value instead of b/d), and does not check shear stress, deflection, or combined loading. Compare the calculated stress against the allowable stress for your specific material and applicable design code before finalizing a design.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Quick Reference</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Typical Allowable Bending Stress by Steel Grade</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Steel Grade</th>
+          <th class="text-left px-4 py-2 font-semibold">Yield Strength</th>
+          <th class="text-left px-4 py-2 font-semibold">Typical Allowable Bending Stress</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">Fe410 / E250 (mild steel)</td><td class="px-4 py-2">250 MPa</td><td class="px-4 py-2">~150–165 MPa</td></tr>
+        <tr><td class="px-4 py-2">E350 (higher strength structural)</td><td class="px-4 py-2">350 MPa</td><td class="px-4 py-2">~210–230 MPa</td></tr>
+        <tr><td class="px-4 py-2">EN8 (medium carbon, machined shafts)</td><td class="px-4 py-2">~280–350 MPa</td><td class="px-4 py-2">~110–140 MPa (with FOS)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Allowable bending stress is not the same as yield strength — it's yield strength divided by a code-mandated or engineering-judgment factor of safety, which is why the allowable figures above are noticeably lower than the raw yield strengths. Always confirm the specific allowable stress from the applicable design code (IS 800 for Indian structural steelwork) and the actual certified material grade being used, rather than assuming a generic value —     <p>Notice how much of the difference between grades comes down to the design factor of safety applied, not just the raw material strength — this is why "allowable stress" figures should always be sourced from the applicable design code for your specific project and jurisdiction (IS 800 in India, or the relevant equivalent elsewhere) rather than assumed from a generic reference table like this one,     <p>For machine element design (shafts, levers, brackets, rather than structural steelwork), a similar principle applies but with different typical safety factors and often different governing codes or manufacturer-specific guidance — always match your allowable stress source to the actual application category (structural vs machine design vs pressure equipment) rather than applying a structural steelwork factor to a machine component or vice versa,     <p>When in doubt about which code or safety factor convention applies to your specific project, consulting a qualified structural or mechanical engineer familiar with the relevant jurisdiction and application category is always the safer path than guessing from a generic online reference table.</p>
+    <p>This holds especially true for anything load-bearing that people will stand on, under, or near.</p>
+    <p>A calculator like this one is a genuinely useful tool for a preliminary check, a homework problem, or a sanity check on someone else's numbers — but it is not a substitute for a stamped, reviewed engineering calculation on anything where a mistake could hurt someone.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Bending Stress</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Swapping width and depth in the section modulus formula.</strong> Since Z = bd²/6 squares the depth term, entering the dimensions the wrong way round for your beam's actual orientation can overstate or understate the section modulus — and therefore the stress — by a large factor.</p>
+      <p><strong>2. Mixing Nm and Nmm.</strong> The formula needs M in Nmm when b and d are in mm (giving σ in N/mm² = MPa) — forgetting to convert a moment given in Nm to Nmm (×1000) understates the calculated stress by a factor of 1000.</p>
+      <p><strong>3. Using this rectangular-section formula for an I-beam or channel.</strong> Standard structural sections have their own published Z values that account for their actual shape — calculating Z from an I-beam's overall width and depth as if it were solid rectangular massively overstates its actual section modulus (and understates stress), since most of an I-beam's cross-section is hollow/thin-walled.</p>
+      <p><strong>4. Comparing calculated stress against yield strength instead of allowable stress.</strong> Allowable stress already includes a design safety factor — a beam whose calculated stress is below yield strength but above allowable stress technically fails the code check, even though it wouldn't yield immediately; always compare against allowable, not raw yield.</p>
+      <p><strong>5. Checking only bending stress and skipping deflection.</strong> A beam can easily pass a stress check while still deflecting more than acceptable for serviceability (a "bouncy" floor, for example) — stress and deflection are independent checks that both need to pass; use this calculator alongside the Beam Deflection Calculator.</p>
+      <p><strong>6. Ignoring shear stress for short, deep beams under heavy point loads.</strong> Bending stress usually governs for longer-span beams, but for short, deep beams carrying large point loads close to a support, shear stress can become the controlling factor and needs its own separate check — don't assume passing the bending stress check alone is sufficient.</p>
+      <p><strong>7. Applying a single section modulus to an asymmetric cross-section.</strong> Sections like a T-beam or unequal channel have different distances from the neutral axis to their top and bottom extreme fibers — using one Z value (as this rectangular-section calculator does) instead of separate top/bottom values understates stress on whichever side is actually farther from the neutral axis.</p>
+      <p><strong>8. Ignoring a significant axial load combined with bending.</strong> A beam or column carrying both bending and a meaningful axial load needs a combined-stress check — checking bending stress alone when axial load is also significant can understate the true peak stress at the extreme fiber where both effects add together.</p>
+      <p><strong>9. Confusing section modulus (Z) with moment of inertia (I).</strong> These are related but different quantities — I describes the section's resistance to bending deformation (used in deflection calculations), while Z = I/c is what directly relates moment to stress; using I where Z is required (or vice versa) in a hand calculation gives a result with the wrong units and the wrong magnitude.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for maximum bending stress in a beam?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">σ = M / Z, where M is the bending moment at the section being checked and Z is the section modulus. For a solid rectangular section, Z = bd²/6, where b is the width and d is the depth (both perpendicular to the neutral axis, with d being the dimension in the direction of bending).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is section modulus and why does it matter?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Section modulus (Z) combines a cross-section's shape and size into a single number that directly relates bending moment to maximum stress — a larger Z means the same bending moment produces lower stress, which is why increasing beam depth (which increases Z faster than increasing width does) is such an effective way to reduce bending stress.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does depth affect bending stress more than width?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Because Z for a rectangular section is bd²/6 — depth is squared, width is linear. Doubling depth quadruples Z (and roughly quarters the stress for the same moment), while doubling width only doubles Z (roughly halving the stress) — this is why beams are almost always oriented and sized to be deep rather than wide.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I calculate stress for an I-beam or channel section instead of a rectangle?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The same σ = M/Z formula applies, but Z for a standard structural section (I-beam, channel, angle) isn't calculated from simple b and d — it's a published property specific to each section size, found in structural steel section tables/handbooks. Look up the Z value for your exact section and use σ = M/Z directly with that published number instead of this rectangular-section calculator.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What's the difference between bending stress and shear stress in a beam?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Bending stress (calculated here) results from the bending moment and varies linearly across the section depth, maximum at the extreme fibers and zero at the neutral axis. Shear stress results from the shear force and varies parabolically, typically maximum at the neutral axis — both need to be checked independently, and for short, deep beams under heavy point loads, shear can sometimes govern the design.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What allowable bending stress should I use for mild steel?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For general structural mild steel (Fe410/E250 grade, common in Indian structural practice), allowable bending stress under IS 800 working-stress principles is commonly around 0.66 × yield strength, giving roughly 150-165 MPa depending on the specific grade and section classification — always confirm against the current applicable code rather than a rule of thumb for a final design.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does a higher calculated stress always mean the beam will fail?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Not necessarily immediately — failure depends on comparing the calculated stress against the material's actual yield or allowable stress, and on whether the loading is static or repeated (fatigue). A calculated stress above the allowable stress means the design doesn't meet the safety margin required by the code, which should be corrected before use, but it isn't the same as the immediate fracture/yield point unless it also exceeds the raw yield strength.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is this the same as checking deflection?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — bending stress (strength) and deflection (stiffness/serviceability) are two separate checks. A beam can pass a stress check comfortably while still deflecting more than acceptable for serviceability, or vice versa — use this calculator alongside the Beam Deflection Calculator, since a complete beam design needs both checks to pass.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does a beam under combined bending and axial load need a different check?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — bending and axial stresses add algebraically at the extreme fibers, so a member carrying significant axial load alongside bending (common in columns and some frame members) needs a combined-stress check rather than the bending-only calculation this tool performs.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateBeamStress(){
+    const moment = parseFloat(document.getElementById('moment').value);
+    const b = parseFloat(document.getElementById('width').value);
+    const d = parseFloat(document.getElementById('depth').value);
+    const allow = parseFloat(document.getElementById('allowStress').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(moment) || moment <= 0){ errors.push('Enter a valid bending moment greater than 0.'); }
+    if(isNaN(b) || b <= 0){ errors.push('Enter a valid width greater than 0.'); }
+    if(isNaN(d) || d <= 0){ errors.push('Enter a valid depth greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rZ').textContent = '\u2014';
+      document.getElementById('rStatus').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const momentNmm = moment * 1000;
+    const I = (b * Math.pow(d,3)) / 12;
+    const Z = (b * Math.pow(d,2)) / 6;
+    const stress = momentNmm / Z;
+
+    let status = '\u2014';
+    let statusColor = '';
+    if(!isNaN(allow) && allow > 0){
+      status = stress <= allow ? 'OK \u2713' : 'Over limit';
+    }
+
+    document.getElementById('rResult').textContent = stress.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' MPa';
+    document.getElementById('resultSub').textContent = 'M = ' + moment + ' Nm on ' + b + '\u00d7' + d + ' mm section';
+    document.getElementById('rZ').textContent = Z.toLocaleString('en-IN', {maximumFractionDigits:0}) + ' mm\u00b3';
+    document.getElementById('rStatus').textContent = status;
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Bending Moment</td><td>${moment.toLocaleString('en-IN')} Nm (${momentNmm.toLocaleString('en-IN')} Nmm)</td></tr>
+                <tr><td>Width (b)</td><td>${b} mm</td></tr>
+                <tr><td>Depth (d)</td><td>${d} mm</td></tr>
+                <tr><td>Moment of Inertia (I)</td><td>${I.toLocaleString('en-IN', {maximumFractionDigits:0})} mm\u2074</td></tr>
+                <tr><td>Section Modulus (Z)</td><td>${Z.toLocaleString('en-IN', {maximumFractionDigits:0})} mm\u00b3</td></tr>
+                <tr><td><strong>Max. Bending Stress</strong></td><td><strong>${stress.toFixed(2)} MPa</strong></td></tr>
+                ${(!isNaN(allow) && allow > 0) ? `<tr><td>Allowable Stress</td><td>${allow} MPa \u2014 ${status}</td></tr>` : ''}
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateBeamStress();
+</script>
+
+</body>
+</html>

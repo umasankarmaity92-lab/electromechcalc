@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Beam Deflection Calculator (Simply Supported) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Beam Deflection Calculator for a simply supported beam under a central point load or uniformly distributed load (UDL). Enter load, length, E and I to get maximum deflection instantly.">
+<meta name="keywords" content="beam deflection calculator, simply supported beam deflection, point load deflection formula, UDL deflection formula, beam bending deflection">
+<meta name="robots" content="index, follow">
+<!-- mechanical = electrical | mechanical | financial (no slashes).
+     beam-deflection = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/beam-deflection">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Beam Deflection Calculator">
+<meta property="og:description" content="Free Beam Deflection Calculator for a simply supported beam — point load or UDL — enter load, length, E and I for instant maximum deflection.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/beam-deflection">
+<meta property="og:image" content="https://www.electromechcalc.com/logo.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Beam Deflection Calculator">
+<meta name="twitter:description" content="Free Beam Deflection Calculator for a simply supported beam — point load or UDL — enter load, length, E and I for instant maximum deflection.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Beam Deflection Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/beam-deflection",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Beam Deflection Calculator for a simply supported beam under a central point load or uniformly distributed load (UDL). Enter load, length, E and I to get maximum deflection instantly.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for maximum deflection under a central point load?",
+      "acceptedAnswer": { "@type": "Answer", "text": "δ = PL³ / (48EI), where P is the point load at mid-span, L is the beam's span length, E is the material's modulus of elasticity, and I is the second moment of area (moment of inertia) of the beam's cross-section — this gives maximum deflection at the center of a simply supported beam." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the formula for deflection under a uniformly distributed load (UDL)?",
+      "acceptedAnswer": { "@type": "Answer", "text": "δ = 5wL⁴ / (384EI), where w is the total UDL load (or, equivalently, 5WL³/384EI where W is load per unit length and the L⁴ becomes L³ — always confirm which convention a source is using). This calculator asks for total UDL load and length, and computes internally with the correct exponents." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does a UDL cause less deflection than the same total load as a point load?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Because a UDL spreads the load across the entire span rather than concentrating it at one point — for the same total load, a beam deflects roughly 5/8 (62.5%) as much under a full UDL as it would under an equivalent point load at mid-span, since the bending moment distribution is less severe when the load is spread out." }
+    },
+    {
+      "@type": "Question",
+      "name": "What units should E and I be in for a consistent result?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Keep units consistent throughout: if L is in millimetres, use E in N/mm² (MPa) and I in mm⁴, which gives deflection in millimetres directly. Mixing metres for length with mm⁴ for I (or similar unit mismatches) is the single most common source of wildly wrong results in beam deflection calculations." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I find the moment of inertia (I) for my beam's cross-section?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For a solid rectangular section, I = bd³/12 (b = width, d = depth, both perpendicular to the bending axis). For standard structural steel sections (I-beams, channels), I is published directly in steel section tables/handbooks — always use the value for bending about the correct axis (usually the strong axis, unless your beam is oriented otherwise)." }
+    },
+    {
+      "@type": "Question",
+      "name": "What deflection limit is normally considered acceptable?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A common structural engineering rule of thumb caps deflection at span/250 to span/360 depending on the application (span/360 is a frequent limit for floors supporting brittle finishes, span/250 is more common for general structural beams) — but the correct limit always depends on the applicable design code and the specific serviceability requirement for your structure, not a single universal number." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this calculator account for the beam's own self-weight?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — you need to include self-weight as part of your UDL input (or add its contribution separately) if it's significant relative to the applied load. For long-span or heavy-section beams, self-weight deflection can be a meaningful fraction of the total and should not be ignored." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this formula valid for a cantilever beam?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — a cantilever (fixed at one end, free at the other) has completely different deflection formulas (δ = PL³/3EI for an end point load, δ = wL⁴/8EI for a UDL) because the boundary conditions are fundamentally different from a simply supported beam. Using the simply-supported formulas on a cantilever will give a significantly wrong answer." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="stylesheet" href="/assets/tailwind.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Structural
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Beam Deflection <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Maximum deflection of a simply supported beam under a central point load or a uniformly distributed load (UDL), with the formula shown.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Beam Deflection Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Simply supported beam — pick load type, fill in the fields, and calculate.</p>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Load Type</label>
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2">
+          <div id="typePoint" class="toggle-btn active" onclick="setLoadType('point')">Central Point Load</div>
+          <div id="typeUDL" class="toggle-btn" onclick="setLoadType('udl')">Uniform Load (UDL)</div>
+        </div>
+      </div>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="loadLabel">Point Load, P (N)</label>
+          <input id="load" type="number" value="5000" step="10" min="0" placeholder="e.g. 5000" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Span Length, L (mm)</label>
+          <input id="length" type="number" value="2000" step="10" min="0" placeholder="e.g. 2000" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Modulus of Elasticity, E (MPa / N/mm²)</label>
+          <input id="eMod" type="number" value="200000" step="1000" min="0" placeholder="e.g. 200000 (steel)" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Moment of Inertia, I (mm⁴)</label>
+          <input id="inertia" type="number" value="8000000" step="1000" min="0" placeholder="e.g. 8000000" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateBeamDeflection()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip" id="formulaChip">δ = PL³ / (48EI)</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Max. Deflection</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Span / Deflection</span>
+            <span id="rRatio" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Deflection (mm)</span>
+            <span id="rDeflMm" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="mechanical/beam-stress.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Beam Stress Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/shaft-diameter.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Shaft Diameter Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/spring-rate.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Spring Rate Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/bolt-torque.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Bolt Torque Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding beam deflection</a></li>
+      <li><a href="#second" class="hover:underline">3. Point load vs UDL comparison</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Simply Supported Beam Deflection Is Calculated</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard Euler-Bernoulli beam theory, simply supported case</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>Beam deflection tells you how much a beam sags under load — a serviceability check that matters for floors that feel "bouncy," machine bases that need to stay rigid, or any structure where excessive sag could crack finishes, misalign equipment, or simply look and feel wrong, even when the beam is nowhere close to breaking under bending stress. Deflection and bending stress are two separate checks: a beam can easily pass a stress check and still fail a deflection (stiffness) check, especially over longer spans.</p>
+
+      <p><strong>Formula used (central point load):</strong> δ = PL³ / (48EI), where P is the point load applied at mid-span, L is the span between supports, E is the modulus of elasticity of the beam material, and I is the second moment of area of the cross-section. <strong>Formula used (uniformly distributed load):</strong> δ = 5wL⁴ / (384EI), where w is the total distributed load across the span. Both formulas assume a simply supported beam — free to rotate at each support, resting on (not fixed into) both ends.</p>
+
+      <p><strong>Worked example:</strong> a steel beam (E = 200,000 MPa) with a moment of inertia I = 8,000,000 mm⁴, spanning L = 2000 mm, carrying a 5000 N point load at its center: δ = (5000 × 2000³) / (48 × 200,000 × 8,000,000) = 4×10¹⁰ / 7.68×10¹³ ≈ 0.52 mm. That's a span-to-deflection ratio of roughly L/3846 — well within typical structural deflection limits (which often require L/250 to L/360 or better).</p>
+
+      <p><strong>Why E and I matter as much as the load itself:</strong> deflection is inversely proportional to both the material's stiffness (E) and the cross-section's resistance to bending (I) — doubling either one halves the deflection for the same load. This is why increasing a beam's depth is so much more effective at controlling deflection than increasing its width: since I for a rectangular section scales with depth cubed (I = bd³/12) but only linearly with width, a modest increase in depth reduces deflection far more than the same percentage increase in width.</p>
+
+      <p><strong>Deflection vs stress — two separate checks:</strong> a shallow, wide beam might comfortably pass a bending stress check (since stress depends on the section modulus Z = I/c) while still deflecting more than acceptable, because deflection depends on the full moment of inertia I, not just Z. This is exactly why deflection is checked as an independent serviceability limit state, alongside (not instead of) a strength/stress check — a beam sized purely for stress can still be too "springy" in practice.</p>
+
+      <p><strong>Deflection under a load away from mid-span:</strong> the point-load formula here assumes the load sits exactly at the center of the span, which gives the maximum possible deflection for a single point load on a given beam. A load positioned closer to one support produces less maximum deflection than the same load at center-span, though the deflection formula becomes more complex (piecewise, different expressions on either side of the load point) — for a quick, conservative estimate of a beam with an off-center load, using the center-load formula with the actual load magnitude gives a safely high (upper-bound) deflection estimate, useful for a first-pass check even though it isn't the exact figure for the true off-center case.</p>
+
+      <p><strong>Combining multiple loads:</strong> for a beam carrying more than one point load, or a mix of point loads and a UDL, the total deflection at any point can be found by superposition — calculating the deflection contribution from each load acting alone (using its own appropriate formula) and adding the results together, since beam deflection under the elastic, small-deflection assumption is linear with respect to load. This calculator handles one load case at a time; a multi-load beam needs this superposition approach applied manually, summing several individual deflection calculations.</p>
+
+      <p><strong>Why deflection limits are stricter for some applications than others:</strong> a structural floor beam supporting rigid, brittle finishes (tile, plaster) needs a tighter deflection limit than a similar beam supporting a flexible finish, because excessive deflection cracks brittle materials even at levels that would be structurally and visually acceptable otherwise. Machine bases and equipment-supporting structures often need even tighter limits than general building structures, since excessive deflection can misalign rotating equipment, cause vibration, or affect process accuracy — always confirm the deflection limit appropriate to your specific application rather than assuming a single generic ratio applies everywhere.</p>
+
+      <p><strong>The role of support conditions beyond simply supported:</strong> this calculator's formulas assume both ends rest freely on supports (free to rotate, no moment resistance at the supports). Real connections are sometimes closer to fixed (welded or bolted rigidly, resisting rotation) or somewhere between the two idealized extremes (semi-rigid) — a beam that's actually fixed at both ends deflects only about one-fifth as much as the same beam simply supported under a central point load (since fixed-end beams distribute moment differently and are inherently stiffer), meaning using the simply-supported formula on an actually-fixed connection significantly overstates real deflection, while using it on a connection that's actually less restrained than assumed understates deflection. Correctly identifying your beam's real support condition matters as much as getting the load and section properties right.</p>
+
+      <p><strong>Material stiffness reference values:</strong> modulus of elasticity (E) varies substantially by material — structural steel sits around 200,000 MPa, aluminum around 69,000 MPa (roughly a third of steel's stiffness), and timber varies widely by species and grade, commonly in the 8,000-14,000 MPa range. This is why a steel beam and an aluminum beam of identical cross-section and span deflect very differently under the same load — aluminum's lower E means roughly three times the deflection of an equivalent steel section, which is why aluminum structural members are often made deeper or use different cross-section shapes to compensate for their inherently lower stiffness per unit weight.</p>
+
+      <p><strong>Practical workflow for a deflection check:</strong> in real design practice, deflection checking usually happens after a section has already been sized for bending stress — you pick a trial section, verify it passes the stress check, then run the exact same section through the deflection formula to confirm it also meets the serviceability limit. It's common for deflection, not stress, to end up governing the final section size for longer-span, lightly-loaded beams (like floor joists over a wide span), while stress governs for shorter, heavily-loaded beams — which check actually controls the design depends on the specific combination of span, load, and section, so both should always be checked rather than assuming one or the other will govern.</p>
+
+      <p><strong>Summary:</strong> use the point-load formula for a single concentrated load at mid-span, the UDL formula for an evenly distributed load across the full span, keep units consistent throughout (mm, MPa, mm⁴ is the most common combination), confirm your beam's actual support condition matches the simply-supported assumption, and always run this deflection check alongside a separate bending stress check, since a beam that passes one doesn't automatically pass the other.</p>
+
+      <p>Finally, treat this calculator's simply-supported, single-load-case results as inputs to a broader design check rather than a final answer on their own — multi-load beams need superposition, non-simply-supported beams need different formulas entirely, and any beam whose calculated deflection sits close to its applicable limit deserves a second, independent check before the design is finalized.</p>
+
+      <p><strong>Common section shapes and their I values:</strong> beyond the solid rectangular section this calculator's worked examples use, common structural sections each have their own moment of inertia. A circular solid section has I = πd⁴/64. Standard steel I-beams, channels, and angles have I published directly in manufacturer or code section tables for each specific size designation — always pull the exact published I value for your specific section size rather than approximating an I-beam as an equivalent solid rectangle, since the actual I of an I-beam (with material concentrated in the flanges, away from the neutral axis) is typically far higher than a solid rectangle of the same overall depth and width would suggest.</p>
+
+      <p><strong>Temperature and long-term effects on deflection:</strong> this calculator computes instantaneous elastic deflection under a static load at normal temperature. Some materials, notably timber and some polymers, exhibit creep — additional deflection that develops gradually over time under sustained load, beyond the initial elastic deflection calculated here. Structural design codes for creep-prone materials typically apply a long-term deflection multiplier on top of the instantaneous calculated value for sustained loads — a beam that looks fine on day one under this calculator's instantaneous formula can still develop excessive deflection after months or years under sustained load if creep isn't separately accounted for.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Central point load 5000 N on a 2000 mm steel beam span, E = 200,000 MPa, I = 8,000,000 mm⁴: δ = (5000 × 2000³) ÷ (48 × 200,000 × 8,000,000) ≈ <strong>0.52 mm</strong> — a span/deflection ratio of about <strong>L/3846</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator covers only a simply supported beam (both ends free to rotate, resting on two supports) under a single central point load or a uniform distributed load — fixed-end, cantilever, and off-center or multiple-load cases use different formulas and are not covered here. Deflection limits for a specific structure should always be checked against the applicable design code (IS 800 for steel structures, or the relevant standard for your material and application).</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Comparison</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Point Load vs UDL: Same Total Load, Different Deflection</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Load Type</th>
+          <th class="text-left px-4 py-2 font-semibold">Total Load</th>
+          <th class="text-left px-4 py-2 font-semibold">Max. Deflection</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">Central point load</td><td class="px-4 py-2">5000 N</td><td class="px-4 py-2">0.521 mm</td></tr>
+        <tr><td class="px-4 py-2">UDL (same total load)</td><td class="px-4 py-2">5000 N</td><td class="px-4 py-2">0.326 mm</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>For the exact same total load (5000 N) on the exact same beam and span, spreading the load evenly across the span (UDL) instead of concentrating it at the center reduces maximum deflection to about 62.5% of the point-load case — this ratio (5/8) is a direct consequence of the different coefficients in the two formulas (1/48 for point load vs 5/384 for UDL, and 5/384 ÷ 1/48 = 5/8 exactly). This is a useful sanity check: if your real loading is somewhere between a pure point load and a pure UDL (like a load spread over the middle third of the span),     <p>In practice, many real beam loadings fall between these two textbook extremes — a beam supporting a row of closely spaced point loads (like floor joists under evenly spaced furniture legs) behaves closer to a UDL as the number of load points increases, while a beam with one dominant heavy load and several light ones behaves closer to the point-load case. When in doubt about which bounding formula to use for an irregular loading pattern, the point-load formula gives the more conservative (higher) deflection estimate, making it the safer default for a quick check.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Beam Deflection</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Mixing millimetres and metres in the same calculation.</strong> If L is in mm, E must be in N/mm² (MPa) and I in mm⁴ for the result to come out in mm — mixing unit systems (e.g., L in metres with I in mm⁴) is the most common source of results that are wrong by several orders of magnitude.</p>
+      <p><strong>2. Using the point-load formula for a distributed load, or vice versa.</strong> The coefficients (1/48 vs 5/384) and the power of L (L³ vs L⁴) are different for point load and UDL — applying the wrong formula for your actual loading pattern gives a meaningfully wrong deflection, not just a small error.</p>
+      <p><strong>3. Using the wrong moment of inertia axis.</strong> A rectangular or I-beam section has a different I value for bending about its strong axis versus its weak axis — using the weak-axis I (or a published table value for the wrong orientation) when the beam is actually oriented to bend about its strong axis dramatically understates stiffness and overstates deflection.</p>
+      <p><strong>4. Forgetting self-weight for long or heavy beams.</strong> This calculator only accounts for the load you enter — for long-span or heavy-section beams, the beam's own weight (treated as an additional UDL) can be a significant fraction of total deflection and needs to be added in separately.</p>
+      <p><strong>5. Applying the simply-supported formula to a fixed or cantilevered beam.</strong> Fixed-end and cantilever beams have completely different deflection formulas with different coefficients — a beam that's actually welded or bolted rigidly at both ends (fixed-fixed) deflects far less than a simply supported one under the same load, so using the wrong support-condition formula significantly misrepresents real behavior.</p>
+      <p><strong>6. Checking deflection but skipping the separate bending stress check.</strong> A beam can pass a deflection (stiffness) check while still being under-strength in bending, or vice versa — deflection and stress are two independent checks that both need to pass; use this calculator alongside the Beam Stress Calculator, not instead of it.</p>
+      <p><strong>7. Applying the center-point-load formula to an off-center load without adjustment.</strong> The formula here gives the maximum deflection for a load at mid-span specifically — an off-center point load produces a different (generally lower) maximum deflection with a more complex formula, so treating an off-center load as if it were centered can meaningfully misstate the result.</p>
+      <p><strong>8. Adding deflections from different load cases incorrectly, or not at all.</strong> For a beam carrying multiple loads, total deflection requires superposition (summing the deflection from each load calculated separately using its own correct formula) — skipping this and only calculating for one load while ignoring others understates total deflection.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for maximum deflection under a central point load?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">δ = PL³ / (48EI), where P is the point load at mid-span, L is the beam's span length, E is the material's modulus of elasticity, and I is the second moment of area (moment of inertia) of the beam's cross-section — this gives maximum deflection at the center of a simply supported beam.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for deflection under a uniformly distributed load (UDL)?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">δ = 5wL⁴ / (384EI), where w is the total UDL load (or, equivalently, 5WL³/384EI where W is load per unit length and the L⁴ becomes L³ — always confirm which convention a source is using). This calculator asks for total UDL load and length, and computes internally with the correct exponents.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does a UDL cause less deflection than the same total load as a point load?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Because a UDL spreads the load across the entire span rather than concentrating it at one point — for the same total load, a beam deflects roughly 5/8 (62.5%) as much under a full UDL as it would under an equivalent point load at mid-span, since the bending moment distribution is less severe when the load is spread out.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What units should E and I be in for a consistent result?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Keep units consistent throughout: if L is in millimetres, use E in N/mm² (MPa) and I in mm⁴, which gives deflection in millimetres directly. Mixing metres for length with mm⁴ for I (or similar unit mismatches) is the single most common source of wildly wrong results in beam deflection calculations.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I find the moment of inertia (I) for my beam's cross-section?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For a solid rectangular section, I = bd³/12 (b = width, d = depth, both perpendicular to the bending axis). For standard structural steel sections (I-beams, channels), I is published directly in steel section tables/handbooks — always use the value for bending about the correct axis (usually the strong axis, unless your beam is oriented otherwise).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What deflection limit is normally considered acceptable?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A common structural engineering rule of thumb caps deflection at span/250 to span/360 depending on the application (span/360 is a frequent limit for floors supporting brittle finishes, span/250 is more common for general structural beams) — but the correct limit always depends on the applicable design code and the specific serviceability requirement for your structure, not a single universal number.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does this calculator account for the beam's own self-weight?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — you need to include self-weight as part of your UDL input (or add its contribution separately) if it's significant relative to the applied load. For long-span or heavy-section beams, self-weight deflection can be a meaningful fraction of the total and should not be ignored.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is this formula valid for a cantilever beam?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — a cantilever (fixed at one end, free at the other) has completely different deflection formulas (δ = PL³/3EI for an end point load, δ = wL⁴/8EI for a UDL) because the boundary conditions are fundamentally different from a simply supported beam. Using the simply-supported formulas on a cantilever will give a significantly wrong answer.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I calculate deflection for multiple loads on the same beam?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Use superposition: calculate the deflection contribution from each load acting alone with its own correct formula (point load or UDL, at its actual position), then add the individual deflection values together, since beam deflection under normal elastic assumptions is linear with respect to applied load.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    let beamLoadType = 'point';
+
+  function setLoadType(type){
+    beamLoadType = type;
+    document.getElementById('typePoint').classList.toggle('active', type === 'point');
+    document.getElementById('typeUDL').classList.toggle('active', type === 'udl');
+    document.getElementById('loadLabel').textContent = type === 'point' ? 'Point Load, P (N)' : 'Total UDL Load, w (N)';
+    document.getElementById('formulaChip').textContent = type === 'point' ? '\u03b4 = PL\u00b3 / (48EI)' : '\u03b4 = 5wL\u2074 / (384EI)';
+  }
+
+  function calculateBeamDeflection(){
+    const load = parseFloat(document.getElementById('load').value);
+    const length = parseFloat(document.getElementById('length').value);
+    const E = parseFloat(document.getElementById('eMod').value);
+    const I = parseFloat(document.getElementById('inertia').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(load) || load <= 0){ errors.push('Enter a valid load greater than 0.'); }
+    if(isNaN(length) || length <= 0){ errors.push('Enter a valid span length greater than 0.'); }
+    if(isNaN(E) || E <= 0){ errors.push('Enter a valid modulus of elasticity greater than 0.'); }
+    if(isNaN(I) || I <= 0){ errors.push('Enter a valid moment of inertia greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rRatio').textContent = '\u2014';
+      document.getElementById('rDeflMm').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    let deflection;
+    if(beamLoadType === 'point'){
+      deflection = (load * Math.pow(length,3)) / (48 * E * I);
+    } else {
+      deflection = (5 * load * Math.pow(length,4)) / (384 * E * I);
+    }
+
+    const ratio = length / deflection;
+
+    document.getElementById('rResult').textContent = deflection.toLocaleString('en-IN', {maximumFractionDigits:4}) + ' mm';
+    document.getElementById('resultSub').textContent = (beamLoadType === 'point' ? 'Central point load' : 'Uniform load (UDL)') + ' \u2014 L = ' + length + ' mm';
+    document.getElementById('rRatio').textContent = 'L/' + Math.round(ratio);
+    document.getElementById('rDeflMm').textContent = deflection.toFixed(4);
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Load Type</td><td>${beamLoadType === 'point' ? 'Central point load' : 'Uniformly distributed'}</td></tr>
+                <tr><td>Load</td><td>${load.toLocaleString('en-IN')} N</td></tr>
+                <tr><td>Span (L)</td><td>${length.toLocaleString('en-IN')} mm</td></tr>
+                <tr><td>Modulus of Elasticity (E)</td><td>${E.toLocaleString('en-IN')} MPa</td></tr>
+                <tr><td>Moment of Inertia (I)</td><td>${I.toLocaleString('en-IN')} mm\u2074</td></tr>
+                <tr><td><strong>Max. Deflection</strong></td><td><strong>${deflection.toFixed(4)} mm</strong></td></tr>
+                <tr><td>Span-to-Deflection Ratio</td><td>L/${Math.round(ratio)}</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateBeamDeflection();
+</script>
+
+</body>
+</html>

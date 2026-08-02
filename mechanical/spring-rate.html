@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Spring Rate Calculator (Helical Compression Spring) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Spring Rate Calculator for a helical compression or extension spring. Enter wire diameter, mean coil diameter, active coils and shear modulus to get spring rate instantly.">
+<meta name="keywords" content="spring rate calculator, spring constant calculator, helical spring stiffness, compression spring rate formula, spring index calculator">
+<meta name="robots" content="index, follow">
+<!-- mechanical = electrical | mechanical | financial (no slashes).
+     spring-rate = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/spring-rate">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Spring Rate Calculator">
+<meta property="og:description" content="Free Spring Rate Calculator for a helical spring — enter wire diameter, coil diameter, active coils and G to get spring rate instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/spring-rate">
+<meta property="og:image" content="https://www.electromechcalc.com/logo.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Spring Rate Calculator">
+<meta name="twitter:description" content="Free Spring Rate Calculator for a helical spring — enter wire diameter, coil diameter, active coils and G to get spring rate instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Spring Rate Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/spring-rate",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Spring Rate Calculator for a helical compression or extension spring. Enter wire diameter, mean coil diameter, active coils and shear modulus to get spring rate instantly.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for helical spring rate?",
+      "acceptedAnswer": { "@type": "Answer", "text": "k = (G × d⁴) / (8 × D³ × n), where k is spring rate (stiffness), G is the material's shear modulus, d is the wire diameter, D is the mean coil diameter (not outer diameter), and n is the number of active coils." }
+    },
+    {
+      "@type": "Question",
+      "name": "What's the difference between mean coil diameter and outer diameter?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Mean coil diameter (D) is measured to the center of the wire, while outer diameter is measured to the outside edge — D = Outer Diameter − wire diameter (d). Using outer diameter directly in the formula instead of mean diameter is a very common and consequential error, since D is cubed in the formula." }
+    },
+    {
+      "@type": "Question",
+      "name": "What's the difference between total coils and active coils?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Active coils (n) are the coils that actually flex and contribute to the spring's deflection. Total coils include additional coils at each end that are ground flat or closed for a stable seating surface (common on compression springs) and don't contribute to the active spring rate — active coils are typically 1.5 to 2.5 fewer than total coils, depending on the end configuration." }
+    },
+    {
+      "@type": "Question",
+      "name": "What shear modulus (G) should I use for spring steel?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For common spring steels (music wire, oil-tempered, chrome-silicon), G is typically around 78,000-80,000 MPa (79,300 MPa is a frequently used default). For stainless steel spring wire, G is somewhat lower, typically around 69,000-72,000 MPa — always check the specific wire material's published shear modulus for an accurate result." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is spring rate so sensitive to coil diameter?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Because D is cubed in the denominator of the formula — doubling the mean coil diameter reduces spring rate to one-eighth of its original value (for the same wire diameter and coil count), which is why even small changes in coil diameter have an outsized effect on stiffness compared to changing the number of coils." }
+    },
+    {
+      "@type": "Question",
+      "name": "How does spring index (C = D/d) affect the design?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Spring index describes the coil's proportions — a low index (below about 4) means a relatively thick wire on a tight coil, which is hard to wind and concentrates stress; a high index (above about 12) means a slender coil that's prone to buckling and tangling. Most practical spring designs target a spring index between roughly 4 and 12, with 6-9 being a commonly preferred sweet spot." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does adding more active coils make a spring stiffer or softer?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Softer — spring rate is inversely proportional to the number of active coils (n is in the denominator), so more coils spread the same total deflection over more turns, reducing the stress and force needed per unit of deflection. Fewer active coils make the spring stiffer for the same wire and coil diameter." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this formula valid for both compression and extension springs?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, the basic spring rate formula (k = Gd⁴/8D³n) is the same for compression and extension springs, since both are helical coil springs loaded axially. Extension springs, however, also need their end-hook design checked separately, and often incorporate initial tension (a preload that must be overcome before the spring starts to stretch), which isn't captured by the basic rate formula alone." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="stylesheet" href="/assets/tailwind.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Springs
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Spring Rate <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Stiffness (spring rate) of a helical compression or extension spring from wire diameter, coil diameter, active coils, and shear modulus.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Spring Rate Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter the coil geometry and material shear modulus.</p>
+
+      <div class="space-y-4 mb-5">
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Wire Diameter, d (mm)</label>
+            <input id="wireDia" type="number" value="3" step="0.1" min="0" placeholder="e.g. 3" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Mean Coil Diameter, D (mm)</label>
+            <input id="coilDia" type="number" value="24" step="0.5" min="0" placeholder="e.g. 24" class="input-field mt-2">
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Active Coils, n</label>
+          <input id="coils" type="number" value="10" step="0.5" min="0" placeholder="e.g. 10" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Shear Modulus, G (MPa)</label>
+          <input id="shearMod" type="number" value="79300" step="100" min="0" placeholder="e.g. 79300 (spring steel)" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateSpringRate()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">k = Gd⁴ / (8D³n)</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Spring Rate</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Spring Index (C)</span>
+            <span id="rIndex" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Index Status</span>
+            <span id="rIndexStatus" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="mechanical/bolt-torque.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Bolt Torque Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/beam-deflection.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Beam Deflection Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/flywheel-energy.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Flywheel Energy Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/shaft-diameter.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Shaft Diameter Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding spring rate</a></li>
+      <li><a href="#second" class="hover:underline">3. Spring index, Wahl factor, and end conditions</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Helical Spring Rate Is Calculated</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard helical spring stiffness formula (spring design handbook practice, general mechanical engineering reference)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>Spring rate (also called the spring constant, k) is the force required to deflect a spring by one unit of length — a stiffer spring has a higher rate and resists deflection more strongly, while a softer spring deflects further for the same applied force. For a helical coil spring, spring rate depends entirely on its geometry (wire diameter, coil diameter, number of active coils) and its material's shear modulus.</p>
+
+      <p><strong>Formula used:</strong> k = (G × d⁴) / (8 × D³ × n), where G is the material's shear modulus, d is the wire diameter, D is the mean coil diameter (measured to the center of the wire, not the outer edge), and n is the number of active coils. With G and stress-related terms in N/mm² (MPa) and d, D in mm, k comes out in N/mm.</p>
+
+      <p><strong>Worked example:</strong> a compression spring with 3 mm wire diameter, 24 mm mean coil diameter, 10 active coils, made from spring steel (G = 79,300 MPa): k = (79,300 × 3⁴) / (8 × 24³ × 10) = (79,300 × 81) / (8 × 13,824 × 10) = 6,423,300 / 1,105,920 ≈ 5.81 N/mm. That means the spring needs about 5.81 N of force for every 1 mm it's compressed — so compressing it 20 mm would need roughly 116 N.</p>
+
+      <p><strong>Why wire diameter has such an outsized effect:</strong> d is raised to the fourth power in the numerator — doubling wire diameter increases spring rate by a factor of 16 (2⁴), all else being equal. This is by far the most sensitive geometric parameter in spring design, which is why even a small change in wire gauge produces a large change in stiffness, and why spring manufacturers offer wire in closely spaced standard gauge increments.</p>
+
+      <p><strong>Practical use — sizing a spring for a target rate:</strong> in real design work, you usually start with a target spring rate (from the application's force-deflection requirement) and work backward to find a combination of wire diameter, coil diameter, and active coils that achieves it — often iterating between a few standard wire gauges and checking the resulting spring index and stress. This calculator is set up for the forward direction (geometry → rate), which is exactly what you need to verify a candidate design before committing to it.</p>
+
+      <p><strong>Solid height and maximum deflection limits:</strong> a compression spring can only deflect until its coils touch each other (solid height, roughly n_total × wire diameter for closely-wound coils) — the linear spring rate calculated here only applies up to some safe fraction of that solid height, since stress rises sharply as the spring approaches solid and coil-to-coil contact changes its behavior entirely. A commonly used design guideline keeps working deflection to no more than about 80% of the deflection at solid height, leaving margin against accidental over-compression in service.</p>
+
+      <p><strong>Static vs dynamic (fatigue) spring applications:</strong> this calculator gives the static spring rate, valid regardless of how the spring is loaded over time. For springs that cycle repeatedly (valve springs, clutch springs, most mechanical springs in continuous machinery), fatigue life becomes a separate and often governing design consideration — stress levels that would be perfectly safe for a one-time static load can lead to fatigue failure after enough load cycles, requiring a lower working stress (and therefore often a lower spring rate for the same wire) than a purely static design would need.</p>
+
+      <p><strong>Series and parallel spring combinations:</strong> when springs work together, their combined rate follows the same rules as electrical resistors, but inverted — springs in parallel (side by side, sharing the same deflection) add their rates directly (k_total = k1 + k2 + ...), while springs in series (stacked end to end, sharing the same load) combine as 1/k_total = 1/k1 + 1/k2 + ... This matters for suspension and cushioning designs that intentionally use multiple springs together to achieve a combined rate that a single spring alone couldn't practically provide.</p>
+
+      <p><strong>Free length, working deflection, and installed height:</strong> a compression spring has a free length (uncompressed), and in service is typically pre-loaded to some installed height before any working deflection is applied on top of that. The spring rate calculated here describes the relationship between force and deflection uniformly throughout the spring's working range — it doesn't change with how much the spring is already compressed (for a standard, constant-pitch helical spring), which is why a single k value can be used to predict force at any point within the spring's linear working range once you know the deflection from free length.</p>
+
+      <p><strong>Material selection for spring wire:</strong> beyond shear modulus, spring wire material selection also depends on allowable stress, corrosion resistance requirements, operating temperature, and cost. Music wire (ASTM A228) offers the highest strength and is common for smaller, high-stress springs; oil-tempered wire and chrome-silicon/chrome-vanadium alloys are used for larger springs or higher-temperature applications; stainless steel wire trades some strength for corrosion resistance in wet or corrosive environments. Each of these has its own characteristic shear modulus and allowable stress, so material selection affects both the rate calculation's G input and the separate stress check.</p>
+
+      <p><strong>Buckling in slender compression springs:</strong> a compression spring that's long relative to its coil diameter (a high slenderness ratio, free length divided by mean coil diameter) can buckle sideways under load, similar to how a slender column buckles under axial compression, rather than compressing straight down. Springs with a free-length-to-diameter ratio above roughly 4 often need a guide rod, guide sleeve, or must be checked against buckling charts specific to their end-condition (free, guided, or fixed ends) — this calculator's rate formula remains valid regardless, but the spring's actual working behavior can become unpredictable if buckling occurs, making this a separate and important check for long, slender spring designs.</p>
+
+      <p><strong>Summary:</strong> use k = Gd⁴/(8D³n) with the mean coil diameter (not outer diameter) and active coil count (not total coils) for an accurate spring rate, check the resulting spring index falls in the practical 4-12 range, run a separate stress calculation using the Wahl factor before finalizing dimensions, and check solid height, fatigue life, and buckling risk (for slender springs) as additional, separate design steps beyond this rate calculation.</p>
+
+      <p>This preliminary-then-verify pattern — use a formula to get a fast first-pass answer, then run the additional checks that the simple formula doesn't cover — shows up throughout mechanical design, and spring design is a particularly good example of it: the rate formula alone tells you almost nothing about whether a candidate geometry is actually a safe, manufacturable, durable spring, only whether it hits your target stiffness. Both pieces of information matter, but they come from different calculations.</p>
+
+      <p><strong>A note on units and precision:</strong> because wire diameter is raised to the fourth power and coil diameter to the third power, small measurement or rounding errors in either dimension compound significantly in the final rate calculation. When precision matters (matching an existing spring, or hitting a tight rate tolerance for a critical application), use the most precise available wire and coil diameter measurements rather than nominal or catalog-rounded values, and be aware that a seemingly negligible 0.05mm error in wire diameter can shift calculated rate by a percent or more.</p>
+
+      <p>Standard wire gauge tables (such as SWG or metric wire diameter series) list the exact nominal diameters available from wire manufacturers — checking your calculated wire diameter requirement against these standard sizes early in the design process avoids specifying a non-standard diameter that would require a special wire order, adding cost and lead time to an otherwise straightforward spring procurement.</p>
+
+      <p>Finally, this calculator's inputs and outputs assume a standard, constant-pitch, constant-diameter helical spring — variable-pitch, conical, or barrel-shaped springs (used where a non-linear or space-constrained force-deflection response is needed) have more complex, non-constant rate behavior that this simple formula does not capture, and need specialized design methods beyond the scope of this calculator.</p>
+
+      <p>If your application needs a non-constant rate, treat this calculator's constant-pitch formula as a useful reference point for understanding the underlying relationships, then consult a spring design handbook or manufacturer for the specialized calculation appropriate to your specific non-standard geometry.</p>
+
+      <p>For a mission-critical spring application, an experienced spring manufacturer's engineering team is generally the fastest and most reliable path to a validated final design, since they combine formula-based sizing with practical manufacturing knowledge and material testing data that a calculator alone cannot provide.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">d = 3 mm, D = 24 mm, n = 10 active coils, G = 79,300 MPa: k = (79,300 × 3⁴) ÷ (8 × 24³ × 10) ≈ <strong>5.81 N/mm</strong> — so a 20 mm compression needs about <strong>116 N</strong> of force.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator computes the theoretical spring rate for a helical coil spring under axial load only — it does not check for solid height, maximum safe deflection, buckling (for slender springs), or fatigue life, all of which are essential for a complete spring design. Always verify a spring design against the manufacturer's or applicable spring design standard's full set of checks before finalizing.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Design Check</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Spring Index (C = D/d) and Why It Matters</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Spring Index (C = D/d)</th>
+          <th class="text-left px-4 py-2 font-semibold">Characteristic</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">Below 4</td><td class="px-4 py-2">Difficult to wind, high stress concentration — generally avoided</td></tr>
+        <tr><td class="px-4 py-2">4 – 6</td><td class="px-4 py-2">Tight coil, higher stress correction needed (Wahl factor)</td></tr>
+        <tr><td class="px-4 py-2">6 – 9</td><td class="px-4 py-2">Commonly preferred practical range</td></tr>
+        <tr><td class="px-4 py-2">9 – 12</td><td class="px-4 py-2">Acceptable, moderate buckling risk on long springs</td></tr>
+        <tr><td class="px-4 py-2">Above 12</td><td class="px-4 py-2">Slender, prone to buckling/tangling — needs guide or is generally avoided</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Spring index (C = D/d, mean coil diameter divided by wire diameter) is a quick sanity check on whether a spring's proportions are practical to manufacture and structurally sound. A very low index concentrates stress on the inside of each coil (needing a correction factor like the Wahl factor for accurate stress calculation), while a very high index makes the spring slender and prone to buckling sideways under compression, especially for longer free lengths — both extremes are generally avoided in favor of the 4–12 range,     <p>The Wahl correction factor is worth knowing about even for a rate-only calculation: at low spring index, actual peak stress in the wire is meaningfully higher than the basic (uncorrected) torsion stress formula suggests, due to both direct shear and coil curvature effects concentrating stress on the inside of each coil. A separate stress calculation using the Wahl factor (which depends on spring index) is     <p>End condition also affects total coil count relative to active coils, and therefore the free length calculation — plain ends, plain ground ends, squared ends, and squared-and-ground ends each remove a different number of coils from active service, with squared-and-ground ends (the most common for compression springs seated against a flat surface) typically removing about 2 full coils' worth of active behavior from the total wound coil count.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Spring Rate</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Using outer diameter instead of mean coil diameter.</strong> D in the formula must be the mean (center-to-center) coil diameter, not the outer diameter — Mean D = Outer D − wire diameter. Using outer diameter directly overstates D (and, since D is cubed, significantly understates the calculated spring rate).</p>
+      <p><strong>2. Using total coils instead of active coils.</strong> Ground/closed end coils on a compression spring don't flex and shouldn't be counted — using total coil count instead of active coil count in the formula overstates n and understates the true spring rate.</p>
+      <p><strong>3. Wrong shear modulus for the actual wire material.</strong> Stainless steel spring wire has a meaningfully lower G than standard carbon/alloy spring steel — using a generic "steel" G value for a stainless spring (or vice versa) introduces a real error in the calculated rate.</p>
+      <p><strong>4. Forgetting that spring rate scales with the fourth power of wire diameter.</strong> A seemingly small change in wire gauge (say from 2.8mm to 3.0mm) can shift spring rate by 15-20% or more — always use the exact wire diameter, not a rounded approximation, when precision matters.</p>
+      <p><strong>5. Ignoring spring index when selecting a design.</strong> A calculated spring rate can be achieved by many different combinations of d, D, and n — but if the resulting spring index falls outside the practical 4–12 range, the design may be difficult to manufacture reliably or prone to buckling/stress concentration issues in service.</p>
+      <p><strong>6. Not checking solid height and maximum safe deflection.</strong> This calculator gives the linear spring rate only — it doesn't check whether your intended deflection would compress the spring to its solid height (coils touching) or exceed the wire's safe stress limit, both of which need separate checks before finalizing a spring design.</p>
+      <p><strong>7. Applying static design assumptions to a cyclically loaded spring.</strong> Fatigue life, not just static stress, governs springs subject to repeated cycling — a spring rate and stress level acceptable for a one-time static load can still fail prematurely by fatigue under continuous cyclic operation if fatigue-specific stress limits aren't checked separately.</p>
+      <p><strong>8. Miscalculating combined spring rate for springs used in series or parallel.</strong> Parallel springs add rates directly; series springs combine as reciprocals — using the wrong combination rule (or applying single-spring logic to a multi-spring assembly) gives a significantly wrong overall system stiffness.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for helical spring rate?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">k = (G × d⁴) / (8 × D³ × n), where k is spring rate (stiffness), G is the material's shear modulus, d is the wire diameter, D is the mean coil diameter (not outer diameter), and n is the number of active coils.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What's the difference between mean coil diameter and outer diameter?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Mean coil diameter (D) is measured to the center of the wire, while outer diameter is measured to the outside edge — D = Outer Diameter − wire diameter (d). Using outer diameter directly in the formula instead of mean diameter is a very common and consequential error, since D is cubed in the formula.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What's the difference between total coils and active coils?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Active coils (n) are the coils that actually flex and contribute to the spring's deflection. Total coils include additional coils at each end that are ground flat or closed for a stable seating surface (common on compression springs) and don't contribute to the active spring rate — active coils are typically 1.5 to 2.5 fewer than total coils, depending on the end configuration.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What shear modulus (G) should I use for spring steel?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For common spring steels (music wire, oil-tempered, chrome-silicon), G is typically around 78,000-80,000 MPa (79,300 MPa is a frequently used default). For stainless steel spring wire, G is somewhat lower, typically around 69,000-72,000 MPa — always check the specific wire material's published shear modulus for an accurate result.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is spring rate so sensitive to coil diameter?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Because D is cubed in the denominator of the formula — doubling the mean coil diameter reduces spring rate to one-eighth of its original value (for the same wire diameter and coil count), which is why even small changes in coil diameter have an outsized effect on stiffness compared to changing the number of coils.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How does spring index (C = D/d) affect the design?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Spring index describes the coil's proportions — a low index (below about 4) means a relatively thick wire on a tight coil, which is hard to wind and concentrates stress; a high index (above about 12) means a slender coil that's prone to buckling and tangling. Most practical spring designs target a spring index between roughly 4 and 12, with 6-9 being a commonly preferred sweet spot.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does adding more active coils make a spring stiffer or softer?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Softer — spring rate is inversely proportional to the number of active coils (n is in the denominator), so more coils spread the same total deflection over more turns, reducing the stress and force needed per unit of deflection. Fewer active coils make the spring stiffer for the same wire and coil diameter.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is this formula valid for both compression and extension springs?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, the basic spring rate formula (k = Gd⁴/8D³n) is the same for compression and extension springs, since both are helical coil springs loaded axially. Extension springs, however, also need their end-hook design checked separately, and often incorporate initial tension (a preload that must be overcome before the spring starts to stretch), which isn't captured by the basic rate formula alone.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do springs combine when used together in series or parallel?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Parallel springs (side by side, sharing the same deflection) add their rates directly: k_total = k1 + k2 + .... Series springs (stacked end to end, sharing the same load) combine as reciprocals: 1/k_total = 1/k1 + 1/k2 + .... Using the wrong combination rule for your actual spring arrangement gives an incorrect overall system stiffness.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateSpringRate(){
+    const d = parseFloat(document.getElementById('wireDia').value);
+    const D = parseFloat(document.getElementById('coilDia').value);
+    const n = parseFloat(document.getElementById('coils').value);
+    const G = parseFloat(document.getElementById('shearMod').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(d) || d <= 0){ errors.push('Enter a valid wire diameter greater than 0.'); }
+    if(isNaN(D) || D <= 0){ errors.push('Enter a valid mean coil diameter greater than 0.'); }
+    if(isNaN(n) || n <= 0){ errors.push('Enter a valid number of active coils greater than 0.'); }
+    if(isNaN(G) || G <= 0){ errors.push('Enter a valid shear modulus greater than 0.'); }
+    if(!isNaN(D) && !isNaN(d) && D <= d){ errors.push('Mean coil diameter should be larger than wire diameter.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rIndex').textContent = '\u2014';
+      document.getElementById('rIndexStatus').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const k = (G * Math.pow(d,4)) / (8 * Math.pow(D,3) * n);
+    const springIndex = D / d;
+    let indexStatus = 'Good (4\u201312)';
+    if(springIndex < 4) indexStatus = 'Too tight (<4)';
+    else if(springIndex > 12) indexStatus = 'Too slender (>12)';
+
+    document.getElementById('rResult').textContent = k.toLocaleString('en-IN', {maximumFractionDigits:3}) + ' N/mm';
+    document.getElementById('resultSub').textContent = 'd=' + d + 'mm, D=' + D + 'mm, n=' + n + ' active coils';
+    document.getElementById('rIndex').textContent = springIndex.toFixed(2);
+    document.getElementById('rIndexStatus').textContent = indexStatus;
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Wire Diameter (d)</td><td>${d} mm</td></tr>
+                <tr><td>Mean Coil Diameter (D)</td><td>${D} mm</td></tr>
+                <tr><td>Active Coils (n)</td><td>${n}</td></tr>
+                <tr><td>Shear Modulus (G)</td><td>${G.toLocaleString('en-IN')} MPa</td></tr>
+                <tr><td><strong>Spring Rate (k)</strong></td><td><strong>${k.toFixed(3)} N/mm</strong></td></tr>
+                <tr><td>Spring Index (C = D/d)</td><td>${springIndex.toFixed(2)} \u2014 ${indexStatus}</td></tr>
+                <tr><td>Force for 10mm deflection</td><td>${(k*10).toFixed(2)} N</td></tr>
+                <tr><td>Force for 25mm deflection</td><td>${(k*25).toFixed(2)} N</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateSpringRate();
+</script>
+
+</body>
+</html>

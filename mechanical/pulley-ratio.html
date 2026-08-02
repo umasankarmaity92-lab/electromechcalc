@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Pulley Ratio Calculator (Speed Ratio & Driven RPM) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Pulley Ratio Calculator. Enter driver and driven pulley diameters plus driver RPM to get the speed ratio and driven pulley RPM instantly, with formula and worked example.">
+<meta name="keywords" content="pulley ratio calculator, pulley speed ratio formula, driven pulley rpm calculator, belt drive ratio calculator, pulley diameter speed calculator">
+<meta name="robots" content="index, follow">
+<!-- mechanical = electrical | mechanical | financial (no slashes).
+     pulley-ratio = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/pulley-ratio">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Pulley Ratio Calculator">
+<meta property="og:description" content="Free Pulley Ratio Calculator — enter driver/driven pulley diameters and driver RPM to get speed ratio and driven RPM instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/pulley-ratio">
+<meta property="og:image" content="https://www.electromechcalc.com/logo.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pulley Ratio Calculator">
+<meta name="twitter:description" content="Free Pulley Ratio Calculator — enter driver/driven pulley diameters and driver RPM to get speed ratio and driven RPM instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Pulley Ratio Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/pulley-ratio",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Pulley Ratio Calculator. Enter driver and driven pulley diameters plus driver RPM to get the speed ratio and driven pulley RPM instantly, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for pulley speed ratio?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Speed Ratio = D_driven / D_driver = N_driver / N_driven. This means driven pulley RPM = Driver RPM × (Driver Diameter ÷ Driven Diameter) — note that the diameter ratio and the speed ratio are inversely related to each other." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is a bigger driven pulley slower, not faster?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Because both pulleys share the same belt speed — a larger driven pulley has a bigger circumference, so it only needs to complete fewer revolutions per minute to match the same belt speed as a smaller driver pulley moving faster (in RPM). This inverse relationship (bigger diameter = slower RPM, for the same belt speed) is the whole basis of using pulleys to change speed." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a 'step-down' vs a 'step-up' pulley drive?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A step-down drive uses a larger driven pulley than the driver, reducing speed (and proportionally increasing torque at the driven shaft) — common for slowing a fast motor down to drive a pump, fan, or conveyor. A step-up drive uses a smaller driven pulley, increasing speed (and proportionally reducing torque) — less common, used when you specifically need higher output speed than the driver provides." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does changing pulley size change torque as well as speed?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — for an ideal, lossless belt drive, power is roughly conserved (minus small belt friction losses), so if speed decreases (step-down), torque increases proportionally at the driven shaft, and vice versa for a step-up drive. This mirrors exactly how a gearbox trades speed for torque." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I choose pulley sizes for a target speed ratio?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Pick a driver pulley size (often set by the motor shaft or an existing pulley), then solve for the driven pulley diameter: D_driven = D_driver × (N_driver ÷ N_driven_target). Round to the nearest commercially available standard pulley size, then recalculate actual achieved RPM with that rounded size, since it likely won't be exactly your target." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does belt slip affect the driven RPM in practice?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — real V-belt drives typically run 1-2% slower than the theoretical no-slip calculation under normal load, more under heavy load or with belt wear. For precision applications, either use a synchronous (toothed) belt, which eliminates slip, or measure actual driven RPM directly rather than relying purely on the calculated theoretical value." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use this calculator for a chain-and-sprocket drive instead of belt-and-pulley?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The same inverse relationship principle applies (sprocket teeth count replaces pulley diameter: Speed Ratio = Teeth_driven ÷ Teeth_driver), but you'd substitute tooth counts for diameters in that case — chain drives don't slip the way belts can, so the calculated ratio is generally more exactly achieved in practice for a chain drive than for a V-belt." }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if driver and driven pulleys are the same diameter?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The speed ratio is 1:1 — driven RPM equals driver RPM exactly (in the ideal no-slip case), and no speed change occurs. Equal-diameter pulleys are used purely to transmit rotation and power between two shafts without changing speed or torque, for example to relocate a drive to a more convenient position." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="stylesheet" href="/assets/tailwind.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Belts & Pulleys
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Pulley Ratio <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Speed ratio and driven pulley RPM from driver/driven pulley diameters and driver speed — formula and worked example included.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Pulley Ratio Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter driver and driven pulley diameters, and driver RPM.</p>
+
+      <div class="space-y-4 mb-5">
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Driver Pulley \u00d8 (mm)</label>
+            <input id="driverDia" type="number" value="100" step="1" min="0" placeholder="e.g. 100" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Driven Pulley \u00d8 (mm)</label>
+            <input id="drivenDia" type="number" value="250" step="1" min="0" placeholder="e.g. 250" class="input-field mt-2">
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Driver Speed, N1 (RPM)</label>
+          <input id="driverRpm" type="number" value="1440" step="1" min="0" placeholder="e.g. 1440" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculatePulleyRatio()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">N2 = N1 × (D1 ÷ D2)</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Driven Pulley Speed</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Speed Ratio</span>
+            <span id="rRatio" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Drive Type</span>
+            <span id="rDriveType" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="mechanical/belt-speed.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Belt Speed Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/chain-length.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Chain Length Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/shaft-torque.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Shaft Torque Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/flywheel-energy.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Flywheel Energy Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding pulley ratio</a></li>
+      <li><a href="#second" class="hover:underline">3. Step-up vs step-down drives</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Pulley Ratio and Driven RPM Are Calculated</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard belt/pulley kinematics (inverse diameter-speed relationship)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>A pulley drive changes rotational speed (and, inversely, torque) between a driver shaft (usually a motor) and a driven shaft (a pump, fan, compressor, or machine spindle), simply by using two different-sized pulleys connected by a belt. Because the belt itself moves at one consistent linear speed, the two pulleys' rotational speeds must differ inversely with their diameters.</p>
+
+      <p><strong>Formula used:</strong> Speed Ratio = D_driven ÷ D_driver = N_driver ÷ N_driven, which rearranges to N_driven = N_driver × (D_driver ÷ D_driven). Note the inverse relationship: a larger driven pulley diameter relative to the driver produces a proportionally lower driven speed, and vice versa.</p>
+
+      <p><strong>Worked example:</strong> a motor with a 100 mm driver pulley spinning at 1440 RPM, driving a 250 mm driven pulley: N_driven = 1440 × (100 ÷ 250) = 1440 × 0.4 = 576 RPM. The speed ratio is 250:100, or 2.5:1 — this is a step-down drive, reducing speed (and proportionally increasing torque) by a factor of 2.5 at the driven shaft.</p>
+
+      <p><strong>Why the diameter ratio and speed ratio are "flipped":</strong> a common point of confusion is expecting the bigger pulley to spin faster — the opposite is true. Since both pulleys share the same belt speed V = πDN/60, and V is fixed by the belt, a bigger D must be paired with a proportionally smaller N to keep V constant. This is the exact same principle as gear ratios: the larger diameter (or larger tooth count, for gears) is always the slower-turning, higher-torque side of the pair.</p>
+
+      <p><strong>Practical pulley selection:</strong> real-world pulley sizing starts from a target output speed (dictated by the driven equipment's requirement) and a known driver speed (the motor's rated RPM), then solves for the diameter ratio needed — D_driven = D_driver × (N_driver ÷ N_driven_target). Since pulleys only come in discrete standard sizes, the final achieved ratio (and driven RPM) is normally slightly different from the exact target once you round to available stock sizes — always recalculate with the actual rounded pulley sizes to confirm the achieved speed is acceptable for your application.</p>
+
+      <p><strong>Torque and power implications of a pulley ratio:</strong> for an ideal, lossless belt drive, power is conserved between driver and driven shafts (minus small belt friction losses, typically a few percent), which means torque and speed trade off inversely — a step-down drive (larger driven pulley, lower driven speed) proportionally increases torque at the driven shaft, while a step-up drive (smaller driven pulley, higher driven speed) proportionally reduces it. This is exactly analogous to a gear reduction, and means pulley selection affects not just the driven equipment's speed but also how much torque its shaft, coupling, and bearings need to be rated for.</p>
+
+      <p><strong>Multi-stage pulley drives:</strong> where a single pulley pair can't achieve a large enough speed ratio within practical pulley size limits, designers sometimes use two belt stages in series (a compound drive), each contributing its own ratio, with the overall ratio equal to the product of the two individual stage ratios. This is less common than a single-stage belt drive for moderate ratios, but becomes a practical option when a very large speed reduction is needed and a single-stage pulley pair would require an impractically large driven pulley.</p>
+
+      <p><strong>Choosing between a pulley step-down and a gearbox for a large ratio:</strong> very large speed reductions (say, 10:1 or higher) are often more practically achieved with a gearbox than a single-stage belt-pulley drive, since the driven pulley diameter needed for a large ratio can become impractically large, heavy, and expensive relative to an equivalent gearbox. Belt-pulley drives are generally favored for moderate ratios (roughly up to about 5:1 or so in a single stage) where their lower cost, simpler maintenance, and inherent overload-slip protection (a belt can slip under a jam, protecting downstream components, where a rigid gear train transmits the full shock load) outweigh a gearbox's typically higher precision and higher achievable ratio in a compact package.</p>
+
+      <p><strong>Belt overload protection as a design feature:</strong> unlike a rigid gear train, a V-belt drive can slip under a sudden jam or overload rather than transmitting the full shock load to downstream components — this is often treated as a deliberate safety/protection feature in machine design, since it can prevent damage to a motor, gearbox, or driven equipment during an unexpected jam, at the cost of some process downtime while the jam is cleared and the belt re-engages. This overload-slip behavior is one of several factors (alongside cost, simplicity, and vibration damping) that make belt-pulley drives attractive even where a gear train could achieve the same ratio more precisely.</p>
+
+      <p><strong>Pulley material and construction considerations:</strong> cast iron pulleys are common for lower-speed, lower-cost applications; steel or aluminum pulleys are used where lighter weight or higher-speed balance is needed. Pulley balance becomes increasingly important as speed rises — an out-of-balance pulley at high RPM generates vibration that can shorten bearing and belt life, which is why higher-speed drives sometimes specify dynamically balanced pulleys rather than accepting standard as-cast balance tolerance.</p>
+
+      <p><strong>Verifying an existing drive's ratio in the field:</strong> when troubleshooting or documenting an existing installation without access to original design drawings, measuring both pulley diameters directly (with calipers or a tape measure around the circumference, then dividing by π) and either reading motor nameplate RPM or measuring actual RPM with a tachometer gives you everything needed to verify the installed ratio and driven speed against this calculator's formula — a quick field check that often resolves confusion about why a piece of equipment is running faster or slower than expected.</p>
+
+      <p><strong>Summary:</strong> use Speed Ratio = D_driven ÷ D_driver = N_driver ÷ N_driven to find driven pulley RPM, remember that a larger driven pulley always means lower driven speed (and higher driven torque), account for roughly 1-2% belt slip in precision applications, and consider a gearbox instead of an oversized single-stage pulley for large speed reductions beyond roughly 5:1.</p>
+
+      <p>This same speed-torque trade-off applies identically to chain-and-sprocket drives (using tooth counts in place of diameters) and to gear trains (using tooth counts or pitch diameters) — pulley ratio, chain drive ratio, and gear ratio are all expressions of the same underlying mechanical advantage principle, just implemented with different power transmission hardware suited to different speed, torque, precision, and cost requirements.</p>
+
+      <p><strong>A closing practical note:</strong> when specifying a new drive from scratch, it's often easier to work backward from your driven equipment's required operating speed and the motor's available rated speed to a target ratio, then select standard pulley sizes that get as close as practical to that target, rather than trying to force an exact theoretical ratio using custom or unusual pulley dimensions. The small deviation from a perfectly exact target ratio that results from using standard, readily available pulley sizes is almost always an acceptable trade for lower cost and faster procurement.</p>
+
+      <p>Whether the application is a small workshop drive or a large industrial process line, the same fundamental relationship this calculator computes — diameter and speed trading off inversely to keep belt speed constant — is what makes pulley-based speed and torque conversion possible in the first place, and understanding it well pays off across virtually every mechanical drive design task you'll encounter.</p>
+
+      <p>Use the worked example and reference table above to build intuition for the numbers, then apply the same relationship confidently to your own driver/driven pulley combination and target speed.</p>
+
+      <p>And if your drive involves more than two pulleys, or a compound multi-stage arrangement, remember that the overall ratio is simply the product of each individual stage's ratio — work through the chain of pulleys one stage at a time, using this same relationship at each step, to arrive at the final driven speed.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Driver \u00d8 100 mm at 1440 RPM, Driven \u00d8 250 mm: N2 = 1440 × (100 ÷ 250) = <strong>576 RPM</strong>. Speed ratio = 2.5:1 (step-down).</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator gives the theoretical driven speed assuming zero belt slip. Real V-belt drives typically see 1-2% slip under load, so actual driven RPM will be slightly lower than calculated here — for slip-free, precise speed matching, use a synchronous (toothed) belt and pulley set instead.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Design Choice</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Step-Up vs Step-Down: Choosing Driver and Driven Pulley Sizes</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Drive Type</th>
+          <th class="text-left px-4 py-2 font-semibold">Driven vs Driver Ø</th>
+          <th class="text-left px-4 py-2 font-semibold">Speed Effect</th>
+          <th class="text-left px-4 py-2 font-semibold">Torque Effect</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">Step-down</td><td class="px-4 py-2">Driven larger</td><td class="px-4 py-2">Decreases</td><td class="px-4 py-2">Increases</td></tr>
+        <tr><td class="px-4 py-2">1:1 (direct)</td><td class="px-4 py-2">Equal diameters</td><td class="px-4 py-2">Unchanged</td><td class="px-4 py-2">Unchanged</td></tr>
+        <tr><td class="px-4 py-2">Step-up</td><td class="px-4 py-2">Driven smaller</td><td class="px-4 py-2">Increases</td><td class="px-4 py-2">Decreases</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Step-down drives are by far the most common in industrial practice — motors are typically selected for their efficient, standard operating RPM range, and most driven equipment (pumps, fans, conveyors, mixers) needs to run slower than that, so a larger driven pulley reduces speed while simultaneously multiplying torque at the driven shaft, similar to a mechanical gear reduction. Step-up drives are less common, generally reserved for specific cases where a driven component genuinely needs to spin faster than the driver (    <p>In each case, remember that the torque effect runs opposite to the speed effect — a step-down drive that reduces speed simultaneously increases available torque at the driven shaft, which is often exactly what's needed when driving equipment (pumps, mixers, conveyors) that requires substantial starting or running torque at     <p>This is exactly why so many pump, fan, and compressor drives use a step-down belt or gear ratio rather than direct-coupling the driven equipment straight to a standard motor shaft — the motor's native speed rarely matches the driven equipment's ideal operating speed, and the step-down ratio simultaneously solves both the speed mismatch and delivers the higher torque the driven equipment needs at its lower operating speed.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Pulley Ratio</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Expecting the larger pulley to spin faster.</strong> The relationship is inverse — a larger driven pulley always spins slower than a smaller driver pulley for the same belt speed, not faster; this is one of the most common conceptual mix-ups in pulley sizing.</p>
+      <p><strong>2. Mixing up which pulley is "driver" and which is "driven."</strong> The formula's roles matter — swapping driver and driven diameters/speeds in the formula gives the reciprocal of the correct ratio, a significantly different (and wrong) answer.</p>
+      <p><strong>3. Ignoring belt slip in a precision application.</strong> Real V-belt drives typically run 1-2% slower than the theoretical calculation under load — for speed-critical timing or synchronization needs, this small but real discrepancy matters and a slip-free synchronous belt should be used instead.</p>
+      <p><strong>4. Forgetting that changing speed also changes torque.</strong> A step-down pulley drive that halves speed roughly doubles torque at the driven shaft (for the same power, minus small belt losses) — downstream components (shaft, coupling, driven equipment) need to be rated for the resulting torque, not just the resulting speed.</p>
+      <p><strong>5. Not rounding to available standard pulley sizes before finalizing a design.</strong> The exact diameter that gives a perfectly precise target ratio is rarely a standard stock size — always select the nearest available pulley sizes and recalculate the actual achieved ratio and speed with those real dimensions, rather than assuming the theoretical target is exactly what you'll get.</p>
+      <p><strong>6. Assuming pulley ratio and gear ratio conventions are calculated identically without checking.</strong> While the underlying inverse-diameter principle is the same, gear ratios use tooth counts (which relate directly and proportionally to pitch diameter) — make sure you're consistently using diameters for pulleys and tooth counts (or matching pitch diameters) for gears, not mixing the two conventions.</p>
+      <p><strong>7. Choosing a single-stage pulley ratio that's impractically large.</strong> Very large speed reductions in one belt stage need a very large driven pulley diameter, which can become impractical, heavy, or expensive — for large ratios, consider a multi-stage belt drive or a gearbox instead of forcing an oversized single-stage pulley.</p>
+      <p><strong>8. Overlooking the torque increase that comes with a step-down speed reduction.</strong> A step-down pulley drive doesn't just reduce speed — it proportionally increases torque at the driven shaft, which needs to be accounted for when sizing that shaft, its coupling, key, and bearings, not just the pulley itself.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for pulley speed ratio?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Speed Ratio = D_driven / D_driver = N_driver / N_driven. This means driven pulley RPM = Driver RPM × (Driver Diameter ÷ Driven Diameter) — note that the diameter ratio and the speed ratio are inversely related to each other.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is a bigger driven pulley slower, not faster?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Because both pulleys share the same belt speed — a larger driven pulley has a bigger circumference, so it only needs to complete fewer revolutions per minute to match the same belt speed as a smaller driver pulley moving faster (in RPM). This inverse relationship (bigger diameter = slower RPM, for the same belt speed) is the whole basis of using pulleys to change speed.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is a 'step-down' vs a 'step-up' pulley drive?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A step-down drive uses a larger driven pulley than the driver, reducing speed (and proportionally increasing torque at the driven shaft) — common for slowing a fast motor down to drive a pump, fan, or conveyor. A step-up drive uses a smaller driven pulley, increasing speed (and proportionally reducing torque) — less common, used when you specifically need higher output speed than the driver provides.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does changing pulley size change torque as well as speed?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — for an ideal, lossless belt drive, power is roughly conserved (minus small belt friction losses), so if speed decreases (step-down), torque increases proportionally at the driven shaft, and vice versa for a step-up drive. This mirrors exactly how a gearbox trades speed for torque.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I choose pulley sizes for a target speed ratio?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Pick a driver pulley size (often set by the motor shaft or an existing pulley), then solve for the driven pulley diameter: D_driven = D_driver × (N_driver ÷ N_driven_target). Round to the nearest commercially available standard pulley size, then recalculate actual achieved RPM with that rounded size, since it likely won't be exactly your target.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does belt slip affect the driven RPM in practice?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — real V-belt drives typically run 1-2% slower than the theoretical no-slip calculation under normal load, more under heavy load or with belt wear. For precision applications, either use a synchronous (toothed) belt, which eliminates slip, or measure actual driven RPM directly rather than relying purely on the calculated theoretical value.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I use this calculator for a chain-and-sprocket drive instead of belt-and-pulley?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The same inverse relationship principle applies (sprocket teeth count replaces pulley diameter: Speed Ratio = Teeth_driven ÷ Teeth_driver), but you'd substitute tooth counts for diameters in that case — chain drives don't slip the way belts can, so the calculated ratio is generally more exactly achieved in practice for a chain drive than for a V-belt.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What happens if driver and driven pulleys are the same diameter?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The speed ratio is 1:1 — driven RPM equals driver RPM exactly (in the ideal no-slip case), and no speed change occurs. Equal-diameter pulleys are used purely to transmit rotation and power between two shafts without changing speed or torque, for example to relocate a drive to a more convenient position.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I use a belt-pulley drive or a gearbox for a large speed reduction?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For moderate ratios (roughly up to about 5:1), a single-stage belt-pulley drive is often simpler and cheaper. For larger ratios, a gearbox is usually more practical than an oversized driven pulley, since a very large single-stage pulley diameter becomes impractically heavy and expensive — a multi-stage belt drive is another option for large ratios where a gearbox isn't preferred.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculatePulleyRatio(){
+    const d1 = parseFloat(document.getElementById('driverDia').value);
+    const d2 = parseFloat(document.getElementById('drivenDia').value);
+    const n1 = parseFloat(document.getElementById('driverRpm').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(d1) || d1 <= 0){ errors.push('Enter a valid driver pulley diameter greater than 0.'); }
+    if(isNaN(d2) || d2 <= 0){ errors.push('Enter a valid driven pulley diameter greater than 0.'); }
+    if(isNaN(n1) || n1 <= 0){ errors.push('Enter a valid driver speed greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rRatio').textContent = '\u2014';
+      document.getElementById('rDriveType').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const n2 = n1 * (d1 / d2);
+    const ratio = d2 / d1;
+    let driveType = '1:1 (Direct)';
+    if(ratio > 1.02) driveType = 'Step-Down';
+    else if(ratio < 0.98) driveType = 'Step-Up';
+
+    document.getElementById('rResult').textContent = n2.toLocaleString('en-IN', {maximumFractionDigits:1}) + ' RPM';
+    document.getElementById('resultSub').textContent = 'Driven \u00d8' + d2 + 'mm from Driver \u00d8' + d1 + 'mm @ ' + n1 + ' RPM';
+    document.getElementById('rRatio').textContent = ratio.toFixed(2) + ' : 1';
+    document.getElementById('rDriveType').textContent = driveType;
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Driver Pulley \u00d8 (D1)</td><td>${d1} mm</td></tr>
+                <tr><td>Driven Pulley \u00d8 (D2)</td><td>${d2} mm</td></tr>
+                <tr><td>Driver Speed (N1)</td><td>${n1.toLocaleString('en-IN')} RPM</td></tr>
+                <tr><td>Speed Ratio (D2:D1)</td><td>${ratio.toFixed(3)} : 1</td></tr>
+                <tr><td><strong>Driven Speed (N2)</strong></td><td><strong>${n2.toFixed(2)} RPM</strong></td></tr>
+                <tr><td>Drive Type</td><td>${driveType}</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculatePulleyRatio();
+</script>
+
+</body>
+</html>

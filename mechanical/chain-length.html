@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Chain Length Calculator (Roller Chain Pitches) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Chain Length Calculator for a roller chain drive. Enter sprocket teeth counts, pitch, and center distance to get chain length in pitches and links, rounded to a valid even link count.">
+<meta name="keywords" content="chain length calculator, roller chain length formula, sprocket center distance calculator, chain pitch calculator, number of chain links">
+<meta name="robots" content="index, follow">
+<!-- mechanical = electrical | mechanical | financial (no slashes).
+     chain-length = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/chain-length">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Chain Length Calculator">
+<meta property="og:description" content="Free Chain Length Calculator for roller chain drives — enter sprocket teeth, pitch and center distance for chain length in links.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/chain-length">
+<meta property="og:image" content="https://www.electromechcalc.com/logo.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Chain Length Calculator">
+<meta name="twitter:description" content="Free Chain Length Calculator for roller chain drives — enter sprocket teeth, pitch and center distance for chain length in links.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Chain Length Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/chain-length",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Chain Length Calculator for a roller chain drive. Enter sprocket teeth counts, pitch, and center distance to get chain length in pitches and links, rounded to a valid even link count.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for roller chain length in pitches?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Lp = 2Cp + (N1+N2)/2 + ((N2−N1)²) / (4π²Cp), where Lp is chain length in number of pitches, Cp is center distance expressed in pitches (center distance ÷ pitch length), and N1, N2 are the number of teeth on the two sprockets." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why must the number of chain links always be an even number?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A roller chain link alternates between an inner (roller) link and an outer (pin) link — an even total link count allows the chain to close into a loop using a standard connecting link. An odd link count requires a special offset link, which is weaker and generally avoided in industrial chain drives, so the calculated pitch count is always rounded up to the nearest even integer." }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens to center distance after rounding the link count?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Since the calculated (non-integer) pitch length rarely lands exactly on an even number, rounding up slightly increases the actual chain length beyond the exact theoretical minimum — which means the actual achievable center distance is usually a little larger than your originally specified target center distance, not exactly equal to it." }
+    },
+    {
+      "@type": "Question",
+      "name": "What's a typical minimum center distance for a chain drive?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A commonly used guideline is a minimum center distance of about 30–50 pitches, or at least the sum of the two sprocket radii plus some clearance — too short a center distance reduces the wrap angle on the smaller sprocket, risking tooth skipping under load; there's no single hard minimum, but very short center distances relative to sprocket size should be avoided." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this formula work for both equal and unequal sprocket sizes?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — when N1 equals N2 (same size sprockets), the last term of the formula becomes zero and it simplifies to Lp = 2Cp + N (a straightforward doubled-center-distance-plus-teeth-count case), and the full formula smoothly handles any combination of different tooth counts as well." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I know which chain pitch size to use for my application?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Chain pitch is generally selected based on the power/torque being transmitted, chain speed, and sprocket tooth count, referencing the chain manufacturer's horsepower/power rating tables for each standard pitch (e.g., ANSI 40, 50, 60, or ISO 08B, 10B, 12B) — this calculator assumes you already know or have selected your pitch; it doesn't perform chain pitch selection from load requirements." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is minimum wrap angle on the small sprocket important?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Wrap angle is how much of the small sprocket's circumference the chain actually contacts — too short a center distance relative to the size difference between sprockets reduces wrap angle on the smaller sprocket, increasing the risk of the chain skipping teeth under load. A commonly cited minimum wrap angle guideline is around 120° on the smaller sprocket, though this varies by application and load severity." }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I add extra slack or just use the exact calculated even-link length?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The rounded-up even-link length already provides the necessary corrected center distance for proper installation — beyond that, chains still need correct working tension (not too tight, not excessively slack) which is normally set via an adjustable idler, slotted motor mounting, or a spring-loaded tensioner rather than by further arbitrarily lengthening the chain itself." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="stylesheet" href="/assets/tailwind.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Chains & Sprockets
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Chain Length <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Roller chain length in pitches and links for a given center distance and sprocket tooth counts — rounded to a valid even link count.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Chain Length Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter sprocket teeth counts, chain pitch, and target center distance.</p>
+
+      <div class="space-y-4 mb-5">
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Driver Sprocket Teeth, N1</label>
+            <input id="teeth1" type="number" value="17" step="1" min="0" placeholder="e.g. 17" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Driven Sprocket Teeth, N2</label>
+            <input id="teeth2" type="number" value="45" step="1" min="0" placeholder="e.g. 45" class="input-field mt-2">
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Chain Pitch, p (mm)</label>
+          <input id="pitch" type="number" value="15.875" step="0.001" min="0" placeholder="e.g. 15.875 (ANSI 60 / ISO 10B)" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Target Center Distance, C (mm)</label>
+          <input id="centerDist" type="number" value="500" step="1" min="0" placeholder="e.g. 500" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateChainLength()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">Lp = 2Cp + (N1+N2)/2 + ((N2−N1)²)/(4π²Cp)</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Chain Length (Links)</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Chain Length (mm)</span>
+            <span id="rLengthMm" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Actual Center Dist.</span>
+            <span id="rActualC" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="mechanical/pulley-ratio.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Pulley Ratio Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/belt-speed.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Belt Speed Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/shaft-torque.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Shaft Torque Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="mechanical/bolt-torque.html" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Bolt Torque Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding chain length calculation</a></li>
+      <li><a href="#second" class="hover:underline">3. Standard roller chain pitch reference</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Roller Chain Length Is Calculated</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard roller chain length formula (ANSI/ISO roller chain drive design practice)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>Sizing a roller chain for a sprocket-to-sprocket drive means finding how many chain links are needed to span a given center distance while properly wrapping both sprockets — too short and the chain won't reach; too long and it sags excessively. Because a roller chain is made of discrete links, the calculated length must be rounded up to a valid even number of links, which is why chain length calculation always ends with a rounding step, not just the raw formula output.</p>
+
+      <p><strong>Formula used:</strong> Lp = 2Cp + (N1+N2)/2 + ((N2−N1)²) / (4π²Cp), where Lp is chain length in number of pitches, Cp is the center distance expressed in pitches (center distance ÷ pitch length), N1 and N2 are the tooth counts of the two sprockets. The result Lp is then rounded UP to the nearest even integer (roller chains need an even link count to close with a standard connecting link), and actual chain length = rounded Lp × pitch.</p>
+
+      <p><strong>Worked example:</strong> a driver sprocket with 17 teeth and a driven sprocket with 45 teeth, ANSI 60 chain (pitch = 15.875 mm), target center distance 500 mm: Cp = 500 ÷ 15.875 ≈ 31.50 pitches. Lp = 2(31.50) + (17+45)/2 + ((45−17)²)/(4π²×31.50) = 63.0 + 31.0 + (784)/(1243.8) ≈ 63.0 + 31.0 + 0.63 ≈ 94.63 pitches, rounded up to the next even number: 96 links. Actual chain length = 96 × 15.875 ≈ 1524 mm, and the corresponding actual (slightly adjusted) center distance works out marginally larger than the original 500 mm target.</p>
+
+      <p><strong>Why the link count must round to an even number:</strong> a roller chain alternates between inner (roller) links and outer (pin) links along its length — an even total link count lets the chain close into a continuous loop using a standard connecting/master link. An odd count would need a special (and mechanically weaker) offset link to close the loop, which is why standard chain drive design practice always rounds the calculated length up to the next even integer rather than to the nearest integer.</p>
+
+      <p><strong>Recalculating actual center distance after rounding:</strong> since the rounded link count is (almost always) slightly more than the exact calculated value, the true achievable center distance with that rounded chain is marginally larger than your original target — the small increase is normal and expected, and most drives accommodate it with a slotted motor mount or adjustable idler sprocket to fine-tune final chain tension during installation.</p>
+
+      <p><strong>Chain drives versus belt drives — why choose one over the other:</strong> unlike a belt, a properly tensioned roller chain does not slip, giving precise, positive speed transmission regardless of load — this makes chain drives preferred wherever exact speed synchronization matters (timing-critical machinery, some conveyor indexing applications) or where high torque needs to be transmitted reliably without the risk of belt slip. The trade-off is that chain drives generally need lubrication, are noisier, and don't offer the shock-absorbing slip protection a belt provides, so the choice between chain and belt often comes down to whether positive, no-slip speed transmission or overload-protective slip is more valuable for the specific application.</p>
+
+      <p><strong>Chain pitch selection and power capacity:</strong> larger-pitch chains (ANSI 80, 100, and above) transmit substantially more power than smaller-pitch chains (ANSI 40, 50) at the same chain speed, but larger pitch also means a larger minimum sprocket size for a given tooth count, more chain weight, and typically lower maximum chain speed before centrifugal and impact effects become limiting. Selecting the correct pitch for an application balances the power/torque being transmitted against speed, available space, and cost — manufacturers publish horsepower rating tables cross-referencing pitch, sprocket tooth count, and chain speed to guide this selection, a separate step from the length calculation this tool performs.</p>
+
+      <p><strong>Lubrication and maintenance considerations:</strong> unlike most belts, roller chains require ongoing lubrication between the pins and bushings to prevent wear and extend service life — inadequate lubrication is one of the most common causes of premature chain elongation (wear-induced pitch stretch), which over time increases effective chain length and can require periodic tension readjustment or eventual chain replacement even on a drive that was correctly sized at installation.</p>
+
+      <p><strong>Sprocket wrap angle and minimum tooth engagement:</strong> for reliable power transmission, a chain needs adequate wrap (contact) around the smaller sprocket to maintain enough teeth in simultaneous engagement — a commonly cited minimum is around 120 degrees of wrap on the smaller sprocket, roughly equivalent to needing at least 3 teeth in contact at any moment for typical tooth counts. Very short center distances relative to a large difference between the two sprocket sizes can reduce wrap angle below this comfortable minimum, increasing the risk of the chain skipping or jumping teeth under load, particularly during shock or reversing loads.</p>
+
+      <p><strong>Sizing considerations for a driven sprocket with very few teeth:</strong> small sprockets (roughly under 17-19 teeth, depending on chain pitch and load) tend to run less smoothly and wear faster than larger sprockets, because chordal action — the slight speed and tension fluctuation that occurs as each link engages and disengages a discrete-toothed sprocket rather than a smooth pulley — becomes more pronounced with fewer teeth. Where possible, choosing a driver sprocket with at least 17-19 teeth is generally recommended practice for smoother running and longer chain/sprocket life, even if a smaller tooth count would technically achieve a desired ratio.</p>
+
+      <p><strong>Multi-strand chains for higher power capacity:</strong> where a single-strand chain of a given pitch can't transmit the required power within an acceptable chain speed and size, multi-strand chains (two or more parallel strands of chain running on correspondingly wider sprockets) increase power capacity roughly in proportion to the number of strands, without needing to step up to a larger, heavier single-strand pitch. This is a common solution for higher-power drives where space constraints or excessive weight rule out simply moving to a larger single-strand chain pitch.</p>
+
+      <p><strong>Summary:</strong> use Lp = 2Cp + (N1+N2)/2 + ((N2−N1)²)/(4π²Cp) to find theoretical chain length in pitches, always round the result up to the nearest even integer for a valid link count, recalculate actual center distance with that rounded length, keep the driver sprocket at 17+ teeth where practical for smooth running, and confirm adequate wrap angle on the smaller sprocket for reliable engagement under load.</p>
+
+      <p>This same rounding-to-even-links discipline and center-distance recalculation applies whether you're designing a brand-new drive from scratch or replacing a worn chain on existing sprockets — the formula and the practical constraints around it don't change based on whether the sprockets are already fixed in place or still being selected, only the specific numbers you're solving for change.</p>
+
+      <p>For a genuinely mission-critical chain drive (indexing machinery, large industrial conveyors, safety-relevant applications), it's worth having the final design reviewed against the chain manufacturer's complete design guidelines — covering power rating, service factor selection, lubrication method, and sprocket material — rather than relying on the length calculation alone, since correct length is necessary but not sufficient for a fully validated chain drive design.</p>
+
+      <p>The worked example and reference tables above give you the numbers to check your own calculation against, and the formula itself, once understood, becomes a quick reference for any future sprocket-to-sprocket chain sizing problem you run into, whether in a maintenance context (replacing a worn chain) or a new design context (specifying a chain drive from scratch).</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">N1=17, N2=45, pitch=15.875mm (ANSI 60), C=500mm: Cp ≈ 31.50, Lp ≈ 94.63 pitches → rounded up to <strong>96 links</strong> → chain length ≈ <strong>1524 mm</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator gives the standard theoretical chain length formula used for initial sizing — it does not account for chain sag/catenary allowance, dynamic tensioning devices, or the minimum wrap angle needed on the smaller sprocket for reliable engagement. Always round up to a valid even link count as shown, and verify the resulting actual center distance and wrap angle before finalizing a chain drive design.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Quick Reference</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Standard Roller Chain Pitches</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">ANSI No.</th>
+          <th class="text-left px-4 py-2 font-semibold">ISO Equivalent</th>
+          <th class="text-left px-4 py-2 font-semibold">Pitch (mm)</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">ANSI 40</td><td class="px-4 py-2">ISO 08B</td><td class="px-4 py-2">12.700 mm</td></tr>
+        <tr><td class="px-4 py-2">ANSI 50</td><td class="px-4 py-2">ISO 10B</td><td class="px-4 py-2">15.875 mm</td></tr>
+        <tr><td class="px-4 py-2">ANSI 60</td><td class="px-4 py-2">ISO 12B</td><td class="px-4 py-2">19.050 mm</td></tr>
+        <tr><td class="px-4 py-2">ANSI 80</td><td class="px-4 py-2">ISO 16B</td><td class="px-4 py-2">25.400 mm</td></tr>
+        <tr><td class="px-4 py-2">ANSI 100</td><td class="px-4 py-2">ISO 20B</td><td class="px-4 py-2">31.750 mm</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Note that ANSI 50 chain has a pitch of 15.875 mm, not ISO 10B's slightly different roller diameter and width specification — the two are dimensionally close and often cross-referenced, but always confirm exact compatibility (pitch, roller diameter, and width) between ANSI and ISO chain/sprocket standards before mixing components from different standards on the same drive, since a pitch mismatch — even a small one —     <p>When replacing a chain on existing equipment, always match the original pitch and chain type exactly rather than substituting a "close enough" alternative from a different standard, since even a nominally similar pitch value from a different standard can have subtly different roller diameter or width dimensions that     <p>Keeping a record of the exact chain standard, pitch, and strand count used on each piece of equipment (rather than relying on visual matching alone when ordering a replacement) avoids this class of mistake entirely and is good practice for any facility maintaining multiple chain-driven machines.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Chain Length</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Forgetting to round the calculated link count up to an even number.</strong> A roller chain needs an even link count to close with a standard connecting link — using the raw (often fractional, often odd-rounding) calculated value instead of rounding up to the nearest even integer produces a chain length that can't actually be assembled with a standard master link.</p>
+      <p><strong>2. Using the wrong pitch value for the actual chain/sprocket standard in use.</strong> Different chain standards (ANSI 40/50/60/80, ISO 08B/10B/12B/16B) have different pitch values — using the wrong pitch in the formula, or mixing components from two different standards on the same drive, leads to a chain that doesn't mesh correctly with the sprocket teeth.</p>
+      <p><strong>3. Keeping center distance in the wrong unit relative to pitch.</strong> The formula's Cp term needs center distance expressed IN PITCHES (center distance ÷ pitch length), not in raw mm — using raw millimetres for Cp without dividing by pitch first produces a wildly incorrect chain length.</p>
+      <p><strong>4. Choosing too short a center distance relative to sprocket size difference.</strong> A very short center distance relative to a large difference in sprocket sizes reduces the wrap angle on the smaller sprocket, increasing the risk of the chain skipping teeth under load — there's no single universal minimum, but very tight, unequal-sprocket layouts deserve a wrap-angle check.</p>
+      <p><strong>5. Not recalculating actual center distance after rounding the link count.</strong> Since the rounded (even) link count is slightly longer than the exact theoretical minimum, the true achievable center distance is marginally larger than your original target — designs with a fixed, non-adjustable center distance need to account for this small increase, typically via a slotted mount or idler sprocket.</p>
+      <p><strong>6. Skipping the tension/sag adjustment mechanism in the final drive design.</strong> This calculator sizes the chain for a target center distance, but a working chain drive still needs a way to fine-tune actual tension (via an adjustable motor base, slotted mount, or idler sprocket) — chain length alone doesn't guarantee correct running tension once installed.</p>
+      <p><strong>7. Neglecting ongoing lubrication in the design and maintenance plan.</strong> A correctly sized chain that isn't properly and regularly lubricated will wear and elongate faster than expected, eventually requiring tension readjustment or premature replacement regardless of how accurately the initial length was calculated.</p>
+      <p><strong>8. Selecting chain pitch based on tooth count and center distance alone, without checking power capacity.</strong> This calculator sizes chain length for a given pitch and geometry, but doesn't check whether that pitch and sprocket combination can actually transmit the required power — always cross-check against the chain manufacturer's power rating tables for your specific pitch, sprocket size, and chain speed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for roller chain length in pitches?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Lp = 2Cp + (N1+N2)/2 + ((N2−N1)²) / (4π²Cp), where Lp is chain length in number of pitches, Cp is center distance expressed in pitches (center distance ÷ pitch length), and N1, N2 are the number of teeth on the two sprockets.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why must the number of chain links always be an even number?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A roller chain link alternates between an inner (roller) link and an outer (pin) link — an even total link count allows the chain to close into a loop using a standard connecting link. An odd link count requires a special offset link, which is weaker and generally avoided in industrial chain drives, so the calculated pitch count is always rounded up to the nearest even integer.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What happens to center distance after rounding the link count?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Since the calculated (non-integer) pitch length rarely lands exactly on an even number, rounding up slightly increases the actual chain length beyond the exact theoretical minimum — which means the actual achievable center distance is usually a little larger than your originally specified target center distance, not exactly equal to it.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What's a typical minimum center distance for a chain drive?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A commonly used guideline is a minimum center distance of about 30–50 pitches, or at least the sum of the two sprocket radii plus some clearance — too short a center distance reduces the wrap angle on the smaller sprocket, risking tooth skipping under load; there's no single hard minimum, but very short center distances relative to sprocket size should be avoided.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does this formula work for both equal and unequal sprocket sizes?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — when N1 equals N2 (same size sprockets), the last term of the formula becomes zero and it simplifies to Lp = 2Cp + N (a straightforward doubled-center-distance-plus-teeth-count case), and the full formula smoothly handles any combination of different tooth counts as well.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I know which chain pitch size to use for my application?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Chain pitch is generally selected based on the power/torque being transmitted, chain speed, and sprocket tooth count, referencing the chain manufacturer's horsepower/power rating tables for each standard pitch (e.g., ANSI 40, 50, 60, or ISO 08B, 10B, 12B) — this calculator assumes you already know or have selected your pitch; it doesn't perform chain pitch selection from load requirements.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is minimum wrap angle on the small sprocket important?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Wrap angle is how much of the small sprocket's circumference the chain actually contacts — too short a center distance relative to the size difference between sprockets reduces wrap angle on the smaller sprocket, increasing the risk of the chain skipping teeth under load. A commonly cited minimum wrap angle guideline is around 120° on the smaller sprocket, though this varies by application and load severity.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I add extra slack or just use the exact calculated even-link length?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The rounded-up even-link length already provides the necessary corrected center distance for proper installation — beyond that, chains still need correct working tension (not too tight, not excessively slack) which is normally set via an adjustable idler, slotted motor mounting, or a spring-loaded tensioner rather than by further arbitrarily lengthening the chain itself.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why choose a chain drive over a belt drive?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A properly tensioned chain doesn't slip, giving precise, positive speed transmission under load — preferred where exact synchronization or reliable high-torque transmission matters. Belts, in exchange, offer shock-absorbing slip protection and generally need less maintenance (no lubrication), so the choice depends on which property matters more for the specific application.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateChainLength(){
+    const N1 = parseFloat(document.getElementById('teeth1').value);
+    const N2 = parseFloat(document.getElementById('teeth2').value);
+    const pitch = parseFloat(document.getElementById('pitch').value);
+    const C = parseFloat(document.getElementById('centerDist').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(N1) || N1 < 3){ errors.push('Enter a valid driver sprocket tooth count (3 or more).'); }
+    if(isNaN(N2) || N2 < 3){ errors.push('Enter a valid driven sprocket tooth count (3 or more).'); }
+    if(isNaN(pitch) || pitch <= 0){ errors.push('Enter a valid chain pitch greater than 0.'); }
+    if(isNaN(C) || C <= 0){ errors.push('Enter a valid center distance greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rLengthMm').textContent = '\u2014';
+      document.getElementById('rActualC').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const Cp = C / pitch;
+    const rawLp = 2 * Cp + (N1 + N2) / 2 + Math.pow(N2 - N1, 2) / (4 * Math.PI * Math.PI * Cp);
+    const roundedLp = Math.ceil(rawLp / 2) * 2;
+    const chainLengthMm = roundedLp * pitch;
+
+    // Solve the same formula in reverse for actual Cp given the rounded, integer Lp
+    // (standard quadratic form used in chain-drive design references):
+    const term1 = roundedLp - (N1 + N2) / 2;
+    const disc = Math.pow(term1, 2) - 8 * Math.pow((N2 - N1) / (2 * Math.PI), 2);
+    const actualCp = disc > 0 ? (term1 + Math.sqrt(disc)) / 4 : Cp;
+    const actualC = actualCp * pitch;
+
+    document.getElementById('rResult').textContent = roundedLp + ' links';
+    document.getElementById('resultSub').textContent = 'N1=' + N1 + ', N2=' + N2 + ', pitch=' + pitch + 'mm';
+    document.getElementById('rLengthMm').textContent = chainLengthMm.toLocaleString('en-IN', {maximumFractionDigits:1}) + ' mm';
+    document.getElementById('rActualC').textContent = actualC.toLocaleString('en-IN', {maximumFractionDigits:1}) + ' mm';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Driver Teeth (N1)</td><td>${N1}</td></tr>
+                <tr><td>Driven Teeth (N2)</td><td>${N2}</td></tr>
+                <tr><td>Chain Pitch (p)</td><td>${pitch} mm</td></tr>
+                <tr><td>Target Center Distance</td><td>${C} mm (${Cp.toFixed(2)} pitches)</td></tr>
+                <tr><td>Calculated Length (raw)</td><td>${rawLp.toFixed(2)} pitches</td></tr>
+                <tr><td><strong>Rounded Chain Length</strong></td><td><strong>${roundedLp} links (${chainLengthMm.toFixed(1)} mm)</strong></td></tr>
+                <tr><td>Actual Center Distance (with rounded chain)</td><td>${actualC.toFixed(1)} mm</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateChainLength();
+</script>
+
+</body>
+</html>
