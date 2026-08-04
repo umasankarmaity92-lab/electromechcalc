@@ -5,6 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#ffffff">
 
+<!-- ===================== THEME (FLASH/CLS PREVENTION) =====================
+     Runs synchronously, before any stylesheet or paint, so the correct
+     dark-theme/light-theme class is already present on <html> the instant
+     CSS starts applying. A matching inline script sits right after the body tag opens to cover body.dark-theme / body.light-theme selectors too.
+     site-nav.js still re-applies both classes on DOMContentLoaded as a
+     no-op safety net and handles the toggle button switching themes. -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
 <!-- ===================== [PER-PAGE] TITLE ===================== -->
 <title>Chain Length Calculator (Roller Chain Pitches) | ElectroMechCalc</title>
 
@@ -30,14 +47,14 @@
 <meta property="og:title" content="Chain Length Calculator">
 <meta property="og:description" content="Free Chain Length Calculator for roller chain drives — enter sprocket teeth, pitch and center distance for chain length in links.">
 <meta property="og:url" content="https://www.electromechcalc.com/mechanical/chain-length">
-<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:image" content="https://www.electromechcalc.com/logo.png">
 <meta property="og:locale" content="en_IN">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Chain Length Calculator">
 <meta name="twitter:description" content="Free Chain Length Calculator for roller chain drives — enter sprocket teeth, pitch and center distance for chain length in links.">
-<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+<meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
 
 <!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
 <script type="application/ld+json">
@@ -104,16 +121,12 @@
 </script>
 
 <!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
-<link rel="preload" as="style" href="/assets/tailwind.min.css">
-<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+<link rel="stylesheet" href="/assets/tailwind.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet" media="print" onload="this.media='all'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet"></noscript>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
 <link rel="preload" as="style" href="/assets/theme.css">
 <link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
@@ -290,6 +303,15 @@
 </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
 
 <!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
 <div id="site-header"></div>

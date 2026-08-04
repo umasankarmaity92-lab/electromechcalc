@@ -11,8 +11,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------------------------------------------------
   const siteHeader = document.querySelector(".site-header");
   if (siteHeader) {
+    // Wrapped in requestAnimationFrame so the offsetHeight read (which
+    // forces a synchronous layout if it runs right after a DOM/style
+    // change) happens on the next paint frame instead of forcing an
+    // immediate reflow mid-script. Avoids the "forced reflow" pattern
+    // Chrome DevTools flags for reading a geometric property right after
+    // invalidating layout, without changing the measured value itself.
     const setHeaderOffset = () => {
-      document.documentElement.style.setProperty("--header-height", siteHeader.offsetHeight + "px");
+      requestAnimationFrame(() => {
+        document.documentElement.style.setProperty("--header-height", siteHeader.offsetHeight + "px");
+      });
     };
     setHeaderOffset();
     if (window.ResizeObserver) {
