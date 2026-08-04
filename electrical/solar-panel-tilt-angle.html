@@ -5,6 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#ffffff">
 
+<!-- ===================== THEME (FLASH/CLS PREVENTION) =====================
+     Runs synchronously, before any stylesheet or paint, so the correct
+     dark-theme/light-theme class is already present on <html> the instant
+     CSS starts applying. A matching inline script sits right after the body tag opens to cover body.dark-theme / body.light-theme selectors too.
+     site-nav.js still re-applies both classes on DOMContentLoaded as a
+     no-op safety net and handles the toggle button switching themes. -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
 <!-- ===================== [PER-PAGE] TITLE ===================== -->
 <title>Solar Panel Tilt Angle Calculator | ElectroMechCalc</title>
 
@@ -291,6 +308,15 @@
 </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
 
 <!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
 <div id="site-header"></div>
