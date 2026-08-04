@@ -137,6 +137,21 @@ class AddScrollToResultOnClick {
 }
 
 
+// Share Result button: rewrites onclick="openShareModal()" (baked into
+// the calculator template) to onclick="loadShareModal()" — the lazy
+// loader in common.js that fetches /assets/share-modal.js on first
+// click instead of shipping the modal's DOM/JS to every page load.
+// Zero per-page edits needed; idempotent (only touches buttons that
+// still say openShareModal).
+class RewriteShareButtonOnClick {
+  element(element) {
+    const onclick = element.getAttribute("onclick") || "";
+    if (onclick.includes("openShareModal")) {
+      element.setAttribute("onclick", onclick.replace(/openShareModal\(\)/g, "loadShareModal()"));
+    }
+  }
+}
+
 // Normalizes a URL path for matching against search-index.json entries.
 // Strips leading/trailing slashes AND the .html extension, and folds
 // "/index" down to "/", so that:
@@ -433,6 +448,7 @@ export async function onRequest(context) {
     .on('div[class*="lg:col-span-3"][class*="border-gray-100"]', new AddCalcInputPanelClass())
     .on('div[class*="lg:col-span-2"][class*="flex-col"][class*="gap-4"]', new AddResultPanelId())
     .on('button[onclick^="calculate"]', new AddScrollToResultOnClick())
+    .on('button.share-result-btn[onclick*="openShareModal"]', new RewriteShareButtonOnClick())
     .on("#site-header", new InjectHTML(headerHTML))
     .on("#site-header", new InsertAfter('<main id="main-content">'))
     .on("#breadcrumb", new InjectHTML(breadcrumbHTML))
