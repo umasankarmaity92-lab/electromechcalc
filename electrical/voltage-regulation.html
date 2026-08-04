@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Voltage Regulation Calculator (Transformer, %R & %X Method) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Voltage Regulation Calculator for transformers. Enter percentage resistance, percentage reactance, power factor, and load type to get percentage voltage regulation instantly, with formula and worked example.">
+<meta name="keywords" content="voltage regulation calculator, transformer voltage regulation formula, percentage resistance reactance, lagging leading power factor voltage drop">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/voltage-regulation">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Voltage Regulation Calculator">
+<meta property="og:description" content="Free Voltage Regulation Calculator — enter %R, %X, and power factor to get transformer voltage regulation instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/voltage-regulation">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Voltage Regulation Calculator">
+<meta name="twitter:description" content="Free Voltage Regulation Calculator — enter %R, %X, and power factor to get transformer voltage regulation instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Voltage Regulation Calculator",
+  "url": "https://www.electromechcalc.com/electrical/voltage-regulation",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Voltage Regulation Calculator for transformers. Enter percentage resistance, percentage reactance, power factor, and load type to get percentage voltage regulation instantly, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for approximate transformer voltage regulation?",
+      "acceptedAnswer": { "@type": "Answer", "text": "% Voltage Regulation ≈ %R × cosφ + %X × sinφ for a lagging (inductive) power factor load, or %R × cosφ − %X × sinφ for a leading (capacitive) power factor load, where %R and %X are the transformer's per-unit resistance and reactance drops at full load, and φ is the load's power factor angle." }
+    },
+    {
+      "@type": "Question",
+      "name": "What does voltage regulation actually measure?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Voltage regulation quantifies how much a transformer's secondary terminal voltage drops (or rises) between no-load and full-load conditions, expressed as a percentage of rated voltage — a lower voltage regulation value means the secondary voltage stays more stable as load is applied, which is generally desirable for connected equipment sensitive to voltage variation." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does power factor affect voltage regulation so significantly?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The reactive (X) component of voltage drop interacts with the load's reactive current differently depending on whether that current lags or leads the voltage — for a lagging (inductive) load, the reactance drop adds to the resistance drop's effect, increasing regulation; for a leading (capacitive) load, the reactance term's effect can partially or fully cancel the resistance drop's effect, reducing regulation, and at a strongly leading power factor, regulation can become negative (secondary voltage under load is actually higher than at no-load)." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can voltage regulation be negative, and what does that mean?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — for a sufficiently leading (capacitive) power factor load, the reactance term can outweigh the resistance term with the opposite sign, giving a negative percentage regulation, meaning the transformer's secondary voltage under load is actually higher than its no-load voltage. This happens because a leading power factor load's reactive current interacts with the transformer's leakage reactance in a way that can boost, rather than reduce, terminal voltage." }
+    },
+    {
+      "@type": "Question",
+      "name": "Where do %R and %X values come from for a real transformer?",
+      "acceptedAnswer": { "@type": "Answer", "text": "%R (percentage resistance) and %X (percentage reactance) are derived from the transformer's short-circuit test — the test measures total copper loss (giving %R) and total impedance voltage (giving %Z, from which %X = √(%Z² − %R²)) at rated current, both expressed as a percentage of rated voltage. These values are typically available on the transformer's test certificate or datasheet." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is lower voltage regulation always better?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Generally yes for maintaining stable secondary voltage under varying load, which benefits most connected equipment — but achieving very low regulation typically requires lower %R and %X (meaning lower losses and lower leakage reactance), which involves design and cost trade-offs, including implications for fault current limiting (lower %X also means higher available fault current, a separate but related design consideration)." }
+    },
+    {
+      "@type": "Question",
+      "name": "How is voltage regulation different from load regulation in other contexts (like a power supply)?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The underlying concept (how much output voltage changes from no-load to full-load) is similar across different types of equipment, but the specific formula and typical magnitude differ significantly by device type — a transformer's voltage regulation, driven by its resistance and reactance, is a different calculation from a regulated power supply's load regulation, which depends on its specific feedback control circuitry rather than passive impedance drops." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does voltage regulation change with load current, or only with load type (power factor)?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Voltage regulation as calculated by this formula assumes full-load current — at partial load, the actual voltage drop scales roughly proportionally with load current (since both the resistance and reactance drop terms are proportional to current), so voltage regulation at partial load is approximately the full-load regulation multiplied by the load fraction, though power factor still independently affects the calculation at any load level." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Transformers
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Voltage Regulation <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Percentage voltage regulation of a transformer from its per-unit resistance and reactance drops, load power factor, and whether the load is lagging or leading.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Voltage Regulation Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter %R, %X, power factor, and load type.</p>
+
+      <div class="space-y-4 mb-5">
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">%R (Resistance)</label>
+            <input id="percentR" type="number" value="1.2" step="0.1" min="0" placeholder="e.g. 1.2" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">%X (Reactance)</label>
+            <input id="percentX" type="number" value="4.8" step="0.1" min="0" placeholder="e.g. 4.8" class="input-field mt-2">
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Power Factor</label>
+          <input id="powerFactor" type="number" value="0.8" step="0.01" min="0.1" max="1" placeholder="e.g. 0.8" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Load Type</label>
+          <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2">
+            <div id="typeLagging" class="toggle-btn active" onclick="setLoadType('lagging')">Lagging (Inductive)</div>
+            <div id="typeLeading" class="toggle-btn" onclick="setLoadType('leading')">Leading (Capacitive)</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateVoltageRegulation()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip" id="formulaChip">VR% = %R×cosφ + %X×sinφ</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Voltage Regulation</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">%Z (Impedance)</span>
+            <span id="rZ" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">sinφ</span>
+            <span id="rSinPhi" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/transformer-efficiency" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Transformer Efficiency Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/short-circuit-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Short Circuit Current Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/ct-ratio" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          CT Ratio Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/pt-ratio" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          PT Ratio Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Voltage Regulation Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding the approximate voltage regulation formula</a></li>
+      <li><a href="#second" class="hover:underline">3. Why leading power factor can give negative (zero or better) regulation</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Transformer Voltage Regulation Is Calculated</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard approximate voltage regulation formula (%R cosφ ± %X sinφ)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>Voltage regulation describes how much a transformer's output voltage sags (or rises) as load is applied, driven by the small but real resistance and reactance within the transformer's windings. A transformer with low voltage regulation keeps its secondary voltage relatively stable from no-load to full-load; one with high regulation experiences more noticeable voltage variation as load changes.</p>
+
+      <p><strong>Formula used:</strong> % Voltage Regulation &asymp; %R &times; cos&phi; + %X &times; sin&phi; (lagging power factor), or %R &times; cos&phi; &minus; %X &times; sin&phi; (leading power factor). %R and %X are the transformer's percentage resistance and reactance drops at full load (from its equivalent circuit, typically derived from short-circuit test data), and &phi; is the load's power factor angle.</p>
+
+      <p><strong>Worked example (lagging power factor):</strong> a transformer has %R = 1.2%, %X = 4.8%, serving a load at 0.8 lagging power factor. sin&phi; = &radic;(1&minus;0.8&sup2;) = &radic;0.36 = 0.6. Voltage Regulation = 1.2 &times; 0.8 + 4.8 &times; 0.6 = 0.96 + 2.88 = 3.84%. The secondary voltage under full load is roughly 3.84% below its no-load value.</p>
+
+      <p><strong>Worked example (same transformer, leading power factor):</strong> the identical transformer, same 0.8 power factor but now leading (capacitive load). Voltage Regulation = 1.2 &times; 0.8 &minus; 4.8 &times; 0.6 = 0.96 &minus; 2.88 = &minus;1.92%. The negative result means secondary voltage under full leading-power-factor load is actually about 1.92% higher than its no-load voltage &mdash; a real and well-understood phenomenon, not a calculation error.</p>
+
+      <p><strong>Why %X typically dominates %R for most transformers:</strong> in most power and distribution transformers, %X is meaningfully larger than %R (leakage reactance tends to be the larger contributor to total impedance voltage drop), which is why power factor &mdash; specifically the sin&phi; term multiplying %X &mdash; has such a strong influence on voltage regulation. This is also why voltage regulation is often significantly worse (higher) for lower power factor lagging loads than for near-unity power factor loads of the same kVA magnitude, since a lower power factor means a larger sin&phi;, amplifying the %X term's contribution.</p>
+
+      <p><strong>Relationship between %Z, %R, and %X:</strong> the transformer's total percentage impedance %Z = &radic;(%R&sup2; + %X&sup2;), and %Z (measured directly via the short-circuit test as the applied voltage percentage needed to circulate rated current) is what's typically stated on a transformer's nameplate. %R comes from the measured short-circuit copper loss (Copper Loss &divide; Rated kVA &times; 100 gives %R directly), and %X is then derived as %X = &radic;(%Z&sup2; &minus; %R&sup2;). This relationship connects voltage regulation calculation back to the same short-circuit test data used for fault current calculations (via %Z) and efficiency calculations (via the copper loss figure), illustrating how several transformer performance calculations share the same underlying test measurements.</p>
+
+      <p><strong>Zero-regulation power factor:</strong> for any given transformer with known %R and %X, there's a specific leading power factor at which voltage regulation becomes exactly zero (secondary voltage under full load exactly equals no-load voltage) &mdash; this occurs where %R&times;cos&phi; = %X&times;sin&phi;, or tan&phi; = %R&divide;%X. Power factor values leading beyond this specific point produce negative regulation (voltage rise under load), while less-leading or lagging power factors produce positive regulation (voltage sag under load). Knowing this crossover point can be useful when specifying power factor correction targets for a facility where voltage stability under load matters, alongside the more commonly discussed demand charge and capacity benefits of power factor correction.</p>
+
+      <p><strong>Voltage regulation and tap changers:</strong> many transformers, particularly larger power transformers, include tap changers (either off-load, requiring the transformer to be de-energized to adjust, or on-load, adjustable while energized) specifically to compensate for voltage regulation and other system voltage variations by adjusting the transformer's effective turns ratio. A transformer with inherently higher voltage regulation may rely more heavily on tap changer adjustment to maintain acceptable secondary voltage across varying load conditions, making tap changer range and step size a related consideration alongside the transformer's base voltage regulation characteristic.</p>
+
+      <p><strong>Summary:</strong> use VR% = %R&times;cos&phi; + %X&times;sin&phi; for lagging power factor, or %R&times;cos&phi; &minus; %X&times;sin&phi; for leading power factor, obtain %R and %X from actual short-circuit test data, remember that %X typically dominates for most transformers (making power factor a strong influence on regulation), and don't be surprised by negative regulation results at sufficiently leading power factor &mdash; it's real, well-understood transformer behavior.</p>
+
+      <p><strong>Practical implications for facility power factor correction projects:</strong> when a facility installs power factor correction capacitors, the correction target (how close to unity, or even how far into leading territory, the corrected power factor should be) has implications beyond the commonly discussed demand charge savings &mdash; overcorrecting into a strongly leading power factor can meaningfully change voltage regulation behavior, in some cases causing voltage rise concerns at light load that need to be considered alongside the capacitor correction's primary billing-driven objective. This is one of several reasons power factor correction system design typically involves more careful analysis than simply adding enough capacitance to reach a target power factor number, particularly for facilities with significant load variation throughout the day.</p>
+
+      <p><strong>Voltage regulation as one piece of overall transformer performance:</strong> voltage regulation, efficiency, and fault current level (via %Z) are all derived from the same underlying transformer design parameters and test data, but represent different, sometimes competing performance priorities &mdash; a transformer designed for very low %X (helping voltage regulation and, incidentally, limiting fault current less effectively) trades off differently than one designed with higher %X for better fault current limiting at the cost of worse voltage regulation under lagging power factor load. Understanding these interconnections helps make sense of why transformer specification is a genuinely multi-criteria design exercise, not a single-parameter optimization.</p>
+
+      <p>Whether you're evaluating a new transformer purchase, troubleshooting an unexpected voltage reading, or designing a power factor correction system, understanding how %R, %X, and power factor combine to produce this single percentage figure gives real insight into transformer behavior that goes well beyond just plugging numbers into a formula.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">%R=1.2%, %X=4.8%, PF=0.8: <strong>Lagging</strong>: VR = 1.2&times;0.8 + 4.8&times;0.6 = <strong>3.84%</strong>. <strong>Leading</strong>: VR = 1.2&times;0.8 &minus; 4.8&times;0.6 = <strong>&minus;1.92%</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator uses the standard first-order approximate voltage regulation formula, accurate for most practical power and distribution transformers. A small second-order correction term is sometimes added for higher precision in certain applications, but the first-order approximation used here is the widely accepted standard for general engineering use. %R and %X should come from the transformer's equivalent circuit parameters (from open-circuit and short-circuit test data) for an accurate result. Consider voltage regulation implications alongside demand charge savings when designing a power factor correction system, especially for facilities with significant load variation.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Key Concept</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Why Leading Power Factor Can Produce Negative Voltage Regulation</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>A leading (capacitive) power factor load draws current that leads the voltage waveform &mdash; when this leading current interacts with the transformer's series reactance, the resulting voltage drop across that reactance can actually add to, rather than subtract from, the secondary terminal voltage. At a sufficiently leading power factor and sufficiently high %X relative to %R, this effect can outweigh the resistance drop entirely, producing the negative voltage regulation seen in the worked example above &mdash; secondary voltage rises above its no-load value as load is applied, rather than sagging.</p>
+    <p>This isn't a purely theoretical curiosity &mdash; it's a real, observable phenomenon in systems with significant capacitive loading (heavily power-factor-corrected industrial facilities, lightly loaded long transmission or distribution lines exhibiting the Ferranti effect, or facilities with excess capacitor bank correction relative to actual inductive load). Understanding this behavior matters for correctly interpreting a voltage reading that seems to rise rather than fall as more load comes online,     <p>The Ferranti effect specifically refers to this voltage-rise phenomenon on lightly loaded, long, high-voltage transmission or distribution lines, where the line's own distributed capacitance (behaving like a leading power factor load on the sending-end transformer or source) can raise receiving-end voltage above sending-end voltage under light load conditions &mdash; a well-documented, named phenomenon in power system analysis that shares the same underlying leading-power-factor voltage regulation mechanism explored here, just occurring on the distributed capacitance of a transmission line rather than a discrete power factor correction capacitor bank.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Voltage Regulation</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Using the lagging power factor formula for a leading power factor load, or vice versa.</strong> The sign of the %X term flips between lagging and leading power factor &mdash; using the wrong sign convention can produce a significantly wrong result, including missing a genuinely negative regulation scenario entirely.</p>
+      <p><strong>2. Confusing %R and %X with the transformer's actual ohmic resistance and reactance values.</strong> %R and %X are per-unit (percentage of rated voltage) quantities derived from short-circuit test data at rated current, not raw ohmic values &mdash; using actual ohmic resistance/reactance directly in this percentage-based formula without proper per-unit conversion gives an incorrect result.</p>
+      <p><strong>3. Assuming voltage regulation is always positive.</strong> For leading power factor loads with %X exceeding %R's contribution, voltage regulation can genuinely be negative &mdash; don't dismiss a calculated negative result as an error without first checking whether the load is actually leading power factor.</p>
+      <p><strong>4. Using no-load or partial-load current data to derive %R and %X instead of full-load (rated current) short-circuit test data.</strong> %R and %X are specifically defined at rated current from the short-circuit test &mdash; using data from a different test or condition gives inconsistent, incorrect percentage values.</p>
+      <p><strong>5. Applying full-load voltage regulation directly to a partial-load condition without scaling.</strong> Voltage regulation approximately scales with load current fraction &mdash; using the full-load regulation figure unscaled for a lightly-loaded condition overstates actual voltage variation at that lighter load.</p>
+      <p><strong>6. Ignoring the second-order correction term where higher precision genuinely matters.</strong> The formula used here is a first-order approximation, accurate for most practical purposes, but very precise applications sometimes need the additional second-order term for slightly improved accuracy &mdash; check whether your specific application's precision requirements warrant this refinement.</p>
+      <p><strong>7. Overcorrecting power factor without considering voltage regulation implications.</strong> Pushing power factor correction into strongly leading territory for maximum demand charge benefit can introduce unintended voltage rise concerns at light load &mdash; a complete power factor correction design should consider voltage regulation impact, not just the correction target percentage alone.</p>
+      <p><strong>8. Not distinguishing the Ferranti effect (line capacitance) from discrete power factor correction capacitor effects when diagnosing an unexpected voltage rise.</strong> Both share the same underlying leading-power-factor voltage regulation mechanism but arise from different physical sources &mdash; correctly identifying which is responsible for an observed voltage rise helps target the right corrective action.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for approximate transformer voltage regulation?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">% Voltage Regulation ≈ %R × cosφ + %X × sinφ for a lagging (inductive) power factor load, or %R × cosφ − %X × sinφ for a leading (capacitive) power factor load, where %R and %X are the transformer's per-unit resistance and reactance drops at full load, and φ is the load's power factor angle.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What does voltage regulation actually measure?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Voltage regulation quantifies how much a transformer's secondary terminal voltage drops (or rises) between no-load and full-load conditions, expressed as a percentage of rated voltage — a lower voltage regulation value means the secondary voltage stays more stable as load is applied, which is generally desirable for connected equipment sensitive to voltage variation.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does power factor affect voltage regulation so significantly?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The reactive (X) component of voltage drop interacts with the load's reactive current differently depending on whether that current lags or leads the voltage — for a lagging (inductive) load, the reactance drop adds to the resistance drop's effect, increasing regulation; for a leading (capacitive) load, the reactance term's effect can partially or fully cancel the resistance drop's effect, reducing regulation, and at a strongly leading power factor, regulation can become negative (secondary voltage under load is actually higher than at no-load).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can voltage regulation be negative, and what does that mean?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — for a sufficiently leading (capacitive) power factor load, the reactance term can outweigh the resistance term with the opposite sign, giving a negative percentage regulation, meaning the transformer's secondary voltage under load is actually higher than its no-load voltage. This happens because a leading power factor load's reactive current interacts with the transformer's leakage reactance in a way that can boost, rather than reduce, terminal voltage.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Where do %R and %X values come from for a real transformer?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">%R (percentage resistance) and %X (percentage reactance) are derived from the transformer's short-circuit test — the test measures total copper loss (giving %R) and total impedance voltage (giving %Z, from which %X = √(%Z² − %R²)) at rated current, both expressed as a percentage of rated voltage. These values are typically available on the transformer's test certificate or datasheet.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is lower voltage regulation always better?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Generally yes for maintaining stable secondary voltage under varying load, which benefits most connected equipment — but achieving very low regulation typically requires lower %R and %X (meaning lower losses and lower leakage reactance), which involves design and cost trade-offs, including implications for fault current limiting (lower %X also means higher available fault current, a separate but related design consideration).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How is voltage regulation different from load regulation in other contexts (like a power supply)?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The underlying concept (how much output voltage changes from no-load to full-load) is similar across different types of equipment, but the specific formula and typical magnitude differ significantly by device type — a transformer's voltage regulation, driven by its resistance and reactance, is a different calculation from a regulated power supply's load regulation, which depends on its specific feedback control circuitry rather than passive impedance drops.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does voltage regulation change with load current, or only with load type (power factor)?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Voltage regulation as calculated by this formula assumes full-load current — at partial load, the actual voltage drop scales roughly proportionally with load current (since both the resistance and reactance drop terms are proportional to current), so voltage regulation at partial load is approximately the full-load regulation multiplied by the load fraction, though power factor still independently affects the calculation at any load level.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why do utilities and designers care about keeping voltage regulation low?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Excessive voltage regulation means connected equipment experiences meaningfully different voltage between light-load and full-load conditions, which can affect motor performance, lighting brightness, and sensitive electronic equipment operation — keeping voltage regulation within an acceptable range (often a few percent for distribution transformers) helps ensure connected loads receive reasonably consistent voltage across normal operating conditions.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    let vrLoadType = 'lagging';
+
+  function setLoadType(type){
+    vrLoadType = type;
+    document.getElementById('typeLagging').classList.toggle('active', type === 'lagging');
+    document.getElementById('typeLeading').classList.toggle('active', type === 'leading');
+    document.getElementById('formulaChip').textContent = type === 'lagging' ? 'VR% = %R×cosφ + %X×sinφ' : 'VR% = %R×cosφ − %X×sinφ';
+  }
+
+  function calculateVoltageRegulation(){
+    const R = parseFloat(document.getElementById('percentR').value);
+    const X = parseFloat(document.getElementById('percentX').value);
+    const pf = parseFloat(document.getElementById('powerFactor').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(R) || R < 0){ errors.push('Enter a valid %R (0 or more).'); }
+    if(isNaN(X) || X < 0){ errors.push('Enter a valid %X (0 or more).'); }
+    if(isNaN(pf) || pf <= 0 || pf > 1){ errors.push('Power factor must be between 0 and 1.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rZ').textContent = '\u2014';
+      document.getElementById('rSinPhi').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const sinPhi = Math.sqrt(1 - Math.pow(pf, 2));
+    const vr = vrLoadType === 'lagging' ? (R * pf + X * sinPhi) : (R * pf - X * sinPhi);
+    const Z = Math.sqrt(R*R + X*X);
+
+    document.getElementById('rResult').textContent = vr.toLocaleString('en-IN', {maximumFractionDigits:2}) + '%';
+    document.getElementById('resultSub').textContent = 'PF=' + pf + ' ' + vrLoadType;
+    document.getElementById('rZ').textContent = Z.toFixed(2) + '%';
+    document.getElementById('rSinPhi').textContent = sinPhi.toFixed(3);
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>%R</td><td>${R}%</td></tr>
+                <tr><td>%X</td><td>${X}%</td></tr>
+                <tr><td>%Z (√(R²+X²))</td><td>${Z.toFixed(2)}%</td></tr>
+                <tr><td>Power Factor</td><td>${pf} (${vrLoadType})</td></tr>
+                <tr><td>sinφ</td><td>${sinPhi.toFixed(3)}</td></tr>
+                <tr><td><strong>Voltage Regulation</strong></td><td><strong>${vr.toFixed(2)}%</strong></td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateVoltageRegulation();
+</script>
+
+</body>
+</html>

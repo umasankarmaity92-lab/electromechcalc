@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Cable Ampacity Calculator (Temperature & Grouping Derating) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Cable Ampacity Calculator. Enter the base (tabulated) ampacity, ambient temperature, and number of grouped circuits to get the actual derated current-carrying capacity, with formula and standard correction factor tables.">
+<meta name="keywords" content="cable ampacity calculator, current carrying capacity calculator, cable derating calculator, ambient temperature correction factor, grouping factor cables, is 3961 ampacity">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/cable-ampacity">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Cable Ampacity Calculator">
+<meta property="og:description" content="Free Cable Ampacity Calculator — enter base ampacity, ambient temperature, and grouped circuits to get derated current-carrying capacity instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/cable-ampacity">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cable Ampacity Calculator">
+<meta name="twitter:description" content="Free Cable Ampacity Calculator — enter base ampacity, ambient temperature, and grouped circuits to get derated current-carrying capacity instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Cable Ampacity Calculator",
+  "url": "https://www.electromechcalc.com/electrical/cable-ampacity",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Cable Ampacity Calculator. Enter the base (tabulated) ampacity, ambient temperature, and number of grouped circuits to get the actual derated current-carrying capacity, with formula and standard correction factor tables.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for the ambient temperature correction factor?",
+      "acceptedAnswer": { "@type": "Answer", "text": "CF = √[(T_max − T_ambient) ÷ (T_max − T_ref)], where T_max is the cable's maximum conductor operating temperature (70°C for standard PVC insulation, 90°C for XLPE), T_ambient is your actual site ambient temperature, and T_ref is the standard reference ambient the tabulated ampacity was calculated at (typically 30°C)." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does higher ambient temperature reduce ampacity?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A cable's rated ampacity is the current that raises its conductor to the maximum safe operating temperature under the reference ambient condition, through the heat the current itself generates. If the surrounding ambient is already hotter than that reference, there's less temperature margin left before the conductor reaches its maximum safe limit, so less current can safely flow — the cable has to be derated." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a grouping (bunching) factor and why does it matter?",
+      "acceptedAnswer": { "@type": "Answer", "text": "When multiple current-carrying cables are installed close together (in the same tray, conduit, or bundled), each cable's own heat contributes to warming its neighbors, reducing all of their ability to dissipate heat effectively compared to a single isolated cable. The grouping factor accounts for this mutual heating effect — more cables grouped together means a lower factor and more derating." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the maximum conductor operating temperature for common cable types?",
+      "acceptedAnswer": { "@type": "Answer", "text": "General-purpose PVC-insulated cable is typically rated for 70°C maximum conductor temperature. XLPE (cross-linked polyethylene) insulated cable, increasingly common for larger installations, is typically rated for 90°C, which gives it meaningfully higher ampacity (and better high-temperature derating characteristics) than PVC for the same conductor size — always confirm your specific cable's rated temperature from its datasheet rather than assuming." }
+    },
+    {
+      "@type": "Question",
+      "name": "Where do I find the base (tabulated) ampacity for my cable?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The base ampacity depends on conductor size, insulation type, number of loaded conductors, and installation method (in free air, in conduit, buried, on a tray, etc.), and is published in tables within the applicable wiring standard (IS 3961 / IS 732 in India, IEC 60364-5-52 internationally, or NEC Table 310 in the US) or in your cable manufacturer's technical datasheet — use the table matching your exact installation method for an accurate starting figure." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this calculator account for voltage drop as well as ampacity?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — this calculator only addresses thermal ampacity (how much current the cable can safely carry without overheating). Voltage drop is a separate check based on cable length, resistance, and load current, and for longer cable runs voltage drop can require a larger conductor size than ampacity alone would suggest — use a dedicated Voltage Drop Calculator alongside this one for a complete cable sizing check." }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I apply both temperature and grouping correction together?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, when both conditions apply — the two correction factors are multiplied together with the base ampacity (not applied separately or the larger one alone), since a cable that's both in a hot ambient and grouped with other loaded cables experiences both derating effects simultaneously." }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if I don't derate a cable that needs it?",
+      "acceptedAnswer": { "@type": "Answer", "text": "An underrated cable running above its safe derated ampacity will operate at a higher conductor temperature than its insulation is designed for, accelerating insulation aging and increasing fire risk over time — the effect is cumulative rather than immediately catastrophic, which is exactly why undersized/under-derated cabling is a common and often-undetected latent hazard in older or poorly-documented installations." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript></noscript>
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Cables & Protection
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Cable Ampacity <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Actual derated current-carrying capacity of a cable, correcting its tabulated ampacity for ambient temperature and grouping with other circuits.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Cable Ampacity Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter the base ampacity from your cable table, plus site conditions.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Base (Tabulated) Ampacity at 30&deg;C (A)</label>
+          <input id="baseAmpacity" type="number" value="100" step="1" min="0" placeholder="e.g. 100" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Max Conductor Operating Temp</label>
+          <select id="maxTemp" class="input-field mt-2">
+            <option value="70" selected>70&deg;C (PVC insulation)</option>
+            <option value="90">90&deg;C (XLPE insulation)</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Site Ambient Temperature (&deg;C)</label>
+          <input id="ambientTemp" type="number" value="40" step="1" placeholder="e.g. 40" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Number of Loaded Circuits Grouped Together</label>
+          <input id="numCircuits" type="number" value="1" step="1" min="1" placeholder="e.g. 1" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateCableAmpacity()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">I = I_base × CF_temp × CF_group</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Derated Ampacity</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Temp. Factor</span>
+            <span id="rTempFactor" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Grouping Factor</span>
+            <span id="rGroupFactor" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/voltage-unbalance" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Voltage Unbalance Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/busbar-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Busbar Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/cable-tray-fill" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Cable Tray Fill Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/conduit-fill" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Conduit Fill Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Cable Ampacity Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding cable ampacity derating</a></li>
+      <li><a href="#second" class="hover:underline">3. Standard grouping (bunching) factors</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Cable Ampacity Derating Is Calculated</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IS 3961 / IEC 60364-5-52 style temperature and grouping correction factors</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>A cable's ampacity &mdash; the maximum current it can carry continuously without overheating &mdash; isn't a single fixed number. It's calculated at a specific reference condition (typically a single cable, in free air, at 30&deg;C ambient), and standard tables publish that reference "base ampacity" for each conductor size and insulation type. Real installations rarely match that reference condition exactly, which is why derating (correction) factors exist: to adjust the tabulated base ampacity down to the actual safe current for your real site conditions.</p>
+
+      <p><strong>Ambient temperature correction formula:</strong> CF_temp = &radic;[(T_max &minus; T_ambient) &divide; (T_max &minus; T_ref)], where T_max is the cable's maximum rated conductor temperature (70&deg;C for standard PVC, 90&deg;C for XLPE), T_ambient is your actual site ambient temperature, and T_ref is the standard reference ambient (30&deg;C) the base ampacity table was built around. This formula comes directly from the physics of resistive heating and heat dissipation &mdash; a cable's temperature rise above ambient is proportional to the square of the current, so the correction factor for a different ambient scales as a square root.</p>
+
+      <p><strong>Grouping (bunching) correction factor:</strong> when multiple loaded cables are installed close together, they collectively reduce each other's ability to shed heat to the surroundings, since each cable is now partly surrounded by other heat sources instead of cooler open space. Standard tables (from IS 3961, IEC 60364-5-52, or similar) provide grouping factors based on the number of circuits bunched together and their arrangement &mdash; more circuits grouped means a progressively lower factor, and therefore more derating.</p>
+
+      <p><strong>Worked example:</strong> a cable has a base (tabulated) ampacity of 100 A at the standard 30&deg;C reference, is PVC-insulated (70&deg;C max), and will be installed at a site ambient of 40&deg;C, grouped with 3 other loaded circuits. Temperature correction: CF_temp = &radic;[(70&minus;40) &divide; (70&minus;30)] = &radic;(30&divide;40) = &radic;0.75 &asymp; 0.866. Grouping factor for 4 circuits together (from a standard table): CF_group &asymp; 0.65. Derated ampacity = 100 &times; 0.866 &times; 0.65 &asymp; 56.3 A &mdash; significantly below the 100 A tabulated figure, illustrating why real-world derating matters and can't be skipped for a hot, grouped installation.</p>
+
+      <p><strong>Why this matters for protection coordination, not just the cable itself:</strong> the derated ampacity, not the tabulated base ampacity, is what the cable's upstream protective device (fuse, MCB, MCCB) should be sized against &mdash; a breaker rated above the cable's actual (derated) safe current provides no real overload protection for that cable under the actual installed conditions, even though it might look correctly sized against the cable's tabulated, undegraded rating. This is one of the more common and consequential real-world cable sizing errors, particularly in retrofit or expansion projects where new circuits get added to an existing, already-grouped cable route.</p>
+
+      <p><strong>Conductor size and material also drive base ampacity:</strong> beyond installation method and insulation type, base ampacity scales strongly with conductor cross-sectional area (larger conductors, more copper cross-section to carry current and dissipate heat, higher ampacity) and material (copper conductors have meaningfully higher ampacity than aluminum conductors of the identical cross-sectional area, since copper's lower resistivity means less resistive heating for the same current). This calculator works with whatever base ampacity you supply, so getting that starting figure right &mdash; matched to your actual conductor size, material, and insulation &mdash; is the single most important input, more consequential to the final answer than either correction factor alone.</p>
+
+      <p>Aluminum conductors, increasingly common for larger sizes due to cost, also generally need a larger cross-sectional area than copper to achieve an equivalent ampacity &mdash; a common rule of thumb is that aluminum needs roughly one to two standard sizes larger than copper for the same current rating, though the exact figure should always be confirmed against the applicable standard's table for the specific sizes involved rather than assumed from a general rule.</p>
+
+      <p><strong>Buried (underground) cables use a different correction approach entirely:</strong> the temperature and grouping correction formulas and factors discussed here apply to cables in air (free air, conduit, tray). Directly buried cables dissipate heat very differently &mdash; through the surrounding soil rather than air &mdash; and are subject to their own separate set of correction factors for soil thermal resistivity, burial depth, and grouping/spacing of buried cables, published in different tables within the same standards. Don't apply air-installation correction factors to a buried cable calculation, and vice versa &mdash; always match your correction method to your actual installation environment.</p>
+
+      <p><strong>Short-time and cyclic loading considerations:</strong> everything in this calculator addresses continuous (steady-state) current rating &mdash; the current a cable can carry indefinitely without exceeding its temperature limit. Some loads are cyclic or intermittent (motor starting currents, batch process equipment) and a cable's thermal mass allows it to tolerate a higher current for a short period than its continuous rating alone would suggest, since it takes time for the conductor to actually reach its maximum temperature. Short-time and cyclic rating calculations are a separate, more involved engineering exercise (typically requiring the cable's specific thermal time constant) and shouldn't be assumed from the continuous ampacity figure this calculator produces.</p>
+
+      <p><strong>Summary:</strong> start with the correct base ampacity for your exact conductor size, insulation type, and installation method from the applicable standard's table, apply CF_temp = &radic;[(T_max&minus;T_ambient)&divide;(T_max&minus;30)] for ambient temperature, apply the grouping factor matching your actual number of bunched circuits and arrangement, multiply all three together for the true derated ampacity, and size the upstream protective device against that derated figure, not the tabulated base value.</p>
+
+      <p><strong>Why this calculation matters beyond just avoiding overheating:</strong> correctly derated cable sizing sits at the intersection of safety (avoiding a fire risk from an overheated, degrading cable insulation), reliability (avoiding nuisance tripping or premature cable failure from chronic overload), and cost (avoiding unnecessarily oversizing every cable "just to be safe," which adds real material and installation cost across a large facility). Getting the derating calculation right, rather than guessing conservatively high or optimistically low, is genuinely valuable engineering work, not just a code-compliance formality.</p>
+
+      <p><strong>Working with an electrical contractor or consulting engineer:</strong> for anything beyond a straightforward single-circuit installation, sharing your actual site conditions (measured or design ambient temperature, planned cable routing and grouping, installation method) with whoever is doing the detailed cable sizing ensures the correction factors applied match your real installation, not generic assumptions. This calculator is a useful tool for understanding and cross-checking that calculation, but a full electrical design should also confirm voltage drop, short-circuit withstand rating, and compliance with the specific edition of the applicable wiring standard in force for your jurisdiction.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Base ampacity 100 A, PVC (70&deg;C), ambient 40&deg;C, 4 circuits grouped: CF_temp = &radic;[(70&minus;40)&divide;(70&minus;30)] &asymp; 0.866, CF_group (4 circuits) &asymp; 0.65. Derated Ampacity = 100 &times; 0.866 &times; 0.65 &asymp; <strong>56.3 A</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator applies temperature and grouping correction to a base (tabulated) ampacity you supply — it does not itself contain a full conductor-size lookup table, since exact tabulated ampacity values vary by standard, insulation type, and installation method. Always source your cable's base ampacity from the applicable standard's table (IS 3961 / IS 732 / IEC 60364-5-52 or your cable manufacturer's datasheet) for the correct conductor size, insulation, and installation method before applying these correction factors, and always protect a cable with an upstream device rated at or below its final derated ampacity. Where a preliminary calculation shows only a small margin above the required load current, consult a qualified electrical engineer to confirm the final cable size and protective device rating before installation, since a marginal derating result deserves a more detailed check than a quick calculator can provide.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference Table</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Standard Grouping Factors for Cables Bunched Together</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Circuits Grouped</th>
+          <th class="text-left px-4 py-2 font-semibold">Typical Grouping Factor</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">1 (single circuit)</td><td class="px-4 py-2">1.00</td></tr>
+        <tr><td class="px-4 py-2">2</td><td class="px-4 py-2">0.80</td></tr>
+        <tr><td class="px-4 py-2">3</td><td class="px-4 py-2">0.70</td></tr>
+        <tr><td class="px-4 py-2">4</td><td class="px-4 py-2">0.65</td></tr>
+        <tr><td class="px-4 py-2">6</td><td class="px-4 py-2">0.57</td></tr>
+        <tr><td class="px-4 py-2">9</td><td class="px-4 py-2">0.54</td></tr>
+        <tr><td class="px-4 py-2">12</td><td class="px-4 py-2">0.50</td></tr>
+        <tr><td class="px-4 py-2">16+</td><td class="px-4 py-2">0.45</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>These are typical values for cables of similar size bunched together, touching, in a single layer in free air &mdash; the applicable standard (IS 3961 / IEC 60364-5-52) publishes more detailed tables that also account for arrangement (single layer vs multiple layers, spaced vs touching, on a perforated tray vs a solid one), which can meaningfully change the factor for the same circuit count.     <p>Spacing cables apart (rather than bunching them tightly together) can significantly improve the effective grouping factor for the same circuit count &mdash; where space allows, maintaining at least one cable diameter of separation between adjacent cables on a tray substantially reduces the mutual heating effect compared to cables touching each other, which is a genuinely useful design lever when a marginal derating calculation is forcing an otherwise avoidable conductor upsize.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Cable Ampacity</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Sizing the protective device against tabulated ampacity instead of derated ampacity.</strong> A breaker or fuse should be rated at or below the cable's actual derated ampacity for the real installed conditions, not its undegraded catalog rating &mdash; using the tabulated figure for protection sizing leaves the cable under-protected against overload in a hot or grouped installation.</p>
+      <p><strong>2. Applying only one correction factor when both temperature and grouping apply.</strong> Ambient temperature and grouping derating are independent effects that both apply simultaneously when both conditions are present &mdash; multiply both factors together with the base ampacity, don't apply just the larger (more severe) one alone.</p>
+      <p><strong>3. Using the wrong maximum conductor temperature for the actual insulation type.</strong> PVC (70&deg;C) and XLPE (90&deg;C) have different maximum operating temperatures, which changes both the temperature correction factor and the base ampacity itself &mdash; using PVC assumptions for an XLPE cable (or vice versa) gives an incorrect derating calculation in both directions.</p>
+      <p><strong>4. Forgetting to re-derate when new circuits are added to an existing bundle.</strong> Adding cables to an already-installed group (a common retrofit scenario) changes the grouping factor for every cable in that group, not just the new one &mdash; existing circuits that were adequately sized for the original grouping may become under-derated once additional circuits are added alongside them.</p>
+      <p><strong>5. Using a base ampacity from the wrong installation method.</strong> Tabulated ampacity differs substantially between installation methods (free air, enclosed conduit, buried directly, on a ventilated tray) for the identical cable &mdash; pulling a base ampacity figure from the wrong table (e.g., free-air figures for a cable that's actually in conduit) produces a meaningfully wrong starting point regardless of how correctly the temperature and grouping factors are then applied.</p>
+      <p><strong>6. Not accounting for solar/radiant heating on cables run in direct sunlight.</strong> Outdoor cable trays or conduits exposed to direct sun can experience a significantly higher effective ambient temperature than the shaded air temperature alone would suggest &mdash; standards typically provide an additional correction or guidance for this condition, which is easy to overlook when only using a general site ambient temperature figure.</p>
+      <p><strong>7. Applying air-installation correction factors to a buried cable.</strong> Buried cables dissipate heat through soil rather than air and require entirely different correction factors (soil thermal resistivity, burial depth, buried-cable grouping/spacing) from a separate table &mdash; using free-air or conduit correction methods for a directly buried cable gives an incorrect result.</p>
+      <p><strong>8. Assuming continuous ampacity applies unchanged to short-time or cyclic loads.</strong> A cable's thermal mass allows it to briefly exceed its continuous rating for intermittent loads (like motor starting) without immediately overheating &mdash; but confirming a safe short-time or cyclic rating requires its own separate calculation using the cable's thermal time constant, not just the continuous ampacity figure treated as an absolute ceiling for every load pattern.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for the ambient temperature correction factor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">CF = √[(T_max − T_ambient) ÷ (T_max − T_ref)], where T_max is the cable's maximum conductor operating temperature (70°C for standard PVC insulation, 90°C for XLPE), T_ambient is your actual site ambient temperature, and T_ref is the standard reference ambient the tabulated ampacity was calculated at (typically 30°C).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does higher ambient temperature reduce ampacity?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A cable's rated ampacity is the current that raises its conductor to the maximum safe operating temperature under the reference ambient condition, through the heat the current itself generates. If the surrounding ambient is already hotter than that reference, there's less temperature margin left before the conductor reaches its maximum safe limit, so less current can safely flow — the cable has to be derated.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is a grouping (bunching) factor and why does it matter?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">When multiple current-carrying cables are installed close together (in the same tray, conduit, or bundled), each cable's own heat contributes to warming its neighbors, reducing all of their ability to dissipate heat effectively compared to a single isolated cable. The grouping factor accounts for this mutual heating effect — more cables grouped together means a lower factor and more derating.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the maximum conductor operating temperature for common cable types?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">General-purpose PVC-insulated cable is typically rated for 70°C maximum conductor temperature. XLPE (cross-linked polyethylene) insulated cable, increasingly common for larger installations, is typically rated for 90°C, which gives it meaningfully higher ampacity (and better high-temperature derating characteristics) than PVC for the same conductor size — always confirm your specific cable's rated temperature from its datasheet rather than assuming.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Where do I find the base (tabulated) ampacity for my cable?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The base ampacity depends on conductor size, insulation type, number of loaded conductors, and installation method (in free air, in conduit, buried, on a tray, etc.), and is published in tables within the applicable wiring standard (IS 3961 / IS 732 in India, IEC 60364-5-52 internationally, or NEC Table 310 in the US) or in your cable manufacturer's technical datasheet — use the table matching your exact installation method for an accurate starting figure.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does this calculator account for voltage drop as well as ampacity?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — this calculator only addresses thermal ampacity (how much current the cable can safely carry without overheating). Voltage drop is a separate check based on cable length, resistance, and load current, and for longer cable runs voltage drop can require a larger conductor size than ampacity alone would suggest — use a dedicated Voltage Drop Calculator alongside this one for a complete cable sizing check.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I apply both temperature and grouping correction together?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, when both conditions apply — the two correction factors are multiplied together with the base ampacity (not applied separately or the larger one alone), since a cable that's both in a hot ambient and grouped with other loaded cables experiences both derating effects simultaneously.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What happens if I don't derate a cable that needs it?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">An underrated cable running above its safe derated ampacity will operate at a higher conductor temperature than its insulation is designed for, accelerating insulation aging and increasing fire risk over time — the effect is cumulative rather than immediately catastrophic, which is exactly why undersized/under-derated cabling is a common and often-undetected latent hazard in older or poorly-documented installations.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I increase cable ampacity by improving ventilation or installation method instead of upsizing the cable?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Sometimes — moving cables from a fully enclosed conduit to free air, increasing spacing between grouped cables, or improving airflow around a cable tray can meaningfully increase effective ampacity for the same conductor size, since these changes directly address the heat dissipation limitation rather than requiring a larger, more expensive conductor. Whether this is practical depends on the specific installation constraints.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateCableAmpacity(){
+    const baseAmpacity = parseFloat(document.getElementById('baseAmpacity').value);
+    const maxTemp = parseFloat(document.getElementById('maxTemp').value);
+    const ambientTemp = parseFloat(document.getElementById('ambientTemp').value);
+    const numCircuits = parseInt(document.getElementById('numCircuits').value, 10);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(baseAmpacity) || baseAmpacity <= 0){ errors.push('Enter a valid base ampacity greater than 0.'); }
+    if(isNaN(ambientTemp)){ errors.push('Enter a valid ambient temperature.'); }
+    if(!isNaN(ambientTemp) && !isNaN(maxTemp) && ambientTemp >= maxTemp){ errors.push('Ambient temperature must be lower than the max conductor operating temperature.'); }
+    if(isNaN(numCircuits) || numCircuits < 1){ errors.push('Enter a valid number of circuits (1 or more).'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rTempFactor').textContent = '\u2014';
+      document.getElementById('rGroupFactor').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const tempFactor = Math.sqrt((maxTemp - ambientTemp) / (maxTemp - 30));
+
+    function groupingFactor(n){
+      if(n <= 1) return 1.00;
+      if(n === 2) return 0.80;
+      if(n === 3) return 0.70;
+      if(n === 4) return 0.65;
+      if(n === 5) return 0.60;
+      if(n <= 6) return 0.57;
+      if(n <= 9) return 0.54;
+      if(n <= 12) return 0.50;
+      if(n <= 16) return 0.45;
+      return 0.41;
+    }
+    const groupFactor = groupingFactor(numCircuits);
+    const deratedAmpacity = baseAmpacity * tempFactor * groupFactor;
+
+    document.getElementById('rResult').textContent = deratedAmpacity.toLocaleString('en-IN', {maximumFractionDigits:1}) + ' A';
+    document.getElementById('resultSub').textContent = 'From ' + baseAmpacity + ' A base, ' + ambientTemp + '\u00b0C ambient, ' + numCircuits + ' circuits';
+    document.getElementById('rTempFactor').textContent = tempFactor.toFixed(3);
+    document.getElementById('rGroupFactor').textContent = groupFactor.toFixed(2);
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Base Ampacity (at 30\u00b0C, 1 circuit)</td><td>${baseAmpacity} A</td></tr>
+                <tr><td>Max Conductor Temp</td><td>${maxTemp}\u00b0C</td></tr>
+                <tr><td>Ambient Temperature</td><td>${ambientTemp}\u00b0C</td></tr>
+                <tr><td>Temperature Correction Factor</td><td>${tempFactor.toFixed(3)}</td></tr>
+                <tr><td>Circuits Grouped</td><td>${numCircuits}</td></tr>
+                <tr><td>Grouping Correction Factor</td><td>${groupFactor.toFixed(2)}</td></tr>
+                <tr><td><strong>Derated Ampacity</strong></td><td><strong>${deratedAmpacity.toFixed(1)} A</strong></td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateCableAmpacity();
+</script>
+
+</body>
+</html>

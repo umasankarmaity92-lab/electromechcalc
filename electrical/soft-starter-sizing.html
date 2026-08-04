@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Soft Starter Sizing Calculator (Duty & Temperature Derating) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Soft Starter Sizing Calculator. Enter motor full load current, starts per hour, and ambient temperature to get the required soft starter current rating instantly, with formula and worked example.">
+<meta name="keywords" content="soft starter sizing calculator, soft starter rating calculator, soft starter duty cycle, soft starter temperature derating, soft starter selection formula">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/soft-starter-sizing">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Soft Starter Sizing Calculator">
+<meta property="og:description" content="Free Soft Starter Sizing Calculator — enter motor FLC, starts per hour, and ambient temperature to get the required rating instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/soft-starter-sizing">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Soft Starter Sizing Calculator">
+<meta name="twitter:description" content="Free Soft Starter Sizing Calculator — enter motor FLC, starts per hour, and ambient temperature to get the required rating instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Soft Starter Sizing Calculator",
+  "url": "https://www.electromechcalc.com/electrical/soft-starter-sizing",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Soft Starter Sizing Calculator. Enter motor full load current, starts per hour, and ambient temperature to get the required soft starter current rating instantly, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the basic formula for soft starter sizing?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Required Soft Starter Rating = Motor Full Load Current × Duty Factor ÷ Temperature Derating Factor. The duty factor increases with more frequent starting (more starts per hour), and the temperature derating factor reduces the soft starter's effective rating when ambient temperature exceeds its reference condition (commonly 40°C)." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does starting frequency (starts per hour) matter so much for soft starter sizing?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A soft starter's power electronics (thyristors/SCRs) generate significant heat during the ramp-up starting period, and this heat needs time to dissipate between starts — frequent starting doesn't allow full thermal recovery between cycles, requiring a larger-rated soft starter (or a reduced duty cycle) to avoid overheating the power electronics, even though the motor's own steady-state running current hasn't changed." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a soft starter need to be oversized compared to a simple contactor for the same motor?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Often yes, particularly for frequent-starting applications — a simple contactor's continuous current rating is largely unaffected by starting frequency (within reason), but a soft starter's semiconductor-based ramping function is genuinely more thermally sensitive to starting frequency, which is why soft starter sizing explicitly accounts for starts-per-hour in a way basic contactor sizing typically doesn't." }
+    },
+    {
+      "@type": "Question",
+      "name": "How does ambient temperature affect soft starter rating?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Like most electronic and electrical equipment, a soft starter's rated current is specified at a reference ambient temperature (commonly 40°C) — operating in a hotter environment (an unventilated panel room, direct sun exposure, a hot industrial environment) reduces the available thermal margin before the unit's internal components exceed their safe operating temperature, requiring derating (either a larger unit, or accepting reduced current capability from the same unit)." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between 'normal duty' and 'heavy duty' soft starter ratings some manufacturers publish?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Some manufacturers publish two different current ratings for the same physical soft starter model — a higher rating for lighter, less frequent starting duty, and a lower rating for the same unit used in more demanding, frequent-starting applications — reflecting the same underlying thermal duty cycle principle this calculator's duty factor addresses, just expressed as two distinct published ratings rather than a continuous adjustment factor." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can a soft starter be bypassed after starting to reduce heat and improve efficiency?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — many soft starter installations include a bypass contactor that closes after the starting ramp completes, carrying full running current directly through a mechanical contact rather than through the soft starter's semiconductors continuously — this reduces heat generation and voltage drop during normal running, and is standard practice for many continuous-duty soft starter applications specifically to avoid unnecessary continuous semiconductor conduction losses." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does soft starter sizing need to account for the driven load's inertia, not just starts per hour?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, indirectly — higher-inertia loads generally take longer to accelerate to full speed, meaning the soft starter's semiconductors conduct current for a longer ramp period each start, which increases heat generation per start even at the same starts-per-hour frequency — very high-inertia applications may need to be treated as a more severe duty class than starts-per-hour alone would suggest." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is soft starter current rating the same thing as motor horsepower/kW rating shown on some product literature?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not directly — while manufacturers often publish a suggested motor kW/HP rating for a given soft starter model as a convenience reference (assuming typical voltage and duty conditions), the fundamental sizing parameter is current, not power — always verify actual current compatibility for your specific motor and voltage, not just a horsepower table lookup, especially for non-typical duty conditions." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Motors & Starting
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Soft Starter Sizing <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Required soft starter current rating from motor full load current, starting frequency (starts per hour), and ambient temperature derating.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Soft Starter Sizing Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter motor FLC, starting frequency, and ambient temperature.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Motor Full Load Current, FLC (A)</label>
+          <input id="flc" type="number" value="55" step="0.1" min="0" placeholder="e.g. 55" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Starts Per Hour</label>
+          <input id="startsPerHour" type="number" value="8" step="1" min="1" placeholder="e.g. 8" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Ambient Temperature (&deg;C)</label>
+          <input id="ambientTemp" type="number" value="40" step="1" placeholder="e.g. 40" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateSoftStarterSizing()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">Rating = FLC × Duty ÷ Temp Derating</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Required Soft Starter Rating</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Duty Factor</span>
+            <span id="rDutyFactor" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Temp. Derating</span>
+            <span id="rTempFactor" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/motor-starting-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Motor Starting Current Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/star-delta-starter" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Star Delta Starter Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/vfd-sizing" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          VFD Sizing Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/contactor-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Contactor Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Soft Starter Sizing Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding soft starter duty and temperature derating</a></li>
+      <li><a href="#second" class="hover:underline">3. Why starts-per-hour matters more for soft starters than for simple contactors</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Soft Starter Rating Is Calculated for Duty and Temperature</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard soft starter sizing method (duty class and ambient temperature derating)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>A soft starter uses power electronics (typically back-to-back thyristors/SCRs per phase) to ramp motor voltage smoothly from a reduced starting level up to full voltage, rather than switching abruptly like a contactor. This electronic ramping is gentler on the motor and connected mechanical system, but the semiconductors themselves generate meaningful heat during each starting ramp &mdash; which is why soft starter sizing needs to account for how often the motor starts, not just its steady running current.</p>
+
+      <p><strong>Formula used:</strong> Required Soft Starter Rating = Motor FLC &times; Duty Factor &divide; Temperature Derating Factor. Duty factor increases with starting frequency (more starts per hour demands a higher-rated unit, or accepting reduced effective capacity from a given unit); temperature derating factor reduces available capacity when ambient exceeds the reference condition (commonly 40&deg;C).</p>
+
+      <p><strong>Worked example:</strong> a motor with 55 A full load current, starting 8 times per hour, in a 40&deg;C ambient (at the reference condition, no additional derating). Duty Factor for 8 starts/hour (falling in a 6-10 starts/hour "normal duty" band) &asymp; 1.15. Temperature Derating Factor at 40&deg;C = 1.0 (no derating needed at reference temperature). Required Soft Starter Rating = 55 &times; 1.15 &divide; 1.0 = 63.25 A &mdash; meaningfully above the motor's bare 55 A FLC, reflecting the additional thermal duty from frequent starting.</p>
+
+      <p><strong>Why this differs from simple contactor sizing:</strong> a standard AC-3 rated contactor's current rating is largely governed by contact wear and thermal duty during normal running, with switching (making/breaking) duty as a secondary consideration that's typically already built into its AC-3 rating for standard starting frequency assumptions. A soft starter's semiconductor-based ramping introduces a genuinely different, more starting-frequency-sensitive thermal profile &mdash; which is exactly why soft starter datasheets and sizing guides explicitly address starts-per-hour as a primary sizing input, in a way that simple contactor selection tables generally don't need to.</p>
+
+      <p><strong>How ambient temperature derating typically works:</strong> using a common approximate guideline of roughly 2% capacity reduction per degree Celsius above the 40&deg;C reference (the specific figure varies by manufacturer), a soft starter installed at 50&deg;C ambient might need to be derated by roughly 20% from its nameplate rating &mdash; meaning either a physically larger unit is needed to deliver the same effective current capacity, or the installation environment needs improved ventilation/cooling to bring ambient temperature closer to the reference condition. This is conceptually the same derating principle used for cable ampacity and other electrical equipment, just with different specific percentage figures appropriate to power electronics.</p>
+
+      <p><strong>Panel ventilation as an alternative to oversizing:</strong> in situations where a soft starter installation location runs hotter than ideal (a densely packed equipment room, direct sun exposure on an outdoor enclosure, poor air circulation), improving panel ventilation or cooling can sometimes be a more cost-effective solution than simply selecting a larger, more expensive soft starter to compensate for temperature derating &mdash; forced ventilation, panel air conditioning, or repositioning equipment to a cooler location are all worth considering as alternatives to oversizing, particularly for marginal derating situations where a modest ambient temperature improvement would eliminate the need for derating entirely.</p>
+
+      <p><strong>Duty cycle and application severity beyond the simple starts-per-hour metric:</strong> while starts-per-hour is a commonly used and reasonably good proxy for soft starter thermal duty, the actual severity also depends on how long each starting ramp lasts (a longer ramp time, whether from a lower voltage boost setting or a higher-inertia load, means longer semiconductor conduction per start) and how much time elapses between starts specifically (not just the hourly average, since several starts clustered together with little recovery time between them are more thermally demanding than the same total starts spread evenly across the hour). Manufacturers' detailed duty cycle charts typically account for these nuances more precisely than a simple starts-per-hour figure alone can capture.</p>
+
+      <p><strong>Summary:</strong> use Required Rating = FLC &times; Duty Factor &divide; Temperature Derating Factor, with duty factor increasing for more frequent starting and temperature derating applying above the reference ambient (commonly 40&deg;C), and always cross-check the final selection against the specific manufacturer's detailed duty cycle chart rather than relying solely on general guideline multipliers for a final purchasing decision.</p>
+
+      <p><strong>Selecting between soft starter and VFD when both could work:</strong> for applications where either technology could reasonably serve the starting-current-management need, a soft starter is typically simpler and less expensive when speed control isn't required, while a VFD adds continuous variable speed capability (useful for process control, energy savings on variable-torque loads like fans and pumps, and even smoother starting than a soft starter can achieve) at correspondingly higher cost and complexity. If the application genuinely only needs controlled starting (not ongoing speed variation), a soft starter is often the more cost-effective choice; if variable speed operation would provide genuine operational or energy-saving value beyond just starting, a VFD's additional capability may justify its higher cost.</p>
+
+      <p><strong>Commissioning and verification:</strong> after installing a correctly sized soft starter, verifying actual operating temperature and starting performance under real operating conditions (actual starts-per-hour, actual ambient temperature, actual load characteristics) during commissioning confirms the sizing calculation held up against real-world conditions, rather than assuming the calculated selection is automatically correct without field verification &mdash; this is particularly worthwhile for applications where actual operating conditions might reasonably differ from initial design assumptions (a process that starts more frequently than originally planned, for example, or an installation location that runs hotter than anticipated).</p>
+
+      <p>A well-sized and properly commissioned soft starter should run comfortably within its thermal limits under normal expected operation, with enough margin to handle occasional deviations from the assumed duty cycle without nuisance tripping &mdash; if a correctly-sized unit still shows signs of thermal stress in service, that's a useful signal to revisit the actual operating conditions against the original sizing assumptions, since real-world usage sometimes diverges from initial planning in ways worth catching and correcting.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">FLC=55A, 8 starts/hour, 40&deg;C ambient: Duty Factor &asymp; 1.15, Temp Derating = 1.0. Required Rating = 55 &times; 1.15 &divide; 1.0 = <strong>63.25 A</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Soft starter sizing multipliers vary meaningfully by specific manufacturer and product line — this calculator uses general, widely applicable guideline factors for starts-per-hour duty and ambient temperature derating. Always verify final soft starter selection against the specific manufacturer's detailed sizing tables and duty cycle charts, which account for their product's specific thermal characteristics more precisely than general guidelines can. Also consider clustered starting patterns and load inertia as additional severity factors beyond a simple starts-per-hour average.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Key Concept</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Soft Starter Thermal Duty — Why Frequent Starting Matters So Much</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Starts Per Hour</th>
+          <th class="text-left px-4 py-2 font-semibold">Duty Factor</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">1-5 (light duty)</td><td class="px-4 py-2">1.00</td></tr>
+        <tr><td class="px-4 py-2">6-10 (normal duty)</td><td class="px-4 py-2">1.15</td></tr>
+        <tr><td class="px-4 py-2">11-20 (heavy duty)</td><td class="px-4 py-2">1.30</td></tr>
+        <tr><td class="px-4 py-2">20+ (very heavy duty)</td><td class="px-4 py-2">1.50</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>The reason a soft starter's thermal duty scales this way traces back to how power electronics dissipate heat &mdash; each starting ramp forces current through the thyristors while they're only partially conducting (phase-controlled), which generates more heat per unit of current than fully-conducting steady-state operation. This heat needs time to dissipate through the unit's heatsink between starts; with insufficient recovery time between frequent starts, heat accumulates faster than it dissipates, progressively raising the semiconductors' operating temperature toward their safe limit.     <p>This is also why some manufacturers publish duty ratings as a specific number of starts within a defined time window (rather than a simple hourly average) &mdash; a rating expressed as "X starts per hour, evenly spaced" captures the recovery-time assumption more explicitly than a bare starts-per-hour figure, and is worth checking for applications with clustered or irregular starting patterns rather than steady, evenly-spaced starts.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Sizing a Soft Starter</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Sizing a soft starter purely by motor FLC without considering starting frequency.</strong> Unlike simple contactor sizing, soft starter sizing needs an explicit starts-per-hour consideration &mdash; using bare FLC alone for a frequently-starting application can undersize the unit for its actual thermal duty.</p>
+      <p><strong>2. Ignoring ambient temperature derating for a soft starter installed in a hot panel or equipment room.</strong> Like most power electronics, soft starters need derating above their reference ambient temperature &mdash; a unit correctly sized for 40&deg;C reference conditions may be inadequate in a genuinely hotter installation environment without this correction.</p>
+      <p><strong>3. Not accounting for high load inertia as an additional severity factor beyond starts-per-hour alone.</strong> A high-inertia load takes longer to accelerate, meaning longer semiconductor conduction time per start even at modest starting frequency &mdash; very high-inertia applications may need to be treated as a more demanding duty class than starts-per-hour numbers alone would suggest.</p>
+      <p><strong>4. Confusing soft starter current rating with a horsepower/kW reference figure from generic product literature.</strong> The fundamental sizing parameter is current at your actual system voltage and duty condition, not a generic horsepower lookup table figure that may assume different voltage or duty conditions than your actual application.</p>
+      <p><strong>5. Not considering a bypass contactor for continuous-duty applications.</strong> Running current continuously through soft starter semiconductors (rather than bypassing to a mechanical contactor after starting) generates unnecessary ongoing heat and voltage drop &mdash; a bypass contactor is standard, sensible practice for most continuous-duty soft starter installations.</p>
+      <p><strong>6. Assuming general duty factor guidelines apply identically across all manufacturers and models.</strong> Actual thermal duty capability varies by specific soft starter design &mdash; always cross-check against the specific manufacturer's detailed duty cycle charts for final selection, rather than relying solely on general guideline factors.</p>
+      <p><strong>7. Ignoring clustered starting patterns in favor of a simple hourly average.</strong> Several starts bunched together with little recovery time between them are more thermally demanding than the same total count spread evenly across an hour — a bare starts-per-hour average can understate actual thermal severity for irregular or clustered starting patterns.</p>
+      <p><strong>8. Defaulting to a soft starter without considering whether a VFD's additional capability would better serve the application.</strong> If variable speed operation would provide genuine operational or energy value beyond just controlled starting, a VFD may be the better overall choice despite its higher cost — evaluate actual application needs, not just starting-current management, when choosing between the two technologies.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the basic formula for soft starter sizing?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Required Soft Starter Rating = Motor Full Load Current × Duty Factor ÷ Temperature Derating Factor. The duty factor increases with more frequent starting (more starts per hour), and the temperature derating factor reduces the soft starter's effective rating when ambient temperature exceeds its reference condition (commonly 40°C).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does starting frequency (starts per hour) matter so much for soft starter sizing?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A soft starter's power electronics (thyristors/SCRs) generate significant heat during the ramp-up starting period, and this heat needs time to dissipate between starts — frequent starting doesn't allow full thermal recovery between cycles, requiring a larger-rated soft starter (or a reduced duty cycle) to avoid overheating the power electronics, even though the motor's own steady-state running current hasn't changed.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does a soft starter need to be oversized compared to a simple contactor for the same motor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Often yes, particularly for frequent-starting applications — a simple contactor's continuous current rating is largely unaffected by starting frequency (within reason), but a soft starter's semiconductor-based ramping function is genuinely more thermally sensitive to starting frequency, which is why soft starter sizing explicitly accounts for starts-per-hour in a way basic contactor sizing typically doesn't.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How does ambient temperature affect soft starter rating?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Like most electronic and electrical equipment, a soft starter's rated current is specified at a reference ambient temperature (commonly 40°C) — operating in a hotter environment (an unventilated panel room, direct sun exposure, a hot industrial environment) reduces the available thermal margin before the unit's internal components exceed their safe operating temperature, requiring derating (either a larger unit, or accepting reduced current capability from the same unit).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the difference between 'normal duty' and 'heavy duty' soft starter ratings some manufacturers publish?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Some manufacturers publish two different current ratings for the same physical soft starter model — a higher rating for lighter, less frequent starting duty, and a lower rating for the same unit used in more demanding, frequent-starting applications — reflecting the same underlying thermal duty cycle principle this calculator's duty factor addresses, just expressed as two distinct published ratings rather than a continuous adjustment factor.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can a soft starter be bypassed after starting to reduce heat and improve efficiency?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — many soft starter installations include a bypass contactor that closes after the starting ramp completes, carrying full running current directly through a mechanical contact rather than through the soft starter's semiconductors continuously — this reduces heat generation and voltage drop during normal running, and is standard practice for many continuous-duty soft starter applications specifically to avoid unnecessary continuous semiconductor conduction losses.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does soft starter sizing need to account for the driven load's inertia, not just starts per hour?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, indirectly — higher-inertia loads generally take longer to accelerate to full speed, meaning the soft starter's semiconductors conduct current for a longer ramp period each start, which increases heat generation per start even at the same starts-per-hour frequency — very high-inertia applications may need to be treated as a more severe duty class than starts-per-hour alone would suggest.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is soft starter current rating the same thing as motor horsepower/kW rating shown on some product literature?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Not directly — while manufacturers often publish a suggested motor kW/HP rating for a given soft starter model as a convenience reference (assuming typical voltage and duty conditions), the fundamental sizing parameter is current, not power — always verify actual current compatibility for your specific motor and voltage, not just a horsepower table lookup, especially for non-typical duty conditions.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What happens if a soft starter is undersized for its actual duty cycle?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">An undersized soft starter subjected to more frequent starting than its rating accommodates will overheat its internal power electronics over time, potentially triggering thermal protection trips (a operational nuisance) or, in more severe cases, leading to premature component failure — correctly accounting for actual starts-per-hour duty, not just steady-state motor current, is essential to avoiding this failure mode.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateSoftStarterSizing(){
+    const flc = parseFloat(document.getElementById('flc').value);
+    const startsPerHour = parseFloat(document.getElementById('startsPerHour').value);
+    const ambientTemp = parseFloat(document.getElementById('ambientTemp').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(flc) || flc <= 0){ errors.push('Enter a valid full load current greater than 0.'); }
+    if(isNaN(startsPerHour) || startsPerHour < 1){ errors.push('Enter a valid starts per hour (1 or more).'); }
+    if(isNaN(ambientTemp)){ errors.push('Enter a valid ambient temperature.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rDutyFactor').textContent = '\u2014';
+      document.getElementById('rTempFactor').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    let dutyFactor = 1.0;
+    if(startsPerHour > 20) dutyFactor = 1.5;
+    else if(startsPerHour > 10) dutyFactor = 1.3;
+    else if(startsPerHour > 5) dutyFactor = 1.15;
+
+    let tempDeratingFactor = 1.0;
+    if(ambientTemp > 40){
+      tempDeratingFactor = 1 - ((ambientTemp - 40) * 0.02);
+      if(tempDeratingFactor < 0.5) tempDeratingFactor = 0.5;
+    }
+
+    const requiredRating = (flc * dutyFactor) / tempDeratingFactor;
+
+    document.getElementById('rResult').textContent = requiredRating.toLocaleString('en-IN', {maximumFractionDigits:1}) + ' A';
+    document.getElementById('resultSub').textContent = startsPerHour + ' starts/hr, ' + ambientTemp + '\u00b0C';
+    document.getElementById('rDutyFactor').textContent = dutyFactor.toFixed(2) + '×';
+    document.getElementById('rTempFactor').textContent = tempDeratingFactor.toFixed(2) + '×';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Motor Full Load Current</td><td>${flc} A</td></tr>
+                <tr><td>Starts Per Hour</td><td>${startsPerHour}</td></tr>
+                <tr><td>Duty Factor</td><td>${dutyFactor.toFixed(2)}×</td></tr>
+                <tr><td>Ambient Temperature</td><td>${ambientTemp}\u00b0C</td></tr>
+                <tr><td>Temperature Derating Factor</td><td>${tempDeratingFactor.toFixed(2)}×</td></tr>
+                <tr><td><strong>Required Soft Starter Rating</strong></td><td><strong>${requiredRating.toFixed(1)} A</strong></td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateSoftStarterSizing();
+</script>
+
+</body>
+</html>

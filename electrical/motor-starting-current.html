@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Motor Starting Current Calculator (DOL, Star-Delta, Autotransformer) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Motor Starting Current Calculator. Enter motor full load current and starting method (DOL, star-delta, autotransformer) to get actual line starting current instantly, with formula and worked example.">
+<meta name="keywords" content="motor starting current calculator, locked rotor current calculator, star delta starting current, autotransformer starting current, dol starting current">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/motor-starting-current">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Motor Starting Current Calculator">
+<meta property="og:description" content="Free Motor Starting Current Calculator — enter FLC and starting method to get actual line starting current instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/motor-starting-current">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Motor Starting Current Calculator">
+<meta name="twitter:description" content="Free Motor Starting Current Calculator — enter FLC and starting method to get actual line starting current instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Motor Starting Current Calculator",
+  "url": "https://www.electromechcalc.com/electrical/motor-starting-current",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Motor Starting Current Calculator. Enter motor full load current and starting method (DOL, star-delta, autotransformer) to get actual line starting current instantly, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for DOL (direct-on-line) starting current?",
+      "acceptedAnswer": { "@type": "Answer", "text": "DOL Starting Current = Full Load Current × Starting Current Multiplier, where the multiplier (typically 5-8× FLC for standard induction motors) reflects the motor's locked-rotor current characteristic, ideally sourced from its nameplate or NEMA code letter / IEC design class rather than assumed." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does star-delta starting reduce starting current to exactly one-third of DOL?",
+      "acceptedAnswer": { "@type": "Answer", "text": "In star (wye) connection during starting, each winding sees line voltage ÷ √3 instead of full line voltage in delta — since current is proportional to voltage (for a given impedance) and the winding connection itself also changes the current relationship, the combined effect reduces line starting current to exactly one-third of what direct-on-line (delta) starting would draw, a well-established result from three-phase motor winding theory." }
+    },
+    {
+      "@type": "Question",
+      "name": "How does autotransformer starting reduce starting current?",
+      "acceptedAnswer": { "@type": "Answer", "text": "An autotransformer starter applies a reduced voltage (a selected tap percentage, commonly 50%, 65%, or 80% of full voltage) to the motor during starting — since motor current is roughly proportional to applied voltage, and the autotransformer's turns ratio also reduces line-side current proportionally, the line starting current reduces by approximately the tap percentage squared (a 65% tap gives roughly 0.65² ≈ 42% of DOL starting current)." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does reducing starting current also reduce starting torque?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Motor torque is proportional to the square of applied voltage (or, equivalently, roughly proportional to current squared for a given motor at a given slip) — any method that reduces starting voltage or current to limit inrush necessarily reduces available starting torque by roughly the same proportion (squared), which is why reduced-voltage starting methods can only be used where the driven load's actual starting torque requirement is modest enough to tolerate this reduction." }
+    },
+    {
+      "@type": "Question",
+      "name": "Which starting method gives the lowest starting current?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Among common methods, star-delta and low-tap autotransformer starting give the most significant starting current reduction (down to roughly a third or less of DOL current), while soft starters offer more flexible, adjustable reduction, and VFDs offer the most current-limited starting of all (often limiting starting current to close to full load current itself, since a VFD ramps frequency and voltage together rather than applying reduced voltage at line frequency)." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use star-delta starting for any motor?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — star-delta starting requires a motor specifically wound and wired for a delta connection at its rated running voltage (with all six winding terminals brought out to allow both star and delta connection), and the driven load's required starting torque must be low enough to tolerate the roughly one-third torque reduction that comes with the one-third current reduction. Not every motor or application is suitable for star-delta starting." }
+    },
+    {
+      "@type": "Question",
+      "name": "How much starting current reduction does a soft starter typically provide?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Soft starters offer adjustable starting current limiting, commonly configurable to limit starting current to roughly 2-4 times full load current (compared to 5-8 times for DOL), with the exact figure depending on the specific soft starter's programmed current limit setting and the connected load's actual starting torque requirement — unlike star-delta or autotransformer starting, soft starter reduction isn't fixed by a simple ratio but is adjustable within the device's configuration." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a VFD eliminate starting current concerns entirely?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Largely, yes for the inrush/locked-rotor current concern specifically — a VFD starts the motor by gradually ramping both frequency and voltage from near zero, so the motor never experiences the sudden line-frequency inrush that DOL and reduced-voltage methods produce, typically keeping starting current close to (sometimes even below) full load current throughout the ramp. This is one of several reasons VFDs are increasingly used specifically for starting current management, beyond their speed control capability." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Motors & Starting
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Motor Starting Current <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Actual line starting current for a motor under direct-on-line, star-delta, or autotransformer starting — from full load current and the DOL starting current multiplier.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Motor Starting Current Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter FLC, DOL multiplier, and starting method.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Motor Full Load Current, FLC (A)</label>
+          <input id="flc" type="number" value="40" step="0.1" min="0" placeholder="e.g. 40" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">DOL Starting Current Multiplier</label>
+          <input id="dolMultiplier" type="number" value="6" step="0.1" min="1" placeholder="e.g. 6" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Starting Method</label>
+          <select id="startMethod" class="input-field mt-2">
+            <option value="dol" selected>Direct-On-Line (DOL)</option>
+            <option value="stardelta">Star-Delta</option>
+            <option value="auto80">Autotransformer (80% tap)</option>
+            <option value="auto65">Autotransformer (65% tap)</option>
+            <option value="auto50">Autotransformer (50% tap)</option>
+            <option value="soft">Soft Starter (typical)</option>
+            <option value="vfd">VFD</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateMotorStartingCurrent()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">I_start = FLC × Multiplier × Reduction Factor</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Line Starting Current</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">DOL Starting Current</span>
+            <span id="rDOL" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Approx. Starting Torque</span>
+            <span id="rTorque" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/contactor-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Contactor Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/star-delta-starter" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Star Delta Starter Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/soft-starter-sizing" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Soft Starter Sizing Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/vfd-sizing" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          VFD Sizing Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Motor Starting Current Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding starting current reduction by method</a></li>
+      <li><a href="#second" class="hover:underline">3. Starting current and torque trade-off by method</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Motor Starting Current Is Calculated by Starting Method</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard motor starting current reduction factors by starting method</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>Every induction motor draws a large surge of current the instant it's switched on, since the rotor is momentarily stationary (locked) and offers very low impedance until it begins accelerating &mdash; this starting current is typically 5-8 times the motor's normal full load running current. Different starting methods manage this surge differently, and each comes with a corresponding, mathematically related reduction in available starting torque.</p>
+
+      <p><strong>Formula used (DOL baseline):</strong> DOL Starting Current = Full Load Current &times; DOL Starting Current Multiplier. This is the actual locked-rotor current the motor itself would draw if started directly across the line at full voltage.</p>
+
+      <p><strong>Reduction factors by starting method:</strong> Star-Delta reduces line starting current to exactly 1&divide;3 of the DOL figure. Autotransformer starting at a given tap percentage reduces line starting current to approximately (tap%)&sup2; of the DOL figure. Soft starters and VFDs offer more flexible, adjustable reduction rather than a single fixed ratio.</p>
+
+      <p><strong>Worked example:</strong> a motor with 40 A full load current and a DOL starting multiplier of 6&times;. DOL Starting Current = 40 &times; 6 = 240 A. Under Star-Delta starting, Line Starting Current = 240 &divide; 3 = 80 A &mdash; a substantial reduction from the DOL figure. Under Autotransformer starting at a 65% tap, Line Starting Current = 240 &times; 0.65&sup2; = 240 &times; 0.4225 &asymp; 101.4 A &mdash; less reduction than star-delta, but with correspondingly more retained starting torque (discussed further below).</p>
+
+      <p><strong>Why star-delta's reduction is exactly one-third, not adjustable:</strong> unlike autotransformer starting (where the tap percentage can be selected to trade off current reduction against torque), star-delta's reduction factor is fixed by the physics of the winding reconfiguration itself &mdash; in star connection, each winding sees line voltage &divide; &radic;3, and the combination of this reduced per-winding voltage with the star connection's current relationship to line current produces exactly a 1&divide;3 reduction in line current (and, correspondingly, exactly 1&divide;3 of DOL starting torque) with no adjustment possible short of using a different starting method entirely.</p>
+
+      <p><strong>NEMA code letters and IEC design classes as sources for the DOL multiplier:</strong> rather than guessing or using a generic assumed multiplier, NEMA (in North American practice) assigns motors a code letter (A through V) on their nameplate specifically indicating locked-rotor kVA per horsepower, from which starting current can be calculated precisely for that specific motor. IEC practice similarly categorizes motor starting characteristics through design classes and manufacturer-published locked-rotor current data. Whenever available, using this motor-specific data gives a meaningfully more accurate DOL starting current figure than an assumed generic multiplier, which is why this calculator treats the multiplier as a user-supplied input rather than a fixed constant &mdash; the actual value genuinely depends on the specific motor.</p>
+
+      <p><strong>Voltage dip considerations during starting:</strong> a large motor starting current doesn't just risk tripping its own protective device &mdash; it also causes a temporary voltage dip across the supply system, potentially affecting other equipment connected to the same distribution point during the brief starting period. This is a separate but related concern from simply avoiding nuisance tripping, and is often the deciding factor for choosing a reduced-current starting method even when the motor's own protective device could technically tolerate full DOL starting current &mdash; a facility with sensitive equipment sharing the same electrical supply as a large motor may need reduced-current starting specifically to limit this voltage dip effect on other connected loads, independent of the motor circuit's own protection requirements.</p>
+
+      <p><strong>Selecting a starting method &mdash; a practical decision framework:</strong> the choice generally comes down to balancing available starting torque needed by the driven load against available fault current capacity and voltage dip tolerance of the supply system, weighed against the additional cost and complexity of more sophisticated starting equipment (a soft starter or VFD costs meaningfully more than a simple DOL or star-delta starter). Small motors on a stiff, high-capacity supply with adequately torque-tolerant loads often use simple DOL starting without issue; larger motors, weaker supply systems, or high-inertia/high-starting-torque-demanding loads typically justify the additional cost of more sophisticated reduced-current starting equipment.</p>
+
+      <p><strong>Summary:</strong> use DOL Starting Current = FLC &times; Multiplier as the baseline, apply 1&divide;3 for star-delta, (tap%)&sup2; for autotransformer, and reference the specific soft starter/VFD configuration for those methods, always confirming that the chosen method's torque reduction (equal to its current reduction for star-delta and autotransformer) is tolerable for the actual driven load's starting torque requirement.</p>
+
+      <p><strong>Transitioning between starting stages:</strong> both star-delta and autotransformer starters involve a transition moment (switching from the reduced-current starting configuration to full running configuration) that itself creates a brief additional current transient, sometimes called a "transition bump," as the motor's back-EMF and the newly applied full voltage interact momentarily out of phase. This transition transient is generally smaller than the initial starting current but is a real, sometimes overlooked consideration in protective device coordination and mechanical shock analysis for these starting methods, distinct from the initial starting current calculated here.</p>
+
+      <p>Whether you're specifying a new motor starter, troubleshooting nuisance tripping on an existing installation, or evaluating whether a VFD upgrade would resolve a persistent voltage dip complaint from other equipment, understanding how each starting method's current and torque reduction relate back to the same underlying DOL baseline gives a solid foundation for making that decision with real numbers rather than general impressions.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">FLC=40A, DOL multiplier=6: DOL Starting = 240A. <strong>Star-Delta</strong>: 240&divide;3 = <strong>80 A</strong>. <strong>Autotransformer (65%)</strong>: 240&times;0.65&sup2; &asymp; <strong>101.4 A</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">The DOL starting current multiplier (typically 5-8× FLC) varies by specific motor design and should ideally come from the motor manufacturer's nameplate data or NEMA code letter / IEC design class rather than assumed — this calculator uses your entered multiplier as the baseline for all reduction method calculations. Soft starter and VFD starting current figures vary considerably by specific device configuration and settings; the values used here are general illustrative figures, not universal constants. Always verify final starting method selection against the actual driven load's required starting torque and the supply system's voltage dip tolerance.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Trade-off</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Starting Current Reduction Always Costs Starting Torque</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Starting Method</th>
+          <th class="text-left px-4 py-2 font-semibold">Current (% of DOL)</th>
+          <th class="text-left px-4 py-2 font-semibold">Torque (% of DOL)</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">DOL</td><td class="px-4 py-2">100%</td><td class="px-4 py-2">100%</td></tr>
+        <tr><td class="px-4 py-2">Star-Delta</td><td class="px-4 py-2">33.3%</td><td class="px-4 py-2">33.3%</td></tr>
+        <tr><td class="px-4 py-2">Autotransformer (80% tap)</td><td class="px-4 py-2">64%</td><td class="px-4 py-2">64%</td></tr>
+        <tr><td class="px-4 py-2">Autotransformer (65% tap)</td><td class="px-4 py-2">42.3%</td><td class="px-4 py-2">42.3%</td></tr>
+        <tr><td class="px-4 py-2">Autotransformer (50% tap)</td><td class="px-4 py-2">25%</td><td class="px-4 py-2">25%</td></tr>
+        <tr><td class="px-4 py-2">Soft Starter (typical)</td><td class="px-4 py-2">Adjustable, ~30-70%</td><td class="px-4 py-2">Adjustable, ~30-70%</td></tr>
+        <tr><td class="px-4 py-2">VFD</td><td class="px-4 py-2">~100-150% of FLC (not DOL)</td><td class="px-4 py-2">Full torque available, current-limited</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Notice that for star-delta and autotransformer starting, the current reduction percentage and torque reduction percentage are always identical &mdash; this is a direct mathematical consequence of both quantities depending on the square of the same voltage reduction factor for autotransformer starting, or the same fixed geometric relationship for star-delta. VFD starting breaks this pattern entirely, since it manages the voltage-to-frequency ratio throughout acceleration rather than simply applying a reduced fixed voltage at line frequency, which is why VFDs can offer both low starting current and full available torque simultaneously,     <p>The general trend across the table also illustrates a broader principle worth internalizing: every reduced-voltage starting method (everything except VFD) reduces current and torque by the same proportion, since both scale with the square of applied voltage &mdash; there's no free lunch available from voltage reduction alone. Only by changing the fundamental relationship between voltage, frequency, and motor operation (as a VFD does) can a starting method break this coupled current-torque trade-off.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Motor Starting Current</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Choosing star-delta starting without confirming the driven load's starting torque tolerance.</strong> Star-delta reduces starting torque to exactly one-third of DOL &mdash; a load requiring more than about a third of full DOL starting torque (many pumps, fans with high static head/pressure, loaded conveyors) may fail to accelerate to full speed under star-delta starting.</p>
+      <p><strong>2. Assuming autotransformer tap percentage reduces current linearly rather than by the square.</strong> An 80% tap doesn't give 80% of DOL current &mdash; it gives approximately 80%&sup2; = 64% &mdash; using a linear assumption significantly overstates the actual current reduction achieved.</p>
+      <p><strong>3. Using an assumed DOL starting multiplier without checking the actual motor's nameplate or code letter.</strong> The 5-8&times; range is typical but not universal &mdash; specific motor designs can fall outside this range, and using an incorrect multiplier propagates error through every subsequent calculation for any starting method.</p>
+      <p><strong>4. Assuming soft starters and VFDs follow the same fixed reduction ratios as star-delta or autotransformer starting.</strong> These devices offer adjustable, configuration-dependent starting current profiles rather than a single fixed physics-determined ratio &mdash; always reference the specific device's actual configured settings rather than a general assumed figure.</p>
+      <p><strong>5. Confusing VFD "starting current" with DOL-relative reduction the same way as other reduced-voltage methods.</strong> A VFD's starting current is better understood relative to the motor's full load current (often close to 100-150% of FLC), not as a percentage reduction of the DOL locked-rotor figure, since a VFD fundamentally changes how the motor accelerates rather than simply reducing voltage at line frequency.</p>
+      <p><strong>6. Not verifying that the motor is actually wound and terminal-configured for the chosen starting method.</strong> Star-delta starting specifically requires a motor with all six winding ends brought out for dual star/delta connection &mdash; not every motor is built this way, and attempting star-delta starting on an incompatible motor isn't simply suboptimal, it's not possible without rewinding or replacing the motor.</p>
+      <p><strong>7. Ignoring the transition current bump when switching from star to delta (or reduced to full voltage).</strong> This secondary transient, distinct from the initial starting current, can matter for protective device coordination and mechanical shock analysis on star-delta and autotransformer starters &mdash; don't assume the initial starting current calculation alone captures the complete starting current profile.</p>
+      <p><strong>8. Not considering voltage dip impact on other equipment when selecting a starting method.</strong> Even where a motor's own protective device tolerates DOL starting current fine, the resulting voltage dip can affect other sensitive equipment sharing the same supply &mdash; this system-level consideration sometimes justifies reduced-current starting even when the motor circuit itself wouldn't strictly require it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for DOL (direct-on-line) starting current?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">DOL Starting Current = Full Load Current × Starting Current Multiplier, where the multiplier (typically 5-8× FLC for standard induction motors) reflects the motor's locked-rotor current characteristic, ideally sourced from its nameplate or NEMA code letter / IEC design class rather than assumed.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does star-delta starting reduce starting current to exactly one-third of DOL?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">In star (wye) connection during starting, each winding sees line voltage ÷ √3 instead of full line voltage in delta — since current is proportional to voltage (for a given impedance) and the winding connection itself also changes the current relationship, the combined effect reduces line starting current to exactly one-third of what direct-on-line (delta) starting would draw, a well-established result from three-phase motor winding theory.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How does autotransformer starting reduce starting current?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">An autotransformer starter applies a reduced voltage (a selected tap percentage, commonly 50%, 65%, or 80% of full voltage) to the motor during starting — since motor current is roughly proportional to applied voltage, and the autotransformer's turns ratio also reduces line-side current proportionally, the line starting current reduces by approximately the tap percentage squared (a 65% tap gives roughly 0.65² ≈ 42% of DOL starting current).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does reducing starting current also reduce starting torque?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Motor torque is proportional to the square of applied voltage (or, equivalently, roughly proportional to current squared for a given motor at a given slip) — any method that reduces starting voltage or current to limit inrush necessarily reduces available starting torque by roughly the same proportion (squared), which is why reduced-voltage starting methods can only be used where the driven load's actual starting torque requirement is modest enough to tolerate this reduction.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Which starting method gives the lowest starting current?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Among common methods, star-delta and low-tap autotransformer starting give the most significant starting current reduction (down to roughly a third or less of DOL current), while soft starters offer more flexible, adjustable reduction, and VFDs offer the most current-limited starting of all (often limiting starting current to close to full load current itself, since a VFD ramps frequency and voltage together rather than applying reduced voltage at line frequency).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I use star-delta starting for any motor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — star-delta starting requires a motor specifically wound and wired for a delta connection at its rated running voltage (with all six winding terminals brought out to allow both star and delta connection), and the driven load's required starting torque must be low enough to tolerate the roughly one-third torque reduction that comes with the one-third current reduction. Not every motor or application is suitable for star-delta starting.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How much starting current reduction does a soft starter typically provide?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Soft starters offer adjustable starting current limiting, commonly configurable to limit starting current to roughly 2-4 times full load current (compared to 5-8 times for DOL), with the exact figure depending on the specific soft starter's programmed current limit setting and the connected load's actual starting torque requirement — unlike star-delta or autotransformer starting, soft starter reduction isn't fixed by a simple ratio but is adjustable within the device's configuration.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does a VFD eliminate starting current concerns entirely?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Largely, yes for the inrush/locked-rotor current concern specifically — a VFD starts the motor by gradually ramping both frequency and voltage from near zero, so the motor never experiences the sudden line-frequency inrush that DOL and reduced-voltage methods produce, typically keeping starting current close to (sometimes even below) full load current throughout the ramp. This is one of several reasons VFDs are increasingly used specifically for starting current management, beyond their speed control capability.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does starting current matter beyond just tripping a breaker?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Beyond nuisance tripping of protective devices, high starting current causes a voltage dip on the supply system (affecting other connected equipment during the start), mechanical shock/stress on the motor and driven equipment from the sudden torque application, and in facilities with billing based partly on peak demand, can contribute to demand charges if frequent starts occur — starting current management is a genuine system-level concern, not just a single motor's protective device coordination issue.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateMotorStartingCurrent(){
+    const flc = parseFloat(document.getElementById('flc').value);
+    const dolMultiplier = parseFloat(document.getElementById('dolMultiplier').value);
+    const method = document.getElementById('startMethod').value;
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(flc) || flc <= 0){ errors.push('Enter a valid full load current greater than 0.'); }
+    if(isNaN(dolMultiplier) || dolMultiplier <= 1){ errors.push('Enter a valid DOL starting multiplier greater than 1.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rDOL').textContent = '\u2014';
+      document.getElementById('rTorque').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const dolCurrent = flc * dolMultiplier;
+    const methodData = {
+      dol: {factor: 1.0, label: 'Direct-On-Line', torquePct: 100},
+      stardelta: {factor: 1/3, label: 'Star-Delta', torquePct: 33.3},
+      auto80: {factor: 0.64, label: 'Autotransformer (80%)', torquePct: 64},
+      auto65: {factor: 0.4225, label: 'Autotransformer (65%)', torquePct: 42.3},
+      auto50: {factor: 0.25, label: 'Autotransformer (50%)', torquePct: 25},
+      soft: {factor: 0.5, label: 'Soft Starter (typical)', torquePct: 50},
+      vfd: {factor: flc*1.2/dolCurrent, label: 'VFD', torquePct: 100}
+    };
+    const m = methodData[method];
+    const lineCurrent = dolCurrent * m.factor;
+
+    document.getElementById('rResult').textContent = lineCurrent.toLocaleString('en-IN', {maximumFractionDigits:1}) + ' A';
+    document.getElementById('resultSub').textContent = m.label + ', FLC=' + flc + 'A';
+    document.getElementById('rDOL').textContent = dolCurrent.toFixed(1) + ' A';
+    document.getElementById('rTorque').textContent = m.torquePct.toFixed(1) + '% of DOL';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Full Load Current</td><td>${flc} A</td></tr>
+                <tr><td>DOL Starting Multiplier</td><td>${dolMultiplier}×</td></tr>
+                <tr><td>DOL Starting Current</td><td>${dolCurrent.toFixed(1)} A</td></tr>
+                <tr><td>Starting Method</td><td>${m.label}</td></tr>
+                <tr><td><strong>Line Starting Current</strong></td><td><strong>${lineCurrent.toFixed(1)} A</strong></td></tr>
+                <tr><td>Approx. Starting Torque</td><td>${m.torquePct.toFixed(1)}% of DOL torque</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateMotorStartingCurrent();
+</script>
+
+</body>
+</html>

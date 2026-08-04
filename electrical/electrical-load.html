@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Electrical Load Calculator (kW & kVA from V, I, PF) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Electrical Load Calculator. Enter voltage, current, and power factor for a single-phase or three-phase circuit to get load in kW and kVA instantly, with formula and worked example.">
+<meta name="keywords" content="electrical load calculator, kw kva calculator, load calculation formula, single phase three phase load calculator, power factor load calculator">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/electrical-load">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Electrical Load Calculator">
+<meta property="og:description" content="Free Electrical Load Calculator — enter voltage, current, and power factor to get kW and kVA load instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/electrical-load">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Electrical Load Calculator">
+<meta name="twitter:description" content="Free Electrical Load Calculator — enter voltage, current, and power factor to get kW and kVA load instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Electrical Load Calculator",
+  "url": "https://www.electromechcalc.com/electrical/electrical-load",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Electrical Load Calculator. Enter voltage, current, and power factor for a single-phase or three-phase circuit to get load in kW and kVA instantly, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for single-phase electrical load?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Load (kW) = Voltage (V) × Current (A) × Power Factor ÷ 1000. This gives real (working) power in kilowatts for a single-phase circuit from its voltage, current, and power factor." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the formula for three-phase electrical load?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Load (kW) = √3 × Voltage (V) × Current (A) × Power Factor ÷ 1000, where voltage is the line-to-line voltage. The √3 (approximately 1.732) factor accounts for the phase relationship between the three conductors in a balanced three-phase system." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between kW and kVA?",
+      "acceptedAnswer": { "@type": "Answer", "text": "kW (kilowatts) measures real power — the power that actually does useful work. kVA (kilovolt-amperes) measures apparent power — the total power the electrical system must supply, including both real power and reactive power. kVA = kW ÷ Power Factor, so kVA is always equal to or greater than kW, with the gap between them widening as power factor moves further from 1.0." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do I need to know both kW and kVA for the same load?",
+      "acceptedAnswer": { "@type": "Answer", "text": "kW tells you the actual useful power output/consumption, relevant for energy billing and understanding actual work performed — kVA tells you the total apparent power the supply system (transformers, cables, switchgear) must be sized to handle, which is what determines equipment capacity requirements, since all these components must handle the full apparent current regardless of power factor." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does three-phase load use √3 instead of 3?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This comes from the vector relationship between line and phase quantities in a balanced three-phase system — while there are three phases, the mathematical relationship between line voltage, line current, and total three-phase power works out to a √3 (not 3) multiplying factor due to the 120° phase angle relationship between the three phases, a standard result from three-phase circuit analysis." }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I use line-to-line or line-to-neutral voltage for the three-phase formula?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Use line-to-line voltage — the standard three-phase load formula (√3 × V × I × PF) is specifically defined using line-to-line voltage; using line-to-neutral voltage in this formula would give an incorrect result, since the √3 factor already accounts for the specific line-to-line voltage convention." }
+    },
+    {
+      "@type": "Question",
+      "name": "How does power factor affect the relationship between kW and kVA?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A power factor of 1.0 (purely resistive load) means kW equals kVA exactly — all supplied power is real, useful power. As power factor decreases below 1.0 (more reactive/inductive load), kVA grows larger relative to kW for the same real power output, meaning the supply system must handle more total current and apparent power to deliver the identical useful kW, which is exactly why poor power factor is penalized on many commercial and industrial electricity tariffs." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I sum individual circuit kW values to get total facility load?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For a rough estimate, yes, but a more accurate total facility load calculation typically applies demand and diversity factors to account for the fact that not all circuits draw their full calculated load simultaneously — see the Maximum Demand Calculator for this more complete facility-level load estimation approach, rather than simply adding every individual circuit's calculated load at face value." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Load & Demand
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Electrical Load <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Electrical load in kW and kVA for a single-phase or three-phase circuit, from voltage, current, and power factor — the fundamental load calculation behind panel sizing and demand estimation.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Electrical Load Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter system type, voltage, current, and power factor.</p>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">System Type</label>
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2">
+          <div id="typeSingle" class="toggle-btn active" onclick="setLoadPhaseType('single')">Single Phase</div>
+          <div id="typeThree" class="toggle-btn" onclick="setLoadPhaseType('three')">Three Phase</div>
+        </div>
+      </div>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Voltage (V)</label>
+          <input id="voltage" type="number" value="230" step="1" min="0" placeholder="e.g. 230" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Current (A)</label>
+          <input id="current" type="number" value="20" step="0.1" min="0" placeholder="e.g. 20" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Power Factor</label>
+          <input id="powerFactor" type="number" value="0.9" step="0.01" min="0.1" max="1" placeholder="e.g. 0.9" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateElectricalLoad()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip" id="formulaChip">kW = V × I × PF ÷ 1000</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Real Power</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Apparent Power</span>
+            <span id="rKVA" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Reactive Power</span>
+            <span id="rKVAR" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/maximum-demand" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Maximum Demand Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/power-demand" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Power Demand Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/load-factor" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Load Factor Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/electrical-energy-cost" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Electrical Energy Cost Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Electrical Load Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding the load formula for single and three phase</a></li>
+      <li><a href="#second" class="hover:underline">3. kW vs kVA — why both numbers matter</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Electrical Load (kW and kVA) Is Calculated</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard single-phase and three-phase load formula</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>Electrical load describes how much power a circuit actually draws, and it's usually expressed in two related but distinct ways: kW (real power, the useful working power) and kVA (apparent power, the total power the supply system must be sized to deliver). Both figures matter for different purposes, and both follow directly from voltage, current, and power factor.</p>
+
+      <p><strong>Formula used (single-phase):</strong> Load (kW) = Voltage (V) &times; Current (A) &times; Power Factor &divide; 1000.</p>
+
+      <p><strong>Formula used (three-phase):</strong> Load (kW) = &radic;3 &times; Voltage (V) &times; Current (A) &times; Power Factor &divide; 1000, using line-to-line voltage.</p>
+
+      <p><strong>Apparent power:</strong> kVA = kW &divide; Power Factor (equivalently, kVA follows the identical formula without the power factor term). Reactive power kVAR = &radic;(kVA&sup2; &minus; kW&sup2;), representing the non-working (reactive) component of apparent power.</p>
+
+      <p><strong>Worked example (single-phase):</strong> 230 V, 20 A, 0.9 power factor. Load = 230 &times; 20 &times; 0.9 &divide; 1000 = 4.14 kW. Apparent Power = 4.14 &divide; 0.9 = 4.6 kVA.</p>
+
+      <p><strong>Worked example (three-phase):</strong> 415 V, 50 A, 0.85 power factor. Load = &radic;3 &times; 415 &times; 50 &times; 0.85 &divide; 1000 &asymp; 30.55 kW. Apparent Power = &radic;3 &times; 415 &times; 50 &divide; 1000 &asymp; 35.94 kVA.</p>
+
+      <p><strong>The power triangle:</strong> real power (kW), reactive power (kVAR), and apparent power (kVA) relate through a right triangle, with kVA as the hypotenuse: kVA&sup2; = kW&sup2; + kVAR&sup2;. Power factor is the cosine of the angle between kW and kVA in this triangle &mdash; a smaller angle (power factor closer to 1.0) means kVA is close to kW, while a larger angle (lower power factor) means a proportionally larger kVAR component and a bigger gap between kW and kVA. This geometric relationship is a standard, widely used way to visualize and remember how these three power quantities connect.</p>
+
+      <p><strong>Where reactive power actually comes from:</strong> inductive loads (motors, transformers, fluorescent/discharge lighting ballasts) require a magnetizing current component to establish and maintain their magnetic fields &mdash; this magnetizing current is 90&deg; out of phase with the voltage and current component doing useful work, contributing to apparent power (kVA) and supply current without directly contributing to real power (kW) delivered as useful output. This reactive current genuinely flows through the system and must be supplied by generators, delivered through transformers, and carried by cables, even though it doesn't register as consumed energy on a standard kWh meter &mdash; which is exactly why it still matters for equipment sizing despite not appearing on an energy bill.</p>
+
+      <p><strong>Connecting single-phase and three-phase calculations:</strong> a three-phase system can be thought of as three individual single-phase circuits operating together with a 120&deg; phase offset between them &mdash; the &radic;3 factor in the three-phase formula is a direct mathematical consequence of properly combining these three offset single-phase components using line-to-line (rather than line-to-neutral) voltage as the reference. Understanding this relationship helps explain why the three-phase formula isn't simply three times the single-phase formula, despite there being three phases involved &mdash; the specific vector combination, not simple tripling, is what determines the correct multiplying factor.</p>
+
+      <p><strong>Summary:</strong> use kW = V&times;I&times;PF&divide;1000 (single-phase) or kW = &radic;3&times;V&times;I&times;PF&divide;1000 (three-phase, line-to-line voltage), find kVA = kW&divide;PF for apparent power, and kVAR = &radic;(kVA&sup2;&minus;kW&sup2;) for reactive power. Remember kW drives energy billing and useful work, while kVA drives supply infrastructure sizing &mdash; both numbers matter, for different purposes.</p>
+
+      <p><strong>Practical measurement considerations:</strong> obtaining accurate voltage, current, and power factor readings for this calculation typically requires a clamp meter (for current), a voltmeter or the same clamp meter's voltage function, and either a dedicated power factor meter or a power quality analyzer that measures true power factor directly &mdash; estimating power factor from a nameplate rating (rather than measuring actual operating power factor) can introduce error, since actual operating power factor often differs from a nameplate figure specified at full rated load, particularly for motors running at partial load, where power factor typically decreases.</p>
+
+      <p><strong>Load calculation as the foundation for broader electrical design:</strong> this basic load calculation feeds directly into cable sizing (via the resulting current), protective device selection (fuse/breaker rating based on load current), and transformer/generator capacity planning (via kVA) &mdash; getting this foundational number right, using measured or verified rather than assumed input values, is genuinely important groundwork for everything that follows in a complete electrical design or load assessment exercise, not just an isolated academic calculation.</p>
+
+      <p><strong>Load calculation for existing versus new circuits:</strong> for an existing, operating circuit, direct measurement (clamp meter for current, voltmeter for voltage, power quality meter or calculated power factor from a separate wattmeter reading) gives the most accurate real-world load figure. For a new or planned circuit not yet installed, load must instead be estimated from equipment nameplate ratings, manufacturer datasheets, or standard load tables for similar equipment &mdash; this estimation carries more uncertainty than direct measurement, which is part of why margin (via demand factors, safety factors in cable and protective device sizing) is standard practice for new circuit design rather than sizing tightly to a purely calculated, unverified figure.</p>
+
+      <p><strong>Why this calculation is genuinely foundational despite its simplicity:</strong> it's easy to treat a basic V&times;I&times;PF calculation as too elementary to warrant careful attention compared to more involved calculations like fault current analysis or protection coordination &mdash; but every one of those more complex downstream calculations ultimately depends on an accurate starting load figure. An error introduced at this basic load calculation stage propagates through every subsequent design decision built on top of it, making the accuracy of these seemingly simple inputs (voltage, current, power factor) just as important to get right as the more visibly complex calculations that follow.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed"><strong>Single-phase</strong> 230V, 20A, PF=0.9: <strong>4.14 kW</strong> (4.6 kVA). <strong>Three-phase</strong> 415V, 50A, PF=0.85: <strong>30.55 kW</strong> (35.94 kVA).</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator computes instantaneous load from voltage, current, and power factor readings you supply — for a complete facility load assessment, individual circuit loads are typically summed with appropriate demand and diversity factors (see the Maximum Demand Calculator) rather than simply added together at face value. Use measured, not nameplate-assumed, power factor for the most accurate result, particularly for motors operating at partial load.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Key Concept</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">kW (Real Power) vs kVA (Apparent Power) — What Each Tells You</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>kW (real power) is what your energy meter bills you for and what actually performs useful work &mdash; running a motor, heating an element, lighting a lamp. kVA (apparent power) is what the electrical supply infrastructure &mdash; transformers, cables, switchgear, generators &mdash; must be sized to handle, since these components carry the full current regardless of how much of that current's associated power is "useful" (real) versus "non-useful" (reactive).</p>
+    <p>At unity power factor (1.0), kW and kVA are identical &mdash; every amp of current does useful work. As power factor drops (more inductive/reactive load, common with motors, transformers, and fluorescent/discharge lighting ballasts), kVA grows larger than kW for the same real power output, meaning supply infrastructure must be sized for more current than the useful power alone would suggest. This is precisely why utilities often size transformer and service capacity in kVA (matching actual current-carrying requirement) rather than kW alone,     <p>A useful mental model: think of kW as the "useful cargo" a truck (the electrical system) delivers, and kVA as the truck's total carrying capacity needed, including space taken up by the truck's own required equipment (analogous to reactive power) that doesn't directly deliver cargo but is still necessary for the truck to operate. A truck with poor "packing efficiency" (low power factor) needs a bigger truck (more kVA capacity) to deliver the same amount of useful cargo (kW) compared to a well-packed truck (high power factor) delivering the identical useful cargo.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Electrical Load</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Using line-to-neutral voltage in the three-phase formula instead of line-to-line.</strong> The standard &radic;3 formula specifically requires line-to-line voltage &mdash; using line-to-neutral voltage without adjustment gives a significantly wrong result.</p>
+      <p><strong>2. Confusing kW and kVA when specifying equipment capacity.</strong> Transformers, generators, and UPS systems are typically rated in kVA (apparent power, matching their actual current-carrying capability) &mdash; sizing this equipment using a kW figure alone, without converting via power factor, can lead to undersized capacity relative to actual current draw.</p>
+      <p><strong>3. Assuming power factor is always close to 1.0 without actually measuring or checking it.</strong> Many common loads (induction motors, older lighting ballasts, welding equipment) have power factor well below 1.0 &mdash; using an assumed near-unity power factor without verification can meaningfully understate real kVA requirements.</p>
+      <p><strong>4. Simply adding individual circuit kW or kVA values to estimate total facility load without demand/diversity factors.</strong> Real facility load is typically less than the simple sum of every circuit's individual calculated load, since not everything operates at full load simultaneously &mdash; use appropriate demand and diversity factors for a more realistic total facility load estimate.</p>
+      <p><strong>5. Applying this basic formula to non-linear (harmonic-rich) loads without accounting for the more complex power relationships involved.</strong> VFDs, rectifiers, and similar non-linear loads can have a more complex relationship between measured RMS current/voltage and true power than this basic sinusoidal-assumption formula captures &mdash; use a true-RMS, true-power-measuring meter for accurate results on such loads.</p>
+      <p><strong>6. Forgetting that reactive power (kVAR) represents genuinely necessary circulating power for some loads, not simply wasted energy.</strong> Reactive power is inherent to how inductive loads (motors, transformers) actually function &mdash; it's not billed as consumed energy the way real power is, but it does require supply infrastructure capacity, which is the practical reason it matters for equipment sizing even though it's not itself "wasted" energy in the same sense as a resistive loss.</p>
+      <p><strong>7. Estimating power factor from a nameplate rating rather than measuring actual operating conditions.</strong> Nameplate power factor is typically specified at full rated load &mdash; actual operating power factor, especially at partial load, often differs meaningfully from this figure, particularly for motors, where power factor tends to decrease at lighter loading.</p>
+      <p><strong>8. Treating this single-point calculation as sufficient for final cable, protective device, or transformer sizing without further checks.</strong> This load calculation is a foundational input, but complete sizing decisions also need ampacity derating, protective device coordination, and demand/diversity factor considerations beyond just this basic kW/kVA figure.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for single-phase electrical load?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Load (kW) = Voltage (V) × Current (A) × Power Factor ÷ 1000. This gives real (working) power in kilowatts for a single-phase circuit from its voltage, current, and power factor.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for three-phase electrical load?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Load (kW) = √3 × Voltage (V) × Current (A) × Power Factor ÷ 1000, where voltage is the line-to-line voltage. The √3 (approximately 1.732) factor accounts for the phase relationship between the three conductors in a balanced three-phase system.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the difference between kW and kVA?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">kW (kilowatts) measures real power — the power that actually does useful work. kVA (kilovolt-amperes) measures apparent power — the total power the electrical system must supply, including both real power and reactive power. kVA = kW ÷ Power Factor, so kVA is always equal to or greater than kW, with the gap between them widening as power factor moves further from 1.0.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why do I need to know both kW and kVA for the same load?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">kW tells you the actual useful power output/consumption, relevant for energy billing and understanding actual work performed — kVA tells you the total apparent power the supply system (transformers, cables, switchgear) must be sized to handle, which is what determines equipment capacity requirements, since all these components must handle the full apparent current regardless of power factor.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does three-phase load use √3 instead of 3?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This comes from the vector relationship between line and phase quantities in a balanced three-phase system — while there are three phases, the mathematical relationship between line voltage, line current, and total three-phase power works out to a √3 (not 3) multiplying factor due to the 120° phase angle relationship between the three phases, a standard result from three-phase circuit analysis.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I use line-to-line or line-to-neutral voltage for the three-phase formula?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Use line-to-line voltage — the standard three-phase load formula (√3 × V × I × PF) is specifically defined using line-to-line voltage; using line-to-neutral voltage in this formula would give an incorrect result, since the √3 factor already accounts for the specific line-to-line voltage convention.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How does power factor affect the relationship between kW and kVA?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A power factor of 1.0 (purely resistive load) means kW equals kVA exactly — all supplied power is real, useful power. As power factor decreases below 1.0 (more reactive/inductive load), kVA grows larger relative to kW for the same real power output, meaning the supply system must handle more total current and apparent power to deliver the identical useful kW, which is exactly why poor power factor is penalized on many commercial and industrial electricity tariffs.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I sum individual circuit kW values to get total facility load?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For a rough estimate, yes, but a more accurate total facility load calculation typically applies demand and diversity factors to account for the fact that not all circuits draw their full calculated load simultaneously — see the Maximum Demand Calculator for this more complete facility-level load estimation approach, rather than simply adding every individual circuit's calculated load at face value.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does this calculator account for harmonic distortion in the current reading?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — this calculator assumes a clean, sinusoidal current waveform; for loads with significant harmonic content (VFDs, rectifiers, and other non-linear loads), the relationship between measured RMS current, voltage, and true power can be more complex than this basic formula captures, and a power quality meter capable of true RMS and true power measurement gives a more accurate result for such loads.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    let loadPhaseType = 'single';
+
+  function setLoadPhaseType(type){
+    loadPhaseType = type;
+    document.getElementById('typeSingle').classList.toggle('active', type === 'single');
+    document.getElementById('typeThree').classList.toggle('active', type === 'three');
+    document.getElementById('formulaChip').textContent = type === 'single' ? 'kW = V × I × PF ÷ 1000' : 'kW = √3 × V × I × PF ÷ 1000';
+  }
+
+  function calculateElectricalLoad(){
+    const voltage = parseFloat(document.getElementById('voltage').value);
+    const current = parseFloat(document.getElementById('current').value);
+    const pf = parseFloat(document.getElementById('powerFactor').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(voltage) || voltage <= 0){ errors.push('Enter a valid voltage greater than 0.'); }
+    if(isNaN(current) || current <= 0){ errors.push('Enter a valid current greater than 0.'); }
+    if(isNaN(pf) || pf <= 0 || pf > 1){ errors.push('Power factor must be between 0 and 1.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rKVA').textContent = '\u2014';
+      document.getElementById('rKVAR').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const factor = loadPhaseType === 'single' ? 1 : Math.sqrt(3);
+    const kW = (factor * voltage * current * pf) / 1000;
+    const kVA = (factor * voltage * current) / 1000;
+    const kVAR = Math.sqrt(Math.max(kVA*kVA - kW*kW, 0));
+
+    document.getElementById('rResult').textContent = kW.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' kW';
+    document.getElementById('resultSub').textContent = (loadPhaseType === 'single' ? 'Single-phase' : 'Three-phase') + ', ' + voltage + 'V, ' + current + 'A';
+    document.getElementById('rKVA').textContent = kVA.toFixed(2) + ' kVA';
+    document.getElementById('rKVAR').textContent = kVAR.toFixed(2) + ' kVAR';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>System Type</td><td>${loadPhaseType === 'single' ? 'Single-phase' : 'Three-phase'}</td></tr>
+                <tr><td>Voltage</td><td>${voltage} V</td></tr>
+                <tr><td>Current</td><td>${current} A</td></tr>
+                <tr><td>Power Factor</td><td>${pf}</td></tr>
+                <tr><td><strong>Real Power</strong></td><td><strong>${kW.toFixed(2)} kW</strong></td></tr>
+                <tr><td>Apparent Power</td><td>${kVA.toFixed(2)} kVA</td></tr>
+                <tr><td>Reactive Power</td><td>${kVAR.toFixed(2)} kVAR</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateElectricalLoad();
+</script>
+
+</body>
+</html>

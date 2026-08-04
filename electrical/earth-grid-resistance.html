@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Earth Grid Resistance Calculator (Sverak Formula) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Earth Grid Resistance Calculator using the Sverak formula (IEEE 80). Enter soil resistivity, buried conductor length, grid area, and burial depth to get grid earth resistance instantly, with formula and worked example.">
+<meta name="keywords" content="earth grid resistance calculator, sverak formula, ieee 80 grounding grid, substation earthing resistance, soil resistivity grounding calculator">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/earth-grid-resistance">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Earth Grid Resistance Calculator">
+<meta property="og:description" content="Free Earth Grid Resistance Calculator (Sverak/IEEE 80 formula) — enter soil resistivity, conductor length, grid area, and depth to get grid resistance instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/earth-grid-resistance">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Earth Grid Resistance Calculator">
+<meta name="twitter:description" content="Free Earth Grid Resistance Calculator (Sverak/IEEE 80 formula) — enter soil resistivity, conductor length, grid area, and depth to get grid resistance instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Earth Grid Resistance Calculator",
+  "url": "https://www.electromechcalc.com/electrical/earth-grid-resistance",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Earth Grid Resistance Calculator using the Sverak formula (IEEE 80). Enter soil resistivity, buried conductor length, grid area, and burial depth to get grid earth resistance instantly, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the Sverak formula for earth grid resistance?",
+      "acceptedAnswer": { "@type": "Answer", "text": "R = ρ × [1÷L + (1÷√(20A)) × (1 + 1÷(1+h×√(20÷A)))], where ρ is soil resistivity (Ω·m), L is total buried conductor length (m), A is the area enclosed by the grid (m²), and h is burial depth (m). It's a widely referenced approximation formula published by J. Sverak and adopted into IEEE Std 80, the standard reference for substation grounding grid design." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does grid area matter more than just conductor length for resistance?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A grounding grid works by spreading fault current out into a large volume of surrounding soil — a grid covering a larger area, even with similar total conductor length, presents current with more soil volume to dissipate into, generally producing lower resistance. This is why enlarging the physical footprint of a grid, not just adding more conductor within the same area, is often the most effective way to reduce grid resistance." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is soil resistivity and why does it vary so much between sites?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Soil resistivity (Ω·m) measures how strongly a given soil resists current flow through it, and varies enormously — from a few ohm-metres for wet, mineral-rich soil to several thousand ohm-metres for dry sand or rock — depending on moisture content, mineral/salt content, soil composition, temperature, and compaction. This wide variation is exactly why soil resistivity should always be measured at the actual installation site rather than assumed from a general reference table for any real earthing design." }
+    },
+    {
+      "@type": "Question",
+      "name": "What target resistance is typically required for a substation earthing grid?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Requirements vary by system voltage, fault current level, and applicable code, but many utility and industrial substations target grid resistance in the range of 1 ohm or less for larger, higher-voltage installations, with a commonly cited general target of 5 ohms or less for many general industrial and commercial earthing systems (sometimes higher for smaller, lower-fault-current systems) — always confirm the specific target for your system voltage and fault level against the applicable code or utility requirement." }
+    },
+    {
+      "@type": "Question",
+      "name": "How can I reduce earth grid resistance if the calculated value is too high?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Common methods include enlarging the grid's physical area (often the single most effective lever), adding more buried conductor within the same area (helpful but with diminishing returns), increasing burial depth, adding ground rods at grid perimeter and interior points, treating soil with a conductivity-enhancing material (bentonite or a similar ground enhancement compound) around electrodes in high-resistivity soil, or, in rock or very high-resistivity soil, using deep-driven rods or connecting to a separate, more favorable earthing location via a buried conductor." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does burial depth have a large effect on grid resistance?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It has a real but generally secondary effect compared to grid area — modest increases in typical burial depth (say, from 0.3m to 0.6m) reduce resistance somewhat, but the improvement is much less dramatic than doubling the grid's enclosed area. Burial depth still matters for other reasons beyond resistance alone (mechanical protection, soil moisture stability, safety step/touch voltage considerations), so shouldn't be minimized purely because its resistance impact is comparatively modest." }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I measure soil resistivity myself or rely on a table of typical values?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For any real earthing design, especially for substations or critical facilities, on-site measurement (commonly using the Wenner four-pin method at multiple locations and probe spacings) is strongly preferred over table values — actual site resistivity can differ substantially from generic soil-type averages due to local moisture, composition, and layering, and getting this input wrong propagates directly into a wrong resistance estimate regardless of how carefully the rest of the calculation is done." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this formula work for any grid shape, or only square/rectangular grids?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The Sverak formula is a general approximation that works reasonably well for various grid shapes (square, rectangular, L-shaped, and other common configurations) as long as the total buried conductor length and enclosed area are correctly determined — it's less accurate for highly irregular or very elongated shapes, where more detailed grid design software or the more complex original Schwarz equations may give better accuracy." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript></noscript>
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Earthing & Grounding
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Earth Grid Resistance <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Substation or plant earthing grid resistance using the Sverak formula (IEEE Std 80) — from soil resistivity, buried conductor length, grid area, and burial depth.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Earth Grid Resistance Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter soil resistivity and grid dimensions.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Soil Resistivity, &rho; (&Omega;&middot;m)</label>
+          <input id="soilResistivity" type="number" value="100" step="1" min="0" placeholder="e.g. 100" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Total Buried Conductor Length, L (m)</label>
+          <input id="conductorLength" type="number" value="500" step="1" min="0" placeholder="e.g. 500" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Grid Area, A (m&sup2;)</label>
+          <input id="gridArea" type="number" value="2500" step="1" min="0" placeholder="e.g. 2500" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Burial Depth, h (m)</label>
+          <input id="burialDepth" type="number" value="0.5" step="0.05" min="0.05" placeholder="e.g. 0.5" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateEarthGridResistance()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">Sverak Formula (IEEE 80)</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Grid Resistance</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Grid Dimension (√A)</span>
+            <span id="rDimension" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Status</span>
+            <span id="rStatus" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/earthing-conductor-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Earthing Conductor Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/short-circuit-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Short Circuit Current Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/busbar-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Busbar Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/mccb-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          MCCB Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Earth Grid Resistance Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding the Sverak grid resistance formula</a></li>
+      <li><a href="#second" class="hover:underline">3. Typical soil resistivity by soil type</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Earth Grid Resistance Is Calculated (Sverak Formula)</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Sverak formula for grounding grid resistance, per IEEE Std 80</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>An earthing (grounding) grid is a mesh of buried conductors that gives fault current a low-resistance path into the earth, keeping ground potential rise and touch/step voltages within safe limits during a fault. Grid resistance &mdash; the overall opposition this buried mesh presents to current flowing into the surrounding soil &mdash; is the key figure used to judge whether a design meets its safety and equipment-protection targets.</p>
+
+      <p><strong>Formula used (Sverak, per IEEE Std 80):</strong> R = &rho; &times; [1&divide;L + (1&divide;&radic;(20A)) &times; (1 + 1&divide;(1+h&times;&radic;(20&divide;A)))]. Here &rho; is soil resistivity, L is the total length of buried conductor in the grid, A is the area the grid encloses, and h is burial depth. This formula was developed by J. Sverak as a practical approximation, validated against more complex methods, and has become one of the most widely used grid resistance formulas in substation earthing design worldwide.</p>
+
+      <p><strong>Worked example:</strong> a grid with soil resistivity 100 &Omega;&middot;m, 500 m of total buried conductor, covering 2500 m&sup2; (roughly a 50m &times; 50m area), buried at 0.5 m depth. 1&divide;L = 1&divide;500 = 0.002. &radic;(20&times;2500) = &radic;50000 &asymp; 223.6, so 1&divide;223.6 &asymp; 0.00447. h&times;&radic;(20&divide;A) = 0.5&times;&radic;(20&divide;2500) = 0.5&times;0.0894 &asymp; 0.0447; 1+0.0447=1.0447; 1&divide;1.0447&asymp;0.9572; 1+0.9572=1.9572. Second term = 0.00447&times;1.9572 &asymp; 0.00875. R = 100 &times; (0.002 + 0.00875) = 100 &times; 0.01075 &asymp; 1.075 &Omega; &mdash; a reasonably low resistance for a substation-scale grid on moderate-resistivity soil.</p>
+
+      <p><strong>Why the formula has two distinct terms:</strong> the first term (1&divide;L) reflects the resistance contribution from the conductor's total length &mdash; more buried conductor, lower resistance, in a relationship that behaves somewhat like resistors in parallel. The second, larger term reflects the resistance contribution from the grid's overall area, since a bigger grid footprint gives current more surrounding soil volume to spread into regardless of exactly how much conductor fills that area. In practice, the area term usually dominates the calculation for typical grid designs, which is the mathematical reason enlarging a grid's footprint is generally more effective at reducing resistance than simply adding more conductor within the same area.</p>
+
+      <p><strong>Diminishing returns from adding conductor without enlarging area:</strong> because the first term (1&divide;L) behaves like a parallel-resistance relationship, doubling total buried conductor length within a fixed grid area doesn't halve resistance &mdash; it only reduces that first term's contribution, and since the second (area) term typically dominates for realistic grid designs, the overall resistance improvement from adding more conductor within the same footprint is often modest. This is a genuinely useful design insight: if a calculated grid resistance is too high, checking whether enlarging the grid's physical area is feasible is usually a more productive first question than simply asking how much more conductor to add.</p>
+
+      <p><strong>Combining grid resistance with supplementary earthing measures:</strong> when site constraints (limited available land, very high soil resistivity) make achieving a target resistance through grid size alone impractical, several supplementary techniques exist. Ground enhancement compounds (bentonite-based or similar conductive backfill material) placed around electrodes can meaningfully lower effective resistance in high-resistivity soil by improving contact between the electrode and surrounding earth. Deep-driven ground rods can reach lower-resistivity soil layers at depth, if geology is favorable. Connecting the grid to a separate, more favorable earthing point via a buried conductor (a counterpoise) is another option where a nearby lower-resistivity area exists. Each of these adds cost and complexity beyond a straightforward grid enlargement, so they're typically considered specifically when site constraints genuinely rule out the simpler option.</p>
+
+      <p><strong>Grid design as an iterative process:</strong> in practice, earthing grid design typically starts with an initial grid layout based on the facility's physical footprint and equipment locations, calculates resistance using a formula like Sverak's, checks whether that resistance meets the target for the specific system voltage and fault current level, and iterates on grid area, conductor spacing, or supplementary measures if the initial design falls short. This calculator supports exactly that iterative check &mdash; quickly testing how changes to area, conductor length, or depth affect the calculated resistance, before committing to detailed engineering drawings and construction.</p>
+
+      <p><strong>Summary:</strong> use R = &rho; &times; [1&divide;L + (1&divide;&radic;(20A)) &times; (1 + 1&divide;(1+h&radic;(20&divide;A)))] with actual site-measured soil resistivity for a defensible grid resistance estimate, remember that enlarging grid area is usually the most effective lever if resistance is too high, and always verify a critical earthing design with post-installation resistance testing rather than relying on the calculation alone.</p>
+
+      <p><strong>Why earthing design deserves this level of care:</strong> a grounding system's job is to protect both equipment and people during a fault &mdash; an inadequately designed grid can result in dangerous step and touch voltages for anyone near the site during a fault event, in addition to inadequate protection for connected equipment. This is precisely why substation and critical facility earthing design is typically performed or reviewed by a qualified electrical engineer with specific grounding design experience, using this kind of calculation as one input among several (soil resistivity testing, fault current studies, touch/step voltage verification) that together comprise a complete, safe earthing system design.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">&rho;=100 &Omega;&middot;m, L=500m, A=2500m&sup2;, h=0.5m: R = 100 &times; [1&divide;500 + (1&divide;&radic;50000) &times; (1 + 1&divide;(1+0.5&times;&radic;0.008))] &asymp; <strong>1.075 &Omega;</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">The Sverak formula gives a widely-used approximation of grid resistance assuming reasonably uniform soil resistivity across the grid area and depth. Real soil is often layered (different resistivity at different depths) or has significant lateral variation, which can make the actual measured grid resistance differ from this calculation — for a final substation or critical facility earthing design, soil resistivity should be measured at the actual site (commonly via the Wenner four-pin method) at multiple locations and depths, and the design verified by a qualified electrical engineer, ideally with post-installation resistance testing to confirm the as-built result.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference Table</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Typical Soil Resistivity by Soil Type</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Soil Type</th>
+          <th class="text-left px-4 py-2 font-semibold">Typical Resistivity (&Omega;&middot;m)</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">Wet organic soil / marshland</td><td class="px-4 py-2">10-50</td></tr>
+        <tr><td class="px-4 py-2">Moist clay / loam</td><td class="px-4 py-2">50-150</td></tr>
+        <tr><td class="px-4 py-2">Sandy clay / average agricultural soil</td><td class="px-4 py-2">100-300</td></tr>
+        <tr><td class="px-4 py-2">Dry sand / gravel</td><td class="px-4 py-2">300-1500</td></tr>
+        <tr><td class="px-4 py-2">Rocky / stony ground</td><td class="px-4 py-2">1500-10,000+</td></tr>
+        <tr><td class="px-4 py-2">Solid bedrock</td><td class="px-4 py-2">Often several thousand and up</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>These ranges illustrate just how dramatically resistivity varies with soil type &mdash; a two-order-of-magnitude difference between wet marshland and rocky ground is common, which directly translates into a similarly large difference in required grid size or supplementary earthing measures to achieve the same target resistance. Soil moisture is a major driver even within one soil type, meaning resistivity at the same site can vary seasonally (drier in summer, wetter after rain) &mdash;     <p>The Wenner four-pin method is the standard field technique for measuring actual soil resistivity &mdash; four equally spaced probes are driven into the ground in a line, a known current is passed between the outer two, and the voltage measured between the inner two is used to calculate apparent resistivity at a depth roughly equal to the probe spacing. Testing at multiple probe spacings gives resistivity data at multiple effective depths, revealing whether the site has uniform or layered soil, information that's genuinely useful for a more accurate design beyond a single-value approximation.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Earth Grid Resistance</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Using a table-average soil resistivity instead of an actual site measurement.</strong> Real soil resistivity varies enormously even within one general soil-type category, depending on local moisture, composition, and layering &mdash; a real earthing design should always use on-site measured resistivity, not a generic reference value, especially for a critical or safety-related installation.</p>
+      <p><strong>2. Using wet-season resistivity measurements without accounting for seasonal variation.</strong> Soil resistivity typically rises in dry conditions &mdash; designing against a favorable wet-season measurement without a conservative safety margin can leave the grid underperforming during drier periods, when it's arguably needed most (dry soil often coincides with other fire/safety risk factors too).</p>
+      <p><strong>3. Confusing total buried conductor length with the grid's physical perimeter or footprint dimension.</strong> L in the formula is the sum of all buried conductor segments in the grid (which can be considerably longer than the perimeter alone for a mesh-pattern grid), not simply the outer boundary length &mdash; using the wrong length figure meaningfully changes the calculated resistance.</p>
+      <p><strong>4. Assuming resistance alone confirms safe touch and step voltages.</strong> A grid can have low overall resistance while still having unsafe local touch or step voltage if conductor spacing within the grid is too wide &mdash; overall grid resistance and touch/step voltage safety are related but separate checks, and both need to be verified for a complete, safe earthing design.</p>
+      <p><strong>5. Not considering soil layering in high-stakes designs.</strong> The Sverak formula assumes reasonably uniform soil resistivity &mdash; sites with significantly different resistivity at different depths (a common real-world condition) may need a more detailed, layered-soil analysis method for an accurate result, rather than a single average resistivity value applied uniformly.</p>
+      <p><strong>6. Treating the calculated resistance as final without post-installation verification.</strong> Calculated grid resistance is a design estimate &mdash; actual as-built resistance should be measured after installation (commonly using the fall-of-potential method) to confirm the design assumptions held true on site, since actual soil conditions, installation quality, and connections can all cause the built grid's performance to differ from the calculated estimate.</p>
+      <p><strong>7. Assuming a favorable calculated resistance means the grid is adequately safe without a touch/step voltage check.</strong> Grid resistance and touch/step voltage safety are related but distinct calculations &mdash; a low overall resistance doesn't automatically guarantee safe local voltages if conductor spacing within the grid is inadequate.</p>
+      <p><strong>8. Underestimating the cost and complexity difference between grid enlargement and supplementary measures.</strong> Ground enhancement compounds, deep rods, and counterpoise connections can achieve a target resistance where site area is constrained, but typically cost more per ohm of improvement than simply using more available land for a larger grid &mdash; evaluate whether land constraints are genuinely fixed before assuming supplementary measures are the only option.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the Sverak formula for earth grid resistance?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">R = ρ × [1÷L + (1÷√(20A)) × (1 + 1÷(1+h×√(20÷A)))], where ρ is soil resistivity (Ω·m), L is total buried conductor length (m), A is the area enclosed by the grid (m²), and h is burial depth (m). It's a widely referenced approximation formula published by J. Sverak and adopted into IEEE Std 80, the standard reference for substation grounding grid design.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does grid area matter more than just conductor length for resistance?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A grounding grid works by spreading fault current out into a large volume of surrounding soil — a grid covering a larger area, even with similar total conductor length, presents current with more soil volume to dissipate into, generally producing lower resistance. This is why enlarging the physical footprint of a grid, not just adding more conductor within the same area, is often the most effective way to reduce grid resistance.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is soil resistivity and why does it vary so much between sites?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Soil resistivity (Ω·m) measures how strongly a given soil resists current flow through it, and varies enormously — from a few ohm-metres for wet, mineral-rich soil to several thousand ohm-metres for dry sand or rock — depending on moisture content, mineral/salt content, soil composition, temperature, and compaction. This wide variation is exactly why soil resistivity should always be measured at the actual installation site rather than assumed from a general reference table for any real earthing design.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What target resistance is typically required for a substation earthing grid?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Requirements vary by system voltage, fault current level, and applicable code, but many utility and industrial substations target grid resistance in the range of 1 ohm or less for larger, higher-voltage installations, with a commonly cited general target of 5 ohms or less for many general industrial and commercial earthing systems (sometimes higher for smaller, lower-fault-current systems) — always confirm the specific target for your system voltage and fault level against the applicable code or utility requirement.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How can I reduce earth grid resistance if the calculated value is too high?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Common methods include enlarging the grid's physical area (often the single most effective lever), adding more buried conductor within the same area (helpful but with diminishing returns), increasing burial depth, adding ground rods at grid perimeter and interior points, treating soil with a conductivity-enhancing material (bentonite or a similar ground enhancement compound) around electrodes in high-resistivity soil, or, in rock or very high-resistivity soil, using deep-driven rods or connecting to a separate, more favorable earthing location via a buried conductor.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does burial depth have a large effect on grid resistance?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It has a real but generally secondary effect compared to grid area — modest increases in typical burial depth (say, from 0.3m to 0.6m) reduce resistance somewhat, but the improvement is much less dramatic than doubling the grid's enclosed area. Burial depth still matters for other reasons beyond resistance alone (mechanical protection, soil moisture stability, safety step/touch voltage considerations), so shouldn't be minimized purely because its resistance impact is comparatively modest.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I measure soil resistivity myself or rely on a table of typical values?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For any real earthing design, especially for substations or critical facilities, on-site measurement (commonly using the Wenner four-pin method at multiple locations and probe spacings) is strongly preferred over table values — actual site resistivity can differ substantially from generic soil-type averages due to local moisture, composition, and layering, and getting this input wrong propagates directly into a wrong resistance estimate regardless of how carefully the rest of the calculation is done.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does this formula work for any grid shape, or only square/rectangular grids?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The Sverak formula is a general approximation that works reasonably well for various grid shapes (square, rectangular, L-shaped, and other common configurations) as long as the total buried conductor length and enclosed area are correctly determined — it's less accurate for highly irregular or very elongated shapes, where more detailed grid design software or the more complex original Schwarz equations may give better accuracy.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How does this earthing grid resistance relate to touch and step voltage safety limits?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Grid resistance alone determines the overall rise in ground potential during a fault, but touch and step voltage (the actual safety hazard to a person standing near or touching equipment during a fault) depend on the grid's specific conductor spacing, layout, and current distribution, not resistance alone — a grid can have acceptably low overall resistance while still having locally unsafe touch or step voltage if conductor spacing is too wide, which is why a complete earthing design checks touch/step voltage separately, not just overall grid resistance.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateEarthGridResistance(){
+    const rho = parseFloat(document.getElementById('soilResistivity').value);
+    const L = parseFloat(document.getElementById('conductorLength').value);
+    const A = parseFloat(document.getElementById('gridArea').value);
+    const h = parseFloat(document.getElementById('burialDepth').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(rho) || rho <= 0){ errors.push('Enter a valid soil resistivity greater than 0.'); }
+    if(isNaN(L) || L <= 0){ errors.push('Enter a valid buried conductor length greater than 0.'); }
+    if(isNaN(A) || A <= 0){ errors.push('Enter a valid grid area greater than 0.'); }
+    if(isNaN(h) || h <= 0){ errors.push('Enter a valid burial depth greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rDimension').textContent = '\u2014';
+      document.getElementById('rStatus').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const term1 = 1 / L;
+    const sqrt20A = Math.sqrt(20 * A);
+    const term2a = 1 / sqrt20A;
+    const term2b = 1 + (1 / (1 + h * Math.sqrt(20 / A)));
+    const term2 = term2a * term2b;
+    const resistance = rho * (term1 + term2);
+    const gridDimension = Math.sqrt(A);
+
+    let status = 'Low resistance';
+    if(resistance > 5) status = 'High \u2014 consider enlarging grid';
+    else if(resistance > 1) status = 'Moderate, check target for your system';
+
+    document.getElementById('rResult').textContent = resistance.toLocaleString('en-IN', {maximumFractionDigits:3}) + ' \u03a9';
+    document.getElementById('resultSub').textContent = '\u03c1=' + rho + ' \u03a9\u00b7m, L=' + L + 'm, A=' + A + 'm\u00b2';
+    document.getElementById('rDimension').textContent = gridDimension.toFixed(1) + ' m';
+    document.getElementById('rStatus').textContent = status;
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Soil Resistivity (\u03c1)</td><td>${rho} \u03a9\u00b7m</td></tr>
+                <tr><td>Total Buried Conductor Length (L)</td><td>${L} m</td></tr>
+                <tr><td>Grid Area (A)</td><td>${A} m\u00b2</td></tr>
+                <tr><td>Burial Depth (h)</td><td>${h} m</td></tr>
+                <tr><td>Term 1 (1/L)</td><td>${term1.toFixed(5)}</td></tr>
+                <tr><td>Term 2 (area contribution)</td><td>${term2.toFixed(5)}</td></tr>
+                <tr><td><strong>Grid Resistance</strong></td><td><strong>${resistance.toFixed(3)} \u03a9</strong></td></tr>
+                <tr><td>Status</td><td>${status}</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateEarthGridResistance();
+</script>
+
+</body>
+</html>

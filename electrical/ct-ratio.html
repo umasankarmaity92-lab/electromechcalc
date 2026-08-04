@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>CT Ratio Calculator (Current Transformer Selection) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free CT Ratio Calculator. Enter maximum load current and secondary current standard to get the recommended CT ratio and utilization percentage instantly, with formula, standard CT sizes, and worked example.">
+<meta name="keywords" content="ct ratio calculator, current transformer sizing, ct selection calculator, ct burden utilization, standard ct ratios">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/ct-ratio">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="CT Ratio Calculator">
+<meta property="og:description" content="Free CT Ratio Calculator — enter maximum load current to get the recommended CT ratio and utilization percentage instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/ct-ratio">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CT Ratio Calculator">
+<meta name="twitter:description" content="Free CT Ratio Calculator — enter maximum load current to get the recommended CT ratio and utilization percentage instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "CT Ratio Calculator",
+  "url": "https://www.electromechcalc.com/electrical/ct-ratio",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free CT Ratio Calculator. Enter maximum load current and secondary current standard to get the recommended CT ratio and utilization percentage instantly, with formula, standard CT sizes, and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is CT ratio and how is it expressed?",
+      "acceptedAnswer": { "@type": "Answer", "text": "CT ratio is the relationship between primary current (the actual current flowing in the conductor being measured) and secondary current (the CT's output to the connected meter or relay), expressed as Primary:Secondary, such as 400:5 (meaning 400A primary current produces 5A secondary output) — standard secondary current is almost always 5A or 1A, so CT ratio is essentially defined by its primary rating once the secondary standard is fixed." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I choose the right CT primary rating for my application?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Select a standard CT primary rating close to, but not far above, your actual maximum expected load current — a common target is sizing so normal load current utilizes roughly 60-100% of the CT's rated primary current, since CT accuracy is generally best in this range and degrades noticeably at low utilization (well below rated current), which is common when a CT is significantly oversized relative to actual load." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is CT accuracy worse when it's oversized relative to actual load?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A CT's accuracy specification applies primarily around and above roughly 20-25% of its rated primary current — well below that threshold, measurement error increases significantly and can become unacceptable for accurate metering or sensitive protection. An oversized CT (rated far above actual normal load current) often operates well below this accuracy-friendly range during normal conditions, degrading measurement quality even though the CT itself is undamaged and functioning." }
+    },
+    {
+      "@type": "Question",
+      "name": "What does CT burden mean, and how does it relate to ratio selection?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Burden is the total impedance (from connected meters, relays, and wiring) that the CT's secondary current must drive — CT accuracy is rated against a specific rated burden (in VA), and connecting a burden significantly different from what the CT is rated for (especially exceeding it) can degrade actual accuracy below the CT's nameplate specification, independent of ratio selection itself. Both ratio and burden compatibility need to be checked for a complete, accurate CT installation." }
+    },
+    {
+      "@type": "Question",
+      "name": "Should CT primary rating exactly match a circuit's protective device rating?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not necessarily exactly, but CT primary rating is often chosen with reference to the circuit's breaker or fuse rating (sometimes matched, sometimes set close to expected normal load which may be somewhat below the protective device's rating) — the guiding principle is good accuracy at actual normal operating current, which may or may not coincide exactly with the protective device's own rating." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between a metering-class and protection-class CT?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Metering-class CTs (commonly designated with a class like 0.2, 0.5, or 1.0) are optimized for accuracy at normal load current, often intentionally saturating (limiting output) at high fault current to protect connected metering equipment from fault-level currents. Protection-class CTs (commonly designated 5P or 10P with an accuracy limit factor) are instead optimized to remain reasonably accurate up to several times rated current, specifically so protection relays see an accurate representation of high fault currents — the two serve different, sometimes conflicting design priorities, and a single installation sometimes uses separate CT windings or cores for each purpose." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can one CT serve both metering and protection functions?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Sometimes, with a dual-rated or dual-core CT specifically designed for this, but it's common practice in many installations to use separate CT cores (often within the same physical CT housing, sharing the same primary conductor but with independent secondary windings) — one core optimized for metering accuracy at normal load, another optimized for protection accuracy at fault current levels, since these two priorities can genuinely conflict in a single-core design." }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if a CT secondary circuit is left open while the primary is energized?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This is a serious safety hazard specific to current transformers — unlike a voltage transformer, an energized CT with an open secondary can develop dangerously high voltage across that open circuit (since the CT is fundamentally a current source on its secondary, not a voltage source), posing a shock and equipment damage risk. CT secondary circuits should always be short-circuited (via a shorting terminal block or similar) before disconnecting any connected meter or relay while the primary remains energized." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript></noscript>
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Metering & Protection
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          CT Ratio <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Recommended current transformer (CT) ratio from maximum load current, with utilization percentage checked against the accuracy-friendly operating range.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">CT Ratio Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter maximum load current and secondary current standard.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Maximum Load Current (A)</label>
+          <input id="maxLoad" type="number" value="320" step="1" min="0" placeholder="e.g. 320" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Secondary Current Standard</label>
+          <select id="secondary" class="input-field mt-2">
+            <option value="5" selected>5 A</option>
+            <option value="1">1 A</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateCTRatio()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">CT Ratio = Primary ÷ Secondary</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Recommended CT Ratio</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Utilization at Full Load</span>
+            <span id="rUtilization" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Accuracy Status</span>
+            <span id="rStatus" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/pt-ratio" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          PT Ratio Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/relay-setting" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Relay Setting Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/power-demand" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Power Demand Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/maximum-demand" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Maximum Demand Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20CT Ratio Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding CT ratio selection</a></li>
+      <li><a href="#second" class="hover:underline">3. Standard CT primary ratings</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How CT Ratio Is Selected for Metering and Protection</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard CT selection practice (IEC 61869-2 / IS 2705 style primary ratings)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>A current transformer (CT) scales down a large primary current to a small, standardized secondary current (almost always 5A or 1A) that meters and protection relays are built to accept. Choosing the right CT ratio means picking a standard primary rating that gives good measurement accuracy at your actual operating current, not simply "big enough to be safe" &mdash; oversizing a CT relative to actual load is one of the most common and easily avoided sources of poor metering accuracy in the field.</p>
+
+      <p><strong>Formula used:</strong> CT Ratio = Selected Standard Primary Rating &divide; Secondary Current (5A or 1A). The primary rating is selected by finding the standard CT size that puts normal maximum load current at roughly 60-100% of that rating, giving good accuracy under typical operating conditions.</p>
+
+      <p><strong>Worked example:</strong> a feeder has a maximum load current of 320 A. Looking at standard CT primary ratings (250, 300, 400, 500...), a 400A primary rating puts 320A at 80% utilization (320&divide;400 &times; 100 = 80%) &mdash; comfortably within the accuracy-friendly 60-100% range. With a 5A secondary standard, CT Ratio = 400:5.</p>
+
+      <p><strong>Why utilization percentage matters as much as the ratio number itself:</strong> a CT's accuracy specification is tested and guaranteed within a specific operating range relative to its rated primary current &mdash; typically from around 20-25% of rated current up through 100% (and often somewhat beyond, for a defined accuracy limit factor). Operating well below this range, common when a CT is selected with excessive margin above actual load "to be safe," produces measurement error that grows disproportionately as actual current falls further below the CT's rated primary &mdash; a CT rated for 1000A serving an actual 200A load (20% utilization, right at the edge of typical accuracy range) will generally measure less accurately than a 250A-rated CT serving that same 200A load (80% utilization, comfortably within range).</p>
+
+      <p><strong>The trade-off against future load growth:</strong> selecting a CT ratio tightly matched to today's exact load current creates a real tension with anticipated future load growth &mdash; a CT sized precisely for current load may need replacement (a more disruptive task than most other electrical upgrades, since it typically requires opening the CT's primary circuit) if load grows meaningfully beyond its rated primary current. Many designers deliberately select a CT primary rating that comfortably covers a reasonable projected future load, accepting a somewhat lower utilization percentage today as a worthwhile trade-off against avoiding a CT replacement in a few years &mdash; this is a legitimate design judgment call, not a mistake, as long as the resulting utilization percentage doesn't drop so low that current accuracy becomes genuinely inadequate for the application's actual metering or protection needs.</p>
+
+      <p><strong>Understanding CT accuracy classes:</strong> a metering CT's accuracy class (commonly 0.2, 0.5, 1.0, or similar) states the maximum percentage error permitted within its rated operating range at rated burden &mdash; a Class 0.5 CT guarantees no more than 0.5% ratio error under specified conditions, tighter (better) than a Class 1.0 CT's 1% guarantee. Higher-accuracy classes (like 0.2, sometimes 0.2S for extended accurate range down to lower currents) are typically specified for revenue/billing metering where financial accuracy matters most, while looser classes suffice for general indication or less critical monitoring purposes. The "S" designation on some accuracy classes specifically indicates extended accuracy performance down to lower current levels (often 1% of rated current), useful for applications needing accurate measurement across a wide load range rather than just near full load.</p>
+
+      <p><strong>Protection CT accuracy limit factor (ALF):</strong> protection-class CTs (5P10, 5P20, 10P10, and similar designations) specify both an accuracy class (5P or 10P, meaning maximum 5% or 10% composite error) and an accuracy limit factor (the multiple of rated current, like 10 or 20, up to which that accuracy is maintained). A 5P10 CT maintains 5% accuracy up to 10 times its rated current &mdash; important because protection relays need to see a reasonably accurate representation of fault current, which is often many times normal load current, not just accuracy near rated load the way metering CTs prioritize.</p>
+
+      <p><strong>Physical CT types and their sizing implications:</strong> window-type (or bar-type) CTs, where the primary conductor simply passes through a central opening, are common for lower to medium current ratings and are often available with multiple ratio taps or even multiple physical window sizes to accommodate different conductor sizes. Wound-type CTs, where the primary winding is a dedicated coil within the CT itself, are more common for lower current ratings where a bar-type design isn't practical. The physical type doesn't change the underlying ratio selection principle, but availability of specific standard ratios can vary somewhat between physical CT construction types.</p>
+
+      <p><strong>Summary:</strong> select a standard CT primary rating that puts your maximum normal load current at roughly 60-100% utilization for good metering accuracy, use protection-class CTs with an appropriate accuracy limit factor where relay accuracy at fault current matters, verify burden compatibility for all connected devices, and always short a CT's secondary before disconnecting any load while its primary remains energized.</p>
+
+      <p><strong>Working with an existing CT installation:</strong> when reviewing or troubleshooting an existing metering or protection installation, checking actual measured utilization (comparing typical operating current against the installed CT's rated primary current, readable from its nameplate) is a quick, valuable diagnostic step &mdash; unexpectedly poor metering accuracy, inconsistent readings, or relay sensitivity concerns can sometimes trace directly back to a CT that's significantly oversized relative to actual operating current, a straightforward finding once you know to check for it specifically.</p>
+
+      <p><strong>Coordinating CT selection with meter and relay input specifications:</strong> whatever CT ratio is ultimately selected, the connected meter or relay needs to be configured (or programmed, for a numerical device) with the matching ratio so it correctly scales the CT's secondary current back into an actual primary current reading &mdash; a CT ratio change without a corresponding update to every connected device's configured ratio produces systematically incorrect readings or settings, a surprisingly common and easily overlooked step when a CT is replaced or its ratio is changed during a system modification.</p>
+
+      <p>Building a simple habit of checking and documenting both the physical CT ratio and every connected device's configured ratio together, any time either one changes, prevents this class of error from persisting undetected &mdash; a mismatch here doesn't usually cause an obvious fault or alarm, just silently incorrect readings, which can go unnoticed for a long time until a billing discrepancy, an audit, or an unexpected protection response during an actual fault reveals the underlying configuration error.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Max load 320A: nearest standard CT primary rating with 60-100% utilization is <strong>400A</strong> (320&divide;400 = 80% utilization). With 5A secondary: <strong>CT Ratio = 400:5</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator recommends a CT primary rating based on load current and a target utilization range for good metering accuracy — actual CT selection for protection purposes (as opposed to metering) may prioritize different criteria (like accuracy at high fault current, or a specific accuracy class such as 5P or 10P) rather than accuracy at normal load current alone. Always confirm CT class, burden, and accuracy limit factor requirements against the specific application (metering, protection, or both) and the applicable standard. For revenue metering specifically, confirm accuracy class requirements with the relevant utility or regulatory body, since these often have specific, mandated requirements beyond general good practice.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference Table</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Standard CT Primary Current Ratings</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Standard CT Primary Ratings (A)</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">5, 10, 15, 20, 25, 30, 40, 50, 60, 75, 100</td></tr>
+        <tr><td class="px-4 py-2">150, 200, 250, 300, 400, 500, 600, 800, 1000</td></tr>
+        <tr><td class="px-4 py-2">1200, 1500, 2000, 2500, 3000, 4000, 5000</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>These follow the widely referenced standard CT primary rating series used across IEC and many national standards, including Indian practice (IS 2705). Not every step is stocked by every manufacturer for every CT type, so always confirm actual availability for your specific CT construction (window/bar-type, wound-type, or a specific voltage class) before finalizing a selection &mdash;     <p>Multi-ratio CTs are particularly useful during initial installation when actual final load current isn't yet precisely known, or in facilities anticipating load changes &mdash; having several selectable tap points lets a technician adjust the effective ratio in the field to better match actual measured load once it's known, without the cost and disruption of a full CT replacement.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Selecting a CT Ratio</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Oversizing CT primary rating far beyond actual load "to be safe."</strong> This is the most common CT selection mistake &mdash; a CT operating well below roughly 20-25% of its rated primary current suffers meaningfully degraded accuracy, which defeats the purpose of accurate metering or sensitive protection.</p>
+      <p><strong>2. Confusing CT ratio selection criteria for metering versus protection applications.</strong> Metering-optimized and protection-optimized CTs have different design priorities (accuracy at normal load vs accuracy at fault current) &mdash; a ratio and class chosen well for one purpose may not suit the other; confirm which application (or both, via separate cores) your specific installation needs.</p>
+      <p><strong>3. Ignoring CT burden compatibility when connecting multiple meters or relays.</strong> Connecting more devices, or devices with higher input impedance than the CT's rated burden accounts for, can push total burden above the CT's rating and degrade accuracy &mdash; verify total connected burden against the CT's rated burden, not just the ratio selection alone.</p>
+      <p><strong>4. Leaving a CT secondary circuit open while the primary remains energized.</strong> This is a genuine safety hazard specific to current transformers, capable of producing dangerously high open-circuit voltage &mdash; always short the secondary circuit via a shorting terminal block before disconnecting any load from an energized CT.</p>
+      <p><strong>5. Not revisiting CT ratio selection after significant load growth.</strong> A CT well-matched to load at installation can become poorly utilized (if load dropped) or risk saturation (if load grew significantly) over time &mdash; periodically checking CT utilization against actual current operating data catches this drift before it degrades measurement quality.</p>
+      <p><strong>6. Assuming a CT selected for good metering accuracy is automatically adequate for protection relay accuracy at fault current.</strong> A metering-class CT is often specifically designed to saturate (limit output) at high fault current, precisely to protect connected metering equipment \u2014 this same saturation behavior can make it unsuitable for accurately relaying true fault current magnitude to a protection relay, which instead needs a protection-class CT designed to remain accurate well beyond normal rated current.</p>
+      <p><strong>7. Selecting accuracy class without matching the actual application requirement.</strong> A tighter (lower-number) accuracy class than genuinely needed adds cost without practical benefit for non-revenue-critical applications, while too loose a class can be genuinely inadequate for revenue metering — match accuracy class to the actual criticality of the specific measurement.</p>
+      <p><strong>8. Not accounting for multiple loads or devices when calculating total CT burden.</strong> Each connected meter, relay, or instrument adds to total burden on the CT secondary circuit — tallying total connected burden across every device sharing that CT, not just the single most obvious load, is necessary for an accurate burden compatibility check.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is CT ratio and how is it expressed?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">CT ratio is the relationship between primary current (the actual current flowing in the conductor being measured) and secondary current (the CT's output to the connected meter or relay), expressed as Primary:Secondary, such as 400:5 (meaning 400A primary current produces 5A secondary output) — standard secondary current is almost always 5A or 1A, so CT ratio is essentially defined by its primary rating once the secondary standard is fixed.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I choose the right CT primary rating for my application?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Select a standard CT primary rating close to, but not far above, your actual maximum expected load current — a common target is sizing so normal load current utilizes roughly 60-100% of the CT's rated primary current, since CT accuracy is generally best in this range and degrades noticeably at low utilization (well below rated current), which is common when a CT is significantly oversized relative to actual load.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is CT accuracy worse when it's oversized relative to actual load?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A CT's accuracy specification applies primarily around and above roughly 20-25% of its rated primary current — well below that threshold, measurement error increases significantly and can become unacceptable for accurate metering or sensitive protection. An oversized CT (rated far above actual normal load current) often operates well below this accuracy-friendly range during normal conditions, degrading measurement quality even though the CT itself is undamaged and functioning.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What does CT burden mean, and how does it relate to ratio selection?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Burden is the total impedance (from connected meters, relays, and wiring) that the CT's secondary current must drive — CT accuracy is rated against a specific rated burden (in VA), and connecting a burden significantly different from what the CT is rated for (especially exceeding it) can degrade actual accuracy below the CT's nameplate specification, independent of ratio selection itself. Both ratio and burden compatibility need to be checked for a complete, accurate CT installation.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should CT primary rating exactly match a circuit's protective device rating?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Not necessarily exactly, but CT primary rating is often chosen with reference to the circuit's breaker or fuse rating (sometimes matched, sometimes set close to expected normal load which may be somewhat below the protective device's rating) — the guiding principle is good accuracy at actual normal operating current, which may or may not coincide exactly with the protective device's own rating.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the difference between a metering-class and protection-class CT?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Metering-class CTs (commonly designated with a class like 0.2, 0.5, or 1.0) are optimized for accuracy at normal load current, often intentionally saturating (limiting output) at high fault current to protect connected metering equipment from fault-level currents. Protection-class CTs (commonly designated 5P or 10P with an accuracy limit factor) are instead optimized to remain reasonably accurate up to several times rated current, specifically so protection relays see an accurate representation of high fault currents — the two serve different, sometimes conflicting design priorities, and a single installation sometimes uses separate CT windings or cores for each purpose.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can one CT serve both metering and protection functions?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Sometimes, with a dual-rated or dual-core CT specifically designed for this, but it's common practice in many installations to use separate CT cores (often within the same physical CT housing, sharing the same primary conductor but with independent secondary windings) — one core optimized for metering accuracy at normal load, another optimized for protection accuracy at fault current levels, since these two priorities can genuinely conflict in a single-core design.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What happens if a CT secondary circuit is left open while the primary is energized?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This is a serious safety hazard specific to current transformers — unlike a voltage transformer, an energized CT with an open secondary can develop dangerously high voltage across that open circuit (since the CT is fundamentally a current source on its secondary, not a voltage source), posing a shock and equipment damage risk. CT secondary circuits should always be short-circuited (via a shorting terminal block or similar) before disconnecting any connected meter or relay while the primary remains energized.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Do CT ratios need to be reconsidered if a facility's load grows over time?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — significant load growth can push actual operating current toward or beyond a CT's rated primary current (risking saturation and inaccurate readings at the new higher load), or in some cases render a previously well-matched CT now poorly utilized if load patterns shift — periodically reviewing CT ratio selection against actual, current operating data is worthwhile for facilities with meaningfully changing load over time.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateCTRatio(){
+    const maxLoad = parseFloat(document.getElementById('maxLoad').value);
+    const secondary = parseFloat(document.getElementById('secondary').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(maxLoad) || maxLoad <= 0){ errors.push('Enter a valid maximum load current greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rUtilization').textContent = '\u2014';
+      document.getElementById('rStatus').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const standardRatings = [5,10,15,20,25,30,40,50,60,75,100,150,200,250,300,400,500,600,800,1000,1200,1500,2000,2500,3000,4000,5000];
+    // Find smallest standard rating that gives utilization <= 100% (i.e., rating >= maxLoad), preferring utilization in 60-100% band
+    let selected = standardRatings.find(r => maxLoad / r >= 0.6 && maxLoad / r <= 1.0);
+    if(!selected){
+      selected = standardRatings.find(r => r >= maxLoad);
+    }
+    if(!selected) selected = Math.ceil(maxLoad / 1000) * 1000;
+
+    const utilization = (maxLoad / selected) * 100;
+    let status = 'Good accuracy range';
+    if(utilization < 25) status = 'Low utilization — check accuracy';
+    else if(utilization > 100) status = 'Overloaded — increase CT rating';
+
+    document.getElementById('rResult').textContent = selected + ':' + secondary;
+    document.getElementById('resultSub').textContent = 'For max load ' + maxLoad + 'A';
+    document.getElementById('rUtilization').textContent = utilization.toFixed(1) + '%';
+    document.getElementById('rStatus').textContent = status;
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Maximum Load Current</td><td>${maxLoad} A</td></tr>
+                <tr><td>Selected CT Primary Rating</td><td>${selected} A</td></tr>
+                <tr><td>Secondary Current</td><td>${secondary} A</td></tr>
+                <tr><td><strong>CT Ratio</strong></td><td><strong>${selected}:${secondary}</strong></td></tr>
+                <tr><td>Utilization at Full Load</td><td>${utilization.toFixed(1)}%</td></tr>
+                <tr><td>Status</td><td>${status}</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateCTRatio();
+</script>
+
+</body>
+</html>

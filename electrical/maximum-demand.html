@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Maximum Demand Calculator (Demand & Diversity Factor) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Maximum Demand Calculator. Enter connected load, demand factor, number of similar units, and diversity factor to get individual and group maximum demand instantly, with formula and worked example for transformer and service sizing.">
+<meta name="keywords" content="maximum demand calculator, demand factor calculator, diversity factor calculator, connected load to maximum demand, transformer sizing demand factor, service sizing electrical">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/maximum-demand">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Maximum Demand Calculator">
+<meta property="og:description" content="Free Maximum Demand Calculator — enter connected load, demand factor, and diversity factor to get individual and group maximum demand instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/maximum-demand">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Maximum Demand Calculator">
+<meta name="twitter:description" content="Free Maximum Demand Calculator — enter connected load, demand factor, and diversity factor to get individual and group maximum demand instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Maximum Demand Calculator",
+  "url": "https://www.electromechcalc.com/electrical/maximum-demand",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Maximum Demand Calculator. Enter connected load, demand factor, number of similar units, and diversity factor to get individual and group maximum demand instantly, with formula and worked example for transformer and service sizing.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for maximum demand?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Maximum Demand = Connected Load × Demand Factor. Demand factor is the ratio of the maximum demand a load category actually draws to its total connected (nameplate) load, and is always 1.0 or less, since not all connected equipment operates simultaneously at full rated load." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between connected load and maximum demand?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Connected load is the sum of the rated (nameplate) capacity of every piece of equipment connected to a system, added up as if everything ran at full load simultaneously. Maximum demand is the actual highest load the system experiences in practice, which is almost always lower than connected load because equipment doesn't all operate at full capacity at the same time — demand factor is exactly the ratio between these two numbers." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is diversity factor and how is it different from demand factor?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Diversity factor applies when combining multiple individual loads or feeders into a group — it's the ratio of the sum of individual maximum demands to the actual group (coincident) maximum demand, and is always 1.0 or greater, since not all individual loads hit their own peak at exactly the same moment. Demand factor reduces a single load's connected capacity down to its own maximum demand; diversity factor then further reduces the sum of several loads' maximum demands down to their combined, coincident group demand." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does maximum demand matter for transformer or service sizing?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Sizing a transformer, service entrance, or main switchgear against the full connected load (rather than the realistic maximum demand) results in significant, unnecessary oversizing — more expensive equipment than the installation will ever actually need. Correctly applying demand and diversity factors gives a right-sized estimate that still provides adequate capacity and safety margin, without paying for capacity that will never be used." }
+    },
+    {
+      "@type": "Question",
+      "name": "Where do demand factor values come from?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Demand factors are published in wiring codes and standards (IS 732 in India, NEC Article 220 in the US) based on decades of accumulated data on how different load categories (lighting, general power outlets, motors, HVAC, kitchen equipment, etc.) actually behave in practice — they're empirical planning figures, not calculated from first principles, and vary by load category, building type, and sometimes by connected load size (larger installations often get a lower demand factor)." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the demand factor for a load category change with the size of the installation?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Often, yes — many code tables provide a decreasing demand factor as connected load increases in certain categories (particularly general lighting and receptacle loads), reflecting the statistical reality that a larger population of connected devices is even less likely to all peak simultaneously than a smaller one. Always check whether your applicable table has size-dependent tiers rather than assuming one flat demand factor regardless of scale." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I combine maximum demand from several different load categories?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Calculate the maximum demand for each category separately (its own connected load × its own demand factor), then sum those individual maximum demands together — this sum, sometimes with an additional overall diversity factor applied if the categories themselves don't all peak together, gives the total maximum demand the transformer or service needs to be sized against." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is maximum demand the same as the demand a utility bills against?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Often closely related but not always identical — utility-billed demand is typically the highest actual metered demand (often a 15- or 30-minute integrated average) recorded during a billing period, which reflects real operating conditions, while the maximum demand calculated here is a planning estimate used before a facility is even built or expanded. Once a facility is operating, its actual billed demand becomes the more accurate, empirical figure, and can be compared against this calculator's planning estimate to check how the assumptions held up in practice." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript></noscript>
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Load & Demand
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Maximum Demand <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Estimate maximum demand from connected load using demand factor, plus group diversified demand for multiple similar feeders or units — the basis for correctly sizing a transformer or service.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Maximum Demand Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter connected load and demand factor, plus optional group diversity inputs.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Connected Load per Unit (kW)</label>
+          <input id="connectedLoad" type="number" value="100" step="1" min="0" placeholder="e.g. 100" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Demand Factor (0-1)</label>
+          <input id="demandFactor" type="number" value="0.7" step="0.01" min="0.01" max="1" placeholder="e.g. 0.7" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Number of Similar Units / Feeders</label>
+          <input id="numUnits" type="number" value="1" step="1" min="1" placeholder="e.g. 1" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Diversity Factor <span class="normal-case text-gray-400">(1.0 if only one unit)</span></label>
+          <input id="diversityFactor" type="number" value="1.2" step="0.01" min="1" placeholder="e.g. 1.2" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateMaximumDemand()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">MD = Connected Load × DF</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Group Maximum Demand</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Individual Max Demand</span>
+            <span id="rIndividual" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Recommended Margin (+20%)</span>
+            <span id="rMargin" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/load-factor" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Load Factor Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/power-demand" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Power Demand Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/cable-ampacity" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Cable Ampacity Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/electrical-load" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Electrical Load Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Maximum Demand Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding maximum demand</a></li>
+      <li><a href="#second" class="hover:underline">3. Typical demand factors by load type</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Maximum Demand Is Estimated from Connected Load</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard demand factor / diversity factor method (IS 732 / NEC Article 220 style)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>Every piece of electrical equipment in a building has a nameplate (connected) rating, but not everything runs at full rated capacity simultaneously &mdash; lights get switched off, motors cycle on and off, HVAC units modulate with the weather. Maximum demand estimation exists precisely to bridge the gap between "what's connected" and "what actually gets drawn," so that transformers, service entrances, and switchgear can be sized realistically rather than for a scenario that never occurs.</p>
+
+      <p><strong>Formula used (individual maximum demand):</strong> Maximum Demand = Connected Load &times; Demand Factor. Demand factor is always between 0 and 1, published by code or derived from your own facility's measured operating pattern, and reflects the realistic fraction of connected load that actually contributes to peak demand.</p>
+
+      <p><strong>Formula used (group diversified demand):</strong> when combining several similar units or feeders, Group Maximum Demand = (Individual Maximum Demand &times; Number of Units) &divide; Diversity Factor. Diversity factor is always 1.0 or greater, and accounts for the fact that even loads which individually reach their own peak demand rarely all do so at the exact same instant &mdash; the more independent units combined, the more this effect typically matters.</p>
+
+      <p><strong>Worked example:</strong> a facility has 5 similar production line feeders, each with a connected load of 100 kW and a demand factor of 0.7 (based on the specific equipment mix on each line). Individual Maximum Demand per feeder = 100 &times; 0.7 = 70 kW. Sum of individual maximum demands across 5 feeders = 70 &times; 5 = 350 kW. With a diversity factor of 1.2 (reflecting that not all 5 lines peak at exactly the same moment): Group Maximum Demand = 350 &divide; 1.2 &asymp; 291.7 kW. This 291.7 kW figure, not the naive 500 kW total connected load or even the 350 kW sum of individual demands, is the realistic number to size a shared transformer or main switchgear against.</p>
+
+      <p><strong>Why demand factor is always &le; 1, and diversity factor is always &ge; 1:</strong> both factors describe the same underlying phenomenon &mdash; non-coincident peak usage &mdash; but applied at different stages. Demand factor reduces a single load category's connected rating down toward its realistic peak (dividing by demand factor would be wrong; you multiply connected load by demand factor, a number less than 1, to shrink it). Diversity factor then reduces the sum of several already-realistic individual maximum demands down further, to their combined, coincident group peak (you divide by diversity factor, a number greater than 1, to shrink the naive sum). Keeping these two operations and their factor ranges straight is one of the most common sources of confusion in demand calculations.</p>
+
+      <p><strong>Multi-category demand calculation for a complete facility:</strong> a real building rarely has just one load category &mdash; a typical commercial facility combines lighting, general power outlets, HVAC, and possibly motors or specialized equipment, each with its own connected load and demand factor. The complete approach calculates each category's individual maximum demand separately (its own connected load &times; its own demand factor), then sums those individual maximum demands together to get the facility's total maximum demand. This total sum may then have a further overall diversity factor applied if the different categories themselves don't all peak at exactly the same time of day (lighting peaking in the evening, HVAC peaking in the afternoon heat, for example) &mdash; though many simpler designs conservatively assume all category peaks coincide and skip this additional diversity step.</p>
+
+      <p><strong>Where demand and diversity factor tables come from:</strong> unlike a formula derived from first-principles physics, these factors are empirical &mdash; built up over decades from utility metering data and load research studies across large numbers of similar facilities. This is why demand factor tables are periodically revised as building usage patterns change (for example, as lighting has become more efficient and HVAC has become a larger share of typical commercial demand, older tables' category weightings have shifted) &mdash; always confirm you're using a current edition of the applicable code's demand factor table rather than a decades-old reference that may no longer reflect typical modern load behavior.</p>
+
+      <p><strong>Practical use in transformer and service sizing:</strong> once the group maximum demand (with an appropriate growth margin) is calculated, this is the figure used to select a transformer kVA rating (after converting from kW using the expected power factor), size the service entrance conductors and main switchgear, and determine utility connection requirements. Because this figure directly drives significant capital cost (transformer size, cable size, switchgear rating), getting the demand and diversity factor assumptions right at the design stage has real, lasting financial consequences for the project &mdash; an overly conservative (low) demand factor assumption oversizes and adds unnecessary cost, while an overly optimistic one risks an inadequate installation that struggles under real operating conditions.</p>
+
+      <p><strong>Summary:</strong> use Maximum Demand = Connected Load &times; Demand Factor for a single load category, sum across categories for a full facility, and divide the sum of several similar units' individual maximum demands by an appropriate diversity factor when combining multiple feeders or buildings into one shared service &mdash; always add a growth margin, and always confirm the specific demand and diversity factors against your applicable code rather than a generic reference table for a final design.</p>
+
+      <p><strong>Connecting maximum demand to real operating data:</strong> once a facility is built and operating, comparing its actual metered maximum demand against the pre-construction calculated estimate is a valuable feedback loop &mdash; a significant mismatch in either direction (actual demand much higher or much lower than predicted) is worth investigating, since it either signals under-provisioned capacity heading toward a future constraint, or an opportunity to right-size future expansions more accurately using the facility's own real demand factor rather than a generic table value.</p>
+
+      <p><strong>A note on power factor for transformer sizing:</strong> maximum demand calculated here is in kW (real power), but transformers are rated in kVA (apparent power) &mdash; converting requires the expected power factor of the combined load (kVA = kW &divide; power factor). A facility with a poor power factor needs a larger kVA-rated transformer for the identical kW maximum demand than one with a good power factor, which is a separate but closely related consideration when finalizing transformer size from this calculator's kW output.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">5 feeders, 100 kW connected each, demand factor 0.7, diversity factor 1.2: Individual Max Demand = 100 &times; 0.7 = 70 kW. Sum = 70 &times; 5 = 350 kW. Group Maximum Demand = 350 &divide; 1.2 &asymp; <strong>291.7 kW</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">The demand and diversity factors used here are general planning figures — actual values depend heavily on the specific load type, operating pattern, and applicable local code or utility requirement. For final transformer, service, or switchgear sizing, always use demand factors from the applicable wiring code (IS 732, NEC Article 220, or your utility's connection standard) for your exact load categories, and have the final design reviewed by a qualified electrical engineer.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference Table</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Typical Demand Factors by Load Category</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Load Category</th>
+          <th class="text-left px-4 py-2 font-semibold">Typical Demand Factor</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">General lighting</td><td class="px-4 py-2">0.8-1.0</td></tr>
+        <tr><td class="px-4 py-2">General power outlets (office/commercial)</td><td class="px-4 py-2">0.5-0.7</td></tr>
+        <tr><td class="px-4 py-2">Motors (single, largest)</td><td class="px-4 py-2">1.0 (own full load)</td></tr>
+        <tr><td class="px-4 py-2">Motors (group, multiple)</td><td class="px-4 py-2">0.6-0.8</td></tr>
+        <tr><td class="px-4 py-2">HVAC / air conditioning</td><td class="px-4 py-2">0.7-0.9</td></tr>
+        <tr><td class="px-4 py-2">Kitchen / commercial cooking equipment</td><td class="px-4 py-2">0.4-0.65</td></tr>
+        <tr><td class="px-4 py-2">Residential (per dwelling unit, multi-unit building)</td><td class="px-4 py-2">0.35-0.5</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>These are general planning ranges intended to illustrate typical order-of-magnitude values &mdash; the applicable wiring code for your jurisdiction (IS 732 in India, NEC Article 220 in the US, or your local utility's connection standard) publishes specific demand factor tables, often broken down further by exact load category, building type, and sometimes a sliding scale that changes with total connected load size.     <p>Notice that motor loads are treated differently from other categories &mdash; the single largest motor in a group is typically counted at its full connected rating (demand factor effectively 1.0, since it could genuinely run at full load at any moment), while the remaining motors in the same group are counted at a lower demand factor reflecting the reduced likelihood that all of them run simultaneously at full load. This convention exists specifically to ensure the calculation doesn't understate demand for the worst-case scenario of the largest motor starting or running at full load while others are also active.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Maximum Demand</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Applying demand factor and diversity factor the same way (both as multipliers).</strong> Demand factor multiplies connected load (a factor &le;1, shrinking the number); diversity factor divides the sum of individual demands (a factor &ge;1, also shrinking the number, but through division) &mdash; mixing these operations up produces a significantly wrong result in either direction.</p>
+      <p><strong>2. Sizing equipment against total connected load instead of maximum demand.</strong> This is the single most common and costly mistake in preliminary electrical planning &mdash; specifying a transformer or service sized for the full nameplate sum of every connected device, rather than the realistic maximum demand, leads to substantial unnecessary oversizing and cost.</p>
+      <p><strong>3. Using a single generic demand factor across dissimilar load categories.</strong> Lighting, motors, HVAC, and general power outlets each have their own characteristic demand factor &mdash; applying one blanket demand factor across a mixed-load facility, rather than calculating each category separately and summing the results, can meaningfully misstate the true maximum demand.</p>
+      <p><strong>4. Forgetting to add a growth/safety margin on top of the calculated maximum demand.</strong> The raw calculated figure represents current, realistic peak usage &mdash; without adding margin for future load growth (commonly 15-25%), equipment sized exactly at today's calculated maximum demand can become inadequate within a few years of normal facility growth.</p>
+      <p><strong>5. Using an assumed diversity factor without any basis in actual load behavior.</strong> Diversity factor genuinely depends on how correlated or independent the peak timing of different loads or feeders actually is &mdash; picking an arbitrary or overly optimistic diversity factor to make a design look more economical, without data or code guidance to support it, risks undersizing shared equipment.</p>
+      <p><strong>6. Confusing maximum demand (a planning estimate) with actual billed/metered demand.</strong> Maximum demand calculated here is a design-stage estimate; billed demand from a utility meter is the empirical, measured reality once a facility is operating &mdash; treating a pre-construction calculation as if it were confirmed operational data overstates its certainty.</p>
+      <p><strong>7. Applying a flat demand factor to motor loads without special treatment for the largest motor.</strong> Standard practice counts the single largest motor in a group at its full connected rating (not derated by a group demand factor), since it could genuinely run at full load independently &mdash; applying the group's lower demand factor to every motor including the largest one can understate worst-case demand.</p>
+      <p><strong>8. Using an outdated demand factor table.</strong> Load behavior patterns shift over time (more efficient lighting, growing HVAC and electronics share of typical demand) &mdash; a demand factor table from an old code edition or outdated reference may not accurately reflect current typical load behavior for a modern facility.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for maximum demand?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Maximum Demand = Connected Load × Demand Factor. Demand factor is the ratio of the maximum demand a load category actually draws to its total connected (nameplate) load, and is always 1.0 or less, since not all connected equipment operates simultaneously at full rated load.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the difference between connected load and maximum demand?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Connected load is the sum of the rated (nameplate) capacity of every piece of equipment connected to a system, added up as if everything ran at full load simultaneously. Maximum demand is the actual highest load the system experiences in practice, which is almost always lower than connected load because equipment doesn't all operate at full capacity at the same time — demand factor is exactly the ratio between these two numbers.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is diversity factor and how is it different from demand factor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Diversity factor applies when combining multiple individual loads or feeders into a group — it's the ratio of the sum of individual maximum demands to the actual group (coincident) maximum demand, and is always 1.0 or greater, since not all individual loads hit their own peak at exactly the same moment. Demand factor reduces a single load's connected capacity down to its own maximum demand; diversity factor then further reduces the sum of several loads' maximum demands down to their combined, coincident group demand.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does maximum demand matter for transformer or service sizing?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Sizing a transformer, service entrance, or main switchgear against the full connected load (rather than the realistic maximum demand) results in significant, unnecessary oversizing — more expensive equipment than the installation will ever actually need. Correctly applying demand and diversity factors gives a right-sized estimate that still provides adequate capacity and safety margin, without paying for capacity that will never be used.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Where do demand factor values come from?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Demand factors are published in wiring codes and standards (IS 732 in India, NEC Article 220 in the US) based on decades of accumulated data on how different load categories (lighting, general power outlets, motors, HVAC, kitchen equipment, etc.) actually behave in practice — they're empirical planning figures, not calculated from first principles, and vary by load category, building type, and sometimes by connected load size (larger installations often get a lower demand factor).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does the demand factor for a load category change with the size of the installation?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Often, yes — many code tables provide a decreasing demand factor as connected load increases in certain categories (particularly general lighting and receptacle loads), reflecting the statistical reality that a larger population of connected devices is even less likely to all peak simultaneously than a smaller one. Always check whether your applicable table has size-dependent tiers rather than assuming one flat demand factor regardless of scale.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I combine maximum demand from several different load categories?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Calculate the maximum demand for each category separately (its own connected load × its own demand factor), then sum those individual maximum demands together — this sum, sometimes with an additional overall diversity factor applied if the categories themselves don't all peak together, gives the total maximum demand the transformer or service needs to be sized against.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is maximum demand the same as the demand a utility bills against?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Often closely related but not always identical — utility-billed demand is typically the highest actual metered demand (often a 15- or 30-minute integrated average) recorded during a billing period, which reflects real operating conditions, while the maximum demand calculated here is a planning estimate used before a facility is even built or expanded. Once a facility is operating, its actual billed demand becomes the more accurate, empirical figure, and can be compared against this calculator's planning estimate to check how the assumptions held up in practice.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I add a safety margin on top of calculated maximum demand when sizing equipment?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, this is standard practice — most designers add a margin (commonly 15-25%, sometimes more for facilities with planned future expansion) on top of the calculated maximum demand before finalizing transformer or service size, both to accommodate normal load growth over the equipment's service life and to avoid a design that's already at its ceiling on day one of operation.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateMaximumDemand(){
+    const connectedLoad = parseFloat(document.getElementById('connectedLoad').value);
+    const demandFactor = parseFloat(document.getElementById('demandFactor').value);
+    const numUnits = parseFloat(document.getElementById('numUnits').value);
+    const diversityFactor = parseFloat(document.getElementById('diversityFactor').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(connectedLoad) || connectedLoad <= 0){ errors.push('Enter a valid connected load greater than 0.'); }
+    if(isNaN(demandFactor) || demandFactor <= 0 || demandFactor > 1){ errors.push('Demand factor must be between 0 and 1.'); }
+    if(isNaN(numUnits) || numUnits < 1){ errors.push('Enter a valid number of units (1 or more).'); }
+    if(isNaN(diversityFactor) || diversityFactor < 1){ errors.push('Diversity factor must be 1.0 or greater.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rIndividual').textContent = '\u2014';
+      document.getElementById('rMargin').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const individualMD = connectedLoad * demandFactor;
+    const sumIndividual = individualMD * numUnits;
+    const groupMD = sumIndividual / diversityFactor;
+    const withMargin = groupMD * 1.2;
+
+    document.getElementById('rResult').textContent = groupMD.toLocaleString('en-IN', {maximumFractionDigits:1}) + ' kW';
+    document.getElementById('resultSub').textContent = numUnits + ' unit(s), DF=' + demandFactor + ', Diversity=' + diversityFactor;
+    document.getElementById('rIndividual').textContent = individualMD.toFixed(1) + ' kW';
+    document.getElementById('rMargin').textContent = withMargin.toFixed(1) + ' kW';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Connected Load per Unit</td><td>${connectedLoad} kW</td></tr>
+                <tr><td>Demand Factor</td><td>${demandFactor}</td></tr>
+                <tr><td>Individual Maximum Demand</td><td>${individualMD.toFixed(2)} kW</td></tr>
+                <tr><td>Number of Units</td><td>${numUnits}</td></tr>
+                <tr><td>Sum of Individual Demands</td><td>${sumIndividual.toFixed(2)} kW</td></tr>
+                <tr><td>Diversity Factor</td><td>${diversityFactor}</td></tr>
+                <tr><td><strong>Group Maximum Demand</strong></td><td><strong>${groupMD.toFixed(2)} kW</strong></td></tr>
+                <tr><td>With 20% Growth Margin</td><td>${withMargin.toFixed(2)} kW</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateMaximumDemand();
+</script>
+
+</body>
+</html>

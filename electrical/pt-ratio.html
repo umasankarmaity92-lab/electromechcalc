@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>PT Ratio Calculator (Potential/Voltage Transformer) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free PT Ratio Calculator for potential (voltage) transformers. Enter system primary voltage and secondary voltage standard to get the PT ratio instantly, with formula, standard secondary voltages, and worked example.">
+<meta name="keywords" content="pt ratio calculator, potential transformer ratio, voltage transformer sizing, vt ratio calculator, pt secondary voltage">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/pt-ratio">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="PT Ratio Calculator">
+<meta property="og:description" content="Free PT Ratio Calculator — enter system primary voltage to get the potential transformer ratio instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/pt-ratio">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PT Ratio Calculator">
+<meta name="twitter:description" content="Free PT Ratio Calculator — enter system primary voltage to get the potential transformer ratio instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "PT Ratio Calculator",
+  "url": "https://www.electromechcalc.com/electrical/pt-ratio",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free PT Ratio Calculator for potential (voltage) transformers. Enter system primary voltage and secondary voltage standard to get the PT ratio instantly, with formula, standard secondary voltages, and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for PT ratio?",
+      "acceptedAnswer": { "@type": "Answer", "text": "PT Ratio = Primary (System) Voltage ÷ Secondary Voltage. For a three-phase system, primary voltage is typically the line-to-line system voltage, and secondary voltage follows a standard value (commonly 110V internationally, sometimes 100V or 120V depending on region and standard)." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the standard PT secondary voltage?",
+      "acceptedAnswer": { "@type": "Answer", "text": "110V line-to-line is the most common international standard (per IEC practice), though 100V is used in some countries and 120V is common in North American practice — always confirm which standard your specific meters, relays, and regional practice actually use before assuming a value." }
+    },
+    {
+      "@type": "Question",
+      "name": "How is PT different from CT in terms of what it measures?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A CT (current transformer) scales down current, has a primary that carries the actual circuit current in series with the load, and its secondary is essentially treated as a current source. A PT (potential transformer, also called a voltage transformer or VT) scales down voltage, has a primary connected in parallel across the voltage being measured, and its secondary behaves like a voltage source — the two devices work on fundamentally different principles despite both being types of instrument transformers." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is PT primary voltage always matched closely to the actual system nominal voltage?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Unlike CT sizing (which benefits from being closely matched to actual load current for accuracy reasons), PT primary voltage rating is essentially fixed by the actual system voltage it's connected across — an 11kV system needs an 11kV-rated PT, a 33kV system needs a 33kV-rated PT, since the PT's primary winding insulation and turns ratio are specifically designed for that exact system voltage class, not selected with a margin the way CT current rating often is." }
+    },
+    {
+      "@type": "Question",
+      "name": "What accuracy classes are used for PTs, similar to CT accuracy classes?",
+      "acceptedAnswer": { "@type": "Answer", "text": "PTs use similar accuracy class conventions to CTs — metering-class PTs (commonly 0.2, 0.5, 1.0) prioritize accuracy at normal system voltage for revenue metering, while protection-class PTs (commonly 3P or 6P designations) prioritize maintaining reasonable accuracy during voltage dips associated with fault conditions, which matters for protection relays that need accurate voltage information even during a disturbance." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can the same PT serve both metering and protection functions?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Often yes, more commonly than with CTs, since voltage measurement during normal conditions and during most fault conditions doesn't diverge as dramatically as current measurement does (where fault current can be many multiples of normal load current) — but dedicated protection-class PTs or separate windings are still used in some critical or high-voltage applications where the specific accuracy-during-disturbance requirement matters most." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is an open-delta PT connection and when is it used?",
+      "acceptedAnswer": { "@type": "Answer", "text": "An open-delta (or V-connection) arrangement uses two single-phase PTs to measure all three line-to-line voltages of a three-phase system, rather than three separate PTs — this reduces cost and is common in three-wire (no neutral available) medium-voltage systems where full three-phase voltage measurement is needed but a neutral reference point for individual phase-to-neutral PTs isn't practically available." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does PT burden matter the same way CT burden does?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, conceptually — PT burden is the total VA load presented by connected meters, relays, and wiring on the PT secondary, and like CT burden, connecting a burden significantly different from (especially exceeding) the PT's rated burden can degrade its actual accuracy below its nameplate specification — always check total connected burden against the PT's rated burden capacity." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Metering & Protection
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          PT Ratio <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Potential (voltage) transformer ratio from system primary voltage and the standard secondary voltage used for metering and protection instruments.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">PT Ratio Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter system primary voltage and secondary voltage standard.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">System Primary Voltage (V, line-to-line)</label>
+          <input id="primaryVoltage" type="number" value="11000" step="10" min="0" placeholder="e.g. 11000" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Secondary Voltage Standard</label>
+          <select id="secondaryVoltage" class="input-field mt-2">
+            <option value="110" selected>110 V</option>
+            <option value="100">100 V</option>
+            <option value="120">120 V</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculatePTRatio()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">PT Ratio = Primary ÷ Secondary</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">PT Ratio</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Ratio (Simplified)</span>
+            <span id="rSimplified" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Phase-Neutral Secondary</span>
+            <span id="rPhaseNeutral" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/ct-ratio" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          CT Ratio Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/relay-setting" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Relay Setting Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/transformer-efficiency" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Transformer Efficiency Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/voltage-regulation" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Voltage Regulation Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20PT Ratio Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding PT ratio selection</a></li>
+      <li><a href="#second" class="hover:underline">3. PT vs CT — key differences</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How PT Ratio Is Calculated and Selected</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard potential transformer ratio method (IEC 61869-3 style)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>A potential transformer (PT), also called a voltage transformer (VT), scales a high system voltage down to a small, standardized secondary voltage that meters, relays, and instruments are built to accept &mdash; conceptually similar to how a CT scales current, but working on voltage instead, and connected in parallel across the voltage being measured rather than in series with current flow.</p>
+
+      <p><strong>Formula used:</strong> PT Ratio = Primary (System) Voltage &divide; Secondary Voltage. Primary voltage is the actual system nominal voltage (11kV, 33kV, 66kV, and so on); secondary voltage follows a standard value, most commonly 110V internationally.</p>
+
+      <p><strong>Worked example:</strong> an 11,000V (11kV) system uses a PT with a 110V secondary standard. PT Ratio = 11,000 &divide; 110 = 100, expressed as 11000:110 or simplified to 100:1. For a 33kV system with the same 110V secondary standard, PT Ratio = 33,000 &divide; 110 = 300:1.</p>
+
+      <p><strong>Why PT primary voltage doesn't get a sizing margin the way CT current rating does:</strong> a PT's primary voltage rating is fundamentally tied to the actual system voltage class it's insulated and designed for &mdash; there's no equivalent to "oversizing for future load growth" the way there is with CT current rating, since a PT rated for a specific voltage class has insulation and turns ratio specifically engineered for that voltage, not a margin above it. An 11kV system needs an 11kV-class PT; using a PT rated for a different voltage class (even one seemingly "close" like 6.6kV or 22kV) isn't a matter of accuracy trade-offs the way CT margin selection is &mdash; it's simply the wrong, incompatible device for that system voltage.</p>
+
+      <p><strong>Line-to-line versus line-to-neutral PT connection:</strong> for a three-phase system, PTs can be connected either line-to-line (measuring the full voltage between two phases, with a 110V line-to-line secondary) or line-to-neutral/phase-to-ground (measuring a single phase's voltage relative to neutral or ground, typically with a secondary of 110&divide;&radic;3 &asymp; 63.5V for a system whose line-to-line secondary would be 110V). Both configurations serve different metering and protection purposes &mdash; three-phase power metering typically needs line-to-line (or a full three-phase PT set) measurement, while some protection functions (like earth fault or unbalance detection) specifically need phase-to-neutral or phase-to-ground voltage information that a line-to-line-only connection wouldn't provide.</p>
+
+      <p><strong>Standard PT primary voltages follow the system voltage series:</strong> unlike CT primary ratings (which follow their own dedicated standard current series), PT primary voltage ratings simply match the standard nominal system voltage series used across power distribution and transmission &mdash; 415V, 3.3kV, 6.6kV, 11kV, 22kV, 33kV, 66kV, 132kV, 220kV, and so on, varying somewhat by country and utility practice. A PT is manufactured for a specific system voltage class (or sometimes a small family of closely related classes), with insulation, creepage distance, and turns ratio all engineered around that specific voltage &mdash; selecting the correct voltage class PT for your actual system is a straightforward, near-exact match exercise, unlike CT current rating selection which involves the accuracy-versus-future-growth trade-off discussed for CTs.</p>
+
+      <p><strong>Why insulation level matters as much as ratio for PT selection:</strong> beyond the turns ratio calculated here, a PT's insulation must be rated for the actual system voltage class it's connected to, including margin for transient overvoltages the system might experience (switching surges, lightning-related transients on outdoor systems). This insulation rating is a separate specification from the voltage ratio itself &mdash; two PTs might have an identical 100:1 ratio but be rated for different maximum system voltages and insulation levels, so ratio alone doesn't fully specify a PT; insulation class must also match the actual installation's voltage class and environment.</p>
+
+      <p><strong>Three-phase PT configurations:</strong> for full three-phase voltage measurement, installations commonly use either three single-phase PTs (one per phase, connected phase-to-neutral, giving complete individual phase voltage information), a single three-phase PT unit (integrating three windings in one housing, more compact but sometimes less flexible), or the open-delta (V-connection) arrangement using just two PTs where a neutral reference isn't practically available. The right configuration depends on what voltage information is actually needed (just line-to-line magnitudes, or full per-phase detail for unbalance/earth-fault detection) and practical installation constraints like available space and whether a system neutral point exists to reference against.</p>
+
+      <p><strong>Summary:</strong> use PT Ratio = System Primary Voltage &divide; Standard Secondary Voltage, select a PT rated for your exact system voltage class (not a margin above it, unlike CT current sizing), confirm both ratio and insulation level match your installation, and remember the critical safety distinction: never short-circuit an energized PT secondary, while an open PT secondary is generally safe.</p>
+
+      <p><strong>Connecting PT selection to overall metering and protection design:</strong> PT ratio, alongside CT ratio, feeds directly into how meters and relays interpret raw secondary readings back into actual primary system values &mdash; a power meter reading PT and CT secondary voltage and current needs both ratios correctly configured to calculate accurate real-world power, energy, and other derived quantities. Getting PT ratio right is therefore just as fundamental to accurate metering as CT ratio, even though the specific selection considerations (fixed voltage class match vs current-based utilization optimization) differ meaningfully between the two instrument transformer types.</p>
+
+      <p><strong>PT selection in medium and high voltage switchgear:</strong> in medium-voltage (typically above 1kV up to around 36kV in common usage) and high-voltage switchgear, PTs are often a specifically ordered, factory-fitted component of the switchgear assembly rather than a separately field-installed device, given the insulation coordination and safety clearances required at these voltage levels. Understanding the ratio and configuration principles covered here remains useful for specifying requirements to a switchgear manufacturer, verifying delivered equipment matches specification, or troubleshooting an existing installation, even when the PT itself isn't something typically installed as a standalone field retrofit at these voltage classes.</p>
+
+      <p>Whether you're specifying a new switchgear order, verifying an existing installation's documentation, or simply building foundational understanding of how voltage measurement scales down safely from high system voltages to instrument-friendly levels, the same ratio principle covered here underlies every one of these tasks.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">11,000V system, 110V secondary: PT Ratio = 11,000 &divide; 110 = <strong>100:1</strong>. For 33,000V system: PT Ratio = 33,000 &divide; 110 = <strong>300:1</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator gives PT ratio from primary and secondary voltage — actual PT selection also requires checking accuracy class, rated burden (VA), insulation level appropriate for the system voltage, and whether a single-phase or three-phase (or open-delta) PT configuration is needed. Always confirm final PT selection against the manufacturer's technical data and the applicable standard for your specific metering or protection application. Remember the critical safety distinction from CTs: never short-circuit an energized PT secondary, and always verify insulation level matches your actual system voltage class before installation.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Comparison</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Potential Transformer (PT) vs Current Transformer (CT)</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Aspect</th>
+          <th class="text-left px-4 py-2 font-semibold">CT (Current Transformer)</th>
+          <th class="text-left px-4 py-2 font-semibold">PT (Potential Transformer)</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">Connection</td><td class="px-4 py-2">In series with load current</td><td class="px-4 py-2">In parallel across the voltage</td></tr>
+        <tr><td class="px-4 py-2">Standard secondary</td><td class="px-4 py-2">5A or 1A</td><td class="px-4 py-2">110V (or 100V/120V)</td></tr>
+        <tr><td class="px-4 py-2">Sizing margin practice</td><td class="px-4 py-2">Match to actual load current for accuracy</td><td class="px-4 py-2">Fixed by actual system voltage class</td></tr>
+        <tr><td class="px-4 py-2">Open secondary hazard</td><td class="px-4 py-2">Dangerous — never leave open while energized</td><td class="px-4 py-2">Safe — open secondary produces no current</td></tr>
+        <tr><td class="px-4 py-2">Short-circuited secondary</td><td class="px-4 py-2">Safe / required before disconnecting load</td><td class="px-4 py-2">Dangerous — never short while energized</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>These two instrument transformer types are often discussed together since they serve complementary roles (getting both voltage and current down to safe, standardized levels for the same metering or protection scheme), but their opposite safety practices for open versus shorted secondaries are worth committing to memory precisely because they're opposite &mdash;     <p>This reversal of safety practice between the two device types is a common point of confusion for anyone newer to instrument transformers &mdash; a useful memory aid is that a CT is fundamentally a current source (so it needs somewhere for current to flow, meaning open-circuit is dangerous and short-circuit is safe), while a PT is fundamentally a voltage source (so a short circuit forces high current, meaning short-circuit is dangerous and open-circuit is safe). Keeping this underlying source-type distinction in mind, rather than memorizing the rules by rote, makes the correct practice easier to recall correctly under real field conditions.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating PT Ratio</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Applying CT-style current margin thinking to PT voltage rating selection.</strong> PT primary voltage is fixed by the actual system voltage class, not selected with an accuracy-driven margin the way CT current rating is &mdash; there's no equivalent "utilization percentage" consideration for PT primary voltage selection.</p>
+      <p><strong>2. Confusing which secondary voltage standard (110V, 100V, or 120V) applies to your specific installation.</strong> Using the wrong standard secondary voltage assumption in a ratio calculation gives an incorrect ratio &mdash; confirm the actual standard used by your region, utility, or specific meter/relay manufacturer before calculating.</p>
+      <p><strong>3. Applying CT secondary safety practice (safe to short) to a PT.</strong> This is a genuinely dangerous mistake &mdash; a PT secondary should never be short-circuited while energized, the opposite safety rule from CT secondaries, since a PT behaves like a voltage source and a short circuit drives high, damaging current.</p>
+      <p><strong>4. Not distinguishing line-to-line from line-to-neutral PT secondary voltage when checking meter compatibility.</strong> A meter expecting a 110V line-to-line input won't read correctly if fed a 63.5V line-to-neutral PT secondary output, or vice versa &mdash; confirm which connection type both the PT and the connected instrument actually use.</p>
+      <p><strong>5. Ignoring PT burden compatibility when connecting multiple meters or relays.</strong> Like CT burden, connecting devices whose combined VA burden exceeds the PT's rated burden can degrade accuracy below its nameplate specification &mdash; check total connected burden, not just ratio selection alone.</p>
+      <p><strong>6. Assuming a single PT automatically provides adequate accuracy for both metering and protection without checking accuracy class.</strong> While PTs are less prone to the dramatic metering-vs-protection accuracy conflict that CTs experience at fault current levels, critical or high-voltage applications may still specifically require a protection-class (3P/6P) PT rather than assuming a general metering-class unit is adequate for both purposes.</p>
+      <p><strong>7. Overlooking insulation level as a separate specification from ratio.</strong> Two PTs can share an identical voltage ratio while being rated for different maximum system voltages and insulation levels &mdash; confirm insulation class matches your actual system voltage and environment, not just the calculated ratio number.</p>
+      <p><strong>8. Choosing PT configuration (three single-phase, one three-phase unit, or open-delta) without considering what protection functions actually need.</strong> Some protection functions specifically require full per-phase voltage information that an open-delta or line-to-line-only configuration doesn't provide &mdash; confirm your configuration choice supports every metering and protection function the installation actually needs, not just line-to-line magnitude measurement.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for PT ratio?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">PT Ratio = Primary (System) Voltage ÷ Secondary Voltage. For a three-phase system, primary voltage is typically the line-to-line system voltage, and secondary voltage follows a standard value (commonly 110V internationally, sometimes 100V or 120V depending on region and standard).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the standard PT secondary voltage?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">110V line-to-line is the most common international standard (per IEC practice), though 100V is used in some countries and 120V is common in North American practice — always confirm which standard your specific meters, relays, and regional practice actually use before assuming a value.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How is PT different from CT in terms of what it measures?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A CT (current transformer) scales down current, has a primary that carries the actual circuit current in series with the load, and its secondary is essentially treated as a current source. A PT (potential transformer, also called a voltage transformer or VT) scales down voltage, has a primary connected in parallel across the voltage being measured, and its secondary behaves like a voltage source — the two devices work on fundamentally different principles despite both being types of instrument transformers.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is PT primary voltage always matched closely to the actual system nominal voltage?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Unlike CT sizing (which benefits from being closely matched to actual load current for accuracy reasons), PT primary voltage rating is essentially fixed by the actual system voltage it's connected across — an 11kV system needs an 11kV-rated PT, a 33kV system needs a 33kV-rated PT, since the PT's primary winding insulation and turns ratio are specifically designed for that exact system voltage class, not selected with a margin the way CT current rating often is.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What accuracy classes are used for PTs, similar to CT accuracy classes?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">PTs use similar accuracy class conventions to CTs — metering-class PTs (commonly 0.2, 0.5, 1.0) prioritize accuracy at normal system voltage for revenue metering, while protection-class PTs (commonly 3P or 6P designations) prioritize maintaining reasonable accuracy during voltage dips associated with fault conditions, which matters for protection relays that need accurate voltage information even during a disturbance.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can the same PT serve both metering and protection functions?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Often yes, more commonly than with CTs, since voltage measurement during normal conditions and during most fault conditions doesn't diverge as dramatically as current measurement does (where fault current can be many multiples of normal load current) — but dedicated protection-class PTs or separate windings are still used in some critical or high-voltage applications where the specific accuracy-during-disturbance requirement matters most.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is an open-delta PT connection and when is it used?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">An open-delta (or V-connection) arrangement uses two single-phase PTs to measure all three line-to-line voltages of a three-phase system, rather than three separate PTs — this reduces cost and is common in three-wire (no neutral available) medium-voltage systems where full three-phase voltage measurement is needed but a neutral reference point for individual phase-to-neutral PTs isn't practically available.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does PT burden matter the same way CT burden does?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, conceptually — PT burden is the total VA load presented by connected meters, relays, and wiring on the PT secondary, and like CT burden, connecting a burden significantly different from (especially exceeding) the PT's rated burden can degrade its actual accuracy below its nameplate specification — always check total connected burden against the PT's rated burden capacity.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is a PT secondary circuit dangerous to leave open, the way an open CT secondary is?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No, the opposite concern applies — a PT's secondary should never be short-circuited while energized (since it behaves like a voltage source, a short circuit would drive very high, damaging current), while leaving it open is generally safe since no current flows without a connected load. This is exactly the reverse safety consideration from a CT, where the secondary should never be left open but is safe to short-circuit, so it's worth being clear on which instrument transformer you're working with before applying either safety practice.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculatePTRatio(){
+    const primary = parseFloat(document.getElementById('primaryVoltage').value);
+    const secondary = parseFloat(document.getElementById('secondaryVoltage').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(primary) || primary <= 0){ errors.push('Enter a valid primary voltage greater than 0.'); }
+    if(isNaN(secondary) || secondary <= 0){ errors.push('Select a valid secondary voltage.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rSimplified').textContent = '\u2014';
+      document.getElementById('rPhaseNeutral').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const ratio = primary / secondary;
+    const phaseNeutralSecondary = secondary / Math.sqrt(3);
+
+    document.getElementById('rResult').textContent = primary.toLocaleString('en-IN') + ':' + secondary;
+    document.getElementById('resultSub').textContent = 'For ' + primary.toLocaleString('en-IN') + 'V system';
+    document.getElementById('rSimplified').textContent = ratio.toFixed(1) + ':1';
+    document.getElementById('rPhaseNeutral').textContent = phaseNeutralSecondary.toFixed(1) + ' V';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Primary (System) Voltage</td><td>${primary.toLocaleString('en-IN')} V</td></tr>
+                <tr><td>Secondary Voltage (Line-Line)</td><td>${secondary} V</td></tr>
+                <tr><td><strong>PT Ratio</strong></td><td><strong>${primary.toLocaleString('en-IN')}:${secondary}</strong></td></tr>
+                <tr><td>Simplified Ratio</td><td>${ratio.toFixed(1)}:1</td></tr>
+                <tr><td>Phase-to-Neutral Secondary</td><td>${phaseNeutralSecondary.toFixed(1)} V</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculatePTRatio();
+</script>
+
+</body>
+</html>

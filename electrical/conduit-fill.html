@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Conduit Fill Calculator (1, 2, or 3+ Conductors) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Conduit Fill Calculator. Enter conduit internal diameter, cable diameter, and number of conductors to get percentage fill instantly, with formula and standard fill limits (53%/31%/40%) for 1, 2, and 3+ conductor conduits.">
+<meta name="keywords" content="conduit fill calculator, conduit fill percentage, conduit sizing calculator, nec chapter 9 conduit fill, conduit capacity calculator">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/conduit-fill">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Conduit Fill Calculator">
+<meta property="og:description" content="Free Conduit Fill Calculator — enter conduit and cable diameter, and conductor count to get percentage fill instantly, with standard fill limits.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/conduit-fill">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Conduit Fill Calculator">
+<meta name="twitter:description" content="Free Conduit Fill Calculator — enter conduit and cable diameter, and conductor count to get percentage fill instantly, with standard fill limits.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Conduit Fill Calculator",
+  "url": "https://www.electromechcalc.com/electrical/conduit-fill",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Conduit Fill Calculator. Enter conduit internal diameter, cable diameter, and number of conductors to get percentage fill instantly, with formula and standard fill limits (53%/31%/40%) for 1, 2, and 3+ conductor conduits.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for conduit fill percentage?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Fill % = (Total Cross-Sectional Area of All Conductors ÷ Conduit Internal Area) × 100. Conduit internal area = π × (internal diameter ÷ 2)²; each conductor's area = π × (conductor diameter ÷ 2)², summed across all conductors in the conduit." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does the maximum fill percentage change depending on the number of conductors?",
+      "acceptedAnswer": { "@type": "Answer", "text": "With just one conductor, it can occupy more of the conduit's cross-section (up to 53%) since there's no need to leave space for multiple round conductors to pack together without excessive friction during pulling. Two conductors pack together less efficiently (round-on-round contact leaves more unused space geometrically), which is why the two-conductor limit (31%) is actually lower than the three-or-more limit (40%) — three or more round conductors happen to pack together more space-efficiently than exactly two do." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is the 2-conductor fill limit lower than the 3-or-more conductor limit?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This is a common point of confusion, but it reflects real packing geometry — two round conductors of similar size inside a round conduit leave proportionally more wasted space between them and the conduit wall than three or more conductors do, since three or more can settle into a more space-efficient triangular or cluster arrangement. The percentages in the standard table (53% / 31% / 40%) directly reflect this geometric reality, not an arbitrary or linearly decreasing scale." }
+    },
+    {
+      "@type": "Question",
+      "name": "What conduit diameter should I use — nominal trade size or actual internal diameter?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Use actual internal diameter (sometimes noticeably different from the nominal trade size, which historically referred to approximate outer dimensions) — conduit manufacturers publish actual internal diameter for each trade size and conduit type (rigid steel, PVC, EMT all differ slightly), and using nominal trade size as if it were internal diameter can meaningfully misstate available fill area." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does conduit fill affect cable ampacity the way tray fill does?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — conduit is itself effectively a grouping/enclosure condition for the cables inside it, and standard cable ampacity derating already accounts for cables being installed 'in conduit' as one of the standard installation methods with its own base ampacity table, separate from free-air or cable tray figures. Conduit fill percentage itself is primarily about physical pulling feasibility and code compliance, while the ampacity impact of being in conduit at all is captured through the installation-method-specific base ampacity table." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I exceed the standard fill percentage if the cables still physically fit?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — the fill percentage limits aren't just about whether cables physically fit inside the conduit; they're specifically calibrated to ensure conductors can be pulled through the conduit during installation without excessive friction damage to insulation, and to leave reasonable allowance for heat dissipation. Exceeding the limit even where cables technically fit risks installation damage and is generally a code violation." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I calculate fill for conductors of different sizes in the same conduit?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Calculate each conductor size group's total area separately (that size's individual conductor area × how many of that size), sum all groups together for total conductor area, then apply the same fill percentage formula using the appropriate limit based on total conductor count (not per-size-group count) — the 1/2/3+ limit tiers are based on total number of conductors in the conduit, regardless of how many different sizes are mixed together." }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I plan for future conductor additions when sizing a conduit?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, similar to cable tray sizing — conduit is often difficult or impossible to enlarge after installation (especially if embedded in concrete or behind finished walls), so many designers deliberately select a conduit size that leaves room below the maximum fill limit for anticipated future circuit additions, rather than sizing tightly to only the conductors being installed initially." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript></noscript>
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Cables & Protection
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Conduit Fill <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Percentage fill of a conduit from its internal diameter and the conductors it carries — checked against standard fill limits that vary by conductor count.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Conduit Fill Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter conduit internal diameter, cable diameter, and conductor count.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Conduit Internal Diameter (mm)</label>
+          <input id="conduitID" type="number" value="50" step="1" min="0" placeholder="e.g. 50" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Cable/Conductor Diameter (mm)</label>
+          <input id="cableDiameter" type="number" value="10" step="0.5" min="0" placeholder="e.g. 10" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Number of Conductors</label>
+          <input id="numConductors" type="number" value="4" step="1" min="1" placeholder="e.g. 4" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateConduitFill()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">Fill% = Conductor Area ÷ Conduit Area × 100</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Conduit Fill</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Allowed Limit</span>
+            <span id="rLimit" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Status</span>
+            <span id="rStatus" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/cable-tray-fill" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Cable Tray Fill Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/cable-ampacity" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Cable Ampacity Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/voltage-drop" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Voltage Drop Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/busbar-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Busbar Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Conduit Fill Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding conduit fill percentage</a></li>
+      <li><a href="#second" class="hover:underline">3. Why the fill limit changes with conductor count</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Conduit Fill Percentage Is Calculated</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard conduit fill percentage method (NEC Chapter 9 Table 1 style limits)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>Conduit fill percentage checks whether the conductors planned for a conduit will actually fit and can be safely pulled through it during installation, without excessive friction that could damage insulation or make the pull practically impossible. Unlike a simple "does it physically fit" check, standard fill percentage limits are calibrated specifically for safe pulling and reasonable heat dissipation, which is why they're meaningfully less than 100% even when more conductors could technically be squeezed in.</p>
+
+      <p><strong>Formula used:</strong> Fill % = (Total Conductor Cross-Sectional Area &divide; Conduit Internal Area) &times; 100. Conduit internal area = &pi; &times; (internal diameter&divide;2)&sup2;; each conductor's area = &pi; &times; (conductor diameter&divide;2)&sup2;, summed across all conductors.</p>
+
+      <p><strong>Worked example:</strong> a 50 mm internal diameter conduit carries 4 conductors, each 10 mm outer diameter. Conduit area = &pi; &times; 25&sup2; &asymp; 1963.5 mm&sup2;. Individual conductor area = &pi; &times; 5&sup2; &asymp; 78.5 mm&sup2;. Total conductor area = 78.5 &times; 4 = 314.2 mm&sup2;. Fill % = 314.2 &divide; 1963.5 &times; 100 &asymp; 16.0% &mdash; comfortably below the 40% limit that applies for 3 or more conductors.</p>
+
+      <p><strong>The three fill limit tiers, and why they don't decrease linearly:</strong> standard tables specify 53% maximum fill for a single conductor, 31% for exactly two conductors, and 40% for three or more conductors. The counterintuitive dip at exactly two conductors reflects real packing geometry: a single round conductor can occupy more than half the conduit's area since there's nothing else to pack around; two round conductors of similar size pack together relatively inefficiently inside a round conduit (leaving proportionally more wasted space than three or more do); and three or more round conductors settle into a more space-efficient triangular or clustered arrangement, allowing a higher fill percentage than the two-conductor case despite having more conductors, not fewer.</p>
+
+      <p><strong>Where these percentages come from:</strong> the specific 53%/31%/40% figures aren't arbitrary round numbers &mdash; they derive from decades of accumulated field data and geometric analysis of how round conductors actually pack inside a round conduit, combined with practical pulling-tension testing to determine what fill level keeps cable pulling forces within safe limits for typical insulation types. This empirical, tested basis is exactly why these percentages remain the standard reference across multiple codes and jurisdictions, even where the exact numbers might differ slightly from one code to another.</p>
+
+      <p><strong>Pulling tension and lubricant considerations:</strong> fill percentage is one input into overall pulling feasibility, but actual pulling tension during installation also depends on conduit bend angles and count along the route, pulling lubricant use, and cable jacket friction characteristics &mdash; a conduit run with many bends can make even a fill-percentage-compliant pull more difficult than a straight run at the identical fill percentage, which is why experienced installers sometimes deliberately target fill percentage well below the maximum limit for conduit runs with challenging routing, even when the straightforward fill calculation alone would technically permit the maximum.</p>
+
+      <p><strong>Conduit fill in the context of a complete raceway design:</strong> for larger installations with extensive conduit and cable tray runs, fill calculations for each conduit or tray segment are typically performed as part of an overall raceway schedule, which also tracks conductor counts, sizes, and routing across the entire facility &mdash; this systematic approach helps catch fill violations across many parallel runs at once, rather than discovering a fill problem on one specific conduit late in a project when it's more disruptive and costly to correct.</p>
+
+      <p><strong>Summary:</strong> use Fill % = Total Conductor Area &divide; Conduit Internal Area &times; 100, apply the correct tier limit for your total conductor count (53% for 1, 31% for exactly 2, 40% for 3 or more), use actual internal diameter (not nominal trade size) for the conduit, and size with margin for anticipated future conductor additions since conduit is often impractical to enlarge after installation.</p>
+
+      <p><strong>Comparing conduit fill to cable tray fill:</strong> both calculations follow the same basic cross-sectional-area-ratio logic, but conduit's fully enclosed, round cross-section and its specific pulling-friction concerns give it its own distinct fill limit tiers (53%/31%/40%), quite different from a cable tray's roughly 50% general guideline for a rectangular, typically more open cross-section. Recognizing which raceway type you're actually sizing for &mdash; and using the correct corresponding limit &mdash; matters more than the underlying formula similarity might suggest, since applying tray-style limits to a conduit calculation (or vice versa) would give a meaningfully wrong answer.</p>
+
+      <p><strong>Special considerations for conduit runs with couplings, boxes, and fittings:</strong> the fill percentage calculation itself addresses the straight-run portion of a conduit, but pull boxes, junction boxes, and conduit bodies along a route have their own separate sizing requirements (often based on conductor count and size, following specific box-fill rules distinct from conduit fill) to ensure adequate space for making connections and bending conductors within the box &mdash; these are complementary calculations, not substitutes for each other, and a complete raceway design checks both conduit fill along straight runs and box fill at every junction point.</p>
+
+      <p><strong>Choosing between conduit and cable tray for a given installation:</strong> conduit offers more physical protection for enclosed conductors and is often required or preferred in certain locations (underground, embedded in concrete, areas needing mechanical protection or specific fire/hazard ratings), while cable tray offers easier future access and typically lower installed cost for larger conductor counts along accessible routes. Fill percentage calculations apply to both, but the choice between them is usually driven by these broader installation and code requirements first, with fill percentage then confirming the selected raceway is adequately sized for the planned conductor count once that choice is made.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">50mm conduit, 4 conductors of 10mm diameter: Conduit Area &asymp; 1963.5 mm&sup2;. Total Conductor Area = 4 &times; &pi;&times;5&sup2; &asymp; 314.2 mm&sup2;. Fill % &asymp; <strong>16.0%</strong> (limit for 3+ conductors: 40%).</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">The fill percentage limits used here (53% for 1 conductor, 31% for 2, 40% for 3 or more) follow the widely referenced NEC Chapter 9 Table 1 convention — some other codes and standards may specify somewhat different limits, so confirm the exact applicable percentage for your governing code before finalizing conduit selection. This calculator also assumes a single cable/conductor diameter; for a conduit carrying mixed conductor sizes, calculate each size group's total area separately and sum them before dividing by conduit internal area. Also check box fill requirements at any pull boxes or junction points along the route separately from the straight-run conduit fill calculated here, and have the final raceway design reviewed against your applicable electrical code.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference Table</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Standard Conduit Fill Limits by Conductor Count</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Number of Conductors</th>
+          <th class="text-left px-4 py-2 font-semibold">Maximum Fill Percentage</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">1</td><td class="px-4 py-2">53%</td></tr>
+        <tr><td class="px-4 py-2">2</td><td class="px-4 py-2">31%</td></tr>
+        <tr><td class="px-4 py-2">3 or more</td><td class="px-4 py-2">40%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>These percentages, widely referenced from NEC Chapter 9 Table 1, are among the most commonly cited conduit fill limits internationally, though some other national or local codes specify their own tables that may differ somewhat &mdash; always confirm the exact applicable percentage for your governing code. The physical reasoning behind these specific numbers (based on realistic packing geometry and pulling friction data accumulated over decades of field experience) is why they're widely adopted as a practical, safety-tested standard rather than an arbitrary round-number convention.</p>
+    <p>It's worth remembering these percentages assume reasonably round, similarly-sized conductors packing in a typical arrangement &mdash; conduits with an unusually large number of very different-sized conductors, or non-round cable cross-sections, may not pack according to the same geometric assumptions these standard percentages were derived from, which is another reason mixed-size conduit fill calculations deserve the more careful, group-by-group area summation approach discussed above rather than a simplified single-diameter assumption.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Conduit Fill</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Using nominal conduit trade size instead of actual internal diameter.</strong> Nominal trade sizes historically referenced approximate outer dimensions, not internal diameter &mdash; always use the manufacturer's published actual internal diameter for your specific conduit type and trade size, since using nominal size as if it were internal diameter overstates available fill area.</p>
+      <p><strong>2. Applying the 3+ conductor limit (40%) when only 2 conductors are present.</strong> The 2-conductor limit (31%) is actually lower than the 3+ conductor limit &mdash; assuming fill limits decrease monotonically with conductor count and using the wrong tier for exactly 2 conductors gives an incorrect (too permissive) result.</p>
+      <p><strong>3. Ignoring conductor size variation within the same conduit.</strong> Averaging different conductor diameters together, rather than calculating each size group's area separately and summing, gives a mathematically incorrect total conductor area for a mixed-size conduit.</p>
+      <p><strong>4. Assuming fill percentage alone accounts for cable ampacity in conduit.</strong> Conduit fill percentage addresses physical pulling feasibility and code compliance; cable ampacity when installed in conduit is addressed through the separate installation-method-specific base ampacity table (distinct from free-air or tray ampacity figures) \u2014 these are related but separate considerations in a complete cable sizing exercise.</p>
+      <p><strong>5. Sizing conduit tightly to only today's conductor count without margin.</strong> Conduit, especially embedded or concealed conduit, is often impractical or impossible to enlarge after installation &mdash; deliberately selecting a larger conduit size with fill percentage well below the maximum limit is common and prudent practice specifically to accommodate anticipated future circuit additions.</p>
+      <p><strong>6. Not accounting for actual cable outer diameter tolerance.</strong> Real cable diameter can vary somewhat from nominal catalog figures depending on manufacturer and specific cable construction &mdash; use actual or manufacturer-confirmed diameter for precision, particularly when a fill calculation is close to its applicable limit.</p>
+      <p><strong>7. Ignoring bend count and routing complexity when close to the fill limit.</strong> A conduit run with many bends can make pulling more difficult than fill percentage alone suggests &mdash; for routes with challenging bend geometry, targeting fill percentage comfortably below the maximum limit, not right at it, gives useful practical margin.</p>
+      <p><strong>8. Overlooking box fill requirements at junction points along the route.</strong> Conduit fill percentage addresses straight-run sections only &mdash; pull boxes, junction boxes, and conduit bodies have their own separate box-fill sizing rules that need to be checked independently, not assumed adequate just because the connecting conduit runs pass their own fill check.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for conduit fill percentage?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Fill % = (Total Cross-Sectional Area of All Conductors ÷ Conduit Internal Area) × 100. Conduit internal area = π × (internal diameter ÷ 2)²; each conductor's area = π × (conductor diameter ÷ 2)², summed across all conductors in the conduit.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does the maximum fill percentage change depending on the number of conductors?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">With just one conductor, it can occupy more of the conduit's cross-section (up to 53%) since there's no need to leave space for multiple round conductors to pack together without excessive friction during pulling. Two conductors pack together less efficiently (round-on-round contact leaves more unused space geometrically), which is why the two-conductor limit (31%) is actually lower than the three-or-more limit (40%) — three or more round conductors happen to pack together more space-efficiently than exactly two do.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is the 2-conductor fill limit lower than the 3-or-more conductor limit?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This is a common point of confusion, but it reflects real packing geometry — two round conductors of similar size inside a round conduit leave proportionally more wasted space between them and the conduit wall than three or more conductors do, since three or more can settle into a more space-efficient triangular or cluster arrangement. The percentages in the standard table (53% / 31% / 40%) directly reflect this geometric reality, not an arbitrary or linearly decreasing scale.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What conduit diameter should I use — nominal trade size or actual internal diameter?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Use actual internal diameter (sometimes noticeably different from the nominal trade size, which historically referred to approximate outer dimensions) — conduit manufacturers publish actual internal diameter for each trade size and conduit type (rigid steel, PVC, EMT all differ slightly), and using nominal trade size as if it were internal diameter can meaningfully misstate available fill area.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does conduit fill affect cable ampacity the way tray fill does?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — conduit is itself effectively a grouping/enclosure condition for the cables inside it, and standard cable ampacity derating already accounts for cables being installed 'in conduit' as one of the standard installation methods with its own base ampacity table, separate from free-air or cable tray figures. Conduit fill percentage itself is primarily about physical pulling feasibility and code compliance, while the ampacity impact of being in conduit at all is captured through the installation-method-specific base ampacity table.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I exceed the standard fill percentage if the cables still physically fit?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — the fill percentage limits aren't just about whether cables physically fit inside the conduit; they're specifically calibrated to ensure conductors can be pulled through the conduit during installation without excessive friction damage to insulation, and to leave reasonable allowance for heat dissipation. Exceeding the limit even where cables technically fit risks installation damage and is generally a code violation.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I calculate fill for conductors of different sizes in the same conduit?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Calculate each conductor size group's total area separately (that size's individual conductor area × how many of that size), sum all groups together for total conductor area, then apply the same fill percentage formula using the appropriate limit based on total conductor count (not per-size-group count) — the 1/2/3+ limit tiers are based on total number of conductors in the conduit, regardless of how many different sizes are mixed together.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I plan for future conductor additions when sizing a conduit?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, similar to cable tray sizing — conduit is often difficult or impossible to enlarge after installation (especially if embedded in concrete or behind finished walls), so many designers deliberately select a conduit size that leaves room below the maximum fill limit for anticipated future circuit additions, rather than sizing tightly to only the conductors being installed initially.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does conduit fill percentage apply differently to flexible conduit versus rigid conduit?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The same basic fill percentage principle and limits generally apply to both flexible and rigid conduit types, since the underlying concerns (pullability and heat dissipation) are similar — but always confirm any conduit-type-specific provisions in your applicable code, since flexible conduit's bending characteristics can sometimes introduce additional pulling considerations beyond the basic fill percentage calculation.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateConduitFill(){
+    const conduitID = parseFloat(document.getElementById('conduitID').value);
+    const cableDiameter = parseFloat(document.getElementById('cableDiameter').value);
+    const numConductors = parseInt(document.getElementById('numConductors').value, 10);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(conduitID) || conduitID <= 0){ errors.push('Enter a valid conduit internal diameter greater than 0.'); }
+    if(isNaN(cableDiameter) || cableDiameter <= 0){ errors.push('Enter a valid conductor diameter greater than 0.'); }
+    if(isNaN(numConductors) || numConductors < 1){ errors.push('Enter a valid number of conductors (1 or more).'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rLimit').textContent = '\u2014';
+      document.getElementById('rStatus').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const conduitArea = Math.PI * Math.pow(conduitID / 2, 2);
+    const individualArea = Math.PI * Math.pow(cableDiameter / 2, 2);
+    const totalConductorArea = individualArea * numConductors;
+    const fillPercent = (totalConductorArea / conduitArea) * 100;
+
+    let limit = 40;
+    if(numConductors === 1) limit = 53;
+    else if(numConductors === 2) limit = 31;
+
+    let status = 'Within limit';
+    if(fillPercent > limit) status = 'Exceeds limit \u2014 upsize conduit';
+    else if(fillPercent > limit * 0.8) status = 'Approaching limit';
+
+    document.getElementById('rResult').textContent = fillPercent.toLocaleString('en-IN', {maximumFractionDigits:1}) + '%';
+    document.getElementById('resultSub').textContent = numConductors + ' × ' + cableDiameter + 'mm in ' + conduitID + 'mm conduit';
+    document.getElementById('rLimit').textContent = limit + '%';
+    document.getElementById('rStatus').textContent = status;
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Conduit Internal Diameter</td><td>${conduitID} mm</td></tr>
+                <tr><td>Conduit Internal Area</td><td>${conduitArea.toFixed(1)} mm\u00b2</td></tr>
+                <tr><td>Individual Conductor Area</td><td>${individualArea.toFixed(1)} mm\u00b2</td></tr>
+                <tr><td>Number of Conductors</td><td>${numConductors}</td></tr>
+                <tr><td>Total Conductor Area</td><td>${totalConductorArea.toFixed(1)} mm\u00b2</td></tr>
+                <tr><td><strong>Fill Percentage</strong></td><td><strong>${fillPercent.toFixed(1)}%</strong></td></tr>
+                <tr><td>Applicable Limit</td><td>${limit}%</td></tr>
+                <tr><td>Status</td><td>${status}</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateConduitFill();
+</script>
+
+</body>
+</html>

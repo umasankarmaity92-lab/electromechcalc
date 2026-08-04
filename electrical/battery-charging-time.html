@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Battery Charging Time Calculator | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Battery Charging Time Calculator. Enter battery capacity, depth of discharge, charging current, and charging efficiency to get estimated charging time instantly, with formula and worked example.">
+<meta name="keywords" content="battery charging time calculator, battery charge time formula, ah capacity charging calculator, depth of discharge calculator, battery charger sizing">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/battery-charging-time">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Battery Charging Time Calculator">
+<meta property="og:description" content="Free Battery Charging Time Calculator — enter capacity, depth of discharge, and charging current to get charging time instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/battery-charging-time">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Battery Charging Time Calculator">
+<meta name="twitter:description" content="Free Battery Charging Time Calculator — enter capacity, depth of discharge, and charging current to get charging time instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Battery Charging Time Calculator",
+  "url": "https://www.electromechcalc.com/electrical/battery-charging-time",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Battery Charging Time Calculator. Enter battery capacity, depth of discharge, charging current, and charging efficiency to get estimated charging time instantly, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for battery charging time?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Charging Time (hours) = (Battery Capacity in Ah × Depth of Discharge) ÷ (Charging Current in A × Charging Efficiency). This estimates how long it takes to restore the discharged capacity, accounting for the fact that not all charging current translates directly into usable stored capacity." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is depth of discharge (DoD) and why does it matter for charging time calculation?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Depth of discharge is how much of the battery's capacity was actually used before recharging begins, expressed as a percentage of total capacity — a battery discharged to 80% DoD needs to replace 80% of its rated capacity during charging, while one discharged to only 30% DoD needs proportionally less charging time for the same charging current." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why isn't charging efficiency 100%?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Charging always involves some energy loss, primarily as heat, during the electrochemical charging process — not every amp-hour delivered by the charger converts directly into stored, usable battery capacity. This inefficiency varies by battery chemistry, with lead-acid batteries typically being less efficient (more loss) than lithium-based chemistries." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does charging efficiency differ between lead-acid and lithium batteries?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Lead-acid batteries experience more energy loss during charging, particularly as the battery approaches full charge (a phenomenon related to gassing and heat generation in the final charging stage), typically giving overall charging efficiency in the 80-90% range. Lithium-ion and lithium iron phosphate (LFP) batteries have fundamentally different electrochemistry with notably lower internal losses during charging, commonly achieving 95-99% charging efficiency." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why might real charging time be longer than this calculator's estimate?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This calculator assumes constant charging current throughout the entire charge cycle, but many real chargers (especially for lead-acid batteries) use a multi-stage profile where current is high during the initial 'bulk' charging stage but tapers off significantly during the final 'absorption' and 'float' stages as the battery approaches full charge — this tapering typically extends actual total charging time beyond a simple constant-current estimate, particularly to reach the last 10-20% of capacity." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a higher charging current always mean faster charging?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Generally yes, up to a point, but batteries (especially lithium-based ones) have a maximum recommended charging current (often expressed as a C-rate, like 0.5C or 1C) beyond which charging faster risks accelerated degradation, excessive heat generation, or in some cases safety concerns — always charge within the battery manufacturer's recommended maximum current rating rather than assuming an arbitrarily higher current always safely charges faster." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a C-rate, and how does it relate to charging current and time?",
+      "acceptedAnswer": { "@type": "Answer", "text": "C-rate expresses charging (or discharging) current relative to the battery's capacity — a 1C charging rate for a 100 Ah battery means charging at 100 A (theoretically fully charging an empty battery in about 1 hour at 100% efficiency), while a 0.5C rate for the same battery means charging at 50 A (roughly 2 hours). Battery manufacturers specify maximum safe C-rates for both charging and discharging, which directly caps how fast a given battery can safely be recharged." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does temperature affect battery charging time or efficiency?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — charging efficiency and safe maximum charging current both typically vary with battery temperature, with very cold or very hot conditions generally reducing safe charging rates and efficiency compared to a moderate reference temperature — many battery management systems automatically adjust charging current based on measured battery temperature specifically to account for this effect." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Batteries & Backup Power
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Battery Charging Time <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Estimated charging time for a battery from its capacity, depth of discharge, charging current, and charging efficiency.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Battery Charging Time Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter battery capacity, depth of discharge, and charging parameters.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Battery Capacity (Ah)</label>
+          <input id="capacity" type="number" value="200" step="1" min="0" placeholder="e.g. 200" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Depth of Discharge (%)</label>
+          <input id="dod" type="number" value="80" step="1" min="1" max="100" placeholder="e.g. 80" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Charging Current (A)</label>
+          <input id="chargingCurrent" type="number" value="20" step="0.5" min="0" placeholder="e.g. 20" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Charging Efficiency (%)</label>
+          <input id="efficiency" type="number" value="85" step="1" min="10" max="100" placeholder="e.g. 85" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateBatteryChargingTime()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">t = (Capacity × DoD) ÷ (Current × Efficiency)</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Estimated Charging Time</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Charge Required</span>
+            <span id="rChargeRequired" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">C-Rate</span>
+            <span id="rCRate" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/generator-fuel-consumption" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Generator Fuel Consumption Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/load-factor" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Load Factor Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/solar-panel-tilt-angle" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Solar Panel Tilt Angle Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/electrical-energy-cost" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Electrical Energy Cost Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Battery Charging Time Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding the battery charging time formula</a></li>
+      <li><a href="#second" class="hover:underline">3. Why charging efficiency varies by battery chemistry</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Battery Charging Time Is Calculated</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard Ah-based battery charging time method</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>Recharging a battery takes time that depends on how much capacity needs replacing, how fast current is being delivered, and how efficiently the battery actually converts that delivered current into stored charge. This calculator combines these three factors into a straightforward charging time estimate.</p>
+
+      <p><strong>Formula used:</strong> Charging Time (hours) = (Battery Capacity (Ah) &times; Depth of Discharge) &divide; (Charging Current (A) &times; Charging Efficiency). Depth of discharge and efficiency are both expressed as decimal fractions (80% = 0.8) in the underlying calculation.</p>
+
+      <p><strong>Worked example:</strong> a 200 Ah battery discharged to 80% depth of discharge, being recharged at 20 A with 85% charging efficiency. Charge Required = 200 &times; 0.8 = 160 Ah. Charging Time = 160 &divide; (20 &times; 0.85) = 160 &divide; 17 &asymp; 9.41 hours.</p>
+
+      <p><strong>Why efficiency reduces effective charging current:</strong> not every amp-hour delivered by the charger converts directly into stored, retrievable battery capacity &mdash; some portion is lost as heat during the electrochemical charging process. Dividing by efficiency in the denominator accounts for this: at 85% efficiency, only 85% of the nominal charging current is effectively "useful" for replacing discharged capacity, so charging takes proportionally longer than a naive calculation ignoring efficiency losses would suggest.</p>
+
+      <p><strong>Why this is a simplified, constant-current estimate:</strong> real charging profiles, especially for lead-acid batteries, typically aren't constant-current throughout &mdash; a common three-stage profile (bulk, absorption, float) delivers full charging current during the initial "bulk" stage, then progressively reduces current as the battery approaches full charge to avoid overcharging damage. This calculator's constant-current assumption gives a reasonable estimate for the bulk-charging-dominated portion of a charge cycle, but actual total time to reach 100% charge, particularly the final 10-20%, is often somewhat longer than this simplified formula alone suggests.</p>
+
+      <p><strong>The three-stage charging profile in more detail:</strong> the bulk stage delivers the charger's maximum rated current continuously while the battery voltage rises toward its target charge voltage &mdash; most of the actual amp-hours are replaced during this relatively fast stage, which is what this calculator's constant-current formula approximates reasonably well. The absorption stage holds the battery at a constant target voltage while current gradually tapers down as the battery becomes more fully charged and accepts less current at that voltage &mdash; this stage takes proportionally longer than the amp-hours it replaces would suggest, since current is deliberately reduced. The float stage (mainly relevant for lead-acid batteries kept on standby/maintenance charge) holds a lower maintenance voltage indefinitely, supplying only enough current to offset the battery's natural self-discharge, not meaningfully adding to fast-charging time calculations.</p>
+
+      <p><strong>C-rate and its practical role in charging time:</strong> C-rate expresses current relative to a battery's capacity, making it a convenient, capacity-independent way to compare charging speed across different battery sizes &mdash; a 1C charge rate theoretically restores a fully depleted battery to full charge in about 1 hour at 100% efficiency (in practice, somewhat longer due to efficiency losses and profile tapering), a 0.5C rate takes roughly twice as long, and a 0.1C ("slow") charge rate takes roughly ten times as long. Battery manufacturers specify maximum safe C-rates for both charging and discharging, and these limits differ meaningfully by chemistry &mdash; lithium batteries often tolerate higher safe charging C-rates than lead-acid batteries of similar capacity, contributing to lithium's reputation for faster practical recharging beyond just its higher efficiency alone.</p>
+
+      <p><strong>Charging time as one input to backup power system design:</strong> for facilities relying on battery backup (UPS systems, off-grid or hybrid solar installations, standby power systems), charging time directly affects how quickly the system can recover full backup capacity after a discharge event &mdash; a system with a long recharge time relative to the frequency of discharge events risks not being fully recharged before the next outage or discharge cycle occurs, a genuine operational risk worth checking during system design, not just an interesting technical detail calculated after the fact.</p>
+
+      <p><strong>Summary:</strong> use Charging Time = (Capacity &times; DoD) &divide; (Current &times; Efficiency), select efficiency appropriate to your actual battery chemistry, remember this constant-current formula approximates the bulk-charging stage well but understates total time-to-full-charge for lead-acid batteries with a tapering absorption stage, and always stay within the manufacturer's maximum safe charging C-rate rather than assuming higher current always safely charges faster.</p>
+
+      <p><strong>Depth of discharge and battery longevity:</strong> beyond its role in this charging time calculation, depth of discharge also has a well-documented relationship to battery cycle life for most chemistries &mdash; shallower discharge cycles (lower DoD per cycle) generally allow more total charge/discharge cycles before capacity degrades below a usable threshold, compared to consistently discharging to a high DoD every cycle. This is a separate but related consideration from charging time alone, worth factoring into how a battery system is actually operated day-to-day if maximizing service life, not just managing charging time, is a design priority.</p>
+
+      <p><strong>Estimating charging cost alongside charging time:</strong> once charging time and charging current are known, multiplying by the charging voltage gives approximate charging power, and multiplying that by charging time gives approximate energy consumed from the charging source &mdash; useful for estimating the electricity cost of routinely recharging a battery system, particularly relevant for larger battery banks (electric vehicle fleets, large UPS installations, solar-plus-storage systems) where charging energy cost is a meaningful recurring operational expense worth tracking and budgeting for.</p>
+
+      <p><strong>Solar and off-grid system charging time considerations:</strong> for battery systems charged from an intermittent source like solar panels rather than a fixed-current grid-connected charger, charging time calculations need to account for the source's actual variable current output (which changes throughout the day with sunlight availability) rather than a single constant current figure &mdash; this calculator's constant-current assumption applies most directly to grid-connected or generator-connected charging with a controlled, steady charging current, and needs adaptation (typically using average daily charging current, or a more detailed hour-by-hour analysis) for solar or other variable-source charging scenarios.</p>
+
+      <p><strong>Battery management systems (BMS) and their role in real charging behavior:</strong> modern lithium battery installations typically include a battery management system that actively controls and limits charging current and voltage based on real-time cell conditions (temperature, individual cell voltage balance, state of charge), which can meaningfully affect actual charging time compared to a simple constant-current assumption &mdash; a BMS-protected battery may deliberately reduce charging current below the nominally available charger output if it detects a condition (like cell imbalance or elevated temperature) warranting a more conservative charging approach, another reason real-world charging time can differ from this calculator's simplified estimate.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">200Ah battery, 80% DoD, 20A charging current, 85% efficiency: Charge Required = 160 Ah. Time = 160 &divide; (20&times;0.85) = 160&divide;17 &asymp; <strong>9.41 hours</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator gives a simplified estimate assuming constant charging current throughout the charge cycle — real battery chargers, especially for lead-acid batteries, often use a multi-stage charging profile (bulk, absorption, float) where charging current tapers off well before the battery is fully charged, meaning actual charging time can be somewhat longer than this simplified constant-current estimate suggests, particularly for the final portion of the charge.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Typical Charging Efficiency by Battery Chemistry</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Battery Chemistry</th>
+          <th class="text-left px-4 py-2 font-semibold">Typical Charging Efficiency</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">Flooded lead-acid</td><td class="px-4 py-2">70-85%</td></tr>
+        <tr><td class="px-4 py-2">Sealed / VRLA / AGM lead-acid</td><td class="px-4 py-2">80-90%</td></tr>
+        <tr><td class="px-4 py-2">Lithium-ion (general)</td><td class="px-4 py-2">95-98%</td></tr>
+        <tr><td class="px-4 py-2">Lithium Iron Phosphate (LFP)</td><td class="px-4 py-2">96-99%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>This meaningful efficiency gap between lead-acid and lithium chemistries is one of several practical advantages lithium batteries offer beyond just weight and cycle life &mdash; for the same charging current and duration, a lithium battery restores noticeably more usable capacity than a comparable lead-acid battery,     <p>The lower charging efficiency of lead-acid batteries also means more heat is generated during charging for the same current, which is part of why lead-acid battery rooms and enclosures typically need more attention to ventilation than equivalent lithium battery installations &mdash; the efficiency figure captured in this calculator isn't purely an abstract number, it has real, physical implications for installation design beyond just charging time itself.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Battery Charging Time</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Ignoring charging efficiency entirely (assuming 100%).</strong> This understates real charging time, sometimes significantly for lead-acid batteries with efficiency well below 100% &mdash; always include a realistic efficiency figure for your specific battery chemistry.</p>
+      <p><strong>2. Assuming constant charging current gives an accurate total-time-to-full-charge estimate for lead-acid batteries.</strong> Multi-stage charging profiles taper current significantly in the final charging stages &mdash; actual total time to reach 100% charge is often longer than this constant-current estimate, particularly for the last 10-20% of capacity.</p>
+      <p><strong>3. Using a charging current above the battery manufacturer's maximum recommended C-rate.</strong> Faster isn't always better or even safe &mdash; charging beyond the manufacturer's specified maximum current risks accelerated degradation, excessive heat, or safety concerns, especially for lithium batteries.</p>
+      <p><strong>4. Confusing depth of discharge with state of charge.</strong> Depth of discharge (how much was used) and state of charge (how much remains) are complementary but distinct concepts &mdash; an 80% DoD battery has a 20% state of charge remaining, not 80% remaining; using the wrong figure in the formula gives a significantly wrong charging time estimate.</p>
+      <p><strong>5. Applying lead-acid charging efficiency assumptions to a lithium battery, or vice versa.</strong> These chemistries have meaningfully different efficiency characteristics &mdash; using the wrong chemistry's typical efficiency range gives an inaccurate estimate for your actual battery type.</p>
+      <p><strong>6. Not accounting for temperature effects on charging efficiency and safe charging current.</strong> Very cold or very hot battery temperatures can reduce both safe charging current and actual charging efficiency compared to moderate reference conditions &mdash; extreme-temperature charging scenarios may need adjusted assumptions beyond standard reference-condition figures.</p>
+      <p><strong>7. Assuming higher C-rate charging is always beneficial without checking cycle life impact.</strong> Faster charging, even within a battery's rated maximum, can sometimes contribute to somewhat faster capacity degradation over many cycles compared to more moderate charging rates, depending on chemistry &mdash; balance charging speed convenience against long-term battery health for applications with frequent charge cycles.</p>
+      <p><strong>8. Not accounting for the ventilation and heat implications of lower charging efficiency chemistries.</strong> Lead-acid batteries generate more charging heat than lithium chemistries for the same current &mdash; installation design (ventilation, enclosure sizing) should reflect the actual chemistry's heat generation characteristics, not be copied directly from a different chemistry's typical installation practice.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for battery charging time?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Charging Time (hours) = (Battery Capacity in Ah × Depth of Discharge) ÷ (Charging Current in A × Charging Efficiency). This estimates how long it takes to restore the discharged capacity, accounting for the fact that not all charging current translates directly into usable stored capacity.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is depth of discharge (DoD) and why does it matter for charging time calculation?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Depth of discharge is how much of the battery's capacity was actually used before recharging begins, expressed as a percentage of total capacity — a battery discharged to 80% DoD needs to replace 80% of its rated capacity during charging, while one discharged to only 30% DoD needs proportionally less charging time for the same charging current.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why isn't charging efficiency 100%?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Charging always involves some energy loss, primarily as heat, during the electrochemical charging process — not every amp-hour delivered by the charger converts directly into stored, usable battery capacity. This inefficiency varies by battery chemistry, with lead-acid batteries typically being less efficient (more loss) than lithium-based chemistries.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does charging efficiency differ between lead-acid and lithium batteries?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Lead-acid batteries experience more energy loss during charging, particularly as the battery approaches full charge (a phenomenon related to gassing and heat generation in the final charging stage), typically giving overall charging efficiency in the 80-90% range. Lithium-ion and lithium iron phosphate (LFP) batteries have fundamentally different electrochemistry with notably lower internal losses during charging, commonly achieving 95-99% charging efficiency.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why might real charging time be longer than this calculator's estimate?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This calculator assumes constant charging current throughout the entire charge cycle, but many real chargers (especially for lead-acid batteries) use a multi-stage profile where current is high during the initial 'bulk' charging stage but tapers off significantly during the final 'absorption' and 'float' stages as the battery approaches full charge — this tapering typically extends actual total charging time beyond a simple constant-current estimate, particularly to reach the last 10-20% of capacity.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does a higher charging current always mean faster charging?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Generally yes, up to a point, but batteries (especially lithium-based ones) have a maximum recommended charging current (often expressed as a C-rate, like 0.5C or 1C) beyond which charging faster risks accelerated degradation, excessive heat generation, or in some cases safety concerns — always charge within the battery manufacturer's recommended maximum current rating rather than assuming an arbitrarily higher current always safely charges faster.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is a C-rate, and how does it relate to charging current and time?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">C-rate expresses charging (or discharging) current relative to the battery's capacity — a 1C charging rate for a 100 Ah battery means charging at 100 A (theoretically fully charging an empty battery in about 1 hour at 100% efficiency), while a 0.5C rate for the same battery means charging at 50 A (roughly 2 hours). Battery manufacturers specify maximum safe C-rates for both charging and discharging, which directly caps how fast a given battery can safely be recharged.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does temperature affect battery charging time or efficiency?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — charging efficiency and safe maximum charging current both typically vary with battery temperature, with very cold or very hot conditions generally reducing safe charging rates and efficiency compared to a moderate reference temperature — many battery management systems automatically adjust charging current based on measured battery temperature specifically to account for this effect.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I always charge a battery to 100%, or is partial charging acceptable?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This depends heavily on battery chemistry and application — some battery chemistries (particularly certain lithium chemistries) can have longer cycle life when routinely charged to less than 100% rather than always fully topped off, while lead-acid batteries generally benefit from reaching full charge regularly to avoid sulfation-related capacity loss — follow the specific battery manufacturer's charging and cycling recommendations for your actual battery chemistry and application rather than a one-size-fits-all charging philosophy.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateBatteryChargingTime(){
+    const capacity = parseFloat(document.getElementById('capacity').value);
+    const dodPercent = parseFloat(document.getElementById('dod').value);
+    const current = parseFloat(document.getElementById('chargingCurrent').value);
+    const efficiencyPercent = parseFloat(document.getElementById('efficiency').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(capacity) || capacity <= 0){ errors.push('Enter a valid battery capacity greater than 0.'); }
+    if(isNaN(dodPercent) || dodPercent <= 0 || dodPercent > 100){ errors.push('Depth of discharge must be between 1 and 100%.'); }
+    if(isNaN(current) || current <= 0){ errors.push('Enter a valid charging current greater than 0.'); }
+    if(isNaN(efficiencyPercent) || efficiencyPercent <= 0 || efficiencyPercent > 100){ errors.push('Charging efficiency must be between 1 and 100%.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rChargeRequired').textContent = '\u2014';
+      document.getElementById('rCRate').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const dod = dodPercent / 100;
+    const efficiency = efficiencyPercent / 100;
+    const chargeRequired = capacity * dod;
+    const chargingTime = chargeRequired / (current * efficiency);
+    const cRate = current / capacity;
+
+    document.getElementById('rResult').textContent = chargingTime.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' hours';
+    document.getElementById('resultSub').textContent = capacity + 'Ah, ' + dodPercent + '% DoD, ' + current + 'A';
+    document.getElementById('rChargeRequired').textContent = chargeRequired.toFixed(1) + ' Ah';
+    document.getElementById('rCRate').textContent = cRate.toFixed(2) + 'C';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Battery Capacity</td><td>${capacity} Ah</td></tr>
+                <tr><td>Depth of Discharge</td><td>${dodPercent}%</td></tr>
+                <tr><td>Charge Required</td><td>${chargeRequired.toFixed(1)} Ah</td></tr>
+                <tr><td>Charging Current</td><td>${current} A (${cRate.toFixed(2)}C)</td></tr>
+                <tr><td>Charging Efficiency</td><td>${efficiencyPercent}%</td></tr>
+                <tr><td><strong>Estimated Charging Time</strong></td><td><strong>${chargingTime.toFixed(2)} hours</strong></td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateBatteryChargingTime();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Busbar Size Calculator | Current Density Method</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Busbar Size Calculator using current density method. Enter load current, material & installation type for instant cross-section area & size.">
+<meta name="keywords" content="busbar size calculator, busbar current rating calculator, current density busbar sizing, copper busbar sizing, aluminum busbar sizing, switchgear busbar calculator">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/busbar-size">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Busbar Size Calculator">
+<meta property="og:description" content="Free Busbar Size Calculator using current density method. Enter load current, material & installation type for instant cross-section area & size.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/busbar-size">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Busbar Size Calculator">
+<meta name="twitter:description" content="Free Busbar Size Calculator using current density method. Enter load current, material & installation type for instant cross-section area & size.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Busbar Size Calculator",
+  "url": "https://www.electromechcalc.com/electrical/busbar-size",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Busbar Size Calculator using the current density method. Enter load current, material, and installation type to get the minimum required busbar cross-sectional area instantly, with formula and standard size reference.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for busbar sizing using the current density method?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Required Cross-Sectional Area (mm²) = Load Current (A) ÷ Current Density (A/mm²). Current density is a design assumption (typically 1.0-1.6 A/mm² for copper, lower for aluminum) representing how much current per unit of cross-sectional area the busbar can safely carry continuously without exceeding its allowable temperature rise." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does installation type (enclosed vs open) change the allowable current density?",
+      "acceptedAnswer": { "@type": "Answer", "text": "An enclosed busbar (inside a switchgear panel or cabinet) has less airflow to dissipate heat compared to an open, well-ventilated busbar in free air — for the same temperature rise limit, an enclosed busbar therefore needs a lower current density (larger cross-section for the same current) than an equivalent open-air installation." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does copper allow a higher current density than aluminum?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Copper has lower electrical resistivity than aluminum, meaning it generates less resistive heat for the same current and cross-sectional area — this lets copper busbars run at a higher current density for the same temperature rise limit, which is why copper busbars can be noticeably smaller than aluminum busbars carrying the identical current." }
+    },
+    {
+      "@type": "Question",
+      "name": "What busbar shape does this calculator assume?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This calculator computes the required total cross-sectional area only — it doesn't specify a particular width-to-thickness ratio. Flat rectangular busbars (the most common shape in low-voltage switchgear) are typically selected with the width considerably greater than the thickness, both for better heat dissipation from the wider surfaces and for practical bending and support reasons, but the specific width/thickness split for a given total area depends on the panel's physical layout and manufacturer's standard bar stock." }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I add a safety margin on top of the calculated busbar size?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — similar to other current-carrying component sizing, most designers add margin beyond the minimum calculated size to accommodate load growth, measurement/calculation uncertainty, and to keep operating temperature comfortably below the busbar's rated maximum rather than right at the limit. A common approach is sizing the busbar for the anticipated maximum demand (with its own growth margin already included) rather than just today's connected load." }
+    },
+    {
+      "@type": "Question",
+      "name": "How does busbar sizing relate to short-circuit withstand, not just continuous current?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Continuous current sizing (this calculator) and short-circuit thermal/mechanical withstand are two separate checks — a busbar sized adequately for continuous load current also needs to be checked (typically via a related adiabatic-style calculation, or against manufacturer test data) for its ability to survive the thermal and mechanical stresses of a short-circuit fault without deforming or failing, which sometimes requires a larger size or additional bracing than continuous current sizing alone would suggest." }
+    },
+    {
+      "@type": "Question",
+      "name": "Do multiple busbars in parallel share current equally?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not necessarily equally by default — parallel busbars can experience unequal current sharing due to slightly different impedances (especially if physical spacing or connection geometry differs between the parallel bars), which is why parallel busbar arrangements for very high current applications need careful attention to symmetric geometry and connection design, not just adding up individual bar ampacities and assuming perfectly even sharing." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do outdoor or high-ambient-temperature installations need busbar derating?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Like cables, a busbar's safe current-carrying capacity is calculated against a reference ambient temperature — a hotter actual ambient reduces the available temperature margin before the busbar reaches its maximum safe operating temperature, requiring either a lower operating current or a larger cross-section to compensate, following the same ambient-temperature-correction principle used in cable ampacity derating." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript></noscript>
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Switchgear & Panels
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Busbar Size <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Minimum busbar cross-sectional area for a given load current, using the standard current density method for copper and aluminum busbars.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Busbar Size Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter load current, material, and installation type.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Load Current (A)</label>
+          <input id="loadCurrent" type="number" value="800" step="10" min="0" placeholder="e.g. 800" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Material</label>
+          <select id="material" class="input-field mt-2">
+            <option value="copper" selected>Copper</option>
+            <option value="aluminum">Aluminum</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Installation Type</label>
+          <select id="installType" class="input-field mt-2">
+            <option value="enclosed" selected>Enclosed (switchgear/panel)</option>
+            <option value="open">Open, well-ventilated</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateBusbarSize()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">Area = I ÷ Current Density</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Required Cross-Section</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Current Density Used</span>
+            <span id="rDensity" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Suggested Size</span>
+            <span id="rSuggestion" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/cable-ampacity" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Cable Ampacity Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/short-circuit-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Short Circuit Current Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/mccb-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          MCCB Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/earthing-conductor-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Earthing Conductor Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Busbar Size Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding busbar current density sizing</a></li>
+      <li><a href="#second" class="hover:underline">3. Standard busbar sizes reference</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Busbar Size Is Calculated from Current Density</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Current density method (typical panel/switchgear design practice, IS 8623 style)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>A busbar is a rigid conductor &mdash; typically a flat copper or aluminum bar &mdash; used inside switchgear and panels to distribute current between incoming supply, protective devices, and outgoing feeders. Unlike a cable, a busbar's size is driven purely by its cross-sectional area and shape (not conductor stranding or insulation), and the current density method gives a quick, standard way to translate a required current rating into a minimum cross-sectional area.</p>
+
+      <p><strong>Formula used:</strong> Required Area (mm&sup2;) = Load Current (A) &divide; Current Density (A/mm&sup2;). Current density is a design assumption representing safe continuous current per unit cross-sectional area, chosen based on material, installation condition, and the busbar's allowable temperature rise.</p>
+
+      <p><strong>Worked example:</strong> a panel needs to carry 800 A on a copper busbar, installed inside an enclosed switchgear cabinet (current density assumption 1.2 A/mm&sup2; for this condition). Required Area = 800 &divide; 1.2 &asymp; 666.7 mm&sup2;. A common way to achieve this with standard flat bar stock might be two parallel 100mm &times; 10mm bars (each 1000 mm&sup2;, giving generous margin) or a similar combination matching available standard sizes and the panel's physical layout.</p>
+
+      <p><strong>Why current density varies with installation condition:</strong> the same busbar carries the same current regardless of where it's installed, but how effectively it can shed the resulting resistive heat to its surroundings depends heavily on airflow &mdash; an open busbar in free, well-ventilated air dissipates heat much more effectively than an identical busbar sealed inside an enclosed cabinet with limited airflow, which is why open installations can safely use a higher current density (smaller bar for the same current) than enclosed ones for the same allowable temperature rise.</p>
+
+      <p><strong>Multiple bars and parallel busbars:</strong> for very high currents, rather than using one extremely large single bar (which becomes impractical to bend, support, and connect, and also dissipates heat less efficiently per unit area due to reduced surface-to-volume ratio), designers commonly use two or more standard-size bars in parallel, spaced apart for better heat dissipation and more even current distribution. This calculator gives total required cross-sectional area &mdash; splitting that area across multiple parallel bars, with attention to symmetric spacing and connection geometry for even current sharing, is a common practical next step for high-current applications.</p>
+
+      <p><strong>Why heat dissipation, not just conduction, governs busbar sizing:</strong> the underlying physics driving safe current density is a heat balance &mdash; the busbar generates heat proportional to current squared multiplied by its resistance (I&sup2;R losses), and this heat must be dissipated to the surroundings fast enough to keep the busbar's steady-state temperature within its safe limit. A larger cross-sectional area both reduces resistance (less heat generated for the same current) and, for a given shape, often increases surface area available for heat dissipation &mdash; both effects work together to allow higher current for a larger bar, which is the physical basis for the simple linear current-density relationship this calculator uses.</p>
+
+      <p><strong>Skin effect and proximity effect at higher frequencies and very large bars:</strong> at standard 50/60 Hz power frequencies, skin effect (current tending to concentrate near a conductor's surface rather than distributing evenly through its cross-section) is a relatively minor factor for typical busbar sizes, but becomes more significant for very large, thick bars or higher-frequency applications. Proximity effect (current distribution in one conductor being influenced by the magnetic field of a nearby parallel conductor) similarly becomes more relevant for closely-spaced parallel busbars carrying large currents. For most general low-voltage panel busbar sizing at standard power frequency, these effects are secondary to the basic current density calculation, but they're part of why detailed manufacturer ampacity tables for large or paralleled busbars sometimes show somewhat lower effective ampacity than a naive proportional scaling from a single smaller bar's rating would suggest.</p>
+
+      <p><strong>Busbar orientation &mdash; flat (vertical) vs edge-on:</strong> a flat rectangular busbar mounted with its wide face vertical (the common orientation) dissipates heat somewhat more effectively via natural convection than the same bar mounted edge-on, since the vertical wide faces promote better convective airflow along the bar's surface &mdash; this is a secondary consideration compared to the primary current-density-based sizing, but is part of why manufacturer-published busbar ampacity tables often specify orientation alongside size and material.</p>
+
+      <p><strong>Summary:</strong> use Required Area = Load Current &divide; Current Density, selecting a density appropriate to material (copper vs aluminum) and installation condition (enclosed vs open), round up to the nearest practical standard bar size or split across parallel bars for large requirements, add margin for anticipated load growth, and separately verify short-circuit withstand before finalizing a panel or switchgear design.</p>
+
+      <p><strong>Connecting busbar sizing to the rest of a panel design:</strong> busbar size doesn't exist in isolation &mdash; it needs to be coordinated with the incoming main breaker rating (the busbar should comfortably handle the main breaker's rated current, with margin), the physical space available within the panel enclosure, and the connection/termination hardware compatible with the chosen bar dimensions. Panel manufacturers often work from standard, pre-engineered busbar configurations rated for specific current ranges precisely to simplify this coordination across many different design variables at once, rather than custom-sizing every busbar from first principles for every project.</p>
+
+      <p><strong>When to consult a manufacturer's ampacity table instead of this calculator:</strong> this current-density method gives a fast, reasonable first estimate suitable for early-stage design and budgetary sizing. For a final, submitted engineering design &mdash; especially for larger current ratings, unusual configurations (multiple closely-spaced parallel bars, non-standard orientations), or where a specific temperature rise limit must be certified &mdash; use the busbar or panel manufacturer's tested and published ampacity tables, which account for the specific geometry, spacing, and thermal testing data behind their actual products, rather than relying on a general rule-of-thumb current density alone.</p>
+
+      <p>For most preliminary panel layouts, budgetary quotes, and early-stage electrical design, however, this current density approach gives a genuinely useful, industry-standard starting point &mdash; fast enough to iterate through several load scenarios quickly, while still grounded in the same physical principles (heat generation vs dissipation) that underpin the more detailed manufacturer test data used for final certification.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">800 A, copper, enclosed (density 1.2 A/mm&sup2;): Required Area = 800 &divide; 1.2 &asymp; <strong>666.7 mm&sup2;</strong> &mdash; achievable with two parallel 100&times;10mm bars (1000 mm&sup2; each) for comfortable margin.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] TEMPERATURE CORRECTION EXAMPLE ===================== -->
+    <div class="mt-6 bg-amber-50/60 border border-amber-100 rounded-2xl p-6">
+      <p class="text-sm font-semibold text-brandDark mb-2">Temperature Correction Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Standard current density tables are usually referenced to a 40&deg;C ambient. If a panel will operate in a 50&deg;C ambient room, a typical derating factor of about 0.90&ndash;0.92 is commonly applied to the current density before sizing. Example: 800 A, copper, enclosed, base density 1.2 A/mm&sup2; &rarr; corrected density &asymp; 1.2 &times; 0.91 &asymp; 1.09 A/mm&sup2; &rarr; Required Area = 800 &divide; 1.09 &asymp; <strong>733.9 mm&sup2;</strong> (versus 666.7 mm&sup2; at standard ambient) &mdash; roughly 10% larger to compensate for the reduced heat dissipation margin at higher ambient temperature. Always confirm the exact derating factor against the applicable standard or manufacturer data for your specific ambient condition.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] IEC/IS STANDARD REFERENCE ===================== -->
+    <div class="mt-6 border border-gray-200 rounded-2xl p-6">
+      <p class="text-sm font-semibold text-brandDark mb-2">Standards Reference</p>
+      <ul class="text-sm text-gray-600 leading-relaxed list-disc pl-5 space-y-1">
+        <li><strong>IS 8623 (Parts 1&ndash;3):</strong> Specification for low-voltage switchgear and controlgear assemblies, including busbar temperature-rise and clearance requirements &mdash; commonly referenced for panel design in India.</li>
+        <li><strong>IEC 61439 (Parts 1&amp;2):</strong> International standard for LV switchgear and controlgear assemblies, superseding IEC 60439, covering type-tested temperature rise limits and short-circuit withstand verification for busbar systems.</li>
+        <li><strong>IS 5082 / IS 613:</strong> Material specifications for copper and copper alloy busbar stock commonly used as manufacturing references.</li>
+      </ul>
+      <p class="text-xs text-gray-400 mt-3">This calculator uses general current-density design rules consistent with common practice under these standards, not a substitute for full type-testing or standard-specific verification.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">The current density values used here (A/mm²) are commonly used general design rule-of-thumb figures for panel and switchgear busbar sizing — actual safe current density depends on busbar shape, orientation (flat vertical vs horizontal), spacing between phases, enclosure ventilation, ambient temperature, permitted temperature rise, and applicable standard (IS 8623, IEC 61439, or similar). For final switchgear or panel design, use the busbar manufacturer's published ampacity tables (typically tested and certified for specific bar sizes and configurations) or a detailed thermal calculation, and have the design reviewed by a qualified electrical engineer. Coordinate the final busbar rating with the incoming main breaker size and the panel's overall short-circuit rating before finalizing any switchgear design.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference Table</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Standard Busbar Sizes (Width × Thickness)</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Size (Width × Thickness, mm)</th>
+          <th class="text-left px-4 py-2 font-semibold">Cross-Section (mm&sup2;)</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">25 × 6</td><td class="px-4 py-2">150</td></tr>
+        <tr><td class="px-4 py-2">40 × 6</td><td class="px-4 py-2">240</td></tr>
+        <tr><td class="px-4 py-2">50 × 6</td><td class="px-4 py-2">300</td></tr>
+        <tr><td class="px-4 py-2">50 × 10</td><td class="px-4 py-2">500</td></tr>
+        <tr><td class="px-4 py-2">60 × 10</td><td class="px-4 py-2">600</td></tr>
+        <tr><td class="px-4 py-2">80 × 10</td><td class="px-4 py-2">800</td></tr>
+        <tr><td class="px-4 py-2">100 × 10</td><td class="px-4 py-2">1000</td></tr>
+        <tr><td class="px-4 py-2">120 × 10</td><td class="px-4 py-2">1200</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>These are commonly stocked flat bar sizes in many markets, but exact standard sizes vary by supplier and region &mdash; always confirm availability with your specific busbar or raw material supplier before finalizing a panel design around a particular size.     <p>As a rough proportion guideline, many standard flat busbar sizes maintain a width-to-thickness ratio somewhere between roughly 5:1 and 10:1 &mdash; wide enough for good heat dissipation and mechanical stability, not so wide that the bar becomes unwieldy to handle, bend, or support within a panel's physical constraints. This ratio is a general design convention rather than a strict rule, and actual bar proportions ultimately depend on what's available from stock and what fits the specific panel layout.</p>
+  </div>
+
+  <!-- ===================== [PER-PAGE] COPPER VS ALUMINUM COMPARISON ===================== -->
+  <div class="mt-10">
+    <h3 class="text-lg font-display font-semibold text-brandDark mb-4">Copper vs Aluminum Busbar: Quick Comparison</h3>
+    <div class="not-prose overflow-x-auto">
+      <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-4 py-2 font-semibold">Parameter</th>
+            <th class="text-left px-4 py-2 font-semibold">Copper</th>
+            <th class="text-left px-4 py-2 font-semibold">Aluminum</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr><td class="px-4 py-2">Typical current density (enclosed)</td><td class="px-4 py-2">1.0&ndash;1.2 A/mm&sup2;</td><td class="px-4 py-2">0.6&ndash;0.8 A/mm&sup2;</td></tr>
+          <tr><td class="px-4 py-2">Typical current density (open air)</td><td class="px-4 py-2">1.4&ndash;1.6 A/mm&sup2;</td><td class="px-4 py-2">0.9&ndash;1.0 A/mm&sup2;</td></tr>
+          <tr><td class="px-4 py-2">Electrical conductivity</td><td class="px-4 py-2">Higher (~100% IACS)</td><td class="px-4 py-2">Lower (~61% IACS)</td></tr>
+          <tr><td class="px-4 py-2">Weight per unit ampacity</td><td class="px-4 py-2">Heavier</td><td class="px-4 py-2">~50% lighter</td></tr>
+          <tr><td class="px-4 py-2">Relative material cost</td><td class="px-4 py-2">Higher</td><td class="px-4 py-2">Lower</td></tr>
+          <tr><td class="px-4 py-2">Bar size for same current</td><td class="px-4 py-2">Smaller</td><td class="px-4 py-2">Larger (~1.6&times; area)</td></tr>
+          <tr><td class="px-4 py-2">Common use case</td><td class="px-4 py-2">Space-constrained panels, LV/MV switchgear</td><td class="px-4 py-2">Large utility/industrial installations, cost-sensitive high-current runs</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-gray-400 mt-3">Values are general design references &mdash; always confirm against your project's applicable standard and manufacturer data before finalizing.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Sizing a Busbar</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Using an open-air current density for an enclosed installation, or vice versa.</strong> These have meaningfully different safe current densities due to different heat dissipation conditions &mdash; using the wrong assumption for your actual installation type gives an undersized (if using open-air density for an enclosed panel) or unnecessarily oversized (opposite case) busbar.</p>
+      <p><strong>2. Confusing copper and aluminum current density values.</strong> Copper safely supports meaningfully higher current density than aluminum for the same temperature rise &mdash; using copper's assumption for an aluminum busbar design understates the required cross-section.</p>
+      <p><strong>3. Sizing only for today's connected load without margin for growth.</strong> Busbars are often difficult and expensive to upsize after a panel is built and commissioned &mdash; sizing tightly to current known load, without reasonable margin for anticipated future load growth, can force a costly panel rebuild or bottleneck expansion later.</p>
+      <p><strong>4. Checking only continuous current rating without a separate short-circuit withstand check.</strong> A busbar adequately sized for continuous current can still be inadequate for short-circuit thermal and mechanical stress if not separately verified &mdash; these are two distinct checks, and both matter for a safe design.</p>
+      <p><strong>5. Assuming parallel busbars automatically share current equally.</strong> Uneven spacing or connection geometry between parallel bars can cause unequal current sharing in practice &mdash; symmetric, carefully designed parallel bar geometry is needed to achieve the even sharing that a simple "total area divided by number of bars" assumption implies.</p>
+      <p><strong>6. Ignoring ambient temperature when the busbar is in an unusually hot location.</strong> Like cables, busbars are rated against a reference ambient temperature &mdash; a busbar installed in an unusually hot equipment room or outdoor enclosure in direct sun may need derating below its standard-condition rated current density, similar to cable ampacity temperature correction.</p>
+      <p><strong>7. Not coordinating busbar rating with the incoming main breaker size.</strong> A busbar should comfortably exceed the main breaker's rated current with reasonable margin &mdash; a busbar sized right at, or below, the main breaker rating creates a mismatch where the "weakest link" in the panel is the busbar itself rather than the intended protective device.</p>
+      <p><strong>8. Assuming a naive proportional scaling for large or closely-spaced parallel bars.</strong> Skin and proximity effects can make the actual combined ampacity of several large or closely-spaced parallel bars somewhat less than simply multiplying one bar's rating by the number of bars &mdash; for large paralleled busbar arrangements, consult manufacturer test data rather than a simple linear scaling assumption.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for busbar sizing using the current density method?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Required Cross-Sectional Area (mm²) = Load Current (A) ÷ Current Density (A/mm²). Current density is a design assumption (typically 1.0-1.6 A/mm² for copper, lower for aluminum) representing how much current per unit of cross-sectional area the busbar can safely carry continuously without exceeding its allowable temperature rise.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does installation type (enclosed vs open) change the allowable current density?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">An enclosed busbar (inside a switchgear panel or cabinet) has less airflow to dissipate heat compared to an open, well-ventilated busbar in free air — for the same temperature rise limit, an enclosed busbar therefore needs a lower current density (larger cross-section for the same current) than an equivalent open-air installation.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does copper allow a higher current density than aluminum?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Copper has lower electrical resistivity than aluminum, meaning it generates less resistive heat for the same current and cross-sectional area — this lets copper busbars run at a higher current density for the same temperature rise limit, which is why copper busbars can be noticeably smaller than aluminum busbars carrying the identical current.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What busbar shape does this calculator assume?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This calculator computes the required total cross-sectional area only — it doesn't specify a particular width-to-thickness ratio. Flat rectangular busbars (the most common shape in low-voltage switchgear) are typically selected with the width considerably greater than the thickness, both for better heat dissipation from the wider surfaces and for practical bending and support reasons, but the specific width/thickness split for a given total area depends on the panel's physical layout and manufacturer's standard bar stock.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I add a safety margin on top of the calculated busbar size?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — similar to other current-carrying component sizing, most designers add margin beyond the minimum calculated size to accommodate load growth, measurement/calculation uncertainty, and to keep operating temperature comfortably below the busbar's rated maximum rather than right at the limit. A common approach is sizing the busbar for the anticipated maximum demand (with its own growth margin already included) rather than just today's connected load.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How does busbar sizing relate to short-circuit withstand, not just continuous current?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Continuous current sizing (this calculator) and short-circuit thermal/mechanical withstand are two separate checks — a busbar sized adequately for continuous load current also needs to be checked (typically via a related adiabatic-style calculation, or against manufacturer test data) for its ability to survive the thermal and mechanical stresses of a short-circuit fault without deforming or failing, which sometimes requires a larger size or additional bracing than continuous current sizing alone would suggest.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Do multiple busbars in parallel share current equally?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Not necessarily equally by default — parallel busbars can experience unequal current sharing due to slightly different impedances (especially if physical spacing or connection geometry differs between the parallel bars), which is why parallel busbar arrangements for very high current applications need careful attention to symmetric geometry and connection design, not just adding up individual bar ampacities and assuming perfectly even sharing.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why do outdoor or high-ambient-temperature installations need busbar derating?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Like cables, a busbar's safe current-carrying capacity is calculated against a reference ambient temperature — a hotter actual ambient reduces the available temperature margin before the busbar reaches its maximum safe operating temperature, requiring either a lower operating current or a larger cross-section to compensate, following the same ambient-temperature-correction principle used in cable ampacity derating.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is aluminum ever preferred over copper for busbars despite needing a larger size?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, particularly for very high current, large cross-section applications, where aluminum's significantly lower cost and lighter weight per unit of current-carrying capacity can outweigh the disadvantage of needing a physically larger bar — aluminum busbars are common in large industrial and utility installations for exactly this cost and weight trade-off, even though copper remains more common in smaller, space-constrained panels.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateBusbarSize(){
+    const current = parseFloat(document.getElementById('loadCurrent').value);
+    const material = document.getElementById('material').value;
+    const installType = document.getElementById('installType').value;
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(current) || current <= 0){ errors.push('Enter a valid load current greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rDensity').textContent = '\u2014';
+      document.getElementById('rSuggestion').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const densities = {
+      copper: { enclosed: 1.2, open: 1.6 },
+      aluminum: { enclosed: 0.8, open: 1.0 }
+    };
+    const density = densities[material][installType];
+    const requiredArea = current / density;
+
+    const standardBars = [
+      {label:'25×6mm', area:150}, {label:'40×6mm', area:240}, {label:'50×6mm', area:300},
+      {label:'50×10mm', area:500}, {label:'60×10mm', area:600}, {label:'80×10mm', area:800},
+      {label:'100×10mm', area:1000}, {label:'120×10mm', area:1200}
+    ];
+    let suggestion = standardBars.find(b => b.area >= requiredArea);
+    let suggestionLabel = suggestion ? suggestion.label + ' (single bar)' : 'Use multiple bars in parallel';
+    if(!suggestion){
+      const numBars = Math.ceil(requiredArea / 1200);
+      suggestionLabel = numBars + ' × 120×10mm bars (parallel)';
+    }
+
+    document.getElementById('rResult').textContent = requiredArea.toLocaleString('en-IN', {maximumFractionDigits:1}) + ' mm\u00b2';
+    document.getElementById('resultSub').textContent = current + 'A, ' + material + ', ' + installType;
+    document.getElementById('rDensity').textContent = density + ' A/mm\u00b2';
+    document.getElementById('rSuggestion').textContent = suggestionLabel;
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Load Current</td><td>${current} A</td></tr>
+                <tr><td>Material</td><td>${material.charAt(0).toUpperCase() + material.slice(1)}</td></tr>
+                <tr><td>Installation Type</td><td>${installType === 'enclosed' ? 'Enclosed' : 'Open, ventilated'}</td></tr>
+                <tr><td>Current Density Used</td><td>${density} A/mm\u00b2</td></tr>
+                <tr><td><strong>Required Cross-Section</strong></td><td><strong>${requiredArea.toFixed(1)} mm\u00b2</strong></td></tr>
+                <tr><td>Suggested Standard Size</td><td>${suggestionLabel}</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateBusbarSize();
+</script>
+
+</body>
+</html>

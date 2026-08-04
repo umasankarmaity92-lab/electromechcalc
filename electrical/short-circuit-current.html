@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Short Circuit Current Calculator (Transformer Fault Level) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Short Circuit Current Calculator for a transformer secondary. Enter transformer kVA rating, secondary voltage, and impedance percentage to get fault current and short circuit MVA instantly, with formula and worked example.">
+<meta name="keywords" content="short circuit current calculator, fault current calculator, transformer impedance fault level, breaker short circuit rating, symmetrical fault current calculation">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/short-circuit-current">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Short Circuit Current Calculator">
+<meta property="og:description" content="Free Short Circuit Current Calculator — enter transformer kVA, voltage, and impedance to get fault current and short circuit MVA instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/short-circuit-current">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Short Circuit Current Calculator">
+<meta name="twitter:description" content="Free Short Circuit Current Calculator — enter transformer kVA, voltage, and impedance to get fault current and short circuit MVA instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Short Circuit Current Calculator",
+  "url": "https://www.electromechcalc.com/electrical/short-circuit-current",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Short Circuit Current Calculator for a transformer secondary. Enter transformer kVA rating, secondary voltage, and impedance percentage to get fault current and short circuit MVA instantly, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for short circuit current at a transformer's secondary?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Isc = Full Load Current × (100 ÷ %Impedance). First calculate the transformer's rated full load current from its kVA and secondary voltage, then divide by the transformer's percentage impedance (expressed as a decimal fraction of 100) to get the estimated symmetrical fault current." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does lower transformer impedance mean higher fault current?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Impedance is what limits current during a fault — a transformer with lower %Z offers less opposition to current flow when its secondary terminals are short-circuited, allowing a higher fault current to flow. This is why %Z is such an important nameplate parameter for protection coordination, not just for normal voltage regulation under load." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a typical impedance percentage for a distribution transformer?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Most distribution transformers in the 100 kVA to a few MVA range have impedance in the 4-6.25% range, with %Z generally trending higher for larger transformer ratings (partly to help limit fault current to a manageable level for downstream switchgear). Always use the exact nameplate %Z value for your specific transformer rather than an assumed typical figure for any real fault current calculation." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does this calculation assume an infinite source?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Treating the upstream utility supply as having zero impedance (infinite fault capacity) gives the highest possible fault current the transformer alone could deliver, which is a standard conservative assumption for a first-pass check — it ensures selected switchgear and breakers have adequate fault rating even in the worst case, since real (finite) upstream source impedance can only reduce actual fault current below this estimate, never increase it." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is short circuit MVA and how does it relate to fault current?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Short circuit MVA (or fault level) is another common way to express the same fault severity: MVA_sc = √3 × V × Isc ÷ 10⁶, or equivalently MVA_sc = Transformer kVA ÷ (%Z ÷ 100) ÷ 1000. Both the fault current (in amps) and fault MVA describe the same underlying event, and different equipment specifications may reference either figure." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this calculator give symmetrical or asymmetrical fault current?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This gives symmetrical (steady-state AC) fault current. The actual first-cycle (asymmetrical) fault current, which includes a DC offset component from the moment the fault initiates, can be meaningfully higher — commonly estimated by multiplying the symmetrical value by a factor around 1.6-2.7 depending on the system X/R ratio. Breaker interrupting ratings typically account for this separately; check your specific breaker's rated making and breaking capacity against both figures." }
+    },
+    {
+      "@type": "Question",
+      "name": "How does upstream source impedance change the actual fault current?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Real utility supplies have finite fault capacity (not truly infinite), and any impedance between the source and the transformer (overhead lines, cables) adds to the total fault-limiting impedance — including this upstream impedance in a full calculation always reduces the calculated fault current below the transformer-only estimate this calculator provides, since additional impedance in series always further limits fault current." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do downstream cables and busbars also reduce fault current further from the transformer?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Every additional length of cable or busbar between the transformer and a downstream fault point adds its own impedance to the fault current path — which is why fault current is highest immediately at the transformer secondary and progressively decreases at points further downstream, an important consideration when selecting appropriately (and not excessively) rated breakers throughout a distribution system rather than using the transformer-secondary fault rating everywhere." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript></noscript>
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Protection & Fault Analysis
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Short Circuit Current <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Estimated symmetrical fault current at a transformer's secondary terminals, from kVA rating, voltage, and impedance percentage — the basis for selecting breaker and switchgear fault ratings.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Short Circuit Current Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter transformer rating, secondary voltage, and impedance percentage.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Transformer Rating (kVA)</label>
+          <input id="transformerKVA" type="number" value="1000" step="10" min="0" placeholder="e.g. 1000" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Secondary Voltage, Line-to-Line (V)</label>
+          <input id="secondaryVoltage" type="number" value="415" step="1" min="0" placeholder="e.g. 415" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Transformer Impedance, %Z</label>
+          <input id="impedancePercent" type="number" value="5" step="0.1" min="0.1" placeholder="e.g. 5" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateShortCircuit()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">Isc = I_FL × (100 ÷ %Z)</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Short Circuit Current</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Full Load Current</span>
+            <span id="rFLC" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Short Circuit MVA</span>
+            <span id="rMVA" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/voltage-drop" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Voltage Drop Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/busbar-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Busbar Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/mccb-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          MCCB Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/earth-grid-resistance" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Earth Grid Resistance Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Short Circuit Current Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding short circuit current from transformer impedance</a></li>
+      <li><a href="#second" class="hover:underline">3. Typical transformer impedance by rating</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Short Circuit Current Is Estimated from Transformer Impedance</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard transformer-impedance fault current method (infinite source assumption)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>When a short circuit occurs on an electrical system, the current that flows is limited almost entirely by the impedance between the source and the fault point &mdash; for a fault right at a transformer's secondary terminals, that impedance is dominated by the transformer's own internal impedance. This calculator uses that relationship to estimate the maximum fault current a transformer alone can deliver, a standard first-pass figure used to verify that downstream breakers and switchgear have adequate fault interrupting capacity.</p>
+
+      <p><strong>Step 1 &mdash; full load current:</strong> I_FL (A) = (kVA &times; 1000) &divide; (&radic;3 &times; V), where V is the secondary line-to-line voltage. This is simply the transformer's rated normal operating current.</p>
+
+      <p><strong>Step 2 &mdash; short circuit current:</strong> Isc = I_FL &times; (100 &divide; %Z). Transformer impedance percentage (%Z), stamped on every transformer nameplate, describes what fraction of rated voltage is needed to circulate rated current through the transformer's internal impedance alone with the secondary short-circuited during a factory impedance test &mdash; inverting this relationship gives the multiplier for how much fault current flows when the full rated voltage is applied across that same impedance during an actual short circuit.</p>
+
+      <p><strong>Worked example:</strong> a 1000 kVA transformer with a 415 V secondary and 5% impedance. Full load current = (1000 &times; 1000) &divide; (&radic;3 &times; 415) &asymp; 1391 A. Short circuit current = 1391 &times; (100 &divide; 5) = 1391 &times; 20 = 27,822 A &asymp; 27.8 kA. This is the estimated maximum symmetrical fault current available at the transformer's secondary terminals, assuming an infinite (zero-impedance) upstream source &mdash; downstream breakers on the main LV switchboard need an interrupting rating at or above this figure.</p>
+
+      <p><strong>Why %Z is such a powerful lever on fault current:</strong> because Isc is inversely proportional to %Z, a transformer with half the impedance percentage of another (otherwise identical) transformer would deliver roughly double the fault current. This is precisely why larger transformers are often deliberately specified with somewhat higher %Z than smaller ones &mdash; partly to keep resulting fault currents within a range that standard, economical switchgear can handle, rather than requiring unusually expensive, extra-high fault-rated equipment throughout the downstream distribution system.</p>
+
+      <p><strong>Symmetrical vs asymmetrical fault current:</strong> the moment a short circuit begins, the fault current waveform typically includes a DC offset component in addition to the steady-state AC (symmetrical) current this calculator produces &mdash; the actual first-cycle current can be substantially higher than the symmetrical value alone, with the exact multiplier depending on the system's X/R ratio (higher X/R ratio systems, common in larger transformers and higher-voltage systems, have a larger asymmetry multiplier, sometimes approaching 2.7&times; the symmetrical value for very high X/R systems, more commonly in the 1.6-2.0&times; range for typical distribution transformers). Breaker specifications distinguish between rated breaking capacity (checked against symmetrical current, since the DC component has typically decayed by the time the breaker actually interrupts) and rated making capacity (checked against the higher asymmetrical peak, since the breaker must be able to safely close onto a fault at that first-cycle peak current without damage).</p>
+
+      <p><strong>Motor contribution to fault current:</strong> running induction motors act briefly like generators immediately after a fault occurs, since their rotating magnetic field and stored mechanical energy continue driving current into the fault for a few cycles as the motor decelerates. For facilities with substantial motor load, this contribution can meaningfully add to total fault current beyond what the transformer alone supplies &mdash; a rule of thumb sometimes used for a rough estimate treats total connected motor horsepower as contributing roughly 4-6 times its own full-load current to the fault for the first few cycles, though a precise calculation requires knowing the specific motors' locked-rotor characteristics.</p>
+
+      <p><strong>How %Z is actually measured:</strong> a transformer's percentage impedance is determined by a standard factory test &mdash; the secondary winding is short-circuited, and the manufacturer applies just enough voltage to the primary winding to circulate the transformer's full rated current through this short circuit. That applied voltage, expressed as a percentage of the transformer's rated voltage, is the %Z value stamped on the nameplate. A 5% impedance transformer, for example, only needs 5% of its rated voltage applied to drive full rated current through a shorted secondary &mdash; which directly explains why, at full rated voltage during an actual fault, current can rise to roughly 100&divide;5 = 20 times the rated full load current.</p>
+
+      <p><strong>Where this fault current figure gets used:</strong> the calculated fault current (or fault MVA) is the key input for selecting breaker and switchgear interrupting ratings, verifying busbar and cable short-circuit withstand ratings (thermal and mechanical, since fault currents create significant electromagnetic forces as well as heating), checking protective relay coordination (making sure upstream and downstream protective devices trip in the correct sequence), and confirming arc-flash incident energy calculations, which depend directly on available fault current at each point in the system.</p>
+
+      <p><strong>Summary:</strong> use Isc = I_FL &times; (100 &divide; %Z) with the transformer's actual nameplate impedance for a conservative first-pass fault current estimate at its secondary terminals, remember that additional cable and busbar impedance reduces fault current further downstream, and always have a complete fault study (including upstream source impedance and motor contribution) performed before finalizing protective device selection on any real installation.</p>
+
+      <p><strong>Why fault current calculations get more, not less, important as system complexity grows:</strong> a simple, single-transformer installation with a short LV distribution run has a relatively straightforward fault current profile, close to this calculator's transformer-only estimate throughout. Larger, more complex facilities with multiple transformers, generators, or extensive distribution can have fault current contributions arriving from multiple directions simultaneously, meaningfully changing the picture at any given fault point &mdash; which is exactly why larger facilities generally warrant a full computer-modeled short circuit study (using software that properly combines all contributing sources and their respective impedances) rather than relying on simplified hand calculations like this one for final protective device selection.</p>
+
+      <p><strong>Arc-flash considerations, briefly:</strong> beyond simply selecting adequately rated breakers, available fault current at a given point directly drives arc-flash incident energy calculations &mdash; higher available fault current generally means higher potential arc-flash energy release if a fault occurs while someone is working nearby, which is why fault current studies feed directly into arc-flash hazard labeling and personal protective equipment requirements under most modern electrical safety programs. This is a specialized calculation beyond this tool's scope, but it's worth knowing that the fault current figure calculated here is a foundational input to that broader safety analysis, not just a switchgear-rating exercise in isolation.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">1000 kVA transformer, 415 V, 5% impedance: I_FL = (1000&times;1000) &divide; (&radic;3&times;415) &asymp; 1391 A. Isc = 1391 &times; (100&divide;5) = <strong>27.8 kA</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator estimates fault current assuming an infinite (zero-impedance) upstream source feeding the transformer, using only the transformer's own impedance — this gives the maximum possible fault current at the transformer secondary and is a standard, conservative first-pass check for breaker and switchgear rating selection. A complete fault study for final protective device coordination should also include upstream utility source impedance, cable/busbar impedance between the transformer and the fault point, and motor contribution, which together typically reduce the actual fault current below this simplified estimate — have a full short circuit study performed by a qualified electrical engineer before finalizing protective device selection on any real installation.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference Table</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Typical Transformer Impedance (%Z) by kVA Rating</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Transformer Rating</th>
+          <th class="text-left px-4 py-2 font-semibold">Typical %Z</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">Up to 500 kVA</td><td class="px-4 py-2">4.0-4.5%</td></tr>
+        <tr><td class="px-4 py-2">630-1000 kVA</td><td class="px-4 py-2">4.5-5.5%</td></tr>
+        <tr><td class="px-4 py-2">1250-2000 kVA</td><td class="px-4 py-2">5.5-6.25%</td></tr>
+        <tr><td class="px-4 py-2">2500 kVA and above</td><td class="px-4 py-2">6.25-7.15%+</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>These are general industry-typical ranges &mdash; actual %Z varies by manufacturer, specific design, and any project-specific requirement, and always appears on the transformer's own nameplate as a tested, certified value. Never assume a typical value from this table for a real fault current calculation when the actual nameplate figure is available; the nameplate value is the correct one to use, since     <p>Note the general trend of higher %Z for larger transformers &mdash; this is often a deliberate design choice, since without it, fault currents from larger transformers would scale up proportionally with their higher full-load current, requiring correspondingly more expensive, higher-fault-rated switchgear throughout the downstream system. Manufacturers balance this against the voltage regulation trade-off, since higher %Z also means more voltage drop under load, so the specified %Z for any given transformer represents a deliberate engineering compromise between these competing considerations.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Short Circuit Current</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Using an assumed or typical %Z instead of the actual transformer nameplate value.</strong> %Z varies by manufacturer and design even for transformers of identical kVA rating &mdash; always use the certified nameplate value for any real fault current calculation, not a general reference figure.</p>
+      <p><strong>2. Treating the transformer-secondary fault current as valid throughout the entire downstream distribution system.</strong> Fault current decreases with additional cable and busbar impedance further from the transformer &mdash; using the transformer-secondary figure to select breakers deep in the distribution system, far from the transformer, significantly overstates the actual fault current those breakers will ever see (over-specifying, though not unsafe, adds unnecessary cost).</p>
+      <p><strong>3. Ignoring upstream source impedance entirely in a final design.</strong> This calculator's infinite-source assumption is a valid conservative first-pass check, but a complete protection study should include actual utility source impedance for accurate, final protective device coordination, not just for headline fault rating selection.</p>
+      <p><strong>4. Confusing symmetrical and asymmetrical (first-cycle) fault current.</strong> This calculator gives symmetrical fault current &mdash; the actual first-cycle asymmetrical current (relevant for breaker making capacity, distinct from breaking capacity) can be substantially higher due to a DC offset component, and needs its own separate check against the breaker's rated making capacity.</p>
+      <p><strong>5. Not accounting for motor contribution to fault current.</strong> Large motors running at the time of a fault continue to feed current into the fault briefly (acting like a generator during their coast-down), adding to the total fault current beyond what the transformer alone supplies &mdash; facilities with large motor loads may need this contribution included for an accurate total fault current figure.</p>
+      <p><strong>6. Selecting a breaker with interrupting rating below the calculated (or actual) available fault current.</strong> This is a serious safety error, not just a design inefficiency &mdash; a breaker asked to interrupt a fault current beyond its rated capacity can fail catastrophically rather than safely clearing the fault, which is exactly the failure mode fault current calculations exist to prevent.</p>
+      <p><strong>7. Overlooking asymmetrical (first-cycle) current when checking breaker making capacity.</strong> Breaker breaking capacity is checked against symmetrical current, but making capacity (closing onto an existing fault) must be checked against the higher asymmetrical peak &mdash; using only the symmetrical figure for both checks can leave making capacity under-verified.</p>
+      <p><strong>8. Applying transformer-secondary fault current to a facility with multiple fault-contributing sources.</strong> A single-transformer calculation like this one doesn't capture the combined effect of multiple transformers, standby generators, or significant motor contribution operating together &mdash; facilities with more than one fault-current source need a proper combined fault study, not a single-source estimate applied as if it were the total.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for short circuit current at a transformer's secondary?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Isc = Full Load Current × (100 ÷ %Impedance). First calculate the transformer's rated full load current from its kVA and secondary voltage, then divide by the transformer's percentage impedance (expressed as a decimal fraction of 100) to get the estimated symmetrical fault current.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does lower transformer impedance mean higher fault current?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Impedance is what limits current during a fault — a transformer with lower %Z offers less opposition to current flow when its secondary terminals are short-circuited, allowing a higher fault current to flow. This is why %Z is such an important nameplate parameter for protection coordination, not just for normal voltage regulation under load.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is a typical impedance percentage for a distribution transformer?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Most distribution transformers in the 100 kVA to a few MVA range have impedance in the 4-6.25% range, with %Z generally trending higher for larger transformer ratings (partly to help limit fault current to a manageable level for downstream switchgear). Always use the exact nameplate %Z value for your specific transformer rather than an assumed typical figure for any real fault current calculation.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does this calculation assume an infinite source?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Treating the upstream utility supply as having zero impedance (infinite fault capacity) gives the highest possible fault current the transformer alone could deliver, which is a standard conservative assumption for a first-pass check — it ensures selected switchgear and breakers have adequate fault rating even in the worst case, since real (finite) upstream source impedance can only reduce actual fault current below this estimate, never increase it.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is short circuit MVA and how does it relate to fault current?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Short circuit MVA (or fault level) is another common way to express the same fault severity: MVA_sc = √3 × V × Isc ÷ 10⁶, or equivalently MVA_sc = Transformer kVA ÷ (%Z ÷ 100) ÷ 1000. Both the fault current (in amps) and fault MVA describe the same underlying event, and different equipment specifications may reference either figure.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does this calculator give symmetrical or asymmetrical fault current?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This gives symmetrical (steady-state AC) fault current. The actual first-cycle (asymmetrical) fault current, which includes a DC offset component from the moment the fault initiates, can be meaningfully higher — commonly estimated by multiplying the symmetrical value by a factor around 1.6-2.7 depending on the system X/R ratio. Breaker interrupting ratings typically account for this separately; check your specific breaker's rated making and breaking capacity against both figures.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How does upstream source impedance change the actual fault current?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Real utility supplies have finite fault capacity (not truly infinite), and any impedance between the source and the transformer (overhead lines, cables) adds to the total fault-limiting impedance — including this upstream impedance in a full calculation always reduces the calculated fault current below the transformer-only estimate this calculator provides, since additional impedance in series always further limits fault current.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why do downstream cables and busbars also reduce fault current further from the transformer?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Every additional length of cable or busbar between the transformer and a downstream fault point adds its own impedance to the fault current path — which is why fault current is highest immediately at the transformer secondary and progressively decreases at points further downstream, an important consideration when selecting appropriately (and not excessively) rated breakers throughout a distribution system rather than using the transformer-secondary fault rating everywhere.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is knowing short circuit current important for switchgear and cable selection?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Breakers, fuses, busbars, and cables must be rated to safely withstand (or interrupt) the maximum fault current they could experience without catastrophic failure — undersizing a breaker's interrupting rating below the actual available fault current risks the breaker failing to safely clear a fault, potentially with explosive results, which is why fault current calculation is a mandatory part of any electrical protection design, not an optional check.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateShortCircuit(){
+    const kva = parseFloat(document.getElementById('transformerKVA').value);
+    const voltage = parseFloat(document.getElementById('secondaryVoltage').value);
+    const impedancePercent = parseFloat(document.getElementById('impedancePercent').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(kva) || kva <= 0){ errors.push('Enter a valid transformer rating greater than 0.'); }
+    if(isNaN(voltage) || voltage <= 0){ errors.push('Enter a valid secondary voltage greater than 0.'); }
+    if(isNaN(impedancePercent) || impedancePercent <= 0){ errors.push('Enter a valid impedance percentage greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rFLC').textContent = '\u2014';
+      document.getElementById('rMVA').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const fullLoadCurrent = (kva * 1000) / (Math.sqrt(3) * voltage);
+    const shortCircuitCurrent = fullLoadCurrent * (100 / impedancePercent);
+    const scMVA = (Math.sqrt(3) * voltage * shortCircuitCurrent) / 1e6;
+    const scKA = shortCircuitCurrent / 1000;
+
+    document.getElementById('rResult').textContent = scKA.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' kA';
+    document.getElementById('resultSub').textContent = kva + ' kVA, ' + voltage + 'V, ' + impedancePercent + '% Z';
+    document.getElementById('rFLC').textContent = fullLoadCurrent.toFixed(1) + ' A';
+    document.getElementById('rMVA').textContent = scMVA.toFixed(1) + ' MVA';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Transformer Rating</td><td>${kva.toLocaleString('en-IN')} kVA</td></tr>
+                <tr><td>Secondary Voltage</td><td>${voltage} V</td></tr>
+                <tr><td>Impedance (%Z)</td><td>${impedancePercent}%</td></tr>
+                <tr><td>Full Load Current</td><td>${fullLoadCurrent.toFixed(1)} A</td></tr>
+                <tr><td><strong>Short Circuit Current (Symmetrical)</strong></td><td><strong>${shortCircuitCurrent.toLocaleString('en-IN', {maximumFractionDigits:0})} A (${scKA.toFixed(2)} kA)</strong></td></tr>
+                <tr><td>Short Circuit MVA</td><td>${scMVA.toFixed(1)} MVA</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateShortCircuit();
+</script>
+
+</body>
+</html>

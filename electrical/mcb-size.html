@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>MCB Size Calculator (Rating & Curve Type) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free MCB Size Calculator. Enter full load current and load type to get the required MCB rating and recommended trip curve type (B, C, or D) instantly, with formula and worked example.">
+<meta name="keywords" content="mcb size calculator, mcb rating calculator, mcb curve type b c d, miniature circuit breaker sizing, mcb selection formula">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/mcb-size">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="MCB Size Calculator">
+<meta property="og:description" content="Free MCB Size Calculator — enter full load current and load type to get the required MCB rating and curve type instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/mcb-size">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MCB Size Calculator">
+<meta name="twitter:description" content="Free MCB Size Calculator — enter full load current and load type to get the required MCB rating and curve type instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "MCB Size Calculator",
+  "url": "https://www.electromechcalc.com/electrical/mcb-size",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free MCB Size Calculator. Enter full load current and load type to get the required MCB rating and recommended trip curve type (B, C, or D) instantly, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for MCB sizing?",
+      "acceptedAnswer": { "@type": "Answer", "text": "MCB Rating = Full Load Current × 1.25, then rounded up to the next standard MCB size. This 125% factor provides margin above steady operating current for continuous-duty circuits, similar to general fuse sizing practice." }
+    },
+    {
+      "@type": "Question",
+      "name": "What do MCB curve types B, C, and D mean?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Curve type describes the MCB's magnetic (instantaneous) trip threshold as a multiple of its rated current — Type B trips instantaneously at 3-5× rated current, Type C at 5-10×, and Type D at 10-20×. A higher curve type tolerates a larger, brief inrush current without instantaneous tripping, which is why the right curve type depends on how much inrush current your specific load produces during normal starting." }
+    },
+    {
+      "@type": "Question",
+      "name": "Which curve type should I use for general lighting and resistive loads?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Type B is standard for general lighting, heating, and resistive loads, which have minimal or no significant inrush current beyond their steady operating current — Type B's lower instantaneous trip threshold (3-5×) still provides fast fault clearing for these low-inrush loads without being unnecessarily insensitive." }
+    },
+    {
+      "@type": "Question",
+      "name": "Which curve type should I use for a motor circuit?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Type C is commonly used for general motor and mixed loads with moderate inrush current (many small to medium motors, general mixed commercial/industrial circuits), while Type D is used for loads with very high inrush current — large motors, transformers, and similar high-inrush equipment — that would nuisance-trip a Type B or even Type C MCB during normal starting." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use a higher curve type than necessary just to be safe?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not without a trade-off — a higher curve type (C or D) tolerates more inrush current without instantaneous tripping, but this also means it takes a larger fault current to trigger instantaneous protection, which can affect fault clearing speed and protection coordination with other devices. Match the curve type to your actual load's real inrush characteristics rather than defaulting to the highest option &quot;to be safe.&quot;" }
+    },
+    {
+      "@type": "Question",
+      "name": "Does MCB rating alone provide motor overload protection?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not adequately on its own for most motor applications — similar to fuses, an MCB sized to ride through motor starting current is generally too insensitive to catch a moderate, sustained overload condition. Motor circuits typically need a separate overload relay (or a motor circuit breaker/protector specifically designed with both magnetic and adjustable thermal overload protection) for genuine running overload protection." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between an MCB and an MCCB?",
+      "acceptedAnswer": { "@type": "Answer", "text": "MCBs (Miniature Circuit Breakers) are generally used for lower current ratings (commonly up to 63-125A depending on the standard and manufacturer) in residential, commercial, and light industrial applications, while MCCBs (Molded Case Circuit Breakers) handle higher current ratings and often offer more adjustable trip settings and higher fault interrupting capacity, more common in industrial and larger commercial installations — use the appropriate device type sized for your circuit's actual current and fault current requirements." }
+    },
+    {
+      "@type": "Question",
+      "name": "Should MCB rating exceed the protected cable's ampacity?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For general circuits, no — the MCB should generally be rated at or below the cable's safe ampacity, so the MCB trips before the cable is damaged by sustained overcurrent. This is the same general principle that applies to fuse-and-cable coordination, and any exception (like specific motor circuit allowances) should be verified against the applicable code rather than assumed." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript></noscript>
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Protection & Switchgear
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          MCB Size <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Required MCB rating and recommended trip curve type (B, C, or D) from full load current and load type.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">MCB Size Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter full load current and select your load type.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Full Load Current (A)</label>
+          <input id="flc" type="number" value="12" step="0.1" min="0" placeholder="e.g. 12" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Load Type</label>
+          <select id="loadType" class="input-field mt-2">
+            <option value="B" selected>Lighting / Resistive (Type B)</option>
+            <option value="C">General / Small Motor (Type C)</option>
+            <option value="D">Transformer / Large Motor (Type D)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateMCBSize()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">MCB = FLC × 1.25</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Required MCB Rating</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Curve Type</span>
+            <span id="rCurve" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Trip Range</span>
+            <span id="rTripRange" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/fuse-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Fuse Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/mccb-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          MCCB Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/mpcb-selection" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          MPCB Selection Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/motor-starting-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Motor Starting Current Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20MCB Size Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding MCB sizing and curve types</a></li>
+      <li><a href="#second" class="hover:underline">3. MCB curve types (B, C, D) reference</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How MCB Size and Curve Type Are Selected</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard MCB sizing method, curve types per IEC 60898</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>An MCB (Miniature Circuit Breaker) protects a circuit two ways at once: a thermal element trips on sustained overload (similar in concept to a fuse's continuous-duty rating), and a magnetic element trips near-instantaneously on a genuine short circuit. Correctly sizing an MCB means selecting both the right current rating (thermal protection) and the right curve type (magnetic/instantaneous trip threshold) for the specific load it protects.</p>
+
+      <p><strong>Formula used (rating):</strong> MCB Rating = Full Load Current &times; 1.25, rounded up to the next standard MCB size. This mirrors general fuse sizing practice, providing margin above steady operating current for continuous duty.</p>
+
+      <p><strong>Curve type selection:</strong> curve type describes the magnetic trip threshold as a multiple of rated current &mdash; Type B (3-5&times;), Type C (5-10&times;), and Type D (10-20&times;). The right choice depends on how much inrush current your load produces during normal starting: resistive/lighting loads (minimal inrush) use Type B; general and small motor loads (moderate inrush) use Type C; transformers and large motors (high inrush) use Type D.</p>
+
+      <p><strong>Worked example:</strong> a small motor circuit with 12 A full load current, moderate starting inrush (Type C appropriate). MCB Rating = 12 &times; 1.25 = 15 A, rounded up to the standard 16 A MCB size. Recommended curve type: C, tripping instantaneously at 5-10&times;16A = 80-160A for genuine short-circuit protection, while comfortably riding through the motor's normal starting inrush without nuisance tripping.</p>
+
+      <p><strong>Why matching curve type to load matters as much as getting the current rating right:</strong> a correctly-rated MCB with the wrong curve type still causes problems &mdash; a Type B MCB on a motor circuit will likely nuisance-trip on every start (inrush exceeding its low 3-5&times; instantaneous threshold), while an unnecessarily high curve type (Type D) on a purely resistive circuit provides less sensitive instantaneous fault protection than the load actually needs, potentially slowing fault clearing in a genuine short-circuit event. Getting both the rating and curve type right together is what makes an MCB selection actually appropriate for its specific circuit.</p>
+
+      <p><strong>MCB thermal and magnetic protection working together:</strong> an MCB's dual protection mechanism means the current rating (the number, like "16A") and the curve type (the letter, like "C") answer two different questions that both need correct answers. The rating answers "how much sustained current can this circuit handle continuously?" via the thermal element, which responds relatively slowly (seconds to minutes) proportional to how far above rated current the actual current runs. The curve type answers "how much brief overcurrent should trip the breaker instantly?" via the magnetic element, which responds in milliseconds once its threshold is exceeded. A load's normal starting inrush needs to stay below the magnetic threshold (so it doesn't trip instantaneously during a normal, expected event) while a genuine fault current needs to exceed it (so protection actually activates quickly when it matters).</p>
+
+      <p><strong>Why standard MCB sizes follow a specific numeric series:</strong> the standard MCB rating series (6, 10, 16, 20, 25, 32, 40, 50, 63A and so on) follows what's sometimes called a preferred number series, roughly increasing by consistent proportional steps rather than fixed absolute increments &mdash; this gives reasonably fine-grained size selection at lower currents (where a small absolute difference matters more proportionally) while avoiding an impractically large number of very close size options at higher currents. Understanding this series helps when a calculated value falls between two standard sizes and you need to select the appropriate next-larger option confidently.</p>
+
+      <p><strong>Residual current protection (RCD/RCCB) as a complementary, not alternative, device:</strong> MCBs protect against overload and short-circuit current, but don't detect earth leakage (a small current escaping to ground through a fault, potentially through a person) &mdash; that's the job of a separate residual current device (RCD or RCCB), which many installations combine with an MCB either as a separate device or a combined RCBO (residual current breaker with overcurrent protection) unit. Selecting an MCB is only one part of a complete circuit protection scheme where earth leakage/shock protection is also a code requirement, which it commonly is for many circuit types.</p>
+
+      <p><strong>Summary:</strong> use MCB Rating = FLC &times; 1.25 rounded up to the next standard size, select curve type B for resistive/lighting loads, C for general/small motor loads, and D for high-inrush transformer/large motor loads, pair motor circuits with proper overload protection, and verify the selected MCB's fault interrupting rating against actual available fault current.</p>
+
+      <p><strong>Diagnosing nuisance tripping after installation:</strong> if an installed MCB trips unexpectedly during normal operation (not during an actual fault), the diagnostic process typically starts by distinguishing between a thermal trip (sustained overload, gradual, the breaker feels warm) and a magnetic trip (instantaneous, associated with a starting event or genuine fault). Thermal nuisance tripping often points to an undersized rating for actual sustained load, while magnetic nuisance tripping during equipment starting often points to an insufficiently high curve type for the load's actual inrush characteristics &mdash; correctly identifying which type of trip occurred meaningfully narrows down whether the fix is a larger rating, a higher curve type, or investigating a genuine fault or load problem rather than simply assuming the breaker itself is faulty.</p>
+
+      <p><strong>Selecting MCBs as part of a coordinated distribution board design:</strong> in a panel with multiple circuits, MCB selection for individual final circuits needs to be coordinated with the panel's main incoming breaker or fuse &mdash; ensuring that a fault on one final circuit trips only that circuit's MCB, not the main incoming device, requires checking time-current curve coordination between the two levels, not just confirming each MCB individually meets its own circuit's basic sizing calculation. This coordination becomes increasingly important as panels grow larger and more complex, with multiple levels of protective devices between the main supply and individual final circuits.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Small motor, FLC=12A, moderate inrush: MCB Rating = 12 &times; 1.25 = 15A &rarr; <strong>16A standard size</strong>, <strong>Type C</strong> curve (trips at 80-160A instantaneous).</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">MCB rating and curve type selection here uses standard general guidelines — for a final design, confirm the exact starting/inrush characteristics of your specific load against the MCB manufacturer's published curve data, and verify the selected MCB's rating and curve type against the applicable electrical code and any downstream protection coordination requirements. Combine with a residual current device (RCD/RCCB) or use a combined RCBO where earth leakage protection is also required, and have the final panel design reviewed by a qualified electrical engineer.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference Table</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">MCB Trip Curve Types and Their Applications</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Curve Type</th>
+          <th class="text-left px-4 py-2 font-semibold">Instantaneous Trip</th>
+          <th class="text-left px-4 py-2 font-semibold">Typical Application</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">Type B</td><td class="px-4 py-2">3-5× rated current</td><td class="px-4 py-2">Lighting, resistive/heating loads, residential</td></tr>
+        <tr><td class="px-4 py-2">Type C</td><td class="px-4 py-2">5-10× rated current</td><td class="px-4 py-2">General mixed loads, small-to-medium motors</td></tr>
+        <tr><td class="px-4 py-2">Type D</td><td class="px-4 py-2">10-20× rated current</td><td class="px-4 py-2">Transformers, large motors, high-inrush equipment</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>These curve type definitions follow IEC 60898, widely referenced internationally including in Indian electrical practice. The instantaneous trip range is what distinguishes a curve type from another of the same current rating &mdash; two 16A MCBs, one Type B and one Type C, have the identical thermal (sustained overload) rating but respond very differently to a brief high-current event,     <p>Manufacturers occasionally offer additional or specialized curve types beyond the standard B/C/D set (such as a K or Z curve for specific specialized applications) for particular equipment protection needs &mdash; while B, C, and D cover the vast majority of general electrical installation requirements, check whether your specific equipment manufacturer recommends a specialized curve type for unusual load characteristics before defaulting to the standard three-tier selection.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Sizing an MCB</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Using Type B for a motor circuit.</strong> Type B's low instantaneous trip threshold (3-5&times;) is easily exceeded by normal motor starting inrush, causing nuisance tripping on every start &mdash; motor circuits generally need Type C or D depending on their specific inrush characteristics.</p>
+      <p><strong>2. Defaulting to Type D "to be safe" for every circuit.</strong> A higher curve type means less sensitive instantaneous fault protection &mdash; using Type D where Type B or C would be appropriate can slow genuine fault clearing without providing any real benefit for a load that doesn't actually need that much inrush tolerance.</p>
+      <p><strong>3. Relying on MCB sizing alone for motor overload protection.</strong> Like fuses, MCBs sized to tolerate motor starting current are generally too insensitive for genuine sustained overload protection &mdash; pair motor circuits with a properly sized overload relay or use a motor circuit breaker/protector with dedicated adjustable overload protection.</p>
+      <p><strong>4. Rounding the calculated rating down to a "close enough" standard size.</strong> Always round up to the next standard MCB size at or above the calculated value &mdash; rounding down undersizes the MCB below its calculated requirement.</p>
+      <p><strong>5. Sizing an MCB above the protected cable's ampacity for a general circuit.</strong> The MCB should generally trip before the cable itself is damaged by overcurrent &mdash; verify the selected MCB rating doesn't exceed the protected cable's safe ampacity, except where a specific, code-recognized exception applies.</p>
+      <p><strong>6. Not verifying the MCB's fault interrupting rating against actual available fault current.</strong> Current rating and curve type address normal operation and instantaneous trip threshold, but the MCB also needs an adequate fault interrupting (breaking) capacity rating for the actual available fault current at its installation point \u2014 a separate, equally important check beyond rating and curve type alone.</p>
+      <p><strong>7. Ignoring specialized curve types when standard B/C/D don't match unusual equipment characteristics.</strong> Some specific loads may warrant a manufacturer-recommended specialized curve type beyond the standard three &mdash; check equipment-specific recommendations rather than forcing an unusual load into the closest standard curve type by default.</p>
+      <p><strong>8. Not distinguishing thermal versus magnetic nuisance tripping when diagnosing an installed circuit.</strong> These point to different root causes (rating too low vs curve type too low) and therefore different fixes &mdash; correctly identifying which type of trip is occurring saves time and avoids an incorrect fix that doesn't address the actual problem.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for MCB sizing?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">MCB Rating = Full Load Current × 1.25, then rounded up to the next standard MCB size. This 125% factor provides margin above steady operating current for continuous-duty circuits, similar to general fuse sizing practice.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What do MCB curve types B, C, and D mean?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Curve type describes the MCB's magnetic (instantaneous) trip threshold as a multiple of its rated current — Type B trips instantaneously at 3-5× rated current, Type C at 5-10×, and Type D at 10-20×. A higher curve type tolerates a larger, brief inrush current without instantaneous tripping, which is why the right curve type depends on how much inrush current your specific load produces during normal starting.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Which curve type should I use for general lighting and resistive loads?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Type B is standard for general lighting, heating, and resistive loads, which have minimal or no significant inrush current beyond their steady operating current — Type B's lower instantaneous trip threshold (3-5×) still provides fast fault clearing for these low-inrush loads without being unnecessarily insensitive.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Which curve type should I use for a motor circuit?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Type C is commonly used for general motor and mixed loads with moderate inrush current (many small to medium motors, general mixed commercial/industrial circuits), while Type D is used for loads with very high inrush current — large motors, transformers, and similar high-inrush equipment — that would nuisance-trip a Type B or even Type C MCB during normal starting.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I use a higher curve type than necessary just to be safe?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Not without a trade-off — a higher curve type (C or D) tolerates more inrush current without instantaneous tripping, but this also means it takes a larger fault current to trigger instantaneous protection, which can affect fault clearing speed and protection coordination with other devices. Match the curve type to your actual load's real inrush characteristics rather than defaulting to the highest option "to be safe."</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does MCB rating alone provide motor overload protection?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Not adequately on its own for most motor applications — similar to fuses, an MCB sized to ride through motor starting current is generally too insensitive to catch a moderate, sustained overload condition. Motor circuits typically need a separate overload relay (or a motor circuit breaker/protector specifically designed with both magnetic and adjustable thermal overload protection) for genuine running overload protection.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the difference between an MCB and an MCCB?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">MCBs (Miniature Circuit Breakers) are generally used for lower current ratings (commonly up to 63-125A depending on the standard and manufacturer) in residential, commercial, and light industrial applications, while MCCBs (Molded Case Circuit Breakers) handle higher current ratings and often offer more adjustable trip settings and higher fault interrupting capacity, more common in industrial and larger commercial installations — use the appropriate device type sized for your circuit's actual current and fault current requirements.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should MCB rating exceed the protected cable's ampacity?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For general circuits, no — the MCB should generally be rated at or below the cable's safe ampacity, so the MCB trips before the cable is damaged by sustained overcurrent. This is the same general principle that applies to fuse-and-cable coordination, and any exception (like specific motor circuit allowances) should be verified against the applicable code rather than assumed.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I know the actual inrush current of my specific load to pick the right curve type?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Check the equipment manufacturer's datasheet for starting/inrush current specifications where available — for motors, this is often expressed as a multiple of full load current or a locked-rotor current rating; for transformers, inrush current (which can be considerably higher and longer-lasting than motor starting current) is sometimes specified separately. Where exact data isn't available, general guidelines by load category (as in the reference table on this page) provide a reasonable starting point, refined through field testing if nuisance tripping occurs.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateMCBSize(){
+    const flc = parseFloat(document.getElementById('flc').value);
+    const loadType = document.getElementById('loadType').value;
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(flc) || flc <= 0){ errors.push('Enter a valid full load current greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rCurve').textContent = '\u2014';
+      document.getElementById('rTripRange').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const calculatedRating = flc * 1.25;
+    const standardSizes = [6,10,16,20,25,32,40,50,63,80,100,125];
+    let stdSize = standardSizes.find(s => s >= calculatedRating);
+    if(!stdSize) stdSize = Math.ceil(calculatedRating / 25) * 25;
+
+    const tripRanges = { B: [3,5], C: [5,10], D: [10,20] };
+    const range = tripRanges[loadType];
+    const tripLow = stdSize * range[0];
+    const tripHigh = stdSize * range[1];
+
+    document.getElementById('rResult').textContent = stdSize + ' A';
+    document.getElementById('resultSub').textContent = 'FLC=' + flc + 'A, Type ' + loadType;
+    document.getElementById('rCurve').textContent = 'Type ' + loadType;
+    document.getElementById('rTripRange').textContent = tripLow + '-' + tripHigh + ' A';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Full Load Current</td><td>${flc} A</td></tr>
+                <tr><td>Calculated (×1.25)</td><td>${calculatedRating.toFixed(2)} A</td></tr>
+                <tr><td><strong>Standard MCB Rating</strong></td><td><strong>${stdSize} A</strong></td></tr>
+                <tr><td>Curve Type</td><td>Type ${loadType}</td></tr>
+                <tr><td>Instantaneous Trip Range</td><td>${tripLow}-${tripHigh} A (${range[0]}-${range[1]}×)</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateMCBSize();
+</script>
+
+</body>
+</html>

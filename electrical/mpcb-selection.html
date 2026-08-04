@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>MPCB Selection Calculator (Motor Protection Circuit Breaker) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free MPCB Selection Calculator. Enter motor full load current and service factor to get the correct MPCB dial setting and typical instantaneous trip threshold instantly, with formula and worked example.">
+<meta name="keywords" content="mpcb selection calculator, motor protection circuit breaker sizing, mpcb dial setting calculator, motor circuit breaker rating, mpcb overload setting">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/mpcb-selection">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="MPCB Selection Calculator">
+<meta property="og:description" content="Free MPCB Selection Calculator — enter motor full load current and service factor to get the correct dial setting instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/mpcb-selection">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MPCB Selection Calculator">
+<meta name="twitter:description" content="Free MPCB Selection Calculator — enter motor full load current and service factor to get the correct dial setting instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "MPCB Selection Calculator",
+  "url": "https://www.electromechcalc.com/electrical/mpcb-selection",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free MPCB Selection Calculator. Enter motor full load current and service factor to get the correct MPCB dial setting and typical instantaneous trip threshold instantly, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is an MPCB and how is it different from a standard MCB or MCCB?",
+      "acceptedAnswer": { "@type": "Answer", "text": "An MPCB (Motor Protection Circuit Breaker) combines adjustable thermal overload protection and short-circuit (magnetic) protection in a single device specifically designed for motor circuits, with an adjustable current dial that lets one physical device cover a range of motor full load currents — unlike a standard MCB or MCCB, which typically has a fixed current rating and isn't designed with motor-specific thermal overload characteristics built in." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I set an MPCB's dial for my motor?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Set the dial to the motor's rated full load current (FLC) as shown on its nameplate, multiplied by the motor's service factor if it has one greater than 1.0 — this dial setting configures the thermal overload trip point specifically for that motor's actual full load operating current." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is motor service factor and why does it affect the dial setting?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Service factor is a multiplier (commonly 1.0 or 1.15 for many general-purpose motors) indicating how much above its nameplate rated load a motor can safely handle continuously without exceeding its insulation temperature limits — a motor with a 1.15 service factor can be intentionally operated up to 115% of its nameplate FLC, so the MPCB dial setting should be adjusted upward to match, rather than tripping the motor at its base FLC when it's actually designed to handle more." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the MPCB dial setting change for star-delta starting?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It depends on where the MPCB is installed in the starting circuit — if placed in the main incoming line ahead of the star-delta contactors, it sees full line current and should be set to the motor's full-load line current as usual. If placed in the delta-winding branch circuits specifically, it sees a different (lower, by a factor of √3) current than the main line current, requiring a correspondingly adjusted setting — always confirm exactly where in the starting circuit the MPCB sits before finalizing its setting." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the typical instantaneous (short-circuit) trip threshold for an MPCB?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Commonly in the range of roughly 12-14 times the dial setting for standard Class 10 motor protection circuit breakers per IEC 60947-4-1, though this varies by specific manufacturer and product — this instantaneous threshold is fixed (not adjustable) on most MPCB models, unlike the thermal overload setting, and is calibrated to tolerate normal motor starting inrush while still responding quickly to a genuine short circuit." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can one MPCB model cover multiple different motor sizes?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, within its specific adjustable current range — a single MPCB model can be dial-set anywhere within its published minimum-to-maximum current range, so the same physical device (and stocked spare part) can protect several different motor sizes whose FLC falls within that range, simply by adjusting the dial setting for each specific installation, which is a genuine inventory and standardization advantage over fixed-rating protective devices." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does an MPCB eliminate the need for a separate motor overload relay?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, for the overload protection function specifically — an MPCB's whole design purpose is combining short-circuit and thermal overload protection in one device, unlike a standard MCCB or fuse which typically needs a separate overload relay for adequate motor protection. This combination is one of the main practical advantages of MPCBs in motor circuit design, simplifying the panel and reducing the number of separate protective devices needed." }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I use the motor's FLC from its nameplate or from a general reference table?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Always use the specific motor's actual nameplate FLC, not a generic reference table value for that motor's approximate horsepower/kW rating — nameplate FLC reflects the actual, specific motor's tested characteristics and can differ meaningfully from generic table estimates, and using the wrong figure can result in an incorrectly set MPCB that either nuisance-trips or fails to protect the motor adequately." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript></noscript>
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Motor Protection
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          MPCB Selection <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Correct dial setting and typical instantaneous trip threshold for a Motor Protection Circuit Breaker, from motor full load current and service factor.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">MPCB Selection Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter motor full load current and service factor.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Motor Full Load Current, FLC (A)</label>
+          <input id="motorFLC" type="number" value="18" step="0.1" min="0" placeholder="e.g. 18" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Motor Service Factor</label>
+          <input id="serviceFactor" type="number" value="1.0" step="0.05" min="1" placeholder="e.g. 1.0 or 1.15" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateMPCBSetting()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">Setting = FLC × Service Factor</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Recommended Dial Setting</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Typical Instantaneous Trip</span>
+            <span id="rInstantaneous" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Trip Range (12-14×)</span>
+            <span id="rRange" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/mccb-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          MCCB Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/contactor-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Contactor Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/motor-starting-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Motor Starting Current Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/star-delta-starter" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Star Delta Starter Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20MPCB Selection Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding MPCB dial setting</a></li>
+      <li><a href="#second" class="hover:underline">3. MPCB vs MCCB+overload relay vs fuse+contactor</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How MPCB Dial Setting Is Determined</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard motor protection circuit breaker sizing per IEC 60947-4-1</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>A Motor Protection Circuit Breaker (MPCB) is purpose-built for motor circuits, combining two protection functions that would otherwise need separate devices: an adjustable thermal overload element (protecting against sustained overload during running) and a fixed instantaneous magnetic element (protecting against short-circuit faults). Its adjustable current dial is what makes correct setting &mdash; not just correct model selection &mdash; the critical step in getting an MPCB to actually protect the specific motor it's installed on.</p>
+
+      <p><strong>Formula used:</strong> MPCB Dial Setting (A) = Motor Full Load Current &times; Service Factor. The motor's nameplate FLC is its rated full-load operating current; service factor (commonly 1.0, or 1.15 for many general-purpose motors designed with some built-in overload tolerance) tells you how far above that nameplate FLC the motor can be intentionally, continuously operated without exceeding its safe temperature limits.</p>
+
+      <p><strong>Worked example:</strong> a motor with a nameplate FLC of 18 A and a 1.0 service factor (no built-in overload allowance). Dial Setting = 18 &times; 1.0 = 18 A &mdash; set the MPCB's adjustable dial directly to 18 A, selecting a specific MPCB model whose adjustable range brackets this value from the manufacturer's catalog. If the same motor instead had a 1.15 service factor, Dial Setting = 18 &times; 1.15 = 20.7 A, reflecting that this particular motor is designed to safely handle up to 115% of its nameplate rating continuously.</p>
+
+      <p><strong>Why the dial setting should track FLC closely, not be padded upward:</strong> unlike fuse or MCB sizing for motor circuits (which use a large multiplier like 175-300% specifically because a fuse or MCB lacks an adjustable, motor-specific thermal characteristic), an MPCB's thermal overload element is purpose-built to distinguish normal starting inrush from genuine sustained overload &mdash; it's designed to ride through a brief starting surge at its rated setting without needing extra numerical headroom the way a simple fuse does. Setting the dial meaningfully above actual FLC "to avoid nuisance tripping" defeats this purpose-built precision and removes real overload protection margin, which is exactly the opposite of what an MPCB is chosen for in the first place.</p>
+
+      <p><strong>Instantaneous (magnetic) trip &mdash; fixed, not adjustable, on most models:</strong> while the thermal overload element is adjustable via the dial, the instantaneous short-circuit trip threshold on most standard MPCB models is fixed at the factory, commonly in the range of 12-14 times the dial setting for Class 10 motor protection circuit breakers under IEC 60947-4-1. This fixed multiplier is calibrated to comfortably tolerate a motor's normal locked-rotor starting current (typically 5-8&times; FLC) with margin, while still responding quickly to a genuine short-circuit event, which by definition draws current well beyond even a heavy starting surge.</p>
+
+      <p><strong>Star-delta starting and MPCB placement:</strong> where an MPCB sits in a star-delta starting circuit changes what current it actually experiences and therefore how it should be set. An MPCB placed in the main incoming line, ahead of the star/delta contactor arrangement, sees the motor's full line current throughout both starting and running, and should be set to the motor's normal full-load line current as usual. An MPCB placed specifically within the delta-winding branch circuits (a less common but sometimes-used arrangement) sees a different current — related to line current by a factor of &radic;3 — due to the winding configuration, and needs its setting adjusted accordingly. Always confirm exactly where in the starting circuit topology an MPCB is positioned before finalizing its dial setting, since this is a genuinely easy point to get wrong without careful attention to the specific circuit diagram.</p>
+
+      <p><strong>Class 10 vs Class 20 vs Class 30 overload tripping characteristics:</strong> MPCBs (and motor overload relays generally) are categorized by trip class, describing how long they'll tolerate a sustained overload before tripping — Class 10 (tripping within roughly 10 seconds at 7.2&times; setting) suits motors with typically fast starting; Class 20 and Class 30 allow progressively longer tolerance, suited to motors with longer, heavier starting duty (high-inertia loads that take longer to accelerate to full speed) that would otherwise nuisance-trip a faster-class device during a legitimately longer, but still normal, starting event. Selecting the correct trip class for your specific motor's starting duty is a separate consideration from the dial current setting calculated here, and getting it wrong (too fast a class for a slow-starting high-inertia load) is a common source of starting-related nuisance tripping even when the current dial setting itself is correct.</p>
+
+      <p><strong>MPCB and contactor combination for remote/automatic switching:</strong> an MPCB alone provides protection but is typically a manually operated device — for motor circuits needing remote start/stop control (from a control system, a start/stop pushbutton station, or automatic sequencing), an MPCB is commonly paired with a separate contactor, with the MPCB handling protection (both thermal overload and short-circuit) and the contactor handling the actual repeated make/break switching duty that a protective device alone isn't designed for. Some integrated products combine both functions, but understanding this division of labor helps when specifying a complete motor starter assembly rather than a standalone protective device.</p>
+
+      <p><strong>Coordination type between MPCB and contactor (Type 1 vs Type 2):</strong> when a genuine short circuit occurs downstream of an MPCB-and-contactor combination, the MPCB's fast instantaneous trip needs to protect the contactor from damage as well as the motor circuit itself — IEC 60947-4-1 defines coordination Type 1 (contactor may be damaged but does not create a safety hazard, may need replacement after a serious fault) and Type 2 (contactor and MPCB both remain fully serviceable after clearing even a maximum-rated fault, no replacement needed). Type 2 coordination is generally preferred where minimizing downtime and replacement cost after a fault matters, and achieving it requires using manufacturer-tested and certified MPCB-contactor combinations rather than assembling components independently and assuming compatibility.</p>
+
+      <p><strong>Summary:</strong> use Dial Setting = Motor FLC &times; Service Factor, set the dial as close to actual FLC as practical rather than padding it upward, confirm MPCB placement relative to any star-delta or other special starting arrangement before finalizing the setting, select the correct trip class (10/20/30) for the motor's actual starting duty, and use manufacturer-tested MPCB-contactor combinations for reliable Type 2 coordination where minimizing post-fault downtime matters.</p>
+
+      <p><strong>Re-checking settings after a motor replacement:</strong> if a motor is later replaced (even with a nominally "equivalent" unit), always re-verify the MPCB dial setting against the new motor's actual nameplate FLC rather than assuming it's identical to the original — different manufacturers, efficiency classes, or even production batches of a nominally similar motor can have somewhat different actual FLC ratings, and leaving an MPCB set for the original motor's FLC after a replacement can result in either nuisance tripping or inadequate protection for the new motor's actual characteristics.</p>
+
+      <p><strong>Documenting the setting for future maintenance:</strong> recording the calculated dial setting, the motor FLC and service factor it was based on, and the date it was set (ideally on a label at the panel or in facility documentation) helps future maintenance staff quickly verify the setting is still correct, or identify when and why it might need updating &mdash; this is a small documentation habit that pays off significantly when troubleshooting an unexplained trip months or years later, especially in facilities with many similar motor circuits where settings could otherwise be easily confused between units.</p>
+
+      <p><strong>A closing note on why this small dial adjustment deserves real attention:</strong> it's easy to treat setting an MPCB dial as a trivial, five-second step compared to the more involved work of selecting the right frame, breaking capacity, or coordination scheme &mdash; but an otherwise perfectly selected MPCB with an incorrectly set dial provides no better protection than the wrong device entirely. The calculation itself is simple, but getting the input right (actual nameplate FLC, correct service factor, correct understanding of circuit placement) and actually performing the adjustment during commissioning, not just specifying it on paper, is what turns a correctly selected device into actual, working motor protection.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Motor FLC=18A, service factor 1.0: Dial Setting = 18 &times; 1.0 = <strong>18 A</strong>. Typical instantaneous trip (12-14&times;): <strong>216-252 A</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Actual MPCB adjustable current ranges (the specific dial graduations available) vary by manufacturer and model line — this calculator gives the correct dial setting value (motor FLC × service factor) and a typical instantaneous trip multiplier range, but you must select a specific MPCB model whose adjustable range brackets your calculated setting from the manufacturer's catalog. Always verify final selection against the motor manufacturer's nameplate data and the MPCB manufacturer's technical documentation.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Comparison</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">MPCB vs Separate Overload Relay vs Fuse-Based Motor Protection</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Protection Scheme</th>
+          <th class="text-left px-4 py-2 font-semibold">Devices Needed</th>
+          <th class="text-left px-4 py-2 font-semibold">Notes</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">MPCB</td><td class="px-4 py-2">1 device</td><td class="px-4 py-2">Combined overload + short-circuit, adjustable dial, common with a contactor for remote switching</td></tr>
+        <tr><td class="px-4 py-2">MCCB/MCB + separate overload relay</td><td class="px-4 py-2">2 devices</td><td class="px-4 py-2">Breaker for short-circuit, relay for overload; more flexible overload curve options in some cases</td></tr>
+        <tr><td class="px-4 py-2">Fuse + contactor + overload relay</td><td class="px-4 py-2">3 devices (fuse, contactor, relay)</td><td class="px-4 py-2">Traditional scheme, still common, generally most economical per device but more components to coordinate</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>MPCBs have become increasingly popular specifically because they consolidate what used to require two or three separate devices into one, simplifying panel design, reducing wiring, and often reducing the number of spare parts a facility needs to stock. The trade-off is typically a somewhat higher per-device cost than a basic fuse, offset by the savings in panel space, wiring labor, and simplified coordination between fewer devices &mdash; for many modern motor circuit designs, particularly in compact panel layouts, this trade-off favors the MPCB approach,     <p>When retrofitting or expanding an existing panel, matching the incumbent protection scheme already used throughout the facility often outweighs a theoretically "better" alternative for a single new circuit, simply for consistency in spare parts, maintenance familiarity, and staff training — a genuinely new panel design has more freedom to choose the scheme best suited to that specific project's requirements from the outset.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Selecting an MPCB</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Setting the dial above actual motor FLC to avoid nuisance tripping.</strong> This directly removes real overload protection margin &mdash; an MPCB's thermal element is purpose-built to handle normal starting without needing this padding; if nuisance tripping occurs at a correctly-set dial, investigate the actual cause rather than simply setting the dial higher.</p>
+      <p><strong>2. Forgetting to apply service factor when the motor has one greater than 1.0.</strong> A motor with a 1.15 service factor is designed to run continuously up to 115% of nameplate FLC &mdash; setting the dial to bare FLC without this adjustment can cause nuisance tripping under conditions the motor is actually rated to handle.</p>
+      <p><strong>3. Using a generic reference FLC instead of the specific motor's actual nameplate value.</strong> Generic horsepower-to-FLC tables give approximate values that can differ meaningfully from a specific motor's actual tested and rated FLC &mdash; always use the real nameplate figure for the motor actually being installed.</p>
+      <p><strong>4. Not confirming MPCB placement relative to star-delta starting contactors before setting the dial.</strong> An MPCB in the main line versus one in the delta-winding branch circuits sees different currents &mdash; using main-line FLC for a branch-circuit-positioned MPCB (or vice versa) gives an incorrect setting.</p>
+      <p><strong>5. Assuming the instantaneous trip threshold is adjustable when it typically isn't.</strong> On most standard MPCB models, only the thermal overload dial is field-adjustable; the instantaneous magnetic trip is fixed at manufacture &mdash; don't assume you can fine-tune both independently unless your specific model explicitly offers an adjustable instantaneous setting.</p>
+      <p><strong>6. Selecting an MPCB model whose adjustable range doesn't comfortably bracket the calculated setting.</strong> A calculated setting sitting right at the very edge of a model's minimum or maximum range leaves little room for fine adjustment or for a slightly different motor being substituted later &mdash; where practical, select a model whose range comfortably includes the calculated setting with some margin on either side.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is an MPCB and how is it different from a standard MCB or MCCB?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">An MPCB (Motor Protection Circuit Breaker) combines adjustable thermal overload protection and short-circuit (magnetic) protection in a single device specifically designed for motor circuits, with an adjustable current dial that lets one physical device cover a range of motor full load currents — unlike a standard MCB or MCCB, which typically has a fixed current rating and isn't designed with motor-specific thermal overload characteristics built in.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I set an MPCB's dial for my motor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Set the dial to the motor's rated full load current (FLC) as shown on its nameplate, multiplied by the motor's service factor if it has one greater than 1.0 — this dial setting configures the thermal overload trip point specifically for that motor's actual full load operating current.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is motor service factor and why does it affect the dial setting?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Service factor is a multiplier (commonly 1.0 or 1.15 for many general-purpose motors) indicating how much above its nameplate rated load a motor can safely handle continuously without exceeding its insulation temperature limits — a motor with a 1.15 service factor can be intentionally operated up to 115% of its nameplate FLC, so the MPCB dial setting should be adjusted upward to match, rather than tripping the motor at its base FLC when it's actually designed to handle more.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does the MPCB dial setting change for star-delta starting?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It depends on where the MPCB is installed in the starting circuit — if placed in the main incoming line ahead of the star-delta contactors, it sees full line current and should be set to the motor's full-load line current as usual. If placed in the delta-winding branch circuits specifically, it sees a different (lower, by a factor of √3) current than the main line current, requiring a correspondingly adjusted setting — always confirm exactly where in the starting circuit the MPCB sits before finalizing its setting.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the typical instantaneous (short-circuit) trip threshold for an MPCB?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Commonly in the range of roughly 12-14 times the dial setting for standard Class 10 motor protection circuit breakers per IEC 60947-4-1, though this varies by specific manufacturer and product — this instantaneous threshold is fixed (not adjustable) on most MPCB models, unlike the thermal overload setting, and is calibrated to tolerate normal motor starting inrush while still responding quickly to a genuine short circuit.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can one MPCB model cover multiple different motor sizes?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, within its specific adjustable current range — a single MPCB model can be dial-set anywhere within its published minimum-to-maximum current range, so the same physical device (and stocked spare part) can protect several different motor sizes whose FLC falls within that range, simply by adjusting the dial setting for each specific installation, which is a genuine inventory and standardization advantage over fixed-rating protective devices.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does an MPCB eliminate the need for a separate motor overload relay?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, for the overload protection function specifically — an MPCB's whole design purpose is combining short-circuit and thermal overload protection in one device, unlike a standard MCCB or fuse which typically needs a separate overload relay for adequate motor protection. This combination is one of the main practical advantages of MPCBs in motor circuit design, simplifying the panel and reducing the number of separate protective devices needed.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I use the motor's FLC from its nameplate or from a general reference table?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Always use the specific motor's actual nameplate FLC, not a generic reference table value for that motor's approximate horsepower/kW rating — nameplate FLC reflects the actual, specific motor's tested characteristics and can differ meaningfully from generic table estimates, and using the wrong figure can result in an incorrectly set MPCB that either nuisance-trips or fails to protect the motor adequately.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What happens if the MPCB dial is set too high or too low for the actual motor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Setting it too low causes nuisance tripping under normal load or even during a slightly longer-than-typical start, while setting it too high fails to protect the motor from a genuine sustained overload condition that could overheat and damage the windings — the dial should be set as close as practical to the motor's actual FLC (adjusted for service factor), not deliberately padded high to avoid nuisance tripping, since that padding directly removes real overload protection margin.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateMPCBSetting(){
+    const flc = parseFloat(document.getElementById('motorFLC').value);
+    const serviceFactor = parseFloat(document.getElementById('serviceFactor').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(flc) || flc <= 0){ errors.push('Enter a valid motor full load current greater than 0.'); }
+    if(isNaN(serviceFactor) || serviceFactor < 1){ errors.push('Service factor must be 1.0 or greater.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rInstantaneous').textContent = '\u2014';
+      document.getElementById('rRange').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const dialSetting = flc * serviceFactor;
+    const instLow = dialSetting * 12;
+    const instHigh = dialSetting * 14;
+    const instTypical = dialSetting * 13;
+
+    document.getElementById('rResult').textContent = dialSetting.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' A';
+    document.getElementById('resultSub').textContent = 'FLC=' + flc + 'A × SF=' + serviceFactor;
+    document.getElementById('rInstantaneous').textContent = instTypical.toFixed(0) + ' A (~13×)';
+    document.getElementById('rRange').textContent = instLow.toFixed(0) + '-' + instHigh.toFixed(0) + ' A';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Motor Full Load Current</td><td>${flc} A</td></tr>
+                <tr><td>Service Factor</td><td>${serviceFactor}</td></tr>
+                <tr><td><strong>Recommended Dial Setting</strong></td><td><strong>${dialSetting.toFixed(2)} A</strong></td></tr>
+                <tr><td>Typical Instantaneous Trip (~13×)</td><td>${instTypical.toFixed(0)} A</td></tr>
+                <tr><td>Instantaneous Trip Range (12-14×)</td><td>${instLow.toFixed(0)}-${instHigh.toFixed(0)} A</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateMPCBSetting();
+</script>
+
+</body>
+</html>

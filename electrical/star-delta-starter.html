@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Star Delta Starter Calculator (Contactor Sizing) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Star Delta Starter Calculator. Enter motor full load current to get the required rating for the main, star, and delta contactors instantly, with formula, timer guidance, and worked example.">
+<meta name="keywords" content="star delta starter calculator, star delta contactor sizing, main star delta contactor rating, star delta timer setting, star delta starting formula">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/star-delta-starter">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Star Delta Starter Calculator">
+<meta property="og:description" content="Free Star Delta Starter Calculator — enter motor FLC to get main, star, and delta contactor ratings instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/star-delta-starter">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Star Delta Starter Calculator">
+<meta name="twitter:description" content="Free Star Delta Starter Calculator — enter motor FLC to get main, star, and delta contactor ratings instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Star Delta Starter Calculator",
+  "url": "https://www.electromechcalc.com/electrical/star-delta-starter",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Star Delta Starter Calculator. Enter motor full load current to get the required rating for the main, star, and delta contactors instantly, with formula, timer guidance, and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why does a star-delta starter need three separate contactors?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The main contactor connects the supply to the motor's winding terminals and carries full running current continuously. The star contactor temporarily connects the winding ends together in a star configuration only during starting. The delta contactor connects the windings in their normal running (delta) configuration once starting is complete — together, these three contactors implement the switch from reduced-voltage star starting to full-voltage delta running." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the standard sizing rule for the main contactor?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The main contactor should be rated at or above the motor's full load line current (FLC), since it carries the complete motor running current continuously once the motor transitions to normal delta operation and throughout normal running." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the standard sizing rule for the delta contactor?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The delta contactor should be rated at approximately 0.58 (58%) of the motor's full load line current, since it sits in series with two of the three motor windings in the delta configuration, carrying phase current rather than the full line current the main contactor sees." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the standard sizing rule for the star contactor?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The star contactor should be rated at approximately 0.33 (33%) of the motor's full load line current, since it only carries the reduced star-connection starting current, and only briefly during the starting period — its duty is lighter and shorter than either the main or delta contactor's duty." }
+    },
+    {
+      "@type": "Question",
+      "name": "How long should the star timer be set for?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The star timer should be set long enough for the motor to reach close to its full running speed while still in star connection, but not excessively longer than necessary — typical settings range from about 3 to 10 seconds depending on motor size and the driven load's inertia, though the correct setting for any specific installation should be verified by observing actual motor acceleration behavior during commissioning, not just assumed from a generic range." }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if the star timer is set too short?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Transitioning to delta before the motor has reached adequate speed causes a second, more severe current and torque transient at the transition moment, since the motor is still accelerating rather than running near full speed — this can partially defeat the purpose of star-delta starting's reduced-current benefit and cause additional mechanical stress." }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if the star timer is set too long?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The motor continues running in the reduced-torque, reduced-current star configuration longer than necessary, which is generally less harmful than switching too early, but for loads with substantial starting torque requirements, an excessively long star period can mean the motor never actually reaches full speed in star configuration, potentially stalling or drawing sustained high current without ever accelerating properly." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can a star-delta starter be used with a soft starter or VFD for a smoother transition?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Star-delta starters are a distinct, older technology from soft starters and VFDs — a soft starter or VFD generally replaces a star-delta arrangement entirely rather than being combined with it, since both achieve reduced-current starting through fundamentally different means (electronic voltage/frequency control rather than mechanical winding reconfiguration) that aren't typically used together on the same motor." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Motors & Starting
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Star Delta Starter <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Required current rating for the main, star, and delta contactors in a star-delta starter, from motor full load current — plus timer setting guidance.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Star Delta Starter Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter motor full load current.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Motor Full Load Current, FLC (A)</label>
+          <input id="flc" type="number" value="60" step="0.1" min="0" placeholder="e.g. 60" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateStarDeltaContactors()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">Main=1.0×FLC, Delta=0.58×FLC, Star=0.33×FLC</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Main Contactor Rating</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter FLC and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Delta Contactor</span>
+            <span id="rDelta" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Star Contactor</span>
+            <span id="rStar" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/motor-starting-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Motor Starting Current Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/contactor-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Contactor Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/soft-starter-sizing" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Soft Starter Sizing Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/mpcb-selection" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          MPCB Selection Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Star Delta Starter Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding the three-contactor star-delta arrangement</a></li>
+      <li><a href="#second" class="hover:underline">3. Typical star timer settings and acceleration time</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Star-Delta Starter Contactors Are Sized</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard star-delta starter contactor sizing convention</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>A star-delta starter uses three contactors working together in sequence &mdash; the main contactor, the star contactor, and the delta contactor &mdash; to first connect the motor windings in a reduced-voltage star configuration for starting, then switch to the normal full-voltage delta configuration for running. Each contactor experiences different current duty, and correctly sizing each one individually (rather than using one uniform rating for all three) is standard, economical starter design practice.</p>
+
+      <p><strong>Formula used:</strong> Main Contactor Rating = FLC &times; 1.0. Delta Contactor Rating = FLC &times; 0.58. Star Contactor Rating = FLC &times; 0.33. These multipliers reflect each contactor's actual current duty within the star-delta switching arrangement, not simply a uniform safety margin applied identically to all three.</p>
+
+      <p><strong>Worked example:</strong> a motor with 60 A full load current. Main Contactor = 60 &times; 1.0 = 60 A. Delta Contactor = 60 &times; 0.58 = 34.8 A. Star Contactor = 60 &times; 0.33 = 19.8 A. Notice the delta and star contactors can both be meaningfully smaller (and less expensive) than the main contactor, since neither carries the full line current the main contactor handles.</p>
+
+      <p><strong>Why the delta contactor carries only 0.58 (roughly 1&divide;&radic;3) of line current:</strong> the delta contactor sits in series with two of the motor's three windings within the delta connection, carrying winding (phase) current rather than the full line current &mdash; in a delta-connected three-phase load, phase current relates to line current by a factor of 1&divide;&radic;3 &asymp; 0.577, which rounds to the commonly used 0.58 design figure.</p>
+
+      <p><strong>Why the star contactor carries only about 0.33 of line current:</strong> the star contactor carries the star-connection starting current, which (as established in star-delta starting theory) is one-third of the equivalent delta/DOL line current &mdash; since this contactor only operates briefly during starting and at this reduced current level, it can be sized considerably smaller than either the main or delta contactor, contributing to the overall economy of a properly-specified star-delta starter panel.</p>
+
+      <p><strong>The complete star-delta switching sequence:</strong> at start, the main contactor and star contactor close together, connecting the motor windings in star configuration and applying supply voltage &mdash; the motor begins accelerating at reduced torque and current. After the timer's set duration elapses, the star contactor opens (briefly disconnecting the star point) and the delta contactor closes, reconnecting the windings in delta configuration at full line voltage, with the main contactor remaining closed throughout to maintain the supply connection. This sequencing, along with a brief interlock delay between opening the star contactor and closing the delta contactor (to prevent the two from ever being closed simultaneously, which would create a dangerous short circuit across the windings), is typically handled automatically by a dedicated star-delta timer relay or a programmable logic controller in more sophisticated installations.</p>
+
+      <p><strong>Why the star and delta contactors must never be closed simultaneously:</strong> if both the star and delta contactors were closed at the same time, the motor windings would be simultaneously connected in two incompatible configurations, creating a direct short circuit path through the windings and potentially causing severe damage to the motor and starter equipment. This is precisely why star-delta timer relays include a mandatory brief interlock delay (commonly 50-100 milliseconds) between opening the star contactor and closing the delta contactor, ensuring a clean break before the new connection is made, along with electrical and sometimes mechanical interlocking between the two contactors as an additional safety measure against this failure mode.</p>
+
+      <p><strong>Duty cycle considerations for the star contactor specifically:</strong> because the star contactor only operates during the brief starting period and is de-energized during normal running, it experiences meaningfully less operating time and switching duty than the main or delta contactor over the starter's service life &mdash; this is part of the justification for its smaller, more economical sizing, since its actual electrical endurance requirement (total switching operations over its service life) is inherently lower than a contactor that remains energized continuously during normal motor operation.</p>
+
+      <p><strong>Summary:</strong> use Main = FLC &times; 1.0, Delta = FLC &times; 0.58, Star = FLC &times; 0.33 for the three contactors, set the star timer based on actual observed motor acceleration during commissioning (typically 3-10 seconds as a starting reference range), ensure proper interlocking prevents star and delta contactors from ever closing simultaneously, and remember the three contactors handle switching only &mdash; separate overload and short-circuit protection is still required.</p>
+
+      <p><strong>Comparing star-delta to newer alternatives:</strong> soft starters and VFDs have increasingly displaced star-delta starting in many new installations, offering smoother, more adjustable starting current and torque control without the mechanical complexity of three separate contactors and a precisely-timed switching sequence. Star-delta starters remain common, however, particularly for retrofit situations, simpler and more cost-sensitive applications, or facilities standardized on this well-understood, mechanically robust technology &mdash; the choice between star-delta and its electronic alternatives typically comes down to a trade-off between star-delta's lower upfront cost and mechanical simplicity versus soft starters' and VFDs' smoother performance and additional capability (like speed control, for VFDs specifically).</p>
+
+      <p><strong>Panel layout and wiring considerations:</strong> a star-delta starter panel needs six motor leads brought out to the starter (rather than the three leads a simple DOL starter needs), since all six winding ends must be individually accessible to implement both the star and delta connections &mdash; this means star-delta starter wiring is inherently more involved than a simple DOL arrangement, both in terms of the motor cable itself (six conductors instead of three) and the internal starter panel wiring connecting the three contactors to the appropriate winding terminals in the correct sequence.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">FLC=60A: Main Contactor = 60&times;1.0 = <strong>60 A</strong>. Delta Contactor = 60&times;0.58 = <strong>34.8 A</strong>. Star Contactor = 60&times;0.33 = <strong>19.8 A</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Contactor sizing multipliers here (1.0× for main, 0.58× for delta, 0.33× for star) are the standard, widely used star-delta starter design convention — always cross-check final contactor selection against the manufacturer's AC-3 rated current table for your exact contactor model, and confirm timer settings against your specific motor's actual acceleration characteristics, ideally verified during commissioning. Ensure reliable interlocking between star and delta contactors, and confirm the motor is genuinely wound and terminated for star-delta operation before specifying this starter type.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Setup Guidance</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Setting the Star Timer for Reliable Star-to-Delta Transition</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>The star timer is what controls exactly when the starter transitions from star (reduced-voltage starting) to delta (full-voltage running) configuration &mdash; it should be set long enough for the motor to accelerate close to its normal running speed while still in the lower-torque star configuration, but not needlessly longer than that. As a general guideline, smaller motors with light-inertia loads often need only 3-5 seconds, while larger motors or higher-inertia loads (large fans, big pumps, heavy conveyors) may need 6-10 seconds or occasionally more to reach adequate speed before transitioning.</p>
+    <p>The correct setting for any specific installation ultimately depends on the actual motor and load combination's real acceleration behavior, not a generic assumed value &mdash; commissioning technicians typically start with a reasonable estimate based on motor size and load type, then observe actual motor sound and current behavior during the transition (a smooth, modest transition current bump indicates good timing;     <p>Documenting the final commissioned timer setting, along with the specific motor and load combination it was verified for, is worthwhile for future reference &mdash; if the motor or driven load is ever changed, the previously verified timer setting shouldn't be assumed to still be correct without re-verification, since acceleration behavior depends on the specific combination of motor characteristics and load inertia/torque requirement, not just the starter panel's fixed hardware configuration.</p>
+
+      <p><strong>Field troubleshooting a star-delta starter:</strong> common real-world issues include a failed or misadjusted timer (motor stuck in star indefinitely, running permanently underpowered, or transitioning far too early), a worn or damaged star or delta contactor (given its cyclic switching duty, especially the star contactor which sees repeated starting-only operation), or a wiring error in the six-lead motor connection (which can cause the motor to run backward, overheat, or fail to start correctly if winding connections are swapped or incorrect). Systematically checking timer operation, contactor condition, and connection correctness in that general order is a practical troubleshooting sequence for a star-delta starter that's stopped working correctly or is exhibiting unusual starting behavior.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Sizing a Star-Delta Starter</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Sizing all three contactors identically to the main contactor rating.</strong> This wastes money on unnecessarily oversized star and delta contactors &mdash; each contactor has a distinctly different current duty and should be sized according to its own specific multiplier, not uniformly to the highest (main contactor) figure.</p>
+      <p><strong>2. Confusing the 0.58 delta contactor factor with the 0.33 star contactor factor, or vice versa.</strong> These are genuinely different figures for genuinely different contactors &mdash; mixing them up undersizes one contactor while unnecessarily oversizing the other.</p>
+      <p><strong>3. Setting the star timer without observing actual motor acceleration behavior.</strong> A generic assumed timer setting may not suit your specific motor and load combination &mdash; always verify and adjust the actual setting during commissioning based on observed motor behavior, not just a rule-of-thumb starting point alone.</p>
+      <p><strong>4. Assuming star-delta starting is suitable for any driven load without checking starting torque requirements.</strong> Star-delta starting provides only about a third of DOL starting torque &mdash; loads with high starting torque requirements (some conveyors, positive-displacement pumps, high-inertia fans) may not accelerate properly under star-delta starting regardless of correct contactor sizing or timer setting.</p>
+      <p><strong>5. Omitting overload and short-circuit protection because "the contactors provide protection."</strong> The three contactors handle switching only, not overcurrent protection &mdash; a complete star-delta starter still needs a properly sized overload relay and upstream fuse or MCCB, exactly as any other motor starter arrangement does.</p>
+      <p><strong>6. Not confirming the motor is actually wound and terminal-configured for star-delta operation.</strong> This requires a motor with all six winding ends brought out to allow both star and delta connection at its rated running voltage &mdash; not every motor is built this way, and attempting a star-delta starter on an incompatible motor isn't possible without rewinding or replacing it.</p>
+      <p><strong>7. Missing or inadequate interlocking between star and delta contactors.</strong> Without reliable electrical and/or mechanical interlocking preventing simultaneous closure, a control fault or timer malfunction could close both contactors together, creating a dangerous short circuit through the motor windings &mdash; proper interlocking is a safety-critical, not optional, part of star-delta starter design.</p>
+      <p><strong>8. Reusing a previously verified timer setting after changing the motor or driven load.</strong> Acceleration behavior depends on the specific motor and load combination &mdash; a timer setting verified correct for one configuration shouldn't be assumed valid after a motor replacement or significant load change without re-verification.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does a star-delta starter need three separate contactors?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The main contactor connects the supply to the motor's winding terminals and carries full running current continuously. The star contactor temporarily connects the winding ends together in a star configuration only during starting. The delta contactor connects the windings in their normal running (delta) configuration once starting is complete — together, these three contactors implement the switch from reduced-voltage star starting to full-voltage delta running.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the standard sizing rule for the main contactor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The main contactor should be rated at or above the motor's full load line current (FLC), since it carries the complete motor running current continuously once the motor transitions to normal delta operation and throughout normal running.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the standard sizing rule for the delta contactor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The delta contactor should be rated at approximately 0.58 (58%) of the motor's full load line current, since it sits in series with two of the three motor windings in the delta configuration, carrying phase current rather than the full line current the main contactor sees.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the standard sizing rule for the star contactor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The star contactor should be rated at approximately 0.33 (33%) of the motor's full load line current, since it only carries the reduced star-connection starting current, and only briefly during the starting period — its duty is lighter and shorter than either the main or delta contactor's duty.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How long should the star timer be set for?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The star timer should be set long enough for the motor to reach close to its full running speed while still in star connection, but not excessively longer than necessary — typical settings range from about 3 to 10 seconds depending on motor size and the driven load's inertia, though the correct setting for any specific installation should be verified by observing actual motor acceleration behavior during commissioning, not just assumed from a generic range.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What happens if the star timer is set too short?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Transitioning to delta before the motor has reached adequate speed causes a second, more severe current and torque transient at the transition moment, since the motor is still accelerating rather than running near full speed — this can partially defeat the purpose of star-delta starting's reduced-current benefit and cause additional mechanical stress.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What happens if the star timer is set too long?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The motor continues running in the reduced-torque, reduced-current star configuration longer than necessary, which is generally less harmful than switching too early, but for loads with substantial starting torque requirements, an excessively long star period can mean the motor never actually reaches full speed in star configuration, potentially stalling or drawing sustained high current without ever accelerating properly.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can a star-delta starter be used with a soft starter or VFD for a smoother transition?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Star-delta starters are a distinct, older technology from soft starters and VFDs — a soft starter or VFD generally replaces a star-delta arrangement entirely rather than being combined with it, since both achieve reduced-current starting through fundamentally different means (electronic voltage/frequency control rather than mechanical winding reconfiguration) that aren't typically used together on the same motor.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does a star-delta starter need any additional protective devices beyond the three contactors?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — a star-delta starter still needs overcurrent/overload protection (typically an overload relay, sized to the motor's full load running current) and short-circuit protection (a fuse or MCCB), plus the timer relay controlling the star-to-delta transition sequence — the three contactors alone only handle the switching function, not protection.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateStarDeltaContactors(){
+    const flc = parseFloat(document.getElementById('flc').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(flc) || flc <= 0){ errors.push('Enter a valid full load current greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rDelta').textContent = '\u2014';
+      document.getElementById('rStar').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const mainRating = flc * 1.0;
+    const deltaRating = flc * 0.58;
+    const starRating = flc * 0.33;
+
+    document.getElementById('rResult').textContent = mainRating.toLocaleString('en-IN', {maximumFractionDigits:1}) + ' A';
+    document.getElementById('resultSub').textContent = 'For FLC=' + flc + 'A';
+    document.getElementById('rDelta').textContent = deltaRating.toFixed(1) + ' A';
+    document.getElementById('rStar').textContent = starRating.toFixed(1) + ' A';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Contactor</th><th>Multiplier</th><th>Rating</th></tr></thead>
+            <tbody>
+                <tr><td>Main</td><td>1.00×</td><td><strong>${mainRating.toFixed(1)} A</strong></td></tr>
+                <tr><td>Delta</td><td>0.58×</td><td>${deltaRating.toFixed(1)} A</td></tr>
+                <tr><td>Star</td><td>0.33×</td><td>${starRating.toFixed(1)} A</td></tr>
+                <tr><td>Full Load Current</td><td colspan="2">${flc} A</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateStarDeltaContactors();
+</script>
+
+</body>
+</html>

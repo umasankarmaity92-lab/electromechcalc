@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Transformer Efficiency Calculator (Core & Copper Losses) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Transformer Efficiency Calculator. Enter transformer rating, load fraction, power factor, core loss, and copper loss to get efficiency and maximum efficiency load point instantly, with formula and worked example.">
+<meta name="keywords" content="transformer efficiency calculator, core loss copper loss calculator, transformer maximum efficiency, transformer losses formula, transformer performance calculator">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/transformer-efficiency">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Transformer Efficiency Calculator">
+<meta property="og:description" content="Free Transformer Efficiency Calculator — enter rating, load, and losses to get efficiency and maximum efficiency load point instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/transformer-efficiency">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Transformer Efficiency Calculator">
+<meta name="twitter:description" content="Free Transformer Efficiency Calculator — enter rating, load, and losses to get efficiency and maximum efficiency load point instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Transformer Efficiency Calculator",
+  "url": "https://www.electromechcalc.com/electrical/transformer-efficiency",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Transformer Efficiency Calculator. Enter transformer rating, load fraction, power factor, core loss, and copper loss to get efficiency and maximum efficiency load point instantly, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for transformer efficiency?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Efficiency (%) = Output Power ÷ (Output Power + Core Loss + Copper Loss) × 100. Output power is the actual load being served (kVA × power factor); core loss is essentially constant regardless of load; copper loss varies with the square of load current (or load fraction)." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does copper loss vary with the square of load, while core loss stays constant?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Core (iron) loss comes from magnetizing the transformer's core, which happens continuously whenever the transformer is energized at rated voltage, regardless of how much load current flows — it's essentially constant. Copper loss comes from I²R heating in the windings, which by definition scales with the square of current, so copper loss at any load fraction equals that fraction squared multiplied by the full-load copper loss figure." }
+    },
+    {
+      "@type": "Question",
+      "name": "At what load does a transformer achieve its maximum efficiency?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Maximum efficiency occurs at the load fraction where copper loss equals core loss, calculated as Load Fraction = √(Core Loss ÷ Full-Load Copper Loss). This is a fundamental result of transformer loss theory — since core loss is constant and copper loss grows with load squared, the total loss curve has a minimum (relative to output) exactly where these two loss components are equal." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why isn't a transformer designed to have its maximum efficiency point at 100% load?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Transformers are typically designed with their maximum efficiency point somewhere below full load (commonly in the 50-75% load range) because most transformers spend the majority of their operating hours at partial load, not continuously at 100% rated load — designing for peak efficiency at a typical average operating load, rather than at rated (often rarely sustained) full load, minimizes real-world energy losses over the transformer's actual operating life." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does power factor affect transformer efficiency?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — output power (numerator in the efficiency formula) is kVA × power factor, so a lower power factor reduces useful output power for the same kVA loading and current (and therefore the same losses), which reduces calculated efficiency. This is one of several reasons poor power factor is undesirable beyond just the demand charge and capacity implications discussed elsewhere — it also directly reduces a transformer's effective operating efficiency." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I find core loss and copper loss values for a specific transformer?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Core (iron) loss is measured via a no-load (open-circuit) test, and full-load copper loss is measured via a short-circuit test, both standard factory acceptance tests performed on every manufactured transformer — these values are published on the transformer's test certificate or datasheet, and should be used directly rather than estimated for an accurate efficiency calculation." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is a higher transformer efficiency always worth paying more for?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not automatically — higher-efficiency transformers (often achieved through better core materials or larger conductor cross-sections) typically cost more upfront, so the decision involves comparing that additional capital cost against the present value of the energy savings over the transformer's expected service life, considering actual load profile, electricity cost, and operating hours — a transformer that runs lightly loaded for a few hours a day benefits less from a premium high-efficiency design than one running near its optimal efficiency point continuously." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does transformer efficiency change with ambient temperature?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Indirectly — winding resistance (and therefore copper loss for a given current) increases somewhat with temperature, so a transformer running hotter (due to high ambient temperature or heavy sustained loading) experiences marginally higher copper loss, and therefore marginally lower efficiency, than the same loading condition at a cooler reference temperature. This effect is generally secondary to the load-fraction effect but can matter for precise efficiency verification." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Transformers
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Transformer Efficiency <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Transformer efficiency at any load point from rating, load fraction, power factor, core loss, and copper loss — plus the load at which efficiency peaks.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Transformer Efficiency Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter rating, load, power factor, and loss figures.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Transformer Rating (kVA)</label>
+          <input id="ratingKVA" type="number" value="1000" step="10" min="0" placeholder="e.g. 1000" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Load Fraction (% of rated kVA)</label>
+          <input id="loadFraction" type="number" value="75" step="1" min="0" max="150" placeholder="e.g. 75" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Power Factor</label>
+          <input id="powerFactor" type="number" value="0.9" step="0.01" min="0.1" max="1" placeholder="e.g. 0.9" class="input-field mt-2">
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Core Loss (W)</label>
+            <input id="coreLoss" type="number" value="1200" step="10" min="0" placeholder="e.g. 1200" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Full Load Copper Loss (W)</label>
+            <input id="copperLoss" type="number" value="10800" step="10" min="0" placeholder="e.g. 10800" class="input-field mt-2">
+          </div>
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateTransformerEfficiency()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">η = Output ÷ (Output + Losses) × 100</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Efficiency</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Max Efficiency Load</span>
+            <span id="rMaxEffLoad" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Max Efficiency</span>
+            <span id="rMaxEff" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/ct-ratio" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          CT Ratio Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/pt-ratio" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          PT Ratio Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/voltage-regulation" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Voltage Regulation Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/short-circuit-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Short Circuit Current Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Transformer Efficiency Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding transformer losses and efficiency</a></li>
+      <li><a href="#second" class="hover:underline">3. Why maximum efficiency occurs at a specific load, not full load</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Transformer Efficiency Is Calculated from Core and Copper Losses</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard transformer efficiency formula (core loss + copper loss method)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>A transformer converts input electrical power to output electrical power at a different voltage, and like any real device, some power is lost along the way as heat &mdash; efficiency simply expresses what fraction of input power actually reaches the output as useful power. Transformer losses split into two distinct components with very different behavior: core (iron) loss, which stays essentially constant regardless of load, and copper (winding) loss, which grows with the square of load current.</p>
+
+      <p><strong>Formula used:</strong> Efficiency (%) = Output Power &divide; (Output Power + Core Loss + Copper Loss) &times; 100, where Output Power = Load Fraction &times; Rated kVA &times; Power Factor &times; 1000 (W), and Copper Loss at that load = (Load Fraction)&sup2; &times; Full-Load Copper Loss.</p>
+
+      <p><strong>Worked example:</strong> a 1000 kVA transformer operating at 75% load, 0.9 power factor, with 1200 W core loss and 10,800 W full-load copper loss. Output Power = 0.75 &times; 1000 &times; 0.9 &times; 1000 = 675,000 W. Copper Loss at 75% load = 0.75&sup2; &times; 10,800 = 6,075 W. Total Losses = 1,200 + 6,075 = 7,275 W. Input Power = 675,000 + 7,275 = 682,275 W. Efficiency = 675,000 &divide; 682,275 &times; 100 &asymp; 98.93%.</p>
+
+      <p><strong>Finding the maximum efficiency load point:</strong> Maximum Efficiency Load Fraction = &radic;(Core Loss &divide; Full-Load Copper Loss) = &radic;(1200 &divide; 10,800) = &radic;0.1111 &asymp; 0.333, or 33.3% load. At this load, copper loss equals core loss (both 1,200 W), and efficiency reaches its maximum &asymp; 99.21% for this transformer &mdash; notably higher than the 98.93% calculated at 75% load, illustrating that this particular transformer is actually most efficient well below its rated capacity, not at or near full load.</p>
+
+      <p><strong>Why the maximum efficiency point exists mathematically:</strong> total loss = core loss (constant) + copper loss (proportional to load squared). As load increases from zero, copper loss starts small and grows quadratically while core loss stays fixed &mdash; the ratio of total loss to output power (which determines efficiency) is minimized exactly where the two loss components are equal, a standard calculus result from setting the derivative of the efficiency function with respect to load to zero. This is why every transformer has one specific load fraction where it operates most efficiently, determined entirely by the ratio of its core loss to its full-load copper loss.</p>
+
+      <p><strong>All-day efficiency &mdash; a more realistic measure for variable-load transformers:</strong> the efficiency figure calculated at a single load point (this calculator's output) captures a snapshot, but real transformers, especially distribution transformers, experience continuously varying load over a typical day. All-day efficiency accounts for this by weighting energy output and energy losses over an actual (or assumed representative) load profile across 24 hours, rather than a single instantaneous load point &mdash; it's calculated as total energy output over the period divided by total energy input over the same period, and generally gives a more meaningful figure for comparing transformers intended for variable-load service than a single-point efficiency calculation alone, since it properly weights the substantial time a transformer spends at partial load (where core loss, being constant, represents a proportionally larger share of losses relative to output than it does at full load).</p>
+
+      <p><strong>Efficiency standards and labeling:</strong> many countries have adopted minimum efficiency performance standards (MEPS) for distribution transformers, specifying minimum required efficiency (often at a standard reference load point like 50% load) that newly manufactured transformers must meet. These standards exist precisely because transformer losses, while individually appearing small, aggregate into meaningful energy consumption across an entire grid's transformer fleet, operating continuously for decades &mdash; regulatory efficiency standards are one of the more cost-effective broad energy efficiency interventions available, since they target equipment that's replaced relatively infrequently but consumes energy essentially continuously throughout its service life.</p>
+
+      <p><strong>Loss reduction strategies in transformer design:</strong> reducing core loss typically involves using higher-grade core steel (grain-oriented silicon steel, or increasingly amorphous metal cores for premium-efficiency designs) that has inherently lower hysteresis and eddy current losses per unit of magnetizing flux. Reducing copper loss typically involves using larger conductor cross-sections in the windings (lower resistance for the same current), though this increases material cost and physical size. Both approaches trade higher manufacturing cost for lower ongoing operating losses &mdash; the economic case for a higher-efficiency (and higher first-cost) transformer improves with higher electricity cost, higher expected utilization/load factor, and longer expected service life, all of which increase the present value of the energy savings relative to the upfront cost premium.</p>
+
+      <p><strong>Summary:</strong> use Efficiency = Output &divide; (Output + Core Loss + Copper Loss) &times; 100, with Copper Loss scaling as (Load Fraction)&sup2; &times; Full-Load Copper Loss, and find maximum efficiency load fraction as &radic;(Core Loss &divide; Full-Load Copper Loss). Use actual test certificate loss figures for accuracy, consider all-day efficiency for variable-load applications rather than a single load point, and weigh higher-efficiency equipment cost against realistic expected load profile and electricity cost over the transformer's service life.</p>
+
+      <p><strong>Diagnosing unexpectedly poor field efficiency:</strong> if a transformer's measured real-world efficiency seems lower than its rated/calculated figure would suggest, useful things to check include whether actual operating power factor is worse than assumed (directly reducing calculated output power for the same kVA loading), whether ambient temperature is unusually high (increasing copper loss via higher winding resistance), and whether the transformer is being operated well away from its maximum efficiency load point in a way that wasn't anticipated during initial specification &mdash; comparing actual measured input and output power against this calculator's theoretical prediction for the same load point is a useful diagnostic first step before assuming a hardware problem.</p>
+
+      <p>A transformer's losses also generate heat that must be dissipated &mdash; while this calculator focuses on the energy/efficiency implications of core and copper loss, the same losses drive the transformer's thermal design and cooling requirements (natural air cooling, forced air, oil-cooling with radiators, and so on), so a transformer with unusually high losses for its rating may also run hotter than expected, a related but separate consideration from the efficiency percentage calculated here.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">1000kVA, 75% load, PF=0.9, core=1200W, Cu(FL)=10800W: Output=675,000W, Losses=7,275W, Efficiency &asymp; <strong>98.93%</strong>. Max efficiency at <strong>33.3% load</strong> &asymp; <strong>99.21%</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator uses core loss and copper loss figures you supply — these should come from the transformer's test certificate or manufacturer datasheet (no-load/open-circuit test for core loss, short-circuit test for full-load copper loss) for an accurate result, rather than assumed or estimated values, since efficiency calculations are quite sensitive to these loss figures. For a realistic assessment of variable-load applications, consider calculating all-day efficiency over an actual or representative load profile rather than relying on a single load-point snapshot.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Key Concept</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Why Maximum Efficiency Doesn't Occur at Full Load</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>It's a common misconception that a transformer is most efficient when running at or near its rated (100%) load &mdash; in reality, most transformers are deliberately designed so their maximum efficiency point falls somewhere below full load, commonly in the 50-75% range for distribution transformers, precisely because most transformers spend the majority of their operational hours at partial load rather than continuously at full rated capacity.</p>
+    <p>This is a deliberate design trade-off: a transformer's core loss and full-load copper loss are both design choices (driven by core material and conductor cross-section respectively), and the designer can shift the maximum efficiency point higher or lower by adjusting the ratio between these two loss components. A transformer expected to run consistently near full load (a dedicated feeder to one large, continuously operating facility) might reasonably be designed with its maximum efficiency point closer to 100% load,     <p>When comparing two transformer options at the specification stage, checking each candidate's maximum efficiency load point against your facility's actual expected typical (not just peak) load gives a more meaningful efficiency comparison than looking at a single quoted efficiency figure alone, especially if that quoted figure is calculated at a load point (like 100% or a manufacturer's own chosen reference point) that doesn't match how the transformer will actually be operated in your specific application.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Transformer Efficiency</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Assuming maximum efficiency always occurs at 100% (rated) load.</strong> Maximum efficiency occurs where core loss equals copper loss, a specific load fraction determined by the transformer's actual loss figures &mdash; for many transformers, this is meaningfully below full load, not at it.</p>
+      <p><strong>2. Using estimated or assumed loss figures instead of actual test certificate values.</strong> Core loss and copper loss vary by design and manufacturer even for transformers of identical kVA rating &mdash; always use the specific transformer's actual no-load and short-circuit test results for an accurate efficiency calculation.</p>
+      <p><strong>3. Forgetting that copper loss scales with load fraction squared, not linearly.</strong> Doubling load doesn't double copper loss &mdash; it quadruples it (since loss is proportional to current squared, and current is proportional to load) &mdash; using a linear assumption significantly understates copper loss at higher loads.</p>
+      <p><strong>4. Ignoring power factor's effect on calculated efficiency.</strong> Output power depends on power factor, not just kVA loading alone &mdash; comparing efficiency figures calculated at different assumed power factors isn't a fair apples-to-apples comparison.</p>
+      <p><strong>5. Comparing efficiency figures from different sources without confirming they're calculated at the same load point.</strong> A transformer's efficiency varies continuously with load &mdash; a manufacturer's quoted "efficiency" figure and your own calculated efficiency at a specific operating load can differ simply because they're evaluated at different load fractions, not because either figure is wrong.</p>
+      <p><strong>6. Overlooking temperature effects on copper loss for precise efficiency verification.</strong> Winding resistance, and therefore copper loss, increases somewhat with operating temperature &mdash; a transformer running hot under sustained heavy load has marginally higher copper loss (and marginally lower efficiency) than the same load calculated using a cooler reference-temperature resistance value.</p>
+      <p><strong>7. Evaluating transformer efficiency using peak load alone rather than a realistic operating profile.</strong> A transformer sized and specified based only on peak load efficiency may spend most of its actual operating hours at a very different, often lighter, load point &mdash; consider all-day efficiency or at least a realistic typical-load efficiency check, not just a peak-load snapshot.</p>
+      <p><strong>8. Assuming higher efficiency is always economically justified regardless of application.</strong> The economic case for paying a premium for higher-efficiency equipment depends on actual load factor, electricity cost, and expected service life &mdash; a lightly-loaded, short-service-life, or low-electricity-cost application may not justify the same efficiency premium as a heavily-loaded, long-life, high-electricity-cost one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for transformer efficiency?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Efficiency (%) = Output Power ÷ (Output Power + Core Loss + Copper Loss) × 100. Output power is the actual load being served (kVA × power factor); core loss is essentially constant regardless of load; copper loss varies with the square of load current (or load fraction).</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does copper loss vary with the square of load, while core loss stays constant?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Core (iron) loss comes from magnetizing the transformer's core, which happens continuously whenever the transformer is energized at rated voltage, regardless of how much load current flows — it's essentially constant. Copper loss comes from I²R heating in the windings, which by definition scales with the square of current, so copper loss at any load fraction equals that fraction squared multiplied by the full-load copper loss figure.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        At what load does a transformer achieve its maximum efficiency?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Maximum efficiency occurs at the load fraction where copper loss equals core loss, calculated as Load Fraction = √(Core Loss ÷ Full-Load Copper Loss). This is a fundamental result of transformer loss theory — since core loss is constant and copper loss grows with load squared, the total loss curve has a minimum (relative to output) exactly where these two loss components are equal.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why isn't a transformer designed to have its maximum efficiency point at 100% load?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Transformers are typically designed with their maximum efficiency point somewhere below full load (commonly in the 50-75% load range) because most transformers spend the majority of their operating hours at partial load, not continuously at 100% rated load — designing for peak efficiency at a typical average operating load, rather than at rated (often rarely sustained) full load, minimizes real-world energy losses over the transformer's actual operating life.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does power factor affect transformer efficiency?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — output power (numerator in the efficiency formula) is kVA × power factor, so a lower power factor reduces useful output power for the same kVA loading and current (and therefore the same losses), which reduces calculated efficiency. This is one of several reasons poor power factor is undesirable beyond just the demand charge and capacity implications discussed elsewhere — it also directly reduces a transformer's effective operating efficiency.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I find core loss and copper loss values for a specific transformer?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Core (iron) loss is measured via a no-load (open-circuit) test, and full-load copper loss is measured via a short-circuit test, both standard factory acceptance tests performed on every manufactured transformer — these values are published on the transformer's test certificate or datasheet, and should be used directly rather than estimated for an accurate efficiency calculation.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is a higher transformer efficiency always worth paying more for?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Not automatically — higher-efficiency transformers (often achieved through better core materials or larger conductor cross-sections) typically cost more upfront, so the decision involves comparing that additional capital cost against the present value of the energy savings over the transformer's expected service life, considering actual load profile, electricity cost, and operating hours — a transformer that runs lightly loaded for a few hours a day benefits less from a premium high-efficiency design than one running near its optimal efficiency point continuously.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does transformer efficiency change with ambient temperature?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Indirectly — winding resistance (and therefore copper loss for a given current) increases somewhat with temperature, so a transformer running hotter (due to high ambient temperature or heavy sustained loading) experiences marginally higher copper loss, and therefore marginally lower efficiency, than the same loading condition at a cooler reference temperature. This effect is generally secondary to the load-fraction effect but can matter for precise efficiency verification.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why do modern energy-efficiency standards focus so much on transformer losses?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Transformers operate continuously (energized 24/7 whenever connected to a live system, even with zero load, due to core loss alone), and there are enormous numbers of them in any power distribution system — even a small efficiency improvement per unit, multiplied across a utility's or country's entire transformer fleet operating continuously for years, represents a substantial aggregate energy saving, which is why transformer efficiency standards (like various national minimum efficiency performance standards) receive significant regulatory attention.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateTransformerEfficiency(){
+    const rating = parseFloat(document.getElementById('ratingKVA').value);
+    const loadPercent = parseFloat(document.getElementById('loadFraction').value);
+    const pf = parseFloat(document.getElementById('powerFactor').value);
+    const coreLoss = parseFloat(document.getElementById('coreLoss').value);
+    const copperLossFL = parseFloat(document.getElementById('copperLoss').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(rating) || rating <= 0){ errors.push('Enter a valid transformer rating greater than 0.'); }
+    if(isNaN(loadPercent) || loadPercent < 0){ errors.push('Enter a valid load fraction (0% or more).'); }
+    if(isNaN(pf) || pf <= 0 || pf > 1){ errors.push('Power factor must be between 0 and 1.'); }
+    if(isNaN(coreLoss) || coreLoss < 0){ errors.push('Enter a valid core loss (0 or more).'); }
+    if(isNaN(copperLossFL) || copperLossFL <= 0){ errors.push('Enter a valid full load copper loss greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rMaxEffLoad').textContent = '\u2014';
+      document.getElementById('rMaxEff').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const loadFraction = loadPercent / 100;
+    const outputPower = loadFraction * rating * pf * 1000;
+    const copperLoss = Math.pow(loadFraction, 2) * copperLossFL;
+    const totalLoss = coreLoss + copperLoss;
+    const inputPower = outputPower + totalLoss;
+    const efficiency = (outputPower / inputPower) * 100;
+
+    const maxEffLoadFraction = Math.sqrt(coreLoss / copperLossFL);
+    const maxOutput = maxEffLoadFraction * rating * pf * 1000;
+    const maxCopperLoss = Math.pow(maxEffLoadFraction, 2) * copperLossFL;
+    const maxTotalLoss = coreLoss + maxCopperLoss;
+    const maxInput = maxOutput + maxTotalLoss;
+    const maxEfficiency = (maxOutput / maxInput) * 100;
+
+    document.getElementById('rResult').textContent = efficiency.toLocaleString('en-IN', {maximumFractionDigits:2}) + '%';
+    document.getElementById('resultSub').textContent = loadPercent + '% load, PF=' + pf;
+    document.getElementById('rMaxEffLoad').textContent = (maxEffLoadFraction*100).toFixed(1) + '%';
+    document.getElementById('rMaxEff').textContent = maxEfficiency.toFixed(2) + '%';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Output Power</td><td>${(outputPower/1000).toFixed(1)} kW</td></tr>
+                <tr><td>Core Loss</td><td>${coreLoss} W</td></tr>
+                <tr><td>Copper Loss at this Load</td><td>${copperLoss.toFixed(1)} W</td></tr>
+                <tr><td>Total Losses</td><td>${totalLoss.toFixed(1)} W</td></tr>
+                <tr><td>Input Power</td><td>${(inputPower/1000).toFixed(2)} kW</td></tr>
+                <tr><td><strong>Efficiency</strong></td><td><strong>${efficiency.toFixed(2)}%</strong></td></tr>
+                <tr><td>Load Fraction for Max Efficiency</td><td>${(maxEffLoadFraction*100).toFixed(1)}%</td></tr>
+                <tr><td>Maximum Achievable Efficiency</td><td>${maxEfficiency.toFixed(2)}%</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateTransformerEfficiency();
+</script>
+
+</body>
+</html>

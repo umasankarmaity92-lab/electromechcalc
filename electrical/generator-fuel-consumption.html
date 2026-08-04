@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Generator Fuel Consumption Calculator (Diesel Genset) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Generator Fuel Consumption Calculator for diesel gensets. Enter load, specific fuel consumption, and run duration to get fuel consumption rate and total fuel used instantly, with formula and worked example.">
+<meta name="keywords" content="generator fuel consumption calculator, diesel genset fuel calculator, specific fuel consumption, dg set fuel consumption formula, genset running cost calculator">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/generator-fuel-consumption">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Generator Fuel Consumption Calculator">
+<meta property="og:description" content="Free Generator Fuel Consumption Calculator — enter load, SFC, and run duration to get fuel consumption instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/generator-fuel-consumption">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Generator Fuel Consumption Calculator">
+<meta name="twitter:description" content="Free Generator Fuel Consumption Calculator — enter load, SFC, and run duration to get fuel consumption instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Generator Fuel Consumption Calculator",
+  "url": "https://www.electromechcalc.com/electrical/generator-fuel-consumption",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Generator Fuel Consumption Calculator for diesel gensets. Enter load, specific fuel consumption, and run duration to get fuel consumption rate and total fuel used instantly, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for generator fuel consumption?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Fuel Consumption Rate (L/hr) = Specific Fuel Consumption (L/kWh) × Load (kW). Total Fuel Used = Fuel Consumption Rate × Operating Duration (hours). Specific fuel consumption (SFC) is how much fuel the generator burns per kWh of electrical output at a given load." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a typical specific fuel consumption (SFC) value for a diesel generator?",
+      "acceptedAnswer": { "@type": "Answer", "text": "SFC typically ranges from roughly 0.28 to 0.40 L/kWh for diesel gensets, varying by engine size, technology, and most significantly by load factor — SFC is generally lowest (best efficiency) at high load (75-100% of rated capacity) and increases noticeably at low load, so always use an SFC figure appropriate to your actual expected operating load rather than a single generic average." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does a generator use more fuel per kWh at low load than at high load?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A diesel engine has certain fixed losses (friction, driving auxiliary systems, maintaining idle combustion) that don't scale down proportionally with reduced electrical output — at low load, these fixed losses represent a larger fraction of total fuel burned relative to the smaller amount of useful electrical energy produced, making fuel consumption per kWh (SFC) worse at low load than at high load, where the same fixed losses are spread over much more useful output." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it more economical to run one large generator at partial load, or a smaller generator near full load?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Generally, running a generator closer to its rated capacity (typically 70-100% load) gives better fuel efficiency (lower SFC) than running it lightly loaded — this is one of several reasons facilities with variable backup power needs sometimes use multiple smaller generators, running only as many as needed to keep each one reasonably loaded, rather than one large generator running mostly at low partial load." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I estimate fuel consumption for a facility's typical backup power scenario?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Estimate the facility's actual expected load during a power outage (not the generator's full rated capacity, unless the facility genuinely runs near that level), find the SFC value corresponding to that load fraction from the manufacturer's fuel consumption curve, then apply the formula with your expected outage duration — using rated capacity SFC for an facility that actually runs at a lower partial load during outages will understate real fuel consumption." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does fuel consumption scale linearly with load, or is the relationship more complex?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The relationship between load and fuel consumption rate (L/hr) is roughly linear across much of the operating range for most diesel engines, but SFC (L/kWh, fuel per unit of output) is not constant across load — it's worse at low load and improves toward higher load, meaning total fuel burned isn't simply proportional to load in the way a perfectly linear, constant-efficiency device would suggest." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is fuel storage sizing important beyond just calculating consumption rate?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Beyond simply knowing how much fuel a generator burns per hour, facilities need adequate on-site fuel storage to cover the maximum realistic outage duration they need to plan for, plus a safety margin, and often need to account for fuel delivery lead time if extended outages are a genuine risk — fuel consumption calculation is the starting input for this broader fuel storage and refueling logistics planning, not the complete answer on its own." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does generator fuel consumption calculation account for fuel used during no-load or idle operation?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not directly in the basic load-proportional formula used here — a generator idling with zero electrical load still burns some fuel just to keep running, and periods of testing, warm-up, or standby idling should be accounted for separately if they represent a meaningful portion of total operating time for your specific application." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Generators & Backup Power
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Generator Fuel Consumption <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Diesel generator fuel consumption rate and total fuel used, from load, specific fuel consumption, and run duration — plus why generators burn more fuel per kWh at partial load.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Generator Fuel Consumption Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Enter load, specific fuel consumption, and run duration.</p>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Generator Load (kW)</label>
+          <input id="loadKW" type="number" value="200" step="1" min="0" placeholder="e.g. 200" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Specific Fuel Consumption, SFC (L/kWh)</label>
+          <input id="sfc" type="number" value="0.32" step="0.01" min="0.1" placeholder="e.g. 0.32" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Operating Duration (hours)</label>
+          <input id="duration" type="number" value="8" step="0.5" min="0" placeholder="e.g. 8" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateGeneratorFuel()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">Fuel Rate = SFC × Load</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Total Fuel Used</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Consumption Rate</span>
+            <span id="rRate" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Energy Produced</span>
+            <span id="rEnergy" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/load-factor" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Load Factor Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/battery-charging-time" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Battery Charging Time Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/electrical-energy-cost" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Electrical Energy Cost Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/maximum-demand" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          Maximum Demand Calculator <span class="text-sky-500">→</span>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Generator Fuel Consumption Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding specific fuel consumption (SFC)</a></li>
+      <li><a href="#second" class="hover:underline">3. Why fuel efficiency drops at partial load</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Generator Fuel Consumption Is Calculated</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard specific fuel consumption (SFC) method for diesel generators</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p>A diesel generator converts fuel energy into electrical output, and like any real energy conversion process, does so with less than 100% efficiency &mdash; specific fuel consumption (SFC) captures this efficiency as a practical, directly usable figure: liters of fuel burned per kWh of electrical energy produced. Multiplying SFC by load gives fuel consumption rate; multiplying that rate by run duration gives total fuel consumed.</p>
+
+      <p><strong>Formula used:</strong> Fuel Consumption Rate (L/hr) = SFC (L/kWh) &times; Load (kW). Total Fuel Used (L) = Fuel Consumption Rate &times; Operating Duration (hours).</p>
+
+      <p><strong>Worked example:</strong> a generator runs at 200 kW load with an SFC of 0.32 L/kWh for 8 hours. Fuel Consumption Rate = 0.32 &times; 200 = 64 L/hr. Total Fuel Used = 64 &times; 8 = 512 L. Over this 8-hour period, the generator also produces 200 &times; 8 = 1,600 kWh of electrical energy, so the same 512 L of fuel can be expressed as roughly 0.32 L per kWh produced &mdash; consistent with the SFC figure used, as expected.</p>
+
+      <p><strong>Where SFC values come from:</strong> generator manufacturers publish fuel consumption curves (or tables) showing SFC or absolute fuel consumption rate at several standard load percentages (commonly 25%, 50%, 75%, and 100% of rated capacity) for each specific genset model &mdash; using the SFC value corresponding to your actual expected operating load, not just the 100%-load figure, is important for an accurate estimate, since SFC changes meaningfully across the load range.</p>
+
+      <p><strong>Why total fuel isn't simply proportional to rated generator size:</strong> a larger generator running at a given kW load doesn't necessarily consume more fuel than a smaller generator delivering the identical kW load &mdash; what matters for fuel consumption is the actual kW output and the specific engine's SFC characteristic at that output level, not the generator's overall rated capacity. This is precisely why running a generator well below its rated capacity is fuel-inefficient on a per-kWh basis: you're paying (in fuel) for that generator's fixed losses while extracting comparatively little useful output relative to what the same fixed losses would support at a higher load.</p>
+
+      <p><strong>Practical implications for genset sizing decisions:</strong> a common tension in generator sizing exists between providing adequate margin for future load growth or occasional peak demand, and avoiding chronic underloading that hurts fuel efficiency during normal, typical operation. One practical approach some facilities use is a multi-generator arrangement (two or more smaller units running in parallel, synchronized to share load) rather than a single large unit &mdash; this allows running only as many units as needed to keep each one reasonably loaded during typical operation, while still providing adequate total capacity for peak or future demand by bringing additional units online only when actually needed.</p>
+
+      <p><strong>Fuel cost estimation beyond just consumption volume:</strong> once total fuel consumption is calculated, multiplying by current fuel price per liter gives estimated fuel cost for a given operating scenario &mdash; useful for budgeting planned generator runtime (scheduled maintenance testing, planned load shifting) or for evaluating the total cost of ownership trade-off between generator capital cost and expected ongoing fuel expense across different sizing or technology options being considered for a new installation.</p>
+
+      <p><strong>Emissions considerations linked to fuel consumption:</strong> since diesel combustion produces emissions roughly proportional to fuel burned, fuel consumption calculations also serve as a reasonable proxy for estimating a generator's emissions output for a given operating scenario &mdash; facilities subject to emissions reporting requirements, or simply tracking their carbon footprint, often use fuel consumption data (converted using standard emission factors for diesel combustion) as the basis for this reporting, making accurate fuel consumption estimation useful for environmental compliance and reporting purposes as well as operational cost planning.</p>
+
+      <p><strong>Summary:</strong> use Fuel Rate = SFC &times; Load and Total Fuel = Rate &times; Duration, always selecting an SFC value matched to your actual expected operating load (not just the full-load figure), remember that fuel efficiency degrades at partial load, and use consumption estimates as one input into broader fuel storage planning, cost budgeting, and emissions reporting rather than a standalone final answer.</p>
+
+      <p><strong>Load bank testing and its relationship to fuel consumption verification:</strong> facilities that periodically test their standby generators under simulated load (using a resistive load bank, rather than relying only on lightly-loaded no-load testing) get the added benefit of real-world fuel consumption data at a known, controlled load level &mdash; comparing this actual measured consumption against manufacturer-published SFC curves for that load level is a useful way to verify the generator is performing as expected, and to catch a developing engine efficiency problem (worn injectors, air filter restriction, or other maintenance issues) before it becomes a more serious reliability concern during an actual emergency use.</p>
+
+      <p><strong>Seasonal and ambient temperature effects on fuel consumption:</strong> engine efficiency, and therefore fuel consumption, can vary somewhat with ambient temperature and altitude, similar to the derating effects discussed for other electrical equipment &mdash; a generator's published SFC figures are typically referenced to standard conditions, and facilities operating in consistently hot, cold, or high-altitude environments may see somewhat different real-world fuel consumption than the reference figures suggest, another reason why comparing actual measured consumption (from load bank testing or genuine emergency operation) against reference figures periodically is valuable practice.</p>
+
+      <p>Whether you're planning fuel storage for a critical backup power installation, budgeting operating costs for a planned maintenance test schedule, or simply trying to understand why a generator seems to burn more fuel than expected during light-load operation, the specific fuel consumption relationship covered here &mdash; and its variation with load &mdash; is the foundational concept behind all of these practical questions.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">200kW load, SFC=0.32 L/kWh, 8 hours: Rate = 0.32&times;200 = <strong>64 L/hr</strong>. Total Fuel = 64&times;8 = <strong>512 L</strong> (1,600 kWh produced).</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Specific fuel consumption (SFC) varies by generator make, model, engine technology, and load factor — this calculator uses the SFC value you supply, which should ideally come from the generator manufacturer's published fuel consumption curve at your actual operating load, rather than a single assumed average figure, for an accurate result. Be aware of the minimum recommended load guidance from your generator manufacturer to avoid wet stacking risk from chronic light-load operation, and periodically validate published SFC figures against actual measured consumption during testing.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Key Concept</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Why Diesel Generators Are Least Fuel-Efficient at Low Load</h2>
+    <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Load (% of Rated Capacity)</th>
+          <th class="text-left px-4 py-2 font-semibold">Typical SFC (L/kWh)</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">25%</td><td class="px-4 py-2">0.40-0.50</td></tr>
+        <tr><td class="px-4 py-2">50%</td><td class="px-4 py-2">0.33-0.38</td></tr>
+        <tr><td class="px-4 py-2">75%</td><td class="px-4 py-2">0.30-0.34</td></tr>
+        <tr><td class="px-4 py-2">100%</td><td class="px-4 py-2">0.28-0.32</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>These are general illustrative ranges &mdash; exact SFC figures vary by generator make, model, engine technology, and age/maintenance condition, so always reference the specific manufacturer's published fuel consumption curve for your actual generator model rather than these general ranges for a precise calculation. The clear trend, however, is consistent across virtually all diesel gensets: fuel efficiency (lower SFC) improves as load increases toward rated capacity,     <p>It's also worth noting that many diesel engine manufacturers recommend a minimum load level (often around 30-40% of rated capacity) even for generators that will spend most of their time lightly loaded, specifically to avoid a phenomenon called "wet stacking" &mdash; incomplete combustion at very low, sustained light load that can cause unburned fuel and carbon deposits to accumulate in the exhaust system over time, potentially leading to engine damage or reduced reliability. This is a separate but related reason (beyond pure fuel efficiency) that chronic very-low-load generator operation is generally avoided in good operating practice.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Generator Fuel Consumption</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+            <p><strong>1. Using 100%-load SFC for a generator that actually runs at a lower partial load.</strong> SFC is meaningfully worse at partial load &mdash; using the best-case, full-load SFC figure for a facility that typically only reaches 40-50% load during outages understates real fuel consumption.</p>
+      <p><strong>2. Assuming total fuel consumption scales linearly with generator size rather than actual load.</strong> Fuel consumption depends on actual kW output and that specific engine's SFC at that output, not directly on the generator's overall rated capacity &mdash; two generators of different sizes delivering the identical kW load consume similar fuel if their SFC at that load point is similar.</p>
+      <p><strong>3. Ignoring idle/no-load fuel consumption for testing or standby periods.</strong> The basic load-proportional formula doesn't capture fuel burned while idling with no or minimal electrical load &mdash; account for this separately if periodic testing or extended standby idling represents meaningful operating time for your application.</p>
+      <p><strong>4. Not accounting for fuel quality or altitude effects on actual consumption.</strong> Manufacturer SFC figures are typically published for standard fuel quality and sea-level (or specified reference altitude) conditions &mdash; significant deviations from these reference conditions can shift actual fuel consumption from the published figures.</p>
+      <p><strong>5. Sizing fuel storage based only on consumption rate without considering maximum realistic outage duration and refueling logistics.</strong> Fuel consumption calculation is one input to a broader fuel storage planning exercise &mdash; it doesn't by itself determine how much on-site fuel storage capacity is actually needed for your specific outage risk profile and refueling logistics constraints.</p>
+      <p><strong>6. Running an oversized generator well below its efficient load range as routine practice.</strong> A generator significantly oversized relative to actual typical load runs persistently in its least fuel-efficient operating range &mdash; right-sizing generator capacity to actual expected load (with reasonable, not excessive, margin) improves real-world fuel economy over the equipment's service life.</p>
+      <p><strong>7. Ignoring the wet stacking risk from chronic very-low-load operation.</strong> Sustained running well below roughly 30-40% of rated capacity can cause incomplete combustion and carbon buildup over time, a reliability concern separate from pure fuel efficiency &mdash; check manufacturer minimum recommended load guidance, not just fuel cost, when planning chronic light-load operation.</p>
+      <p><strong>8. Never validating published SFC figures against actual measured consumption.</strong> Real-world fuel consumption can drift from manufacturer reference figures due to ambient conditions, fuel quality, or developing maintenance issues &mdash; periodic load bank testing with fuel consumption measurement helps catch this drift before it becomes a reliability concern.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+        <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for generator fuel consumption?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Fuel Consumption Rate (L/hr) = Specific Fuel Consumption (L/kWh) × Load (kW). Total Fuel Used = Fuel Consumption Rate × Operating Duration (hours). Specific fuel consumption (SFC) is how much fuel the generator burns per kWh of electrical output at a given load.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is a typical specific fuel consumption (SFC) value for a diesel generator?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">SFC typically ranges from roughly 0.28 to 0.40 L/kWh for diesel gensets, varying by engine size, technology, and most significantly by load factor — SFC is generally lowest (best efficiency) at high load (75-100% of rated capacity) and increases noticeably at low load, so always use an SFC figure appropriate to your actual expected operating load rather than a single generic average.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does a generator use more fuel per kWh at low load than at high load?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A diesel engine has certain fixed losses (friction, driving auxiliary systems, maintaining idle combustion) that don't scale down proportionally with reduced electrical output — at low load, these fixed losses represent a larger fraction of total fuel burned relative to the smaller amount of useful electrical energy produced, making fuel consumption per kWh (SFC) worse at low load than at high load, where the same fixed losses are spread over much more useful output.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is it more economical to run one large generator at partial load, or a smaller generator near full load?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Generally, running a generator closer to its rated capacity (typically 70-100% load) gives better fuel efficiency (lower SFC) than running it lightly loaded — this is one of several reasons facilities with variable backup power needs sometimes use multiple smaller generators, running only as many as needed to keep each one reasonably loaded, rather than one large generator running mostly at low partial load.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I estimate fuel consumption for a facility's typical backup power scenario?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Estimate the facility's actual expected load during a power outage (not the generator's full rated capacity, unless the facility genuinely runs near that level), find the SFC value corresponding to that load fraction from the manufacturer's fuel consumption curve, then apply the formula with your expected outage duration — using rated capacity SFC for an facility that actually runs at a lower partial load during outages will understate real fuel consumption.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does fuel consumption scale linearly with load, or is the relationship more complex?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The relationship between load and fuel consumption rate (L/hr) is roughly linear across much of the operating range for most diesel engines, but SFC (L/kWh, fuel per unit of output) is not constant across load — it's worse at low load and improves toward higher load, meaning total fuel burned isn't simply proportional to load in the way a perfectly linear, constant-efficiency device would suggest.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is fuel storage sizing important beyond just calculating consumption rate?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Beyond simply knowing how much fuel a generator burns per hour, facilities need adequate on-site fuel storage to cover the maximum realistic outage duration they need to plan for, plus a safety margin, and often need to account for fuel delivery lead time if extended outages are a genuine risk — fuel consumption calculation is the starting input for this broader fuel storage and refueling logistics planning, not the complete answer on its own.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does generator fuel consumption calculation account for fuel used during no-load or idle operation?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Not directly in the basic load-proportional formula used here — a generator idling with zero electrical load still burns some fuel just to keep running, and periods of testing, warm-up, or standby idling should be accounted for separately if they represent a meaningful portion of total operating time for your specific application.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How does fuel quality or altitude affect generator fuel consumption?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Lower fuel quality (lower energy content per liter) can increase the volume of fuel needed for the same electrical output, and high-altitude operation can reduce a naturally aspirated diesel engine's power output and efficiency due to reduced air density (though many modern generators use turbocharging to substantially compensate for this effect) — both factors can shift actual fuel consumption away from a manufacturer's standard-condition published SFC figures.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    function calculateGeneratorFuel(){
+    const loadKW = parseFloat(document.getElementById('loadKW').value);
+    const sfc = parseFloat(document.getElementById('sfc').value);
+    const duration = parseFloat(document.getElementById('duration').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(loadKW) || loadKW <= 0){ errors.push('Enter a valid generator load greater than 0.'); }
+    if(isNaN(sfc) || sfc <= 0){ errors.push('Enter a valid specific fuel consumption greater than 0.'); }
+    if(isNaN(duration) || duration <= 0){ errors.push('Enter a valid operating duration greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rRate').textContent = '\u2014';
+      document.getElementById('rEnergy').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const rate = sfc * loadKW;
+    const totalFuel = rate * duration;
+    const energyProduced = loadKW * duration;
+
+    document.getElementById('rResult').textContent = totalFuel.toLocaleString('en-IN', {maximumFractionDigits:1}) + ' L';
+    document.getElementById('resultSub').textContent = loadKW + 'kW for ' + duration + ' hours';
+    document.getElementById('rRate').textContent = rate.toFixed(1) + ' L/hr';
+    document.getElementById('rEnergy').textContent = energyProduced.toLocaleString('en-IN') + ' kWh';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Generator Load</td><td>${loadKW} kW</td></tr>
+                <tr><td>Specific Fuel Consumption</td><td>${sfc} L/kWh</td></tr>
+                <tr><td>Fuel Consumption Rate</td><td>${rate.toFixed(1)} L/hr</td></tr>
+                <tr><td>Operating Duration</td><td>${duration} hours</td></tr>
+                <tr><td><strong>Total Fuel Used</strong></td><td><strong>${totalFuel.toFixed(1)} L</strong></td></tr>
+                <tr><td>Energy Produced</td><td>${energyProduced.toLocaleString('en-IN')} kWh</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateGeneratorFuel();
+</script>
+
+</body>
+</html>
