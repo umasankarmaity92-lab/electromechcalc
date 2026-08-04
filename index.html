@@ -33,17 +33,25 @@
 <meta name="twitter:description" content="Free electrical, mechanical & financial calculators built for real fieldwork. Formulas shown, results instant, no sign-up.">
 <link rel="canonical" href="https://www.electromechcalc.com/">
 <link rel="icon" href="/favicon.png" type="image/png">
-<link rel="preload" as="style" href="/assets/tailwind.min.css">
-<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+<!-- Tailwind is render-blocking on purpose here — the site's entire layout
+     (flex, spacing, sizing) is built from Tailwind utility classes, so
+     deferring it (the earlier preload+media=print trick) let the browser
+     paint fully unstyled HTML first, then snap the whole page into its
+     real layout once Tailwind finished loading — a massive, page-wide
+     CLS hit. Google Fonts below stays non-blocking since a font swap is
+     a much smaller, contained visual change, not a layout collapse. -->
+<link rel="stylesheet" href="/assets/tailwind.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional"></noscript>
-<link rel="preload" as="style" href="/assets/theme.css">
-<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<!-- theme.css also render-blocking for the same layout-integrity reason
+     as Tailwind above — it defines structural rules (.blueprint-grid,
+     .nav-dropdown-panel, .cat-banner, etc.), not just decorative color
+     rules, so deferring it caused the same kind of pre/post-load layout
+     jump. -->
+<link rel="stylesheet" href="/assets/theme.css">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786" crossorigin="anonymous"></script>
 <style>
   .cat-banner{position:relative;display:block;width:100%;aspect-ratio:1200/515;border-radius:14px;overflow:hidden;box-shadow:0 6px 20px -8px rgba(11,18,32,0.35);border:1px solid rgba(11,18,32,0.06);isolation:isolate;transform:translateZ(0);transition:transform .35s ease,box-shadow .35s ease}
