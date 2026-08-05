@@ -84,7 +84,7 @@
     {
       "@type": "Question",
       "name": "What is the formula for deflection under a uniformly distributed load (UDL)?",
-      "acceptedAnswer": { "@type": "Answer", "text": "δ = 5wL⁴ / (384EI), where w is the total UDL load (or, equivalently, 5WL³/384EI where W is load per unit length and the L⁴ becomes L³ — always confirm which convention a source is using). This calculator asks for total UDL load and length, and computes internally with the correct exponents." }
+      "acceptedAnswer": { "@type": "Answer", "text": "δ = 5WL³ / (384EI), where W is the total UDL load across the span (not load per unit length). If you instead have load per unit length, w, use δ = 5wL⁴ / (384EI) — always confirm which convention a source is using before picking the exponent on L." }
     },
     {
       "@type": "Question",
@@ -500,7 +500,7 @@
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
             <p>Beam deflection tells you how much a beam sags under load — a serviceability check that matters for floors that feel "bouncy," machine bases that need to stay rigid, or any structure where excessive sag could crack finishes, misalign equipment, or simply look and feel wrong, even when the beam is nowhere close to breaking under bending stress. Deflection and bending stress are two separate checks: a beam can easily pass a stress check and still fail a deflection (stiffness) check, especially over longer spans.</p>
 
-      <p><strong>Formula used (central point load):</strong> δ = PL³ / (48EI), where P is the point load applied at mid-span, L is the span between supports, E is the modulus of elasticity of the beam material, and I is the second moment of area of the cross-section. <strong>Formula used (uniformly distributed load):</strong> δ = 5wL⁴ / (384EI), where w is the total distributed load across the span. Both formulas assume a simply supported beam — free to rotate at each support, resting on (not fixed into) both ends.</p>
+      <p><strong>Formula used (central point load):</strong> δ = PL³ / (48EI), where P is the point load applied at mid-span, L is the span between supports, E is the modulus of elasticity of the beam material, and I is the second moment of area of the cross-section. <strong>Formula used (uniformly distributed load):</strong> δ = 5WL³ / (384EI), where W is the total distributed load across the span (not load per unit length). Both formulas assume a simply supported beam — free to rotate at each support, resting on (not fixed into) both ends.</p>
 
       <p><strong>Worked example:</strong> a steel beam (E = 200,000 MPa) with a moment of inertia I = 8,000,000 mm⁴, spanning L = 2000 mm, carrying a 5000 N point load at its center: δ = (5000 × 2000³) / (48 × 200,000 × 8,000,000) = 4×10¹⁰ / 7.68×10¹³ ≈ 0.52 mm. That's a span-to-deflection ratio of roughly L/3846 — well within typical structural deflection limits (which often require L/250 to L/360 or better).</p>
 
@@ -559,7 +559,8 @@
     </table>
   </div>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-    <p>For the exact same total load (5000 N) on the exact same beam and span, spreading the load evenly across the span (UDL) instead of concentrating it at the center reduces maximum deflection to about 62.5% of the point-load case — this ratio (5/8) is a direct consequence of the different coefficients in the two formulas (1/48 for point load vs 5/384 for UDL, and 5/384 ÷ 1/48 = 5/8 exactly). This is a useful sanity check: if your real loading is somewhere between a pure point load and a pure UDL (like a load spread over the middle third of the span),     <p>In practice, many real beam loadings fall between these two textbook extremes — a beam supporting a row of closely spaced point loads (like floor joists under evenly spaced furniture legs) behaves closer to a UDL as the number of load points increases, while a beam with one dominant heavy load and several light ones behaves closer to the point-load case. When in doubt about which bounding formula to use for an irregular loading pattern, the point-load formula gives the more conservative (higher) deflection estimate, making it the safer default for a quick check.</p>
+    <p>For the exact same total load (5000 N) on the exact same beam and span, spreading the load evenly across the span (UDL) instead of concentrating it at the center reduces maximum deflection to about 62.5% of the point-load case — this ratio (5/8) is a direct consequence of the different coefficients in the two formulas (1/48 for point load vs 5/384 for UDL, and 5/384 ÷ 1/48 = 5/8 exactly). This is a useful sanity check: if your real loading is somewhere between a pure point load and a pure UDL (like a load spread over the middle third of the span).</p>
+      <p>In practice, many real beam loadings fall between these two textbook extremes — a beam supporting a row of closely spaced point loads (like floor joists under evenly spaced furniture legs) behaves closer to a UDL as the number of load points increases, while a beam with one dominant heavy load and several light ones behaves closer to the point-load case. When in doubt about which bounding formula to use for an irregular loading pattern, the point-load formula gives the more conservative (higher) deflection estimate, making it the safer default for a quick check.</p>
   </div>
 </section>
 
@@ -603,7 +604,7 @@
         What is the formula for deflection under a uniformly distributed load (UDL)?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">δ = 5wL⁴ / (384EI), where w is the total UDL load (or, equivalently, 5WL³/384EI where W is load per unit length and the L⁴ becomes L³ — always confirm which convention a source is using). This calculator asks for total UDL load and length, and computes internally with the correct exponents.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">δ = 5WL³ / (384EI), where W is the total UDL load across the span (not load per unit length). If you instead have load per unit length, w, use δ = 5wL⁴ / (384EI) — always confirm which convention a source is using before picking the exponent on L.</p>
     </details>
 
     <details class="py-5">
@@ -715,7 +716,7 @@
     document.getElementById('typePoint').classList.toggle('active', type === 'point');
     document.getElementById('typeUDL').classList.toggle('active', type === 'udl');
     document.getElementById('loadLabel').textContent = type === 'point' ? 'Point Load, P (N)' : 'Total UDL Load, w (N)';
-    document.getElementById('formulaChip').textContent = type === 'point' ? '\u03b4 = PL\u00b3 / (48EI)' : '\u03b4 = 5wL\u2074 / (384EI)';
+    document.getElementById('formulaChip').textContent = type === 'point' ? '\u03b4 = PL\u00b3 / (48EI)' : '\u03b4 = 5WL\u00b3 / (384EI)';
   }
 
   function calculateBeamDeflection(){
@@ -747,7 +748,7 @@
     if(beamLoadType === 'point'){
       deflection = (load * Math.pow(length,3)) / (48 * E * I);
     } else {
-      deflection = (5 * load * Math.pow(length,4)) / (384 * E * I);
+      deflection = (5 * load * Math.pow(length,3)) / (384 * E * I);
     }
 
     const ratio = length / deflection;
