@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- meta: {"category":"Mechanical"} -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== THEME (FLASH/CLS PREVENTION) =====================
+     Runs synchronously, before any stylesheet or paint, so the correct
+     dark-theme/light-theme class is already present on <html> the instant
+     CSS starts applying — no later class-add via site-nav.js's
+     DOMContentLoaded handler, which was causing a ~1.0 CLS hit as the
+     entire theme (colors AND several layout-affecting rules) snapped in
+     partway through the page's first paint. A matching inline script sits
+     right after <body> opens (see below) to cover the body.dark-theme /
+     body.light-theme selectors theme.css also relies on — site-nav.js
+     still re-applies both classes on DOMContentLoaded as a no-op safety
+     net (classList.add on an already-present class is a no-op) and is
+     what actually handles the toggle button switching themes later. -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Pump Power Calculator (Hydraulic, Shaft &amp; Motor Input) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free pump power calculator. Find hydraulic power, shaft (brake) power and motor input power from flow rate, total head, pump efficiency and motor efficiency.">
+<meta name="keywords" content="pump power calculator, hydraulic power formula, pump shaft power calculator, pump motor sizing, pump efficiency calculator, kW hp pump">
+<meta name="robots" content="index, follow">
+<!-- PAGE_CATEGORY = electrical | mechanical | financial (no slashes).
+     PAGE_SLUG = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/pump-power">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Pump Power Calculator">
+<meta property="og:description" content="Hydraulic power, shaft power and motor input power for a pump — from flow rate, total head, pump efficiency and motor efficiency.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/pump-power">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pump Power Calculator">
+<meta name="twitter:description" content="Hydraulic power, shaft power and motor input power for a pump — from flow rate, total head, pump efficiency and motor efficiency.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA =====================
+     Minimum 8 FAQ entries (Q1-Q8) — matches the site-wide standard set
+     across all published calculators. Add more (Q9, Q10...) as needed;
+     never ship fewer than 8, and keep this JSON-LD block in sync with
+     the visible FAQ_ITEMS accordion below (same questions, same
+     order) so structured data never diverges from on-page content. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Pump Power Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/pump-power",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free online calculator for pump hydraulic power, shaft (brake) power and motor input power, using flow rate, total head, fluid density, pump efficiency and motor efficiency.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Mechanical Calculators", "item": "https://www.electromechcalc.com/mechanical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "Pump Power Calculator", "item": "https://www.electromechcalc.com/mechanical/pump-power" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for pump hydraulic power?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Hydraulic power equals fluid density times gravitational acceleration times flow rate times total head, P = rho g Q H. This is the theoretical minimum power needed to move that flow against that head, with no allowance for pump or motor losses." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between hydraulic power, shaft power, and motor input power?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Hydraulic power is the useful work delivered to the fluid. Shaft power is what the pump's driver must supply to its shaft, which is higher than hydraulic power because the pump itself has internal losses (its efficiency). Motor input power is the electrical power drawn from the supply, which is higher again than shaft power because the motor also has its own efficiency losses." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is total head and how is it different from just the vertical lift?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Total head includes the static lift (the actual height difference the fluid is raised), plus friction losses in the suction and discharge piping, fittings and valves, plus any difference in pressure head between the source and the destination. It is always equal to or greater than the static lift alone, and using static lift alone will understate the power required." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does pump efficiency vary instead of being one fixed number?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Every pump has a performance curve where efficiency changes with flow rate, peaking at its Best Efficiency Point (BEP) and falling off as flow moves away from that point in either direction. The efficiency figure used in a power calculation should reflect the actual expected operating flow rate, not just the pump's single best rated efficiency." }
+    },
+    {
+      "@type": "Question",
+      "name": "How much margin should I add when selecting the actual motor size?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A common practice is to select the next standard motor frame size above the calculated motor input power requirement, rather than an exact custom size, which provides headroom for pump wear, minor system changes, and starting conditions. The specific margin depends on company standards and the criticality of the application." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does fluid viscosity affect pump power, not just density?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — this calculator's formula assumes a water-like, low-viscosity fluid. For significantly more viscous fluids (like heavy oils), both the pump's head-flow performance and its efficiency are affected by viscosity, requiring viscosity correction factors from the pump manufacturer rather than the plain hydraulic power formula alone." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is my calculated motor input power lower than the motor's actual measured electrical draw?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Several factors can explain a gap: the pump may be operating away from its assumed efficiency point on its curve, actual system head may differ from the design head, motor efficiency at partial load differs from its full-load rated efficiency, and there may be additional losses in the drive (like a belt or gearbox) not captured in a direct-coupled calculation." }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I use the pump's efficiency at the design flow rate or its maximum (BEP) efficiency?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Use the efficiency at the actual flow rate the pump will operate at most of the time, which is not always the same as its maximum BEP efficiency. If the pump's real operating point is away from BEP, using the peak efficiency figure will understate the true shaft power required at that operating point." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Free · Instant results
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Pump Power <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Hydraulic power, shaft power and motor input power for a pump — from flow rate, total head, pump efficiency and motor efficiency.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+      
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-5">Flow, Head &amp; Efficiency Inputs</h2>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Flow Rate (m³/hr)</label>
+          <input id="ppFlow" type="number" value="50" step="1" min="0" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Total Head, H (m)</label>
+          <input id="ppHead" type="number" value="30" step="1" min="0" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Fluid Density (kg/m³)</label>
+        <input id="ppDensity" type="number" value="1000" step="10" min="0" class="input-field mt-2">
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Pump Efficiency, ηₚ (%)</label>
+          <input id="ppPumpEff" type="number" value="70" step="1" min="1" max="100" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Motor Efficiency, ηₘ (%) — optional</label>
+          <input id="ppMotorEff" type="number" value="92" step="1" min="1" max="100" placeholder="leave blank to skip" class="input-field mt-2">
+        </div>
+      </div>
+
+      <button onclick="calculatePumpPower()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 rounded-lg transition">Calculate Power</button>
+
+      <div id="validationBox" class="hidden mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3"></div>
+
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+      
+      <div class="result-tile rounded-2xl p-6 text-white">
+        <span class="font-mono text-[11px] uppercase tracking-wider text-sky-300">Shaft (Brake) Power</span>
+        <div id="rResult" class="text-4xl font-display font-bold mt-1">—</div>
+        <div id="resultSub" class="text-gray-400 text-xs mt-2">—</div>
+        <div id="formulaChip" class="formula-chip mt-3">P = ρgQH / ηₚ</div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">Hydraulic Power</span>
+          <div id="rHydraulic" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">Motor Input Power</span>
+          <div id="rMotorInput" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Calculation Breakdown</span>
+        <div class="breakdown-wrap">
+          <div id="breakdownBox"></div>
+        </div>
+      </div>
+
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          
+          <a href="/mechanical/pipe-pressure-drop" class="nav-dropdown-link border border-gray-100">Pipe Pressure Drop Calculator</a>
+          <a href="/mechanical/hydraulic-cylinder-force" class="nav-dropdown-link border border-gray-100">Hydraulic Cylinder Force Calculator</a>
+          <a href="/mechanical/shaft-torque" class="nav-dropdown-link border border-gray-100">Shaft Torque Calculator</a>
+          <a href="/mechanical/heat-exchanger-duty" class="nav-dropdown-link border border-gray-100">Heat Exchanger Duty Calculator</a>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR =====================
+     Standard section on every published calculator. The single Share
+     Result button (openShareModal) and its modal are shared, site-wide
+     logic living in common.js + theme.css — nothing to add here beyond
+     this markup. setFeedback() below is per-page (each calculator
+     tracks its own Yes/No feedback state), matching how every other
+     published calculator implements it; add it inside
+     CALCULATOR_JS. No like/dislike buttons — Share Result + Yes/No
+     + Feedback mail is the current standard, deliberately lighter than
+     the old three-group bar. -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Pump Power Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS =====================
+     Standard 5-row TOC used across every published calculator.
+     Keep the anchors (#calculator, #how-it-works, #second, #mistakes,
+     #faqs) in sync with the actual section ids below — if a page
+     skips the optional SECOND_SECTION block, remove that li too
+     and renumber the rest. -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. How pump power is calculated</a></li>
+      <li><a href="#second" class="hover:underline">3. Typical centrifugal pump efficiency by flow</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== [PER-PAGE] EXPLANATION =====================
+     Target length across how-it-works + second + mistakes + FAQ
+     combined: 3000+ words of genuine, non-duplicated content (this is
+     the site-wide content-depth standard, not just a suggestion —
+     thin pages are the #1 AdSense/SEO risk on this site). Include a
+     worked numeric example with real figures, not just the formula. -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Pump power, explained</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard centrifugal pump hydraulic power formula, IS 5120/API 610 general practice</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p>Sizing a pump's drive motor starts with the <strong>hydraulic power</strong> — the actual useful work rate needed to lift a given flow of fluid against a given total head:</p>
+      <p class="formula-chip text-sm">Pₕᵧᵨ = ρ × g × Q × H</p>
+      <p>where ρ is fluid density, g is gravitational acceleration (9.80665 m/s²), Q is volumetric flow rate, and H is total head — the total energy per unit weight of fluid the pump must add, expressed as an equivalent height, combining static lift, friction losses in the piping, and any pressure difference between the source and destination.</p>
+      <p>No pump converts 100% of the mechanical energy delivered to its shaft into useful hydraulic work — internal losses from fluid recirculation, disk friction, and mechanical (bearing/seal) friction mean the <strong>shaft power</strong> (also called brake power, the power the driver must deliver to the pump shaft) is always higher than the hydraulic power, by a factor set by the pump's efficiency:</p>
+      <p class="formula-chip text-sm">Pₛₕₐᶠₜ = Pₕᵧᵨ / ηₚ</p>
+      <p>Finally, if the pump is driven by an electric motor, the motor itself also has losses (electrical and mechanical), so the <strong>motor input power</strong> — the actual electrical power drawn from the supply — is higher again than the shaft power, by the motor's own efficiency:</p>
+      <p class="formula-chip text-sm">Pₘₒₜₒᵣ = Pₛₕₐᶠₜ / ηₘ</p>
+      <p>Pump efficiency itself is not a fixed number for a given pump — it varies across the pump's operating curve, peaking at its Best Efficiency Point (BEP) and dropping off at flow rates well above or below that point. For motor sizing, the shaft power should be checked not just at the design duty point but across the pump's full expected operating range, since running far from BEP both wastes energy and can shorten pump life through increased vibration and bearing/seal wear.</p>
+
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      
+      <h3 class="font-display font-semibold text-brandDark mb-3">Worked Example</h3>
+      <p class="text-sm text-gray-600 mb-2">A centrifugal pump moves 50 m³/hr of water against 30 m total head, at 70% pump efficiency, driven by a motor with 92% efficiency.</p>
+      <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+        <li>Q = 50/3600 = 0.01389 m³/s</li>
+        <li>Hydraulic power = 1000 × 9.80665 × 0.01389 × 30 = 4,086 W ≈ <strong>4.09 kW</strong></li>
+        <li>Shaft power = 4.09 / 0.70 = <strong>5.84 kW</strong> (≈ 7.84 HP)</li>
+        <li>Motor input power = 5.84 / 0.92 = <strong>6.35 kW</strong> (≈ 8.52 HP)</li>
+      </ul>
+      <p class="text-sm text-gray-600 mt-2">A standard motor frame at or just above 6.35 kW (commonly a 7.5 kW / 10 HP motor in typical standard sizing steps) would normally be selected, giving headroom above the calculated duty point.</p>
+
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator gives steady-state power at the design flow and head; actual motor selection should also check the pump's power curve across its full operating range (including any run-out condition) and apply the motor manufacturer's standard frame sizing.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION (optional but standard) =====================
+     Every published calculator carries a second content block here —
+     a comparison table, a second worked scenario, a rate/limit
+     reference table, or a related-topic deep-dive (e.g. "how tenure
+     changes total interest", "GST slabs at a glance"). Drop the whole
+     <section> and its TOC <li> only if there is genuinely nothing
+     page-specific to add — don't leave it thin just to check the box. -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference table</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Typical centrifugal pump efficiency by flow rate</h2>
+  
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead><tr class="text-left text-gray-500 text-xs uppercase border-b border-gray-200">
+          <th class="py-2 pr-4">Pump size / flow range</th><th class="py-2">Typical peak (BEP) efficiency</th>
+        </tr></thead>
+        <tbody class="divide-y divide-gray-100 text-gray-700">
+          <tr><td class="py-2 pr-4">Small pumps, below ~10 m³/hr</td><td class="py-2">40 – 55%</td></tr>
+          <tr><td class="py-2 pr-4">Medium pumps, ~10–100 m³/hr</td><td class="py-2">55 – 75%</td></tr>
+          <tr><td class="py-2 pr-4">Large pumps, above ~100 m³/hr</td><td class="py-2">75 – 88%</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="text-sm text-gray-600 mt-4">Efficiency generally rises with pump size because mechanical and disk-friction losses become a smaller fraction of total power handled as the pump gets larger — this is one reason a single large pump is often more energy-efficient than several smaller pumps doing the same combined duty, all else being equal.</p>
+
+</section>
+
+<!-- ===================== COMMON MISTAKES =====================
+     Standard section on every published calculator. Minimum 5
+     numbered mistakes, each 1-2 sentences: state the mistake, then
+     why it's wrong / what it costs the user. -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common mistakes when calculating pump power</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p><strong>1. Using static lift alone as "head" and ignoring friction losses.</strong> Total head is the static lift plus all friction losses in the suction and discharge piping (and any pressure head difference) — using static lift alone significantly understates the true head the pump must overcome, and therefore understates power.</p>
+      <p><strong>2. Sizing the motor to shaft power at the design point only.</strong> Centrifugal pump power typically increases toward the low-head, high-flow end of its curve — a motor sized exactly to the design-point shaft power can be overloaded if the system operates further right on the curve (e.g. during low static head conditions).</p>
+      <p><strong>3. Forgetting motor efficiency when comparing to motor nameplate ratings.</strong> Shaft power is not the same as motor input (electrical) power — comparing a calculated shaft power directly against a motor's kW nameplate without accounting for motor efficiency slightly understates actual electricity draw.</p>
+      <p><strong>4. Using a generic efficiency figure instead of the actual pump curve.</strong> Pump efficiency varies with flow rate across the pump's operating curve and is different for every pump model and impeller trim — a rule-of-thumb efficiency is fine for early estimating, but final sizing should use the specific pump's published performance curve.</p>
+      <p><strong>5. Mixing up density for non-water fluids.</strong> Pumping a fluid denser or lighter than water (brine, oil, slurry) changes hydraulic power proportionally — using water's density (1000 kg/m³) for a different fluid gives a power figure that's wrong by the same ratio as the density difference.</p>
+      <p><strong>6. Not adding a safety margin on the selected motor size.</strong> Even after correctly calculating motor input power, it's common practice to select the next standard motor frame size above the calculated requirement, rather than the exact calculated value, to allow for pump wear, minor system changes, and starting torque requirements.</p>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] FAQ =====================
+     Minimum 8 <details> items, matching the 8 JSON-LD entries above
+     1-for-1 (same question text, same order) — schema and visible
+     content must never diverge. First item gets the `open` attribute. -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2">Straight answers on hydraulic power, shaft power, and sizing the drive motor.</p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    
+    <details class="py-4" open>
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What is the formula for pump hydraulic power?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Hydraulic power equals fluid density times gravitational acceleration times flow rate times total head, P = rho g Q H. This is the theoretical minimum power needed to move that flow against that head, with no allowance for pump or motor losses.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What is the difference between hydraulic power, shaft power, and motor input power?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Hydraulic power is the useful work delivered to the fluid. Shaft power is what the pump's driver must supply to its shaft, which is higher than hydraulic power because the pump itself has internal losses (its efficiency). Motor input power is the electrical power drawn from the supply, which is higher again than shaft power because the motor also has its own efficiency losses.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What is total head and how is it different from just the vertical lift?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Total head includes the static lift (the actual height difference the fluid is raised), plus friction losses in the suction and discharge piping, fittings and valves, plus any difference in pressure head between the source and the destination. It is always equal to or greater than the static lift alone, and using static lift alone will understate the power required.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why does pump efficiency vary instead of being one fixed number?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Every pump has a performance curve where efficiency changes with flow rate, peaking at its Best Efficiency Point (BEP) and falling off as flow moves away from that point in either direction. The efficiency figure used in a power calculation should reflect the actual expected operating flow rate, not just the pump's single best rated efficiency.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How much margin should I add when selecting the actual motor size?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">A common practice is to select the next standard motor frame size above the calculated motor input power requirement, rather than an exact custom size, which provides headroom for pump wear, minor system changes, and starting conditions. The specific margin depends on company standards and the criticality of the application.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Does fluid viscosity affect pump power, not just density?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Yes — this calculator's formula assumes a water-like, low-viscosity fluid. For significantly more viscous fluids (like heavy oils), both the pump's head-flow performance and its efficiency are affected by viscosity, requiring viscosity correction factors from the pump manufacturer rather than the plain hydraulic power formula alone.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why is my calculated motor input power lower than the motor's actual measured electrical draw?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Several factors can explain a gap: the pump may be operating away from its assumed efficiency point on its curve, actual system head may differ from the design head, motor efficiency at partial load differs from its full-load rated efficiency, and there may be additional losses in the drive (like a belt or gearbox) not captured in a direct-coupled calculation.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Should I use the pump's efficiency at the design flow rate or its maximum (BEP) efficiency?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Use the efficiency at the actual flow rate the pump will operate at most of the time, which is not always the same as its maximum BEP efficiency. If the pump's real operating point is away from BEP, using the peak efficiency figure will understate the true shaft power required at that operating point.</p>
+    </details>
+
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+  
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+
+  function calculatePumpPower(){
+    const flowM3hr = parseFloat(document.getElementById('ppFlow').value);
+    const head = parseFloat(document.getElementById('ppHead').value);
+    const density = parseFloat(document.getElementById('ppDensity').value);
+    const pumpEff = parseFloat(document.getElementById('ppPumpEff').value);
+    const motorEff = parseFloat(document.getElementById('ppMotorEff').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(flowM3hr) || flowM3hr <= 0){ errors.push('Enter a valid flow rate greater than 0.'); }
+    if(isNaN(head) || head <= 0){ errors.push('Enter a valid total head greater than 0.'); }
+    if(isNaN(density) || density <= 0){ errors.push('Enter a valid fluid density greater than 0.'); }
+    if(isNaN(pumpEff) || pumpEff <= 0 || pumpEff > 100){ errors.push('Pump efficiency must be between 1 and 100%.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rHydraulic').textContent = '\u2014';
+      document.getElementById('rMotorInput').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const flowM3s = flowM3hr / 3600;
+    const hydraulicPowerW = density * 9.80665 * flowM3s * head;
+    const hydraulicPowerKw = hydraulicPowerW / 1000;
+
+    const shaftPowerKw = hydraulicPowerKw / (pumpEff / 100);
+    const shaftPowerHp = shaftPowerKw * 1.341;
+
+    document.getElementById('rResult').textContent = shaftPowerKw.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' kW';
+    document.getElementById('resultSub').textContent = flowM3hr + ' m³/hr at ' + head + 'm head, ηₚ=' + pumpEff + '%';
+    document.getElementById('rHydraulic').textContent = hydraulicPowerKw.toFixed(2) + ' kW';
+
+    let motorHtml = '';
+    if(!isNaN(motorEff) && motorEff > 0 && motorEff <= 100){
+      const motorInputKw = shaftPowerKw / (motorEff / 100);
+      document.getElementById('rMotorInput').textContent = motorInputKw.toFixed(2) + ' kW';
+      motorHtml = '<tr><td>Motor Efficiency (ηₘ)</td><td>' + motorEff + '%</td></tr><tr><td><strong>Motor Input Power</strong></td><td><strong>' + motorInputKw.toFixed(2) + ' kW (' + (motorInputKw*1.341).toFixed(2) + ' HP)</strong></td></tr>';
+    } else {
+      document.getElementById('rMotorInput').textContent = '\u2014';
+    }
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Flow Rate</td><td>${flowM3hr} m³/hr (${flowM3s.toFixed(5)} m³/s)</td></tr>
+                <tr><td>Total Head (H)</td><td>${head} m</td></tr>
+                <tr><td>Fluid Density (ρ)</td><td>${density} kg/m³</td></tr>
+                <tr><td><strong>Hydraulic Power</strong></td><td><strong>${hydraulicPowerKw.toFixed(3)} kW</strong></td></tr>
+                <tr><td>Pump Efficiency (ηₚ)</td><td>${pumpEff}%</td></tr>
+                <tr><td><strong>Shaft (Brake) Power</strong></td><td><strong>${shaftPowerKw.toFixed(3)} kW (${shaftPowerHp.toFixed(2)} HP)</strong></td></tr>
+                ${motorHtml}
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculatePumpPower();
+
+</script>
+
+<script>
+  // ===== Generic Copy Result (added site-wide; does not touch page-specific calc logic) =====
+  function copyResultGeneric(){
+    var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
+    var btn = document.getElementById('copyResultBtn');
+    if (!panel || !btn) return;
+    var text = panel.innerText.trim();
+    function restore(){ btn.textContent = '📋 Copy Result'; }
+    if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = '✅ Copied';
+        setTimeout(restore, 1800);
+      }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+    } else {
+      btn.textContent = '⚠️ Not supported';
+      setTimeout(restore, 1800);
+    }
+  }
+
+  // ===== Generic number-input safety net (added site-wide; purely additive —
+  // runs on blur AFTER the page's own oninput/onchange calc handlers, and only
+  // corrects a value that is non-finite or outside the field's own declared
+  // min/max attributes, then re-fires "input" so the page's existing calc
+  // function recalculates with the corrected value. Never overrides or
+  // replaces any existing calculator logic. =====
+  (function(){
+    function clampNumberInput(el){
+      if (el.type !== 'number' || el.value === '') return;
+      var hasMin = el.hasAttribute('min');
+      var hasMax = el.hasAttribute('max');
+      var min = hasMin ? parseFloat(el.min) : null;
+      var max = hasMax ? parseFloat(el.max) : null;
+      var v = parseFloat(el.value);
+      var corrected = null;
+      if (!isFinite(v)) { corrected = (min !== null ? min : 0); }
+      else if (min !== null && v < min) { corrected = min; }
+      else if (max !== null && v > max) { corrected = max; }
+      if (corrected !== null && corrected !== v) {
+        el.value = corrected;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    document.querySelectorAll('input[type="number"]').forEach(function(el){
+      el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+</script>
+</body>
+</html>

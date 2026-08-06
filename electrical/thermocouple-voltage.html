@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== THEME (FLASH/CLS PREVENTION) ===================== -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Thermocouple Voltage Calculator (Type K, J, T, E) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Thermocouple Voltage Calculator for Type K, J, T and E. Enter hot and cold junction temperatures to get EMF output in mV using NIST ITS-90 reference polynomials, with formula and worked example.">
+<meta name="keywords" content="thermocouple voltage calculator, type k thermocouple mv calculator, thermocouple emf calculator, type j thermocouple voltage calculator, type t thermocouple calculator, type e thermocouple mv calculator, nist thermocouple table calculator, cold junction compensation calculator">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/thermocouple-voltage">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Thermocouple Voltage Calculator (Type K, J, T, E)">
+<meta property="og:description" content="Free Thermocouple Voltage Calculator — enter hot and cold junction temperatures for Type K, J, T or E to get EMF output in mV instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/thermocouple-voltage">
+<meta property="og:image" content="https://www.electromechcalc.com/logo.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Thermocouple Voltage Calculator (Type K, J, T, E)">
+<meta name="twitter:description" content="Free Thermocouple Voltage Calculator — enter hot and cold junction temperatures for Type K, J, T or E to get EMF output in mV instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Thermocouple Voltage Calculator",
+  "url": "https://www.electromechcalc.com/electrical/thermocouple-voltage",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free Thermocouple Voltage Calculator for Type K, J, T and E. Enter hot and cold junction temperatures to get EMF output in mV using NIST ITS-90 reference polynomials, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electrical Calculators", "item": "https://www.electromechcalc.com/electrical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "Thermocouple Voltage Calculator", "item": "https://www.electromechcalc.com/electrical/thermocouple-voltage" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula used to calculate thermocouple voltage?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This calculator uses the NIST ITS-90 reference polynomial E(T) for the selected thermocouple type, which expresses EMF (in mV) as a power series in temperature (in degrees Celsius), fitted separately for each type over specific temperature ranges. Net output voltage is then E(T_hot) minus E(T_cold), since a thermocouple produces an EMF proportional to the difference between its two junction temperatures, not the absolute temperature of either one alone." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does cold junction temperature matter?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A thermocouple only generates a voltage in response to a temperature difference between its measuring (hot) junction and its reference (cold) junction — the NIST tables are all built assuming a 0 degC ice-point reference, so if your actual cold junction sits at, say, 25 degC ambient instead of 0 degC, you must subtract E(25 degC) from E(T_hot) to get the correct net EMF, which this calculator does automatically." }
+    },
+    {
+      "@type": "Question",
+      "name": "What temperature range is valid for each thermocouple type?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Per the NIST ITS-90 reference functions used here: Type K covers -270 degC to 1372 degC, Type J covers -210 degC to 1200 degC (though iron wire oxidation typically limits practical continuous use to around 750 degC in air), Type T covers -270 degC to 400 degC, and Type E covers -270 degC to 1000 degC. Entering a temperature outside the selected type's range returns a validation error instead of an extrapolated, unreliable figure." }
+    },
+    {
+      "@type": "Question",
+      "name": "Which thermocouple type has the highest output per degree?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Type E has the highest Seebeck coefficient (EMF output per degree of temperature difference) of the four common base-metal types covered here, roughly 68 microvolts per degC near room temperature, compared to roughly 41 microvolts per degC for Type K, 52 microvolts per degC for Type J, and 43 microvolts per degC for Type T. A higher coefficient generally means better resolution for a given signal-conditioning setup, especially at lower temperatures." }
+    },
+    {
+      "@type": "Question",
+      "name": "How accurate is this calculator compared to NIST reference tables?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This calculator uses the same NIST ITS-90 polynomial coefficients published in the official NIST Monograph 175 reference tables for Types K, J, T and E, so results match the published tables to within the polynomial fit's own stated accuracy (typically a fraction of a microvolt across most of each range). Any difference you see against a physical measurement comes from the sensor, wiring, or instrument, not from this calculation." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use this for cold junction compensation in my own instrument?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, conceptually — set the reference (cold) junction field to your instrument's measured cold-junction temperature and the hot junction field to the temperature you want to convert to (or from), and the same E(T_hot) minus E(T_cold) relationship is exactly what a digital cold-junction-compensated instrument computes internally, just usually in the reverse direction (voltage in, temperature out) using an inverse polynomial." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is my measured voltage different from the calculated value?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Common causes include an incorrect or unaccounted cold junction temperature, using the wrong type of extension or compensating cable (which itself must match the thermocouple's Seebeck characteristic), reversed polarity, junctions formed with the wrong metals or contaminated by corrosion, electrical noise pickup on long unshielded runs, or genuine sensor drift/degradation from operating near or beyond the wire's rated temperature and atmosphere for an extended period." }
+    },
+    {
+      "@type": "Question",
+      "name": "Which thermocouple type should I use for my application?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Type K is the general-purpose default for most industrial oxidizing-atmosphere applications up to around 1200 degC; Type J suits reducing or vacuum atmospheres and older equipment already wired for it, but degrades faster in oxidizing conditions above roughly 750 degC; Type T is preferred for cryogenic and sub-zero work and where high accuracy at low temperature matters, such as food and pharmaceutical processes; and Type E is chosen when the highest available EMF output per degree is needed, particularly for accurate low-to-moderate temperature measurement in non-magnetic environments." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="stylesheet" href="/assets/tailwind.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    border-color:#0ea5e9;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+  body.dark-theme .toggle-btn{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES ===================== */
+
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB ===================== -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Temperature Sensing
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Thermocouple Voltage <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Type K, J, T and E EMF output from junction temperatures — using NIST ITS-90 reference polynomials, with cold junction compensation.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Thermocouple Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Select thermocouple type and enter the hot and cold junction temperatures.</p>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Thermocouple Type</label>
+        <div class="flex gap-2 mt-2" id="typeToggle">
+          <button type="button" class="toggle-btn active" data-type="K" onclick="selectTcType('K')">Type K</button>
+          <button type="button" class="toggle-btn" data-type="J" onclick="selectTcType('J')">Type J</button>
+          <button type="button" class="toggle-btn" data-type="T" onclick="selectTcType('T')">Type T</button>
+          <button type="button" class="toggle-btn" data-type="E" onclick="selectTcType('E')">Type E</button>
+        </div>
+        <p class="text-xs text-gray-400 mt-2" id="typeRangeNote">Valid range: -270 &deg;C to 1372 &deg;C (Chromel-Alumel)</p>
+      </div>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Measuring (Hot) Junction Temperature, T&#8341; (&deg;C)</label>
+          <input id="hotTemp" type="number" value="500" step="1" placeholder="e.g. 500" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Reference (Cold) Junction Temperature, T&#8300; (&deg;C)</label>
+          <input id="coldTemp" type="number" value="0" step="1" placeholder="e.g. 0" class="input-field mt-2">
+          <p class="text-xs text-gray-400 mt-1">Use 0&deg;C for an ice-point reference, or your cold-junction compensation sensor's reading (e.g. ambient ~25&deg;C).</p>
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button onclick="calculateThermocoupleVoltage()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">E&#8345;&#8348; = E(T&#8341;) &minus; E(T&#8300;)</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Net EMF Output</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">&mdash;</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Select a type, enter temperatures and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">EMF (&micro;V)</span>
+            <span id="rUv" class="font-display font-semibold text-lg">&mdash;</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Avg. Sensitivity (&micro;V/&deg;C)</span>
+            <span id="rSens" class="font-display font-semibold text-lg">&mdash;</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators — data-copy-exclude keeps this out of the
+           Copy Result output (see copyResultGeneric() in common.js) -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4" data-copy-exclude>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/transformer-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Transformer Size Calculator <span class="text-sky-500">&rarr;</span>
+          </a>
+          <a href="/motor-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Motor Current Calculator <span class="text-sky-500">&rarr;</span>
+          </a>
+          <a href="/solar-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Solar Panel Size Calculator <span class="text-sky-500">&rarr;</span>
+          </a>
+          <a href="/electrical-calculators" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            All Electrical Calculators <span class="text-sky-500">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Thermocouple%20Voltage%20Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding thermocouple voltage</a></li>
+      <li><a href="#second" class="hover:underline">3. Comparing types K, J, T and E</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Thermocouple Output Voltage Is Calculated</h2>
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: NIST ITS-90 thermocouple reference functions (NIST Monograph 175); IEC 60584</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>A thermocouple is two dissimilar metal wires joined at one end (the measuring or "hot" junction). When that junction is at a different temperature from the point where the wires connect to your measuring instrument (the reference or "cold" junction), the Seebeck effect generates a small DC voltage between the two free ends — typically a few tens of microvolts per degree of temperature difference. This calculator converts junction temperatures directly into that output voltage, and back-calculates what your instrument actually measures once cold junction compensation is accounted for.</p>
+
+      <p><strong>Formula used:</strong> the calculator evaluates E(T), the NIST ITS-90 reference EMF function for the selected type, at both the hot and cold junction temperatures, then takes the difference: E&#8345;&#8348; = E(T&#8341;) &minus; E(T&#8300;). E(T) itself is not a single simple equation — it is a piecewise polynomial in temperature, with a different set of coefficients for sub-zero and above-zero ranges (and, for Type K, an additional small exponential correction term above 0&deg;C), fitted by NIST to match physically measured reference thermocouple data as closely as possible across each type's full rated range.</p>
+
+      <p><strong>Why subtraction, not just E(T&#8341;) alone:</strong> the published NIST tables for E(T) are all built on the assumption that the reference junction sits at exactly 0&deg;C (the ice point). In practice, almost no real instrument maintains a genuine ice-point reference — instead, it measures the actual temperature of its own cold junction (often the terminal block where the thermocouple wire connects to copper wiring) using a separate temperature sensor, and performs this same subtraction internally. This process is called cold junction compensation, and getting it wrong is one of the single biggest sources of error in thermocouple-based temperature measurement.</p>
+
+      <p><strong>Worked example:</strong> a Type K thermocouple with its hot junction at 500&deg;C and its cold junction at a typical ambient 25&deg;C: E(500) &asymp; 20.644 mV, E(25) &asymp; 1.000 mV, so net output &asymp; 19.644 mV. If you incorrectly assumed a perfect 0&deg;C cold junction instead of the real 25&deg;C ambient, you would read E(500) &asymp; 20.644 mV directly — an error of roughly 1 mV, which for Type K corresponds to about 24&deg;C of apparent temperature error. This is exactly why cold junction compensation matters even for a "small" 25&deg;C reference offset.</p>
+
+      <p><strong>The Seebeck coefficient is not constant:</strong> a common simplification treats thermocouple output as strictly linear (voltage = constant &times; temperature difference), but the real relationship is mildly non-linear across the full range of any type — the local slope of E(T), called the Seebeck coefficient at that temperature, changes gradually as temperature increases. Near room temperature Type K sits around 40-41 &micro;V/&deg;C, but it rises to roughly 42 &micro;V/&deg;C by a few hundred degrees Celsius before the curve's shape changes again at higher temperatures. This is precisely why NIST publishes tables (and the underlying polynomials this calculator evaluates) rather than a single linear conversion factor — a linear approximation is fine for a rough estimate but introduces meaningful error across a wide operating range.</p>
+
+      <p><strong>Where the coefficients come from:</strong> NIST derived these reference functions from an extensive set of calibrated laboratory measurements against the International Temperature Scale of 1990 (ITS-90), then fit high-order polynomials (piecewise by range) that reproduce those measurements to within a very small fraction of a microvolt across most of each type's range. These are the same reference functions built into essentially every commercial temperature transmitter, PLC analog input card, and calibration standard that claims ITS-90 compliance for thermocouple linearization.</p>
+
+      <p><strong>Reading the result the other way (temperature from voltage):</strong> everything above works forward — from temperature to voltage. Real instruments more often need the reverse: they measure a voltage and need to report a temperature. NIST also publishes separate inverse polynomials (voltage-to-temperature) for exactly this purpose; they are mathematically distinct fits, not simply the algebraic inverse of the forward function, chosen specifically to minimize error when solving in that direction. This calculator implements the forward (temperature-to-voltage) direction, which is the more useful direction for checking expected sensor output, verifying a calibrator's source setting, or sanity-checking a data sheet figure.</p>
+
+      <p><strong>Extension and compensating cable:</strong> the wire that runs from the thermocouple junction back to the instrument must itself be made from matching (or closely matched, "compensating") alloy pairs for each type — using ordinary copper wire, or the wrong type's extension cable, effectively creates additional unintended thermocouple junctions at every connection point, each generating its own spurious EMF that corrupts the reading. This is a wiring and installation issue entirely separate from the voltage calculation itself, but it is worth understanding because it is one of the most common real-world causes of a "correct calculation, wrong reading" symptom.</p>
+
+      <p><strong>Polarity matters:</strong> each thermocouple type has a designated positive and negative leg (for Type K, the positive leg is magnetic — attracted to a magnet — while the negative leg is not), and reversing the two at any connection point in the circuit, including at the instrument terminals, effectively subtracts where it should add, producing either a wildly wrong reading or, at certain temperature combinations, a near-zero or negative reading that can look like a sensor fault rather than a wiring error.</p>
+
+      <p><strong>Accuracy classes:</strong> IEC 60584 and ASTM E230 define standard and "special limits of error" accuracy classes for each thermocouple type, expressed as either a percentage of reading or a fixed degree tolerance, whichever is larger, over specified temperature ranges. This calculator reports the theoretical, error-free EMF from the reference function; real sensor tolerance, wiring resistance effects, and instrument input accuracy all add to that baseline and should be considered separately when specifying overall measurement uncertainty for a system.</p>
+
+      <p><strong>Isothermal blocks and multiple cold junctions:</strong> in a real instrument with multiple thermocouple input channels, all channels typically terminate on a single isothermal (uniform-temperature) block, with one shared cold-junction temperature sensor reading that block's actual temperature. If that block is not genuinely isothermal — for example, one corner sits closer to a heat-generating component inside the instrument enclosure — different channels effectively see slightly different, unaccounted cold-junction temperatures, introducing small but real channel-to-channel measurement offsets that no amount of correct calculation elsewhere in the circuit can fix.</p>
+
+      <p><strong>Practical use of this calculator:</strong> use it to predict expected sensor output before wiring up a new installation, to verify a signal calibrator or simulator's mV output setting against a target temperature, to sanity-check a data sheet or datalogger reading against hand-calculated expectations, or to understand how much a given cold-junction temperature error would shift your apparent reading — all without needing to look up and manually interpolate a printed NIST reference table.</p>
+
+      <p><strong>Summary:</strong> net thermocouple output equals E(T&#8341;) minus E(T&#8300;), evaluated using the ITS-90 reference polynomial for the selected type; cold junction temperature must always be accounted for; the relationship is mildly non-linear across each type's range, which is exactly why a polynomial fit (rather than a single conversion constant) is used; and correct wiring polarity and matching extension cable are separate but equally important prerequisites for the calculated figure to match what your instrument actually reads.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Type K, T&#8341; = 500&deg;C, T&#8300; = 25&deg;C: E&#8345;&#8348; = E(500) &minus; E(25) &asymp; 20.644 &minus; 1.000 = <strong>19.644 mV</strong> (&asymp; <strong>19644 &micro;V</strong>, average sensitivity &asymp; <strong>41.4 &micro;V/&deg;C</strong> over this span).</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator gives theoretical EMF from the NIST ITS-90 reference polynomials for an ideal, error-free thermocouple with matched extension wiring and correct polarity. Real sensor tolerance (per IEC 60584 / ASTM E230), wiring resistance, instrument input accuracy, and cold-junction sensor error all add to this baseline figure in an actual installation.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Quick Reference</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Comparing Type K, J, T and E Thermocouples</h2>
+  <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Type</th>
+          <th class="text-left px-4 py-2 font-semibold">Alloys (+/-)</th>
+          <th class="text-left px-4 py-2 font-semibold">ITS-90 Range</th>
+          <th class="text-left px-4 py-2 font-semibold">Output @ 100&deg;C</th>
+          <th class="text-left px-4 py-2 font-semibold">Typical Use</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">K</td><td class="px-4 py-2">Chromel / Alumel</td><td class="px-4 py-2">-270 to 1372&deg;C</td><td class="px-4 py-2">4.10 mV</td><td class="px-4 py-2">General purpose, oxidizing atmosphere</td></tr>
+        <tr><td class="px-4 py-2">J</td><td class="px-4 py-2">Iron / Constantan</td><td class="px-4 py-2">-210 to 1200&deg;C*</td><td class="px-4 py-2">5.27 mV</td><td class="px-4 py-2">Reducing/vacuum atmosphere, legacy equipment</td></tr>
+        <tr><td class="px-4 py-2">T</td><td class="px-4 py-2">Copper / Constantan</td><td class="px-4 py-2">-270 to 400&deg;C</td><td class="px-4 py-2">4.28 mV</td><td class="px-4 py-2">Cryogenic, food & pharma, high low-temp accuracy</td></tr>
+        <tr><td class="px-4 py-2">E</td><td class="px-4 py-2">Chromel / Constantan</td><td class="px-4 py-2">-270 to 1000&deg;C</td><td class="px-4 py-2">6.32 mV</td><td class="px-4 py-2">Highest output, non-magnetic, cryogenic to moderate temp</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>*Type J's ITS-90 reference function is defined up to 1200&deg;C, but the iron leg oxidizes relatively quickly above roughly 750&deg;C in air, so most manufacturers rate continuous industrial use lower than the full mathematically-valid range — always check the specific wire manufacturer's rated maximum for your atmosphere.</p>
+    <p>Type E stands out for having the highest EMF output per degree of the four common base-metal types shown here, which can be an advantage when working with lower-resolution signal conditioning, but the actual choice between types in practice usually comes down more to temperature range, atmosphere compatibility, and existing plant standardization than to raw output alone.</p>
+    <p>All four are "base metal" thermocouple types (as opposed to noble-metal types like R, S and B, which extend to much higher temperatures at significantly higher cost) and are interchangeable within a given type per IEC 60584 color-coding and tolerance standards, though ANSI (US) and IEC/BS (International) color codes for the same type differ and should never be assumed to match across suppliers.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Working With Thermocouple Voltage</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p><strong>1. Ignoring cold junction temperature entirely.</strong> Reading E(T&#8341;) alone and treating it as the expected instrument output assumes a perfect 0&deg;C reference — for a realistic 20-30&deg;C ambient cold junction, this alone can introduce tens of degrees of apparent error depending on the type.</p>
+      <p><strong>2. Using ordinary copper wire instead of matched extension cable.</strong> Every unintended junction formed by mismatched wire creates its own spurious EMF at its own local temperature, corrupting the signal in a way that is often intermittent and hard to diagnose because it depends on ambient conditions along the run.</p>
+      <p><strong>3. Reversed polarity at any connection point.</strong> One swapped connection, even a single terminal deep in an otherwise correct run, can flip the sign of part of the signal path and produce a reading that looks plausible but is systematically wrong.</p>
+      <p><strong>4. Assuming a linear mV-per-degree conversion across a wide range.</strong> The Seebeck coefficient changes gradually with temperature for every type — a linear estimate anchored at one point on the curve drifts increasingly out of true the further you move from that anchor point.</p>
+      <p><strong>5. Operating a type outside its recommended atmosphere.</strong> Type J's iron leg oxidizes in air at sustained high temperature; Type K can suffer "green rot" (preferential oxidation) in certain marginally reducing/oxidizing mixed atmospheres — both effects shift the actual EMF-vs-temperature relationship away from the ideal reference function over time, independent of any calculation error.</p>
+      <p><strong>6. Mixing up ANSI and IEC/BS color codes.</strong> The same thermocouple type uses different colored insulation depending on the standard the manufacturer follows — assuming a color code without checking the specific standard in use can lead to a correctly-calculated but physically miswired circuit.</p>
+      <p><strong>7. Not accounting for an isothermal block that isn't actually isothermal.</strong> Multiple channels sharing one cold-junction sensor assume every channel's physical termination point is at the same temperature as that sensor — a poorly designed or thermally uneven terminal block silently introduces channel-specific offsets.</p>
+      <p><strong>8. Treating calculated EMF as the full measurement uncertainty.</strong> This calculator's output is the theoretical, error-free reference value — real installation tolerance stacks on top from sensor manufacturing tolerance (per IEC 60584/ASTM E230 accuracy class), wiring, and instrument input accuracy, and should be added separately when specifying total system uncertainty.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula used to calculate thermocouple voltage?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This calculator uses the NIST ITS-90 reference polynomial E(T) for the selected thermocouple type, which expresses EMF (in mV) as a power series in temperature (in &deg;C), fitted separately for each type over specific temperature ranges. Net output voltage is then E(T&#8341;) minus E(T&#8300;), since a thermocouple produces an EMF proportional to the difference between its two junction temperatures, not the absolute temperature of either one alone.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does cold junction temperature matter?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A thermocouple only generates a voltage in response to a temperature difference between its measuring (hot) junction and its reference (cold) junction — the NIST tables are all built assuming a 0&deg;C ice-point reference, so if your actual cold junction sits at, say, 25&deg;C ambient instead of 0&deg;C, you must subtract E(25&deg;C) from E(T&#8341;) to get the correct net EMF, which this calculator does automatically.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What temperature range is valid for each thermocouple type?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Per the NIST ITS-90 reference functions used here: Type K covers -270&deg;C to 1372&deg;C, Type J covers -210&deg;C to 1200&deg;C (though iron wire oxidation typically limits practical continuous use to around 750&deg;C in air), Type T covers -270&deg;C to 400&deg;C, and Type E covers -270&deg;C to 1000&deg;C. Entering a temperature outside the selected type's range returns a validation error instead of an extrapolated, unreliable figure.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Which thermocouple type has the highest output per degree?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Type E has the highest Seebeck coefficient (EMF output per degree of temperature difference) of the four common base-metal types covered here, roughly 68 &micro;V/&deg;C near room temperature, compared to roughly 41 &micro;V/&deg;C for Type K, 52 &micro;V/&deg;C for Type J, and 43 &micro;V/&deg;C for Type T. A higher coefficient generally means better resolution for a given signal-conditioning setup, especially at lower temperatures.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How accurate is this calculator compared to NIST reference tables?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This calculator uses the same NIST ITS-90 polynomial coefficients published in the official NIST Monograph 175 reference tables for Types K, J, T and E, so results match the published tables to within the polynomial fit's own stated accuracy (typically a fraction of a microvolt across most of each range). Any difference you see against a physical measurement comes from the sensor, wiring, or instrument, not from this calculation.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I use this for cold junction compensation in my own instrument?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, conceptually — set the reference (cold) junction field to your instrument's measured cold-junction temperature and the hot junction field to the temperature you want to convert to (or from), and the same E(T&#8341;) minus E(T&#8300;) relationship is exactly what a digital cold-junction-compensated instrument computes internally, just usually in the reverse direction (voltage in, temperature out) using an inverse polynomial.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is my measured voltage different from the calculated value?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Common causes include an incorrect or unaccounted cold junction temperature, using the wrong type of extension or compensating cable (which itself must match the thermocouple's Seebeck characteristic), reversed polarity, junctions formed with the wrong metals or contaminated by corrosion, electrical noise pickup on long unshielded runs, or genuine sensor drift/degradation from operating near or beyond the wire's rated temperature and atmosphere for an extended period.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Which thermocouple type should I use for my application?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Type K is the general-purpose default for most industrial oxidizing-atmosphere applications up to around 1200&deg;C; Type J suits reducing or vacuum atmospheres and older equipment already wired for it, but degrades faster in oxidizing conditions above roughly 750&deg;C; Type T is preferred for cryogenic and sub-zero work and where high accuracy at low temperature matters, such as food and pharmaceutical processes; and Type E is chosen when the highest available EMF output per degree is needed, particularly for accurate low-to-moderate temperature measurement in non-magnetic environments.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== EXPLORE MORE CALCULATORS ===================== -->
+<section id="explore-more" class="max-w-6xl mx-auto px-4 pb-16">
+  <h2 class="font-display font-semibold text-brandDark text-xl mb-5">Explore More Calculators</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+    <a href="/electrical-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#e0f2fe">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Electrical Calculators</h3>
+      <p class="text-sm text-gray-500">Transformer size, motor current, DG size, solar sizing &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="/mechanical-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#fef3c7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Mechanical Calculators</h3>
+      <p class="text-sm text-gray-500">Belt length, bearing life, cooling tower efficiency &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="/financial-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#dcfce7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Financial Calculators</h3>
+      <p class="text-sm text-gray-500">EPF, PPF, SIP, gratuity, income tax, CAGR &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+
+  // ===== Share / Feedback bar =====
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+
+  // ===== NIST ITS-90 thermocouple reference polynomials (E in mV, T in degC) =====
+  // Source: NIST Monograph 175 reference functions, Types K, J, T, E.
+  var TC_COEFF = {
+    K: {
+      label: 'Chromel-Alumel',
+      min: -270, max: 1372,
+      ranges: [
+        { min:-270, max:0, c:[0.0,0.394501280250e-1,0.236223735980e-4,-0.328589067840e-6,-0.499048287770e-8,-0.675090591730e-10,-0.574103274280e-12,-0.310888728940e-14,-0.104516093650e-16,-0.198892668780e-19,-0.163226974860e-22] },
+        { min:0, max:1372, c:[-0.176004136860e-1,0.389212049750e-1,0.185587700320e-4,-0.994575928740e-7,0.318409457190e-9,-0.560728448890e-12,0.560750590590e-15,-0.320207200030e-18,0.971511471520e-22,-0.121047212750e-25], exp:{a0:0.118597600000,a1:-0.118343200000e-3,a2:0.126968600000e3} }
+      ]
+    },
+    J: {
+      label: 'Iron-Constantan',
+      min: -210, max: 1200,
+      ranges: [
+        { min:-210, max:760, c:[0.0,0.503811878150e-1,0.304758369300e-4,-0.856810657200e-7,0.132281952950e-9,-0.170529583370e-12,0.209480906970e-15,-0.125383953360e-18,0.156317256970e-22] },
+        { min:760, max:1200, c:[0.296456256810e3,-0.149761277860e1,0.317871039240e-2,-0.318476867010e-5,0.157717571400e-8,-0.306913690560e-12] }
+      ]
+    },
+    T: {
+      label: 'Copper-Constantan',
+      min: -270, max: 400,
+      ranges: [
+        { min:-270, max:0, c:[0.0,0.387481063640e-1,0.441944343470e-4,0.118443231050e-6,0.200329735540e-7,0.901380195590e-9,0.226511565930e-10,0.360711542050e-12,0.384939398830e-14,0.282135219250e-16,0.142515947790e-18,0.487686622860e-21,0.107955392700e-23,0.139450270620e-26,0.797951539270e-30] },
+        { min:0, max:400, c:[0.0,0.387481063640e-1,0.332922278800e-4,0.206182434040e-6,-0.218822568460e-8,0.109968809280e-10,-0.308157587720e-13,0.454791352900e-16,-0.275129016730e-19] }
+      ]
+    },
+    E: {
+      label: 'Chromel-Constantan',
+      min: -270, max: 1000,
+      ranges: [
+        { min:-270, max:0, c:[0.0,0.586655087080e-1,0.454109771240e-4,-0.779980486860e-6,-0.258001608430e-7,-0.594525830570e-9,-0.932140586670e-11,-0.102876055340e-12,-0.803701236700e-15,-0.439794973910e-17,-0.164147763550e-19,-0.396736195160e-22,-0.558273287210e-25,-0.346578420130e-28] },
+        { min:0, max:1000, c:[0.0,0.586655087100e-1,0.450322755820e-4,0.289084072120e-7,-0.330568966520e-9,0.650244032700e-12,-0.191974955040e-15,-0.125366004970e-17,0.214892175690e-20,-0.143880417820e-23,0.359608994810e-27] }
+      ]
+    }
+  };
+
+  var currentTcType = 'K';
+
+  function emfMv(type, T){
+    var table = TC_COEFF[type];
+    var range = null;
+    for(var i=0;i<table.ranges.length;i++){
+      var r = table.ranges[i];
+      if(T >= r.min - 1e-9 && T <= r.max + 1e-9){ range = r; break; }
+    }
+    if(!range) return null;
+    var v = 0;
+    for(var j=0;j<range.c.length;j++){ v += range.c[j] * Math.pow(T, j); }
+    if(range.exp){ v += range.exp.a0 * Math.exp(range.exp.a1 * Math.pow(T - range.exp.a2, 2)); }
+    return v;
+  }
+
+  function selectTcType(type){
+    currentTcType = type;
+    document.querySelectorAll('#typeToggle .toggle-btn').forEach(function(btn){
+      btn.classList.toggle('active', btn.getAttribute('data-type') === type);
+    });
+    var t = TC_COEFF[type];
+    document.getElementById('typeRangeNote').textContent =
+      'Valid range: ' + t.min + ' \u00B0C to ' + t.max + ' \u00B0C (' + t.label + ')';
+    calculateThermocoupleVoltage();
+  }
+
+  function calculateThermocoupleVoltage(){
+    var type = currentTcType;
+    var table = TC_COEFF[type];
+    var hot = parseFloat(document.getElementById('hotTemp').value);
+    var cold = parseFloat(document.getElementById('coldTemp').value);
+
+    var validationBox = document.getElementById('validationBox');
+    var errors = [];
+    if(isNaN(hot)){ errors.push('Enter a valid hot junction temperature.'); }
+    else if(hot < table.min || hot > table.max){ errors.push('Hot junction temperature must be between ' + table.min + ' \u00B0C and ' + table.max + ' \u00B0C for Type ' + type + '.'); }
+    if(isNaN(cold)){ errors.push('Enter a valid cold junction temperature.'); }
+    else if(cold < table.min || cold > table.max){ errors.push('Cold junction temperature must be between ' + table.min + ' \u00B0C and ' + table.max + ' \u00B0C for Type ' + type + '.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(function(e){ return '\u2022 ' + e; }).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rUv').textContent = '\u2014';
+      document.getElementById('rSens').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    var eHot = emfMv(type, hot);
+    var eCold = emfMv(type, cold);
+    var net = eHot - eCold;
+    var netUv = net * 1000;
+    var sens = (hot !== cold) ? (netUv / (hot - cold)) : null;
+
+    document.getElementById('rResult').textContent = net.toLocaleString('en-IN', {maximumFractionDigits:3}) + ' mV';
+    document.getElementById('resultSub').textContent = 'Type ' + type + ', T\u2081=' + hot + '\u00B0C, T\u2080=' + cold + '\u00B0C';
+    document.getElementById('rUv').textContent = netUv.toLocaleString('en-IN', {maximumFractionDigits:0});
+    document.getElementById('rSens').textContent = sens !== null ? sens.toLocaleString('en-IN', {maximumFractionDigits:1}) : '\u2014';
+
+    document.getElementById('breakdownBox').innerHTML =
+      '<table class="breakdown-table">' +
+        '<thead><tr><th>Quantity</th><th>Value</th></tr></thead>' +
+        '<tbody>' +
+          '<tr><td>Type</td><td>' + type + ' (' + table.label + ')</td></tr>' +
+          '<tr><td>Hot Junction, T\u2081</td><td>' + hot + ' \u00B0C</td></tr>' +
+          '<tr><td>E(T\u2081)</td><td>' + eHot.toFixed(4) + ' mV</td></tr>' +
+          '<tr><td>Cold Junction, T\u2080</td><td>' + cold + ' \u00B0C</td></tr>' +
+          '<tr><td>E(T\u2080)</td><td>' + eCold.toFixed(4) + ' mV</td></tr>' +
+          '<tr><td><strong>Net EMF</strong></td><td><strong>' + net.toFixed(4) + ' mV</strong></td></tr>' +
+          '<tr><td>Net EMF (\u00B5V)</td><td>' + netUv.toFixed(0) + ' \u00B5V</td></tr>' +
+          '<tr><td>Avg. Sensitivity</td><td>' + (sens !== null ? sens.toFixed(2) + ' \u00B5V/\u00B0C' : '\u2014') + '</td></tr>' +
+        '</tbody>' +
+      '</table>';
+  }
+
+  calculateThermocoupleVoltage();
+</script>
+
+<script>
+  // ===== copyResultGeneric() lives in common.js (auto-injected site-wide by middleware). =====
+
+  // ===== Generic number-input safety net (site-wide, purely additive). =====
+  (function(){
+    function clampNumberInput(el){
+      if (el.type !== 'number' || el.value === '') return;
+      var hasMin = el.hasAttribute('min');
+      var hasMax = el.hasAttribute('max');
+      var min = hasMin ? parseFloat(el.min) : null;
+      var max = hasMax ? parseFloat(el.max) : null;
+      var v = parseFloat(el.value);
+      var corrected = null;
+      if (!isFinite(v)) { corrected = (min !== null ? min : 0); }
+      else if (min !== null && v < min) { corrected = min; }
+      else if (max !== null && v > max) { corrected = max; }
+      if (corrected !== null && corrected !== v) {
+        el.value = corrected;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    document.querySelectorAll('input[type="number"]').forEach(function(el){
+      el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+</script>
+</body>
+</html>

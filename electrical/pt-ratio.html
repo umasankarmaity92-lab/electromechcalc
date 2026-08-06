@@ -54,7 +54,7 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
+  "@type": "SoftwareApplication",
   "name": "PT Ratio Calculator",
   "url": "https://www.electromechcalc.com/electrical/pt-ratio",
   "applicationCategory": "UtilitiesApplication",
@@ -62,6 +62,18 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
   "description": "Free PT Ratio Calculator for potential (voltage) transformers. Enter system primary voltage and secondary voltage standard to get the PT ratio instantly, with formula, standard secondary voltages, and worked example.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electrical Calculators", "item": "https://www.electromechcalc.com/electrical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "PT Ratio Calculator", "item": "https://www.electromechcalc.com/electrical/pt-ratio" }
+  ]
 }
 </script>
 
@@ -457,6 +469,7 @@
   <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
     <div class="flex items-center gap-2 flex-wrap">
       <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
       <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
@@ -744,5 +757,53 @@
   calculatePTRatio();
 </script>
 
+<script>
+  // ===== Generic Copy Result (added site-wide; does not touch page-specific calc logic) =====
+  function copyResultGeneric(){
+    var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
+    var btn = document.getElementById('copyResultBtn');
+    if (!panel || !btn) return;
+    var text = panel.innerText.trim();
+    function restore(){ btn.textContent = '📋 Copy Result'; }
+    if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = '✅ Copied';
+        setTimeout(restore, 1800);
+      }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+    } else {
+      btn.textContent = '⚠️ Not supported';
+      setTimeout(restore, 1800);
+    }
+  }
+
+  // ===== Generic number-input safety net (added site-wide; purely additive —
+  // runs on blur AFTER the page's own oninput/onchange calc handlers, and only
+  // corrects a value that is non-finite or outside the field's own declared
+  // min/max attributes, then re-fires "input" so the page's existing calc
+  // function recalculates with the corrected value. Never overrides or
+  // replaces any existing calculator logic. =====
+  (function(){
+    function clampNumberInput(el){
+      if (el.type !== 'number' || el.value === '') return;
+      var hasMin = el.hasAttribute('min');
+      var hasMax = el.hasAttribute('max');
+      var min = hasMin ? parseFloat(el.min) : null;
+      var max = hasMax ? parseFloat(el.max) : null;
+      var v = parseFloat(el.value);
+      var corrected = null;
+      if (!isFinite(v)) { corrected = (min !== null ? min : 0); }
+      else if (min !== null && v < min) { corrected = min; }
+      else if (max !== null && v > max) { corrected = max; }
+      if (corrected !== null && corrected !== v) {
+        el.value = corrected;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    document.querySelectorAll('input[type="number"]').forEach(function(el){
+      el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+</script>
 </body>
 </html>

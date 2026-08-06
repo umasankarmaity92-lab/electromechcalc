@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- meta: {"category":"Mechanical"} -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== THEME (FLASH/CLS PREVENTION) =====================
+     Runs synchronously, before any stylesheet or paint, so the correct
+     dark-theme/light-theme class is already present on <html> the instant
+     CSS starts applying — no later class-add via site-nav.js's
+     DOMContentLoaded handler, which was causing a ~1.0 CLS hit as the
+     entire theme (colors AND several layout-affecting rules) snapped in
+     partway through the page's first paint. A matching inline script sits
+     right after <body> opens (see below) to cover the body.dark-theme /
+     body.light-theme selectors theme.css also relies on — site-nav.js
+     still re-applies both classes on DOMContentLoaded as a no-op safety
+     net (classList.add on an already-present class is a no-op) and is
+     what actually handles the toggle button switching themes later. -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Key Size Calculator (Shaft Key Width, Height &amp; Length) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free machine key size calculator. Find standard key width and height from shaft diameter, and required key length from shear and crushing (bearing) strength checks against transmitted torque.">
+<meta name="keywords" content="key size calculator, shaft key calculator, key length calculator, keyway design, key shear stress calculator, key bearing stress calculator, IS 2048 key size">
+<meta name="robots" content="index, follow">
+<!-- PAGE_CATEGORY = electrical | mechanical | financial (no slashes).
+     PAGE_SLUG = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/key-size">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Key Size Calculator">
+<meta property="og:description" content="Standard key cross-section from shaft diameter, plus required key length from shear and crushing strength checks against the transmitted torque.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/key-size">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Key Size Calculator">
+<meta name="twitter:description" content="Standard key cross-section from shaft diameter, plus required key length from shear and crushing strength checks against the transmitted torque.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA =====================
+     Minimum 8 FAQ entries (Q1-Q8) — matches the site-wide standard set
+     across all published calculators. Add more (Q9, Q10...) as needed;
+     never ship fewer than 8, and keep this JSON-LD block in sync with
+     the visible FAQ_ITEMS accordion below (same questions, same
+     order) so structured data never diverges from on-page content. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Key Size Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/key-size",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free online calculator for machine key sizing — standard key width and height by shaft diameter, plus required key length calculated from both shear strength and crushing (bearing) strength checks against the transmitted torque.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Mechanical Calculators", "item": "https://www.electromechcalc.com/mechanical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "Key Size Calculator", "item": "https://www.electromechcalc.com/mechanical/key-size" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How is key length calculated from transmitted torque?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Two independent checks are calculated: a shear length from the key's width and the shaft's shear stress limit, and a crushing (bearing) length from the key's height and the material's bearing stress limit. The larger of the two results is the governing minimum length, since the key must survive both failure modes." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why are there two different formulas, one for shear and one for crushing?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A key can fail in two different ways: by shearing straight across along the shaft surface, or by the key's sides being crushed against the keyway walls under bearing pressure. These are independent failure modes governed by different stress limits and different effective areas, so both must be checked and the weaker (longer required length) case governs the design." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is allowable bearing stress usually about twice the allowable shear stress for the same material?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Most ductile materials can tolerate meaningfully higher compressive (bearing) stress than shear stress before yielding, based on general material yield behavior. A commonly used approximate relationship takes allowable bearing stress as roughly double the allowable shear stress for the same key material, though the exact ratio depends on the specific material and applicable design code." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I choose the standard key width and height for a given shaft diameter?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Standard parallel key sizing tables (such as IS 2048) specify a width and height for each shaft diameter range, based on common industry practice — this calculator auto-fills those standard values when you enter a shaft diameter, though you should always confirm against the specific hub component's actual keyway if mating with a purchased part." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does the crushing check use half the key height instead of the full height?",
+      "acceptedAnswer": { "@type": "Answer", "text": "In a standard sunk key, half of the key's height sits above the shaft's keyway and half sits below it, with only the portion protruding into the hub's keyway actually bearing against the hub material under torque. This effective bearing height is taken as H/2 in the standard crushing check formula." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does cutting a keyway weaken the shaft itself?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — removing material for a keyway reduces the shaft's cross-section and creates a stress concentration at the corners of the slot, both of which reduce the shaft's torque capacity compared to an equivalent plain round shaft. This calculator sizes the key only; shaft strength with the keyway accounted for needs a separate check, often using a reduced effective shaft diameter or a stress concentration factor." }
+    },
+    {
+      "@type": "Question",
+      "name": "How much margin should I add over the calculated minimum key length?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A commonly used margin is around 15 to 25 percent over the governing calculated length, both to provide a safety margin for load variation and misalignment, and because standard key stock is only available in fixed length increments, so the actual length used is typically rounded up from the calculated figure anyway." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can key length exceed the hub length it's fitted into?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — the calculated key length must physically fit within the length of the hub (pulley, gear, or coupling) it engages. If the calculated required length exceeds the available hub length, options include increasing key width or height (if the shaft and hub allow it), using two keys, or selecting a different connection method such as a shrink fit or spline." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Free · Instant results
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Key Size <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Standard key width and height by shaft diameter, plus required key length from shear and crushing strength checks against the transmitted torque.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+      
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-5">Shaft &amp; Torque Inputs</h2>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Shaft Diameter (mm)</label>
+        <input id="ksShaft" type="number" value="55" step="1" min="6" onchange="updateStandardKey()" class="input-field mt-2">
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-2">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Key Width, W (mm)</label>
+          <input id="ksWidth" type="number" value="16" step="1" min="0" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Key Height, H (mm)</label>
+          <input id="ksHeight" type="number" value="10" step="1" min="0" class="input-field mt-2">
+        </div>
+      </div>
+      <p id="ksStdNote" class="text-[11px] text-gray-400 mb-5">Auto-filled from standard IS 2048 proportions for the shaft diameter — edit if using a non-standard key.</p>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Transmitted Torque (N·m)</label>
+        <input id="ksTorque" type="number" value="200" step="5" min="0" class="input-field mt-2">
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Allowable Shear Stress, τ (MPa)</label>
+          <input id="ksTau" type="number" value="42" step="1" min="0" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Allowable Bearing Stress, σc (MPa)</label>
+          <input id="ksSigmaC" type="number" value="84" step="1" min="0" class="input-field mt-2">
+        </div>
+      </div>
+
+      <button onclick="calculateKeySize()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 rounded-lg transition">Calculate Key Length</button>
+
+      <div id="validationBox" class="hidden mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3"></div>
+
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+      
+      <div class="result-tile rounded-2xl p-6 text-white">
+        <span class="font-mono text-[11px] uppercase tracking-wider text-sky-300">Recommended Key Length</span>
+        <div id="rResult" class="text-4xl font-display font-bold mt-1">—</div>
+        <div id="resultSub" class="text-gray-400 text-xs mt-2">—</div>
+        <div id="formulaChip" class="formula-chip mt-3">Governing = max(L_shear, L_crush)</div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">Shear Length</span>
+          <div id="rShearLen" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">Crushing Length</span>
+          <div id="rCrushLen" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Calculation Breakdown</span>
+        <div class="breakdown-wrap">
+          <div id="breakdownBox"></div>
+        </div>
+      </div>
+
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          
+          <a href="/mechanical/shaft-diameter" class="nav-dropdown-link border border-gray-100">Shaft Diameter Calculator</a>
+          <a href="/mechanical/shaft-torque" class="nav-dropdown-link border border-gray-100">Shaft Torque Calculator</a>
+          <a href="/mechanical/bolt-torque" class="nav-dropdown-link border border-gray-100">Bolt Torque Calculator</a>
+          <a href="/mechanical/metal-weight" class="nav-dropdown-link border border-gray-100">Metal Weight Calculator</a>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR =====================
+     Standard section on every published calculator. The single Share
+     Result button (openShareModal) and its modal are shared, site-wide
+     logic living in common.js + theme.css — nothing to add here beyond
+     this markup. setFeedback() below is per-page (each calculator
+     tracks its own Yes/No feedback state), matching how every other
+     published calculator implements it; add it inside
+     CALCULATOR_JS. No like/dislike buttons — Share Result + Yes/No
+     + Feedback mail is the current standard, deliberately lighter than
+     the old three-group bar. -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Key Size Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS =====================
+     Standard 5-row TOC used across every published calculator.
+     Keep the anchors (#calculator, #how-it-works, #second, #mistakes,
+     #faqs) in sync with the actual section ids below — if a page
+     skips the optional SECOND_SECTION block, remove that li too
+     and renumber the rest. -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. How key size and length are determined</a></li>
+      <li><a href="#second" class="hover:underline">3. Standard key sizes by shaft diameter</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== [PER-PAGE] EXPLANATION =====================
+     Target length across how-it-works + second + mistakes + FAQ
+     combined: 3000+ words of genuine, non-duplicated content (this is
+     the site-wide content-depth standard, not just a suggestion —
+     thin pages are the #1 AdSense/SEO risk on this site). Include a
+     worked numeric example with real figures, not just the formula. -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Machine key sizing, explained</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IS 2048 (parallel keys and keyways), general machine design practice</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p>A machine key transmits torque between a shaft and a hub (a pulley, gear, or coupling) by sitting in matching keyways cut into both parts. Sizing a key correctly means two separate steps: first selecting the key's cross-section (width and height) based on the shaft diameter using a recognized standard, and second calculating the minimum key length needed to safely carry the actual transmitted torque without failing.</p>
+      <p><strong>Step 1 — Standard cross-section:</strong> key width and height are not arbitrary; they follow standard proportions (this calculator uses IS 2048-style parallel key sizing) tied directly to shaft diameter, since the key must fit a keyway of a size the hub manufacturer will also expect. Picking the standard size for a given shaft diameter ensures compatibility with off-the-shelf pulleys, gears and couplings.</p>
+      <p><strong>Step 2 — Required length, from two independent strength checks:</strong> once width and height are fixed, the key's length must be long enough to survive two different failure modes, and the longer of the two results governs:</p>
+      <p class="formula-chip text-sm">Shear failure: L = 2T / (τ × W × D)</p>
+      <p>The <strong>shear check</strong> considers the key failing by shearing straight across its width, along the shaft's outer surface. The torque T is resisted by the shear stress τ acting over the key's shear area (width W × length L), at the shaft's radius (D/2) as the moment arm — rearranging that torque balance for length gives the formula above.</p>
+      <p class="formula-chip text-sm">Crushing failure: L = 4T / (σc × H × D)</p>
+      <p>The <strong>crushing (bearing) check</strong> considers a different failure mode — the sides of the key being crushed by the contact pressure against the keyway walls. Only half the key's height (H/2) is in bearing contact on each side, and the allowable bearing (compressive) stress σc is normally taken as roughly twice the allowable shear stress τ for the same key material, since materials generally tolerate more compressive stress than shear stress before yielding.</p>
+      <p>Whichever of the two calculated lengths is larger is the <strong>governing</strong> case — the key must be at least that long to avoid failing in that mode. A practical design then adds a margin (this calculator applies 15%) on top of the governing theoretical length, both for a safety margin and because standard key stock is typically only available in fixed length increments.</p>
+
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      
+      <h3 class="font-display font-semibold text-brandDark mb-3">Worked Example</h3>
+      <p class="text-sm text-gray-600 mb-2">A 55 mm shaft uses a standard 16×10 mm key to transmit 200 N·m of torque, with allowable shear stress 42 MPa and allowable bearing stress 84 MPa.</p>
+      <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+        <li>T = 200 N·m = 200,000 N·mm</li>
+        <li>Shear length: L = (2×200,000) / (42×16×55) = 400,000 / 36,960 = <strong>10.82 mm</strong></li>
+        <li>Crushing length: L = (4×200,000) / (84×10×55) = 800,000 / 46,200 = <strong>17.32 mm</strong></li>
+        <li>Governing case: <strong>Crushing</strong> (17.32 mm &gt; 10.82 mm)</li>
+        <li>Recommended length with 15% margin = 17.32 × 1.15 ≈ <strong>19.9 mm</strong> — typically rounded up to a standard 20 or 22 mm key length</li>
+      </ul>
+
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Standard key width/height by shaft diameter follows common IS 2048-style proportions; always confirm against the specific coupling, pulley or gear hub's keyway if it's a purchased component, since hub keyways are sized to match the mating shaft standard in use.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION (optional but standard) =====================
+     Every published calculator carries a second content block here —
+     a comparison table, a second worked scenario, a rate/limit
+     reference table, or a related-topic deep-dive (e.g. "how tenure
+     changes total interest", "GST slabs at a glance"). Drop the whole
+     <section> and its TOC <li> only if there is genuinely nothing
+     page-specific to add — don't leave it thin just to check the box. -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference table</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Standard parallel key sizes by shaft diameter</h2>
+  
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead><tr class="text-left text-gray-500 text-xs uppercase border-b border-gray-200">
+          <th class="py-2 pr-4">Shaft diameter range (mm)</th><th class="py-2 pr-4">Key width, W (mm)</th><th class="py-2">Key height, H (mm)</th>
+        </tr></thead>
+        <tbody class="divide-y divide-gray-100 text-gray-700">
+          <tr><td class="py-2 pr-4">12 – 17</td><td class="py-2 pr-4">5</td><td class="py-2">5</td></tr>
+          <tr><td class="py-2 pr-4">17 – 22</td><td class="py-2 pr-4">6</td><td class="py-2">6</td></tr>
+          <tr><td class="py-2 pr-4">22 – 30</td><td class="py-2 pr-4">8</td><td class="py-2">7</td></tr>
+          <tr><td class="py-2 pr-4">30 – 38</td><td class="py-2 pr-4">10</td><td class="py-2">8</td></tr>
+          <tr><td class="py-2 pr-4">38 – 44</td><td class="py-2 pr-4">12</td><td class="py-2">8</td></tr>
+          <tr><td class="py-2 pr-4">44 – 50</td><td class="py-2 pr-4">14</td><td class="py-2">9</td></tr>
+          <tr><td class="py-2 pr-4">50 – 58</td><td class="py-2 pr-4">16</td><td class="py-2">10</td></tr>
+          <tr><td class="py-2 pr-4">58 – 65</td><td class="py-2 pr-4">18</td><td class="py-2">11</td></tr>
+          <tr><td class="py-2 pr-4">65 – 75</td><td class="py-2 pr-4">20</td><td class="py-2">12</td></tr>
+          <tr><td class="py-2 pr-4">75 – 85</td><td class="py-2 pr-4">22</td><td class="py-2">14</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="text-sm text-gray-600 mt-4">This calculator auto-fills width and height from a table like this one when you enter a shaft diameter, but always confirm the exact width and height against the specific hub component's keyway (pulley, coupling, or gear) if you're mating with a purchased part, since the hub's keyway is what your key actually has to fit — the shaft-diameter table gives the expected standard, not a guarantee of what a specific part was actually made to.</p>
+
+</section>
+
+<!-- ===================== COMMON MISTAKES =====================
+     Standard section on every published calculator. Minimum 5
+     numbered mistakes, each 1-2 sentences: state the mistake, then
+     why it's wrong / what it costs the user. -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common mistakes when sizing a key</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p><strong>1. Checking only shear or only crushing, not both.</strong> The two failure modes are independent and depend differently on key width versus height — skipping one check can miss the actual governing (weaker) failure mode, especially since crushing often governs for wider, shorter keys and shear can govern for narrower, taller ones.</p>
+      <p><strong>2. Using the shaft diameter as the moment arm without dividing by 2.</strong> Torque acts at the shaft's radius, not its full diameter — using diameter directly instead of radius in the torque balance halves the calculated stress (or doubles the calculated required length), a common algebra slip when rearranging the torque equations.</p>
+      <p><strong>3. Assuming full key height is in bearing contact for the crushing check.</strong> Only half the key height (H/2) is engaged in bearing contact on each side of a standard sunk key — using the full height H instead of H/2 in the crushing formula understates the actual bearing stress (or overstates the safe length).</p>
+      <p><strong>4. Using a non-standard width/height without checking hub compatibility.</strong> A calculated "ideal" cross-section that doesn't match the shaft diameter's standard key size may not fit a purchased pulley, gear, or coupling's factory-cut keyway — stick to the standard size for the shaft diameter unless the mating hub is also custom-made.</p>
+      <p><strong>5. Ignoring stress concentration at the keyway.</strong> Cutting a keyway into a shaft removes material and creates a stress concentration that reduces the shaft's own torque capacity below that of a plain round shaft of the same diameter — this calculator sizes the key itself, but shaft strength with the keyway factored in needs its own separate check.</p>
+      <p><strong>6. Not adding a design margin over the bare calculated minimum length.</strong> The theoretical minimum length from the shear/crushing checks is a bare limit, not a design length — applying a margin (commonly 15–25%) accounts for uncertainties in actual load, minor misalignment, and rounds up to commercially available key stock lengths.</p>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] FAQ =====================
+     Minimum 8 <details> items, matching the 8 JSON-LD entries above
+     1-for-1 (same question text, same order) — schema and visible
+     content must never diverge. First item gets the `open` attribute. -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2">Straight answers on key width/height selection, shear check, and crushing check.</p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    
+    <details class="py-4" open>
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How is key length calculated from transmitted torque?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Two independent checks are calculated: a shear length from the key's width and the shaft's shear stress limit, and a crushing (bearing) length from the key's height and the material's bearing stress limit. The larger of the two results is the governing minimum length, since the key must survive both failure modes.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why are there two different formulas, one for shear and one for crushing?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">A key can fail in two different ways: by shearing straight across along the shaft surface, or by the key's sides being crushed against the keyway walls under bearing pressure. These are independent failure modes governed by different stress limits and different effective areas, so both must be checked and the weaker (longer required length) case governs the design.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why is allowable bearing stress usually about twice the allowable shear stress for the same material?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Most ductile materials can tolerate meaningfully higher compressive (bearing) stress than shear stress before yielding, based on general material yield behavior. A commonly used approximate relationship takes allowable bearing stress as roughly double the allowable shear stress for the same key material, though the exact ratio depends on the specific material and applicable design code.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How do I choose the standard key width and height for a given shaft diameter?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Standard parallel key sizing tables (such as IS 2048) specify a width and height for each shaft diameter range, based on common industry practice — this calculator auto-fills those standard values when you enter a shaft diameter, though you should always confirm against the specific hub component's actual keyway if mating with a purchased part.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why does the crushing check use half the key height instead of the full height?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">In a standard sunk key, half of the key's height sits above the shaft's keyway and half sits below it, with only the portion protruding into the hub's keyway actually bearing against the hub material under torque. This effective bearing height is taken as H/2 in the standard crushing check formula.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Does cutting a keyway weaken the shaft itself?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Yes — removing material for a keyway reduces the shaft's cross-section and creates a stress concentration at the corners of the slot, both of which reduce the shaft's torque capacity compared to an equivalent plain round shaft. This calculator sizes the key only; shaft strength with the keyway accounted for needs a separate check, often using a reduced effective shaft diameter or a stress concentration factor.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How much margin should I add over the calculated minimum key length?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">A commonly used margin is around 15 to 25 percent over the governing calculated length, both to provide a safety margin for load variation and misalignment, and because standard key stock is only available in fixed length increments, so the actual length used is typically rounded up from the calculated figure anyway.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Can key length exceed the hub length it's fitted into?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">No — the calculated key length must physically fit within the length of the hub (pulley, gear, or coupling) it engages. If the calculated required length exceeds the available hub length, options include increasing key width or height (if the shaft and hub allow it), using two keys, or selecting a different connection method such as a shrink fit or spline.</p>
+    </details>
+
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+  
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+
+  // [minShaft, maxShaft, W, H] -- approximate IS 2048-style parallel key standard sizes
+  const keyStdTable = [
+    [6, 8, 2, 2], [8, 10, 3, 3], [10, 12, 4, 4], [12, 17, 5, 5],
+    [17, 22, 6, 6], [22, 30, 8, 7], [30, 38, 10, 8], [38, 44, 12, 8],
+    [44, 50, 14, 9], [50, 58, 16, 10], [58, 65, 18, 11], [65, 75, 20, 12],
+    [75, 85, 22, 14], [85, 95, 25, 14], [95, 110, 28, 16], [110, 130, 32, 18],
+    [130, 150, 36, 20], [150, 170, 40, 22], [170, 200, 45, 25]
+  ];
+
+  function updateStandardKey(){
+    const D = parseFloat(document.getElementById('ksShaft').value);
+    if(isNaN(D) || D <= 0) return;
+    const row = keyStdTable.find(r => D > r[0] && D <= r[1]) || (D <= keyStdTable[0][1] ? keyStdTable[0] : keyStdTable[keyStdTable.length-1]);
+    document.getElementById('ksWidth').value = row[2];
+    document.getElementById('ksHeight').value = row[3];
+  }
+  document.addEventListener('DOMContentLoaded', updateStandardKey);
+
+  function calculateKeySize(){
+    const D = parseFloat(document.getElementById('ksShaft').value);
+    const W = parseFloat(document.getElementById('ksWidth').value);
+    const H = parseFloat(document.getElementById('ksHeight').value);
+    const torqueNm = parseFloat(document.getElementById('ksTorque').value);
+    const tau = parseFloat(document.getElementById('ksTau').value);
+    const sigmaC = parseFloat(document.getElementById('ksSigmaC').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(D) || D <= 0){ errors.push('Enter a valid shaft diameter greater than 0.'); }
+    if(isNaN(W) || W <= 0){ errors.push('Enter a valid key width greater than 0.'); }
+    if(isNaN(H) || H <= 0){ errors.push('Enter a valid key height greater than 0.'); }
+    if(isNaN(torqueNm) || torqueNm <= 0){ errors.push('Enter a valid transmitted torque greater than 0.'); }
+    if(isNaN(tau) || tau <= 0){ errors.push('Enter a valid allowable shear stress greater than 0.'); }
+    if(isNaN(sigmaC) || sigmaC <= 0){ errors.push('Enter a valid allowable bearing stress greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rShearLen').textContent = '\u2014';
+      document.getElementById('rCrushLen').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const torqueNmm = torqueNm * 1000; // N.m -> N.mm
+    const radiusMm = D / 2;
+
+    // Shear check: Torque = shear force x radius; shear force = tau x (W x L)
+    // T = tau * W * L * (D/2)  =>  L = 2T / (tau * W * D)
+    const L_shear = (2 * torqueNmm) / (tau * W * D);
+
+    // Crushing/bearing check: bearing area = L x (H/2); Torque = sigmaC * L * (H/2) * (D/2)
+    // T = sigmaC * L * (H/2) * (D/2) => L = 4T / (sigmaC * H * D)
+    const L_crush = (4 * torqueNmm) / (sigmaC * H * D);
+
+    const governing = Math.max(L_shear, L_crush);
+    const recommended = governing * 1.15; // margin
+
+    document.getElementById('rResult').textContent = recommended.toFixed(1) + ' mm';
+    document.getElementById('resultSub').textContent = 'W×H = ' + W + '×' + H + 'mm on Ø' + D + 'mm shaft, T=' + torqueNm + ' N·m';
+    document.getElementById('rShearLen').textContent = L_shear.toFixed(1) + ' mm';
+    document.getElementById('rCrushLen').textContent = L_crush.toFixed(1) + ' mm';
+
+    const governingLabel = L_shear >= L_crush ? 'Shear' : 'Crushing (bearing)';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Shaft Diameter (D)</td><td>${D} mm</td></tr>
+                <tr><td>Key Cross-Section (W × H)</td><td>${W} × ${H} mm</td></tr>
+                <tr><td>Transmitted Torque</td><td>${torqueNm} N·m (${torqueNmm.toLocaleString('en-IN')} N·mm)</td></tr>
+                <tr><td>Shear Length: L = 2T / (τ×W×D)</td><td>${L_shear.toFixed(2)} mm</td></tr>
+                <tr><td>Crushing Length: L = 4T / (σc×H×D)</td><td>${L_crush.toFixed(2)} mm</td></tr>
+                <tr><td>Governing Check</td><td>${governingLabel}</td></tr>
+                <tr><td><strong>Minimum Required Length</strong></td><td><strong>${governing.toFixed(2)} mm</strong></td></tr>
+                <tr><td><strong>Recommended Length (+15% margin)</strong></td><td><strong>${recommended.toFixed(1)} mm</strong></td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateKeySize();
+
+</script>
+
+<script>
+  // ===== Generic Copy Result (added site-wide; does not touch page-specific calc logic) =====
+  function copyResultGeneric(){
+    var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
+    var btn = document.getElementById('copyResultBtn');
+    if (!panel || !btn) return;
+    var text = panel.innerText.trim();
+    function restore(){ btn.textContent = '📋 Copy Result'; }
+    if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = '✅ Copied';
+        setTimeout(restore, 1800);
+      }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+    } else {
+      btn.textContent = '⚠️ Not supported';
+      setTimeout(restore, 1800);
+    }
+  }
+
+  // ===== Generic number-input safety net (added site-wide; purely additive —
+  // runs on blur AFTER the page's own oninput/onchange calc handlers, and only
+  // corrects a value that is non-finite or outside the field's own declared
+  // min/max attributes, then re-fires "input" so the page's existing calc
+  // function recalculates with the corrected value. Never overrides or
+  // replaces any existing calculator logic. =====
+  (function(){
+    function clampNumberInput(el){
+      if (el.type !== 'number' || el.value === '') return;
+      var hasMin = el.hasAttribute('min');
+      var hasMax = el.hasAttribute('max');
+      var min = hasMin ? parseFloat(el.min) : null;
+      var max = hasMax ? parseFloat(el.max) : null;
+      var v = parseFloat(el.value);
+      var corrected = null;
+      if (!isFinite(v)) { corrected = (min !== null ? min : 0); }
+      else if (min !== null && v < min) { corrected = min; }
+      else if (max !== null && v > max) { corrected = max; }
+      if (corrected !== null && corrected !== v) {
+        el.value = corrected;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    document.querySelectorAll('input[type="number"]').forEach(function(el){
+      el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+</script>
+</body>
+</html>

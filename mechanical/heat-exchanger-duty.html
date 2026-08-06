@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- meta: {"category":"Mechanical"} -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== THEME (FLASH/CLS PREVENTION) =====================
+     Runs synchronously, before any stylesheet or paint, so the correct
+     dark-theme/light-theme class is already present on <html> the instant
+     CSS starts applying — no later class-add via site-nav.js's
+     DOMContentLoaded handler, which was causing a ~1.0 CLS hit as the
+     entire theme (colors AND several layout-affecting rules) snapped in
+     partway through the page's first paint. A matching inline script sits
+     right after <body> opens (see below) to cover the body.dark-theme /
+     body.light-theme selectors theme.css also relies on — site-nav.js
+     still re-applies both classes on DOMContentLoaded as a no-op safety
+     net (classList.add on an already-present class is a no-op) and is
+     what actually handles the toggle button switching themes later. -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Heat Exchanger Duty Calculator (Q = mCpΔT &amp; LMTD Area) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free heat exchanger duty calculator. Find heat duty (kW) from mass flow rate, specific heat and temperature change, plus optional required heat transfer area from U and LMTD.">
+<meta name="keywords" content="heat exchanger duty calculator, heat duty formula, Q=mCpdT calculator, LMTD calculator, heat transfer area calculator, heat exchanger sizing">
+<meta name="robots" content="index, follow">
+<!-- PAGE_CATEGORY = electrical | mechanical | financial (no slashes).
+     PAGE_SLUG = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/heat-exchanger-duty">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Heat Exchanger Duty Calculator">
+<meta property="og:description" content="Heat duty of a heat exchanger from mass flow rate, specific heat and temperature change — plus optional required heat transfer area from overall U and LMTD.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/heat-exchanger-duty">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Heat Exchanger Duty Calculator">
+<meta name="twitter:description" content="Heat duty of a heat exchanger from mass flow rate, specific heat and temperature change — plus optional required heat transfer area from overall U and LMTD.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA =====================
+     Minimum 8 FAQ entries (Q1-Q8) — matches the site-wide standard set
+     across all published calculators. Add more (Q9, Q10...) as needed;
+     never ship fewer than 8, and keep this JSON-LD block in sync with
+     the visible FAQ_ITEMS accordion below (same questions, same
+     order) so structured data never diverges from on-page content. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Heat Exchanger Duty Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/heat-exchanger-duty",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free online calculator for heat exchanger thermal duty using the sensible heat equation Q = mCpΔT, with an optional second step to estimate required heat transfer area from the overall heat transfer coefficient and log mean temperature difference (LMTD).",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Mechanical Calculators", "item": "https://www.electromechcalc.com/mechanical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "Heat Exchanger Duty Calculator", "item": "https://www.electromechcalc.com/mechanical/heat-exchanger-duty" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for heat exchanger duty?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Q equals mass flow rate times specific heat times temperature change, Q = m dot times Cp times Delta T, for sensible heating or cooling with no phase change. With flow in kg per second, Cp in kJ per kg-Kelvin, and Delta T in degrees Celsius, the result comes out directly in kilowatts." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is LMTD and why not just average the two end temperature differences?",
+      "acceptedAnswer": { "@type": "Answer", "text": "LMTD, the log mean temperature difference, correctly accounts for the fact that the temperature gap between hot and cold streams changes non-linearly along the exchanger length. A simple arithmetic average overstates the true driving force whenever the two end-differences are noticeably different, which would understate the required heat transfer area." }
+    },
+    {
+      "@type": "Question",
+      "name": "What's the difference between counter-current and parallel flow arrangement?",
+      "acceptedAnswer": { "@type": "Answer", "text": "In counter-current flow, the hot and cold fluids move in opposite directions through the exchanger, which generally gives a higher LMTD and therefore requires less area for the same duty. In parallel (co-current) flow, both fluids move the same direction, which is less thermally efficient but sometimes preferred for reasons like limiting the maximum wall temperature." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I estimate the overall heat transfer coefficient U if I don't have test data?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Use published reference ranges for the specific fluid combination and exchanger type as a starting estimate, such as the typical values table on this page, then refine with the manufacturer's design data or a detailed film-coefficient calculation once the exchanger type and materials are selected — U varies too widely by application for one universal number." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can this calculator handle a condenser or an evaporator?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not directly — this calculator's duty formula covers sensible heat only (temperature change with no phase change). Condensing or boiling duty depends on latent heat and the mass flow undergoing the phase change, which is a different calculation, though the LMTD and area relationship can still apply once that duty is known separately." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why did the calculator show an error about a temperature cross?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A temperature cross happens when the hot fluid temperature drops below the cold fluid temperature at one end of the exchanger for the arrangement you selected, which makes the LMTD calculation mathematically invalid. This usually means the flow arrangement should be counter-current instead of parallel, or that the entered temperatures need rechecking." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this area result already include a fouling allowance?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — the area result uses the U value you enter directly. If that U value is a clean-surface figure, the calculated area will be a clean-condition minimum; add a fouling factor to U (reducing it) if you want the result to reflect long-term fouled operation, which a full thermal design would normally include." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the calculated area accurate enough for actually ordering an exchanger?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Treat it as a first-pass sizing estimate only. A purchase-ready design needs the manufacturer's or a process engineer's detailed calculation, including fouling factors, a correction factor for the actual (often multi-pass) flow arrangement, pressure drop checks, and material and mechanical design per the applicable exchanger design code." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Free · Instant results
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Heat Exchanger Duty <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Heat duty from mass flow rate, specific heat and temperature change — plus optional required heat transfer area from U and LMTD.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+      
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-5">Heat Duty Inputs</h2>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Mass Flow Rate (kg/hr)</label>
+          <input id="hxFlow" type="number" value="5000" step="10" min="0" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Specific Heat, Cp (kJ/kg·K)</label>
+          <input id="hxCp" type="number" value="4.18" step="0.01" min="0" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Cold Fluid Inlet, Tᵢₙ (°C)</label>
+          <input id="hxTin" type="number" value="25" step="1" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Cold Fluid Outlet, Tₒᵤₜ (°C)</label>
+          <input id="hxTout" type="number" value="60" step="1" class="input-field mt-2">
+        </div>
+      </div>
+      <p class="text-[11px] text-gray-400 mt-1 mb-4">The duty (Q) calculation above works for either fluid direction. The optional LMTD/area section below always treats this stream as the one being heated (cold side) — if your process fluid is actually cooling down, enter its numbers in the Hot Fluid fields instead and put the fluid being heated here.</p>
+
+      <div class="border-t border-gray-100 pt-4 mt-2 mb-4">
+        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Optional — Heat Transfer Area</span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Overall U (W/m²·K)</label>
+          <input id="hxU" type="number" value="800" step="10" min="0" placeholder="leave blank to skip" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Hot Fluid Inlet (°C)</label>
+          <input id="hxHotIn" type="number" value="95" step="1" placeholder="leave blank to skip" class="input-field mt-2">
+        </div>
+      </div>
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Hot Fluid Outlet (°C)</label>
+        <input id="hxHotOut" type="number" value="70" step="1" placeholder="leave blank to skip" class="input-field mt-2">
+      </div>
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Flow Arrangement</label>
+        <select id="hxArrangement" class="input-field mt-2">
+          <option value="counter">Counter-current</option>
+          <option value="parallel">Parallel (co-current)</option>
+        </select>
+      </div>
+
+      <button onclick="calculateHeatDuty()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 rounded-lg transition">Calculate Duty</button>
+
+      <div id="validationBox" class="hidden mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3"></div>
+
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+      
+      <div class="result-tile rounded-2xl p-6 text-white">
+        <span class="font-mono text-[11px] uppercase tracking-wider text-sky-300">Heat Duty (Q)</span>
+        <div id="rResult" class="text-4xl font-display font-bold mt-1">—</div>
+        <div id="resultSub" class="text-gray-400 text-xs mt-2">—</div>
+        <div id="formulaChip" class="formula-chip mt-3">Q = ṁ × Cp × ΔT</div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">LMTD</span>
+          <div id="rLmtd" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">Required Area</span>
+          <div id="rArea" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Calculation Breakdown</span>
+        <div class="breakdown-wrap">
+          <div id="breakdownBox"></div>
+        </div>
+      </div>
+
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          
+          <a href="/mechanical/pump-power" class="nav-dropdown-link border border-gray-100">Pump Power Calculator</a>
+          <a href="/mechanical/pipe-pressure-drop" class="nav-dropdown-link border border-gray-100">Pipe Pressure Drop Calculator</a>
+          <a href="/mechanical/thermal-expansion" class="nav-dropdown-link border border-gray-100">Thermal Expansion Calculator</a>
+          <a href="/mechanical/metal-weight" class="nav-dropdown-link border border-gray-100">Metal Weight Calculator</a>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR =====================
+     Standard section on every published calculator. The single Share
+     Result button (openShareModal) and its modal are shared, site-wide
+     logic living in common.js + theme.css — nothing to add here beyond
+     this markup. setFeedback() below is per-page (each calculator
+     tracks its own Yes/No feedback state), matching how every other
+     published calculator implements it; add it inside
+     CALCULATOR_JS. No like/dislike buttons — Share Result + Yes/No
+     + Feedback mail is the current standard, deliberately lighter than
+     the old three-group bar. -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Heat Exchanger Duty Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS =====================
+     Standard 5-row TOC used across every published calculator.
+     Keep the anchors (#calculator, #how-it-works, #second, #mistakes,
+     #faqs) in sync with the actual section ids below — if a page
+     skips the optional SECOND_SECTION block, remove that li too
+     and renumber the rest. -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. How heat duty and area are calculated</a></li>
+      <li><a href="#second" class="hover:underline">3. Typical overall U values by service</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== [PER-PAGE] EXPLANATION =====================
+     Target length across how-it-works + second + mistakes + FAQ
+     combined: 3000+ words of genuine, non-duplicated content (this is
+     the site-wide content-depth standard, not just a suggestion —
+     thin pages are the #1 AdSense/SEO risk on this site). Include a
+     worked numeric example with real figures, not just the formula. -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Heat exchanger duty and area, explained</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: TEMA (heat exchanger design practice), standard sensible-heat and LMTD relations</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p>Heat exchanger duty is the rate of heat energy that must be transferred from one fluid stream to another to achieve a required temperature change. For a fluid with no phase change, this is given by the sensible heat equation:</p>
+      <p class="formula-chip text-sm">Q = ṁ × Cp × ΔT</p>
+      <p>Here, ṁ is the mass flow rate of the fluid being heated or cooled, Cp is its specific heat capacity (how much energy it takes to raise 1 kg of the fluid by 1°C), and ΔT is the temperature change it undergoes across the exchanger. With mass flow in kg/s, Cp in kJ/kg·K, and ΔT in °C, the result comes out directly in kW — the standard unit heat exchanger duty is specified in.</p>
+      <p>This duty figure is the starting point for sizing the exchanger, but it doesn't by itself tell you how large the exchanger needs to be — that depends on how efficiently heat crosses from the hot side to the cold side, which is where the log mean temperature difference (LMTD) and overall heat transfer coefficient (U) come in.</p>
+      <p class="formula-chip text-sm">Q = U × A × LMTD</p>
+      <p>LMTD accounts for the fact that the temperature difference between the two fluids is not constant along the length of the exchanger — it's largest at one end and smallest at the other. For counter-current flow (the two fluids moving in opposite directions, generally the more efficient and more common industrial arrangement), LMTD is calculated from the temperature differences at each end of the exchanger, ΔT₁ and ΔT₂:</p>
+      <p class="formula-chip text-sm">LMTD = (ΔT₁ − ΔT₂) / ln(ΔT₁/ΔT₂)</p>
+      <p>Once Q and LMTD are known, and an estimate of the overall heat transfer coefficient U is available (which depends on the fluids involved, the exchanger type, and the materials used — see the reference table below), the required heat transfer area follows directly by rearranging Q = U × A × LMTD to solve for A. This gives a first-pass estimate of exchanger size, which a detailed thermal design would refine further with fouling factors, correction factors for multi-pass or cross-flow arrangements, and pressure-drop checks.</p>
+
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      
+      <h3 class="font-display font-semibold text-brandDark mb-3">Worked Example</h3>
+      <p class="text-sm text-gray-600 mb-2">Water is heated from 25°C to 60°C at 5000 kg/hr, using hot process fluid entering at 95°C and leaving at 70°C in a counter-current shell-and-tube exchanger with U = 800 W/m²·K.</p>
+      <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+        <li>ṁ = 5000/3600 = 1.389 kg/s, Cp = 4.18 kJ/kg·K, ΔT = 35°C</li>
+        <li>Q = 1.389 × 4.18 × 35 = <strong>203.2 kW</strong></li>
+        <li>Counter-current: ΔT₁ = 95−60 = 35°C (hot inlet vs cold outlet); ΔT₂ = 70−25 = 45°C (hot outlet vs cold inlet)</li>
+        <li>LMTD = (35−45) / ln(35/45) = −10 / −0.2513 = <strong>39.79°C</strong></li>
+        <li>Area = Q / (U × LMTD) = 203,200 / (800 × 39.79) = <strong>6.38 m²</strong></li>
+      </ul>
+
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator covers sensible (no phase change) heat duty and a simplified counter-current LMTD area estimate; condensing/boiling duty, multi-pass correction factors, and fouling allowances need a full thermal design rather than this simplified tool.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION (optional but standard) =====================
+     Every published calculator carries a second content block here —
+     a comparison table, a second worked scenario, a rate/limit
+     reference table, or a related-topic deep-dive (e.g. "how tenure
+     changes total interest", "GST slabs at a glance"). Drop the whole
+     <section> and its TOC <li> only if there is genuinely nothing
+     page-specific to add — don't leave it thin just to check the box. -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference table</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Typical overall heat transfer coefficients (U)</h2>
+  
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead><tr class="text-left text-gray-500 text-xs uppercase border-b border-gray-200">
+          <th class="py-2 pr-4">Service</th><th class="py-2">Typical U (W/m²·K)</th>
+        </tr></thead>
+        <tbody class="divide-y divide-gray-100 text-gray-700">
+          <tr><td class="py-2 pr-4">Water to water</td><td class="py-2">800 – 1,500</td></tr>
+          <tr><td class="py-2 pr-4">Water to light oil</td><td class="py-2">300 – 900</td></tr>
+          <tr><td class="py-2 pr-4">Water to heavy oil / viscous fluid</td><td class="py-2">50 – 300</td></tr>
+          <tr><td class="py-2 pr-4">Steam to water</td><td class="py-2">1,500 – 4,000</td></tr>
+          <tr><td class="py-2 pr-4">Air to water (finned tube)</td><td class="py-2">25 – 60</td></tr>
+          <tr><td class="py-2 pr-4">Ammonia condenser (refrigerant to water)</td><td class="py-2">800 – 1,400</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="text-sm text-gray-600 mt-4">These ranges are wide because U depends heavily on fluid velocity, tube material and wall thickness, surface fouling, and exchanger geometry — use the manufacturer's design value or a detailed film-coefficient calculation for final sizing, and treat this table as a first-pass estimating guide only.</p>
+
+</section>
+
+<!-- ===================== COMMON MISTAKES =====================
+     Standard section on every published calculator. Minimum 5
+     numbered mistakes, each 1-2 sentences: state the mistake, then
+     why it's wrong / what it costs the user. -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common mistakes when sizing a heat exchanger</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p><strong>1. Using an arithmetic mean temperature difference instead of LMTD.</strong> Simply averaging the hot and cold temperature differences at the two ends overstates the effective driving temperature difference whenever the two end-differences are far apart, which understates the required area.</p>
+      <p><strong>2. Mixing up counter-current and parallel-flow ΔT₁/ΔT₂ pairing.</strong> The two flow arrangements pair the hot and cold stream temperatures differently at each end — using the counter-current pairing for a parallel-flow exchanger (or vice versa) gives a wrong LMTD and therefore a wrong area.</p>
+      <p><strong>3. Forgetting units on Cp.</strong> Specific heat is sometimes quoted in kJ/kg·K and sometimes in kcal/kg°C — mixing the two without converting (1 kcal/kg°C = 4.186 kJ/kg·K) throws off the duty calculation by that same factor.</p>
+      <p><strong>4. Using a single-phase U value for a condensing or boiling duty.</strong> Phase-change heat transfer (condensation, boiling) has very different, usually much higher, heat transfer coefficients than sensible (no phase change) heating or cooling — and phase-change duty itself uses latent heat, not Q = mCpΔT, so this calculator's duty formula does not apply to it directly.</p>
+      <p><strong>5. Ignoring fouling allowance.</strong> Real exchangers accumulate scale, deposits, or biological fouling over time, which reduces effective U below its clean-surface value — detailed designs include a fouling factor; a first-pass estimate using clean U alone will undersize the exchanger for long-term service.</p>
+      <p><strong>6. Applying the single-pass LMTD formula directly to a multi-pass shell-and-tube exchanger.</strong> Real multi-pass and cross-flow exchangers need an LMTD correction factor (F) less than 1, since their flow pattern is not purely counter-current — skipping this factor underestimates the required area for anything other than a true single-pass counter-current design.</p>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] FAQ =====================
+     Minimum 8 <details> items, matching the 8 JSON-LD entries above
+     1-for-1 (same question text, same order) — schema and visible
+     content must never diverge. First item gets the `open` attribute. -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2">Straight answers on heat duty, LMTD, and heat transfer area.</p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    
+    <details class="py-4" open>
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What is the formula for heat exchanger duty?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Q equals mass flow rate times specific heat times temperature change, Q = m dot times Cp times Delta T, for sensible heating or cooling with no phase change. With flow in kg per second, Cp in kJ per kg-Kelvin, and Delta T in degrees Celsius, the result comes out directly in kilowatts.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What is LMTD and why not just average the two end temperature differences?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">LMTD, the log mean temperature difference, correctly accounts for the fact that the temperature gap between hot and cold streams changes non-linearly along the exchanger length. A simple arithmetic average overstates the true driving force whenever the two end-differences are noticeably different, which would understate the required heat transfer area.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What's the difference between counter-current and parallel flow arrangement?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">In counter-current flow, the hot and cold fluids move in opposite directions through the exchanger, which generally gives a higher LMTD and therefore requires less area for the same duty. In parallel (co-current) flow, both fluids move the same direction, which is less thermally efficient but sometimes preferred for reasons like limiting the maximum wall temperature.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How do I estimate the overall heat transfer coefficient U if I don't have test data?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Use published reference ranges for the specific fluid combination and exchanger type as a starting estimate, such as the typical values table on this page, then refine with the manufacturer's design data or a detailed film-coefficient calculation once the exchanger type and materials are selected — U varies too widely by application for one universal number.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Can this calculator handle a condenser or an evaporator?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Not directly — this calculator's duty formula covers sensible heat only (temperature change with no phase change). Condensing or boiling duty depends on latent heat and the mass flow undergoing the phase change, which is a different calculation, though the LMTD and area relationship can still apply once that duty is known separately.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why did the calculator show an error about a temperature cross?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">A temperature cross happens when the hot fluid temperature drops below the cold fluid temperature at one end of the exchanger for the arrangement you selected, which makes the LMTD calculation mathematically invalid. This usually means the flow arrangement should be counter-current instead of parallel, or that the entered temperatures need rechecking.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Does this area result already include a fouling allowance?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">No — the area result uses the U value you enter directly. If that U value is a clean-surface figure, the calculated area will be a clean-condition minimum; add a fouling factor to U (reducing it) if you want the result to reflect long-term fouled operation, which a full thermal design would normally include.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Is the calculated area accurate enough for actually ordering an exchanger?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Treat it as a first-pass sizing estimate only. A purchase-ready design needs the manufacturer's or a process engineer's detailed calculation, including fouling factors, a correction factor for the actual (often multi-pass) flow arrangement, pressure drop checks, and material and mechanical design per the applicable exchanger design code.</p>
+    </details>
+
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+  
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+
+  function calculateHeatDuty(){
+    const flowKgHr = parseFloat(document.getElementById('hxFlow').value);
+    const cp = parseFloat(document.getElementById('hxCp').value);
+    const tIn = parseFloat(document.getElementById('hxTin').value);
+    const tOut = parseFloat(document.getElementById('hxTout').value);
+    const U = parseFloat(document.getElementById('hxU').value);
+    const hotIn = parseFloat(document.getElementById('hxHotIn').value);
+    const hotOut = parseFloat(document.getElementById('hxHotOut').value);
+    const arrangement = document.getElementById('hxArrangement').value;
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(flowKgHr) || flowKgHr <= 0){ errors.push('Enter a valid mass flow rate greater than 0.'); }
+    if(isNaN(cp) || cp <= 0){ errors.push('Enter a valid specific heat greater than 0.'); }
+    if(isNaN(tIn) || isNaN(tOut)){ errors.push('Enter valid inlet and outlet temperatures.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rLmtd').textContent = '\u2014';
+      document.getElementById('rArea').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const deltaT = Math.abs(tOut - tIn);
+    const flowKgS = flowKgHr / 3600;
+    const Qkw = flowKgS * cp * deltaT; // kg/s * kJ/kgK * K = kW
+
+    document.getElementById('rResult').textContent = Qkw.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' kW';
+    document.getElementById('resultSub').textContent = flowKgHr.toLocaleString('en-IN') + ' kg/hr, ΔT = ' + deltaT.toFixed(1) + '\u00b0C';
+
+    let lmtdHtml = '';
+    let areaHtml = '';
+    if(!isNaN(U) && U > 0 && !isNaN(hotIn) && !isNaN(hotOut)){
+      // Cold side is tIn -> tOut (being heated). Hot side is hotIn -> hotOut (being cooled).
+      let dT1, dT2;
+      if(arrangement === 'counter'){
+        dT1 = hotIn - tOut;
+        dT2 = hotOut - tIn;
+      } else {
+        dT1 = hotIn - tIn;
+        dT2 = hotOut - tOut;
+      }
+      if(dT1 > 0 && dT2 > 0){
+        const lmtd = Math.abs(dT1 - dT2) < 0.0001 ? dT1 : (dT1 - dT2) / Math.log(dT1/dT2);
+        const areaM2 = (Qkw * 1000) / (U * lmtd);
+        document.getElementById('rLmtd').textContent = lmtd.toFixed(2) + ' \u00b0C';
+        document.getElementById('rArea').textContent = areaM2.toFixed(2) + ' m\u00b2';
+        lmtdHtml = '<tr><td>ΔT₁ / ΔT₂</td><td>' + dT1.toFixed(1) + '\u00b0C / ' + dT2.toFixed(1) + '\u00b0C</td></tr><tr><td><strong>LMTD</strong></td><td><strong>' + lmtd.toFixed(2) + ' \u00b0C</strong></td></tr>';
+        areaHtml = '<tr><td>Overall U</td><td>' + U + ' W/m²·K</td></tr><tr><td><strong>Required Area (A = Q/U×LMTD)</strong></td><td><strong>' + areaM2.toFixed(2) + ' m²</strong></td></tr>';
+      } else {
+        document.getElementById('rLmtd').textContent = 'Invalid — check temps';
+        document.getElementById('rArea').textContent = '\u2014';
+        lmtdHtml = '<tr><td colspan="2" style="color:#b91c1c;">Hot fluid temperatures must stay above the cold fluid at both ends for the chosen arrangement — check for a temperature cross.</td></tr>';
+      }
+    } else {
+      document.getElementById('rLmtd').textContent = '\u2014';
+      document.getElementById('rArea').textContent = '\u2014';
+    }
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Mass Flow Rate</td><td>${flowKgHr.toLocaleString('en-IN')} kg/hr (${flowKgS.toFixed(4)} kg/s)</td></tr>
+                <tr><td>Specific Heat (Cp)</td><td>${cp} kJ/kg·K</td></tr>
+                <tr><td>Temperature Change (ΔT)</td><td>${deltaT.toFixed(1)} °C (${tIn}°C → ${tOut}°C)</td></tr>
+                <tr><td><strong>Heat Duty (Q)</strong></td><td><strong>${Qkw.toFixed(2)} kW</strong></td></tr>
+                <tr><td>Heat Duty (kcal/hr)</td><td>${(Qkw*860.42).toLocaleString('en-IN',{maximumFractionDigits:0})} kcal/hr</td></tr>
+                ${lmtdHtml}
+                ${areaHtml}
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateHeatDuty();
+
+</script>
+
+<script>
+  // ===== Generic Copy Result (added site-wide; does not touch page-specific calc logic) =====
+  function copyResultGeneric(){
+    var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
+    var btn = document.getElementById('copyResultBtn');
+    if (!panel || !btn) return;
+    var text = panel.innerText.trim();
+    function restore(){ btn.textContent = '📋 Copy Result'; }
+    if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = '✅ Copied';
+        setTimeout(restore, 1800);
+      }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+    } else {
+      btn.textContent = '⚠️ Not supported';
+      setTimeout(restore, 1800);
+    }
+  }
+
+  // ===== Generic number-input safety net (added site-wide; purely additive —
+  // runs on blur AFTER the page's own oninput/onchange calc handlers, and only
+  // corrects a value that is non-finite or outside the field's own declared
+  // min/max attributes, then re-fires "input" so the page's existing calc
+  // function recalculates with the corrected value. Never overrides or
+  // replaces any existing calculator logic. =====
+  (function(){
+    function clampNumberInput(el){
+      if (el.type !== 'number' || el.value === '') return;
+      var hasMin = el.hasAttribute('min');
+      var hasMax = el.hasAttribute('max');
+      var min = hasMin ? parseFloat(el.min) : null;
+      var max = hasMax ? parseFloat(el.max) : null;
+      var v = parseFloat(el.value);
+      var corrected = null;
+      if (!isFinite(v)) { corrected = (min !== null ? min : 0); }
+      else if (min !== null && v < min) { corrected = min; }
+      else if (max !== null && v > max) { corrected = max; }
+      if (corrected !== null && corrected !== v) {
+        el.value = corrected;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    document.querySelectorAll('input[type="number"]').forEach(function(el){
+      el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+</script>
+</body>
+</html>

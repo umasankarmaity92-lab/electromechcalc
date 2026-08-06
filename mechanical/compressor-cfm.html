@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- meta: {"category":"Mechanical"} -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== THEME (FLASH/CLS PREVENTION) =====================
+     Runs synchronously, before any stylesheet or paint, so the correct
+     dark-theme/light-theme class is already present on <html> the instant
+     CSS starts applying — no later class-add via site-nav.js's
+     DOMContentLoaded handler, which was causing a ~1.0 CLS hit as the
+     entire theme (colors AND several layout-affecting rules) snapped in
+     partway through the page's first paint. A matching inline script sits
+     right after <body> opens (see below) to cover the body.dark-theme /
+     body.light-theme selectors theme.css also relies on — site-nav.js
+     still re-applies both classes on DOMContentLoaded as a no-op safety
+     net (classList.add on an already-present class is a no-op) and is
+     what actually handles the toggle button switching themes later. -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Compressor CFM Calculator (Reciprocating — Displacement &amp; FAD) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free reciprocating compressor CFM calculator. Find piston displacement and free air delivery (FAD) in CFM, m3/min and L/min from bore, stroke, RPM, number of cylinders and volumetric efficiency.">
+<meta name="keywords" content="compressor cfm calculator, reciprocating compressor displacement, free air delivery calculator, compressor capacity calculator, volumetric efficiency compressor">
+<meta name="robots" content="index, follow">
+<!-- PAGE_CATEGORY = electrical | mechanical | financial (no slashes).
+     PAGE_SLUG = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/compressor-cfm">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Compressor CFM Calculator">
+<meta property="og:description" content="Piston displacement and Free Air Delivery (FAD) of a reciprocating compressor in CFM, m3/min and L/min — from bore, stroke, RPM, cylinders and volumetric efficiency.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/compressor-cfm">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Compressor CFM Calculator">
+<meta name="twitter:description" content="Piston displacement and Free Air Delivery (FAD) of a reciprocating compressor in CFM, m3/min and L/min — from bore, stroke, RPM, cylinders and volumetric efficiency.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA =====================
+     Minimum 8 FAQ entries (Q1-Q8) — matches the site-wide standard set
+     across all published calculators. Add more (Q9, Q10...) as needed;
+     never ship fewer than 8, and keep this JSON-LD block in sync with
+     the visible FAQ_ITEMS accordion below (same questions, same
+     order) so structured data never diverges from on-page content. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Compressor CFM Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/compressor-cfm",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free online calculator for reciprocating compressor piston displacement and Free Air Delivery (FAD), in CFM, m3/min and L/min, from bore diameter, stroke length, RPM, number of cylinders and volumetric efficiency.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Mechanical Calculators", "item": "https://www.electromechcalc.com/mechanical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "Compressor CFM Calculator", "item": "https://www.electromechcalc.com/mechanical/compressor-cfm" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between piston displacement and Free Air Delivery (FAD)?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Piston displacement is the theoretical maximum volume swept by the piston(s) per unit time, based purely on cylinder geometry and speed. FAD is the actual volume of air delivered, which is always less than displacement because of clearance volume re-expansion, valve losses, and internal leakage, captured together as volumetric efficiency." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does volumetric efficiency decrease at higher compression ratios?",
+      "acceptedAnswer": { "@type": "Answer", "text": "At the top of each stroke, some high-pressure gas remains trapped in the cylinder's clearance volume rather than being expelled. At a higher compression ratio, that trapped gas is at a higher pressure and has to expand further before the cylinder pressure drops enough to open the intake valve again, which wastes more of the stroke on re-expansion instead of drawing in fresh air." }
+    },
+    {
+      "@type": "Question",
+      "name": "What does single-acting versus double-acting mean for a compressor cylinder, and does the piston rod matter?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A single-acting cylinder compresses air using only one face of the piston. A double-acting cylinder compresses on both strokes using both faces, roughly doubling displacement versus an identical single-acting cylinder — slightly less than double if a piston rod passes through the crank end, since the rod reduces that stroke's effective area." }
+    },
+    {
+      "@type": "Question",
+      "name": "What volumetric efficiency should I assume if I don't have manufacturer data?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For a typical single-stage reciprocating air compressor at a moderate compression ratio (around 6 to 8 to 1), 70 to 80 percent is a reasonable estimating range. For a more accurate figure specific to your machine, use the manufacturer's rated FAD curve or an actual acceptance test result, since efficiency varies with compression ratio, clearance volume, and mechanical condition." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do I need multi-stage compression for high discharge pressures?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A single stage compressing across a very high pressure ratio suffers both low volumetric efficiency and high discharge temperature. Splitting the compression across two or more stages, with intercooling between them, keeps each stage's individual pressure ratio lower, which improves overall volumetric efficiency and reduces the peak temperature the compressor and lubricant see." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does compressor speed (RPM) affect volumetric efficiency?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, to a smaller degree than compression ratio — very high speeds can reduce volumetric efficiency slightly due to valve dynamics and increased flow losses, while very low speeds can also reduce it due to increased relative leakage time per stroke. Compression ratio remains the dominant factor for most practical estimating purposes." }
+    },
+    {
+      "@type": "Question",
+      "name": "How does this calculator's FAD compare to the CFM rating on a compressor's nameplate?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A nameplate FAD rating comes from the manufacturer's actual tested performance at specified reference conditions, and is the more reliable figure for procurement. This calculator's FAD is a geometry-and-efficiency-based estimate, useful for sizing, cross-checking, or comparing options before a manufacturer's data sheet is available." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does altitude affect the FAD this calculator gives?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This calculator gives volumetric FAD (a volume flow rate) based on geometry and efficiency, which is not directly altitude-dependent. However, the mass of air corresponding to that volume decreases at altitude due to lower air density, which matters if you're sizing equipment based on mass flow (like some process or combustion applications) rather than volume flow alone." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Free · Instant results
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Compressor CFM <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Piston displacement and Free Air Delivery (FAD) of a reciprocating compressor — in CFM, m3/min and L/min — from bore, stroke, RPM and volumetric efficiency.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+      
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-5">Compressor Geometry Inputs</h2>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Cylinder Bore, D (mm)</label>
+          <input id="cfmBore" type="number" value="100" step="1" min="0" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Stroke Length, L (mm)</label>
+          <input id="cfmStroke" type="number" value="80" step="1" min="0" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Compressor Speed (RPM)</label>
+          <input id="cfmRpm" type="number" value="1000" step="10" min="0" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Number of Cylinders</label>
+          <input id="cfmCylinders" type="number" value="2" step="1" min="1" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="flex gap-2 mb-5 bg-gray-100 rounded-lg p-1">
+        <div id="actSingle" class="toggle-btn active" onclick="setActingCfm('single')">Single-Acting</div>
+        <div id="actDouble" class="toggle-btn" onclick="setActingCfm('double')">Double-Acting</div>
+      </div>
+
+      <div id="cfmRodField" class="mb-5 hidden-field">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Piston Rod Diameter (mm)</label>
+        <input id="cfmRod" type="number" value="0" step="1" min="0" class="input-field mt-2">
+        <p class="text-[11px] text-gray-400 mt-1">Crosshead-type double-acting compressors: the crank-end (return) stroke has reduced swept volume due to the rod. Leave 0 for a trunk-piston design with no through-rod.</p>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Volumetric Efficiency, ηᵥ (%)</label>
+        <input id="cfmEta" type="number" value="80" step="1" min="1" max="100" class="input-field mt-2">
+        <p class="text-[11px] text-gray-400 mt-1">Typical 65–85% for single-stage reciprocating compressors, depending on compression ratio</p>
+      </div>
+
+      <button onclick="calculateCompressorCfm()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 rounded-lg transition">Calculate FAD</button>
+
+      <div id="validationBox" class="hidden mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3"></div>
+
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+      
+      <div class="result-tile rounded-2xl p-6 text-white">
+        <span class="font-mono text-[11px] uppercase tracking-wider text-sky-300">Free Air Delivery (FAD)</span>
+        <div id="rResult" class="text-4xl font-display font-bold mt-1">—</div>
+        <div id="resultSub" class="text-gray-400 text-xs mt-2">—</div>
+        <div id="formulaChip" class="formula-chip mt-3">FAD = Displacement × ηᵥ</div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">Piston Displacement</span>
+          <div id="rDisplacement" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">FAD (L/min)</span>
+          <div id="rLmin" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Calculation Breakdown</span>
+        <div class="breakdown-wrap">
+          <div id="breakdownBox"></div>
+        </div>
+      </div>
+
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          
+          <a href="/mechanical/compressed-air-consumption" class="nav-dropdown-link border border-gray-100">Compressed Air Consumption Calculator</a>
+          <a href="/mechanical/air-receiver-tank" class="nav-dropdown-link border border-gray-100">Air Receiver Tank Calculator</a>
+          <a href="/mechanical/pump-power" class="nav-dropdown-link border border-gray-100">Pump Power Calculator</a>
+          <a href="/mechanical/shaft-torque" class="nav-dropdown-link border border-gray-100">Shaft Torque Calculator</a>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR =====================
+     Standard section on every published calculator. The single Share
+     Result button (openShareModal) and its modal are shared, site-wide
+     logic living in common.js + theme.css — nothing to add here beyond
+     this markup. setFeedback() below is per-page (each calculator
+     tracks its own Yes/No feedback state), matching how every other
+     published calculator implements it; add it inside
+     CALCULATOR_JS. No like/dislike buttons — Share Result + Yes/No
+     + Feedback mail is the current standard, deliberately lighter than
+     the old three-group bar. -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Compressor CFM Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS =====================
+     Standard 5-row TOC used across every published calculator.
+     Keep the anchors (#calculator, #how-it-works, #second, #mistakes,
+     #faqs) in sync with the actual section ids below — if a page
+     skips the optional SECOND_SECTION block, remove that li too
+     and renumber the rest. -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. How compressor displacement and FAD work</a></li>
+      <li><a href="#second" class="hover:underline">3. Typical volumetric efficiency by compression ratio</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== [PER-PAGE] EXPLANATION =====================
+     Target length across how-it-works + second + mistakes + FAQ
+     combined: 3000+ words of genuine, non-duplicated content (this is
+     the site-wide content-depth standard, not just a suggestion —
+     thin pages are the #1 AdSense/SEO risk on this site). Include a
+     worked numeric example with real figures, not just the formula. -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Reciprocating compressor CFM, explained</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: ISO 1217 (compressor acceptance test FAD definition), general reciprocating compressor design practice</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p>A reciprocating compressor's air delivery capacity starts with its <strong>piston displacement</strong> — the total swept volume the piston(s) physically push through per unit time, based purely on geometry and speed:</p>
+      <p class="formula-chip text-sm">Displacement = (π/4)D² × L × RPM × cylinders × strokes/rev</p>
+      <p>D is the cylinder bore, L is the stroke length, RPM is compressor speed, and the strokes-per-revolution factor is 1 for a single-acting cylinder (which compresses air only on one side of the piston) or 2 for a double-acting cylinder (which compresses on both the forward and return strokes, using both faces of the piston).</p>
+      <p>Displacement, however, is not the same as actual delivered air — it's the theoretical maximum if the cylinder filled completely and expelled all of that volume with every stroke. In reality, a compressor cylinder always has some residual "clearance volume" at the top of the stroke that doesn't get expelled and instead re-expands on the next intake stroke, along with intake and discharge valve losses and minor internal leakage past the piston rings. These effects are captured together in the <strong>volumetric efficiency</strong>, ηᵥ, which is the ratio of actual delivered volume to theoretical displacement:</p>
+      <p class="formula-chip text-sm">FAD = Displacement × ηᵥ</p>
+      <p>Volumetric efficiency isn't a fixed number — it drops as compression ratio (discharge pressure divided by intake pressure) increases, because a higher compression ratio means the clearance volume's trapped high-pressure gas has to expand further before the intake valve can open again, wasting more of the stroke on re-expansion rather than useful intake. Typical single-stage reciprocating compressors run 65–85% volumetric efficiency; the exact figure for a specific machine comes from the manufacturer's performance curve or an acceptance test, and this calculator's efficiency field lets you plug in that known value (or a reasonable estimate) directly.</p>
+
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      
+      <h3 class="font-display font-semibold text-brandDark mb-3">Worked Example</h3>
+      <p class="text-sm text-gray-600 mb-2">A single-stage, double-acting reciprocating compressor has 2 cylinders, 100 mm bore, 80 mm stroke, running at 1000 RPM with 80% volumetric efficiency.</p>
+      <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+        <li>Swept volume per stroke = π/4 × 100² × 80 = 628,319 mm³ = 628.3 cm³</li>
+        <li>Strokes per revolution = 2 (double-acting)</li>
+        <li>Displacement = 628,319 × 1000 × 2 × 2 = 2,513,274,123 mm³/min = <strong>2.513 m³/min</strong></li>
+        <li>FAD = 2.513 × 0.80 = <strong>2.011 m³/min</strong> = 2,011 L/min ≈ <strong>71.0 CFM</strong></li>
+      </ul>
+
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Volumetric efficiency depends on the actual compression ratio, clearance volume, valve losses and leakage of the specific compressor — use the manufacturer's rated FAD for procurement decisions; this calculator gives an estimating figure from typical efficiency ranges.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION (optional but standard) =====================
+     Every published calculator carries a second content block here —
+     a comparison table, a second worked scenario, a rate/limit
+     reference table, or a related-topic deep-dive (e.g. "how tenure
+     changes total interest", "GST slabs at a glance"). Drop the whole
+     <section> and its TOC <li> only if there is genuinely nothing
+     page-specific to add — don't leave it thin just to check the box. -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference table</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Typical volumetric efficiency by compression ratio</h2>
+  
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead><tr class="text-left text-gray-500 text-xs uppercase border-b border-gray-200">
+          <th class="py-2 pr-4">Compression ratio (P₂/P₁)</th><th class="py-2">Typical volumetric efficiency</th>
+        </tr></thead>
+        <tbody class="divide-y divide-gray-100 text-gray-700">
+          <tr><td class="py-2 pr-4">3:1 (e.g. 1 to 3 bar(a))</td><td class="py-2">85 – 90%</td></tr>
+          <tr><td class="py-2 pr-4">5:1 (e.g. 1 to 5 bar(a))</td><td class="py-2">78 – 85%</td></tr>
+          <tr><td class="py-2 pr-4">7:1 (e.g. 1 to 7 bar(a), common single-stage air compressor)</td><td class="py-2">70 – 80%</td></tr>
+          <tr><td class="py-2 pr-4">10:1 and above</td><td class="py-2">Below 70% — multi-stage compression usually preferred</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="text-sm text-gray-600 mt-4">This is the underlying reason most compressed air systems above roughly 7–8 bar discharge pressure use two-stage (or multi-stage) compression with intercooling, rather than a single high-ratio stage — splitting the compression across stages keeps each stage's compression ratio, and therefore its volumetric efficiency loss, in a more favourable range, while also reducing discharge temperature.</p>
+
+</section>
+
+<!-- ===================== COMMON MISTAKES =====================
+     Standard section on every published calculator. Minimum 5
+     numbered mistakes, each 1-2 sentences: state the mistake, then
+     why it's wrong / what it costs the user. -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common mistakes when calculating compressor CFM</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p><strong>1. Quoting piston displacement as if it were FAD.</strong> Displacement is a theoretical maximum based purely on geometry; actual delivered air is always less, once volumetric efficiency is applied — comparing a compressor's displacement figure against another's rated FAD is comparing two different things.</p>
+      <p><strong>2. Using a flat volumetric efficiency regardless of compression ratio.</strong> Volumetric efficiency drops meaningfully as the discharge-to-intake pressure ratio increases — applying the same efficiency figure across very different operating pressures will misstate FAD at the higher end.</p>
+      <p><strong>3. Ignoring the piston rod's effect on crank-end swept volume for crosshead-type compressors.</strong> On a double-acting cylinder with a piston rod passing through the crank end, that stroke's effective area is reduced by the rod's cross-section — for a large rod, treating both strokes as full-bore can noticeably overstate displacement; enter the rod diameter when it applies.</p>
+      <p><strong>4. Mixing up intake conditions with standard/reference conditions.</strong> FAD is properly referenced to a standard set of intake conditions (temperature, pressure, humidity per the applicable standard) — comparing FAD figures measured or estimated at different intake conditions without correction isn't a fair like-for-like comparison.</p>
+      <p><strong>5. Relying on nameplate horsepower alone to estimate CFM.</strong> Rule-of-thumb ratios (like a fixed CFM per horsepower) vary a lot between compressor designs, stages, and efficiency levels — they're useful for a very rough first estimate only, not a substitute for the manufacturer's actual rated FAD curve.</p>
+      <p><strong>6. Not accounting for altitude or elevated intake temperature.</strong> Air density drops at higher altitude and higher intake temperature, which reduces the actual mass of air delivered for the same volumetric FAD — relevant when a compressor's rated FAD (typically at sea-level standard conditions) is applied at a different site.</p>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] FAQ =====================
+     Minimum 8 <details> items, matching the 8 JSON-LD entries above
+     1-for-1 (same question text, same order) — schema and visible
+     content must never diverge. First item gets the `open` attribute. -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2">Straight answers on displacement, volumetric efficiency, and FAD versus nameplate CFM.</p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    
+    <details class="py-4" open>
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What is the difference between piston displacement and Free Air Delivery (FAD)?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Piston displacement is the theoretical maximum volume swept by the piston(s) per unit time, based purely on cylinder geometry and speed. FAD is the actual volume of air delivered, which is always less than displacement because of clearance volume re-expansion, valve losses, and internal leakage, captured together as volumetric efficiency.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why does volumetric efficiency decrease at higher compression ratios?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">At the top of each stroke, some high-pressure gas remains trapped in the cylinder's clearance volume rather than being expelled. At a higher compression ratio, that trapped gas is at a higher pressure and has to expand further before the cylinder pressure drops enough to open the intake valve again, which wastes more of the stroke on re-expansion instead of drawing in fresh air.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What does single-acting versus double-acting mean for a compressor cylinder, and does the piston rod matter?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">A single-acting cylinder compresses air using only one face of the piston. A double-acting cylinder compresses on both strokes using both faces, roughly doubling displacement versus an identical single-acting cylinder — slightly less than double if a piston rod passes through the crank end, since the rod reduces that stroke's effective area.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What volumetric efficiency should I assume if I don't have manufacturer data?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">For a typical single-stage reciprocating air compressor at a moderate compression ratio (around 6 to 8 to 1), 70 to 80 percent is a reasonable estimating range. For a more accurate figure specific to your machine, use the manufacturer's rated FAD curve or an actual acceptance test result, since efficiency varies with compression ratio, clearance volume, and mechanical condition.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why do I need multi-stage compression for high discharge pressures?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">A single stage compressing across a very high pressure ratio suffers both low volumetric efficiency and high discharge temperature. Splitting the compression across two or more stages, with intercooling between them, keeps each stage's individual pressure ratio lower, which improves overall volumetric efficiency and reduces the peak temperature the compressor and lubricant see.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Does compressor speed (RPM) affect volumetric efficiency?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Yes, to a smaller degree than compression ratio — very high speeds can reduce volumetric efficiency slightly due to valve dynamics and increased flow losses, while very low speeds can also reduce it due to increased relative leakage time per stroke. Compression ratio remains the dominant factor for most practical estimating purposes.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How does this calculator's FAD compare to the CFM rating on a compressor's nameplate?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">A nameplate FAD rating comes from the manufacturer's actual tested performance at specified reference conditions, and is the more reliable figure for procurement. This calculator's FAD is a geometry-and-efficiency-based estimate, useful for sizing, cross-checking, or comparing options before a manufacturer's data sheet is available.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Does altitude affect the FAD this calculator gives?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">This calculator gives volumetric FAD (a volume flow rate) based on geometry and efficiency, which is not directly altitude-dependent. However, the mass of air corresponding to that volume decreases at altitude due to lower air density, which matters if you're sizing equipment based on mass flow (like some process or combustion applications) rather than volume flow alone.</p>
+    </details>
+
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+  
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+
+  let cfmActing = 'single';
+  function setActingCfm(type){
+    cfmActing = type;
+    document.getElementById('actSingle').classList.toggle('active', type === 'single');
+    document.getElementById('actDouble').classList.toggle('active', type === 'double');
+    document.getElementById('cfmRodField').classList.toggle('hidden-field', type !== 'double');
+  }
+
+  function calculateCompressorCfm(){
+    const D = parseFloat(document.getElementById('cfmBore').value);
+    const L = parseFloat(document.getElementById('cfmStroke').value);
+    const rodInput = parseFloat(document.getElementById('cfmRod').value);
+    const rod = cfmActing === 'double' ? (isNaN(rodInput) ? 0 : rodInput) : 0;
+    const rpm = parseFloat(document.getElementById('cfmRpm').value);
+    const cylinders = parseFloat(document.getElementById('cfmCylinders').value);
+    const eta = parseFloat(document.getElementById('cfmEta').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(D) || D <= 0){ errors.push('Enter a valid bore diameter greater than 0.'); }
+    if(isNaN(L) || L <= 0){ errors.push('Enter a valid stroke length greater than 0.'); }
+    if(cfmActing === 'double' && rod >= D){ errors.push('Rod diameter must be smaller than the bore diameter.'); }
+    if(isNaN(rpm) || rpm <= 0){ errors.push('Enter a valid compressor speed greater than 0.'); }
+    if(isNaN(cylinders) || cylinders < 1){ errors.push('Enter a valid number of cylinders (1 or more).'); }
+    if(isNaN(eta) || eta <= 0 || eta > 100){ errors.push('Volumetric efficiency must be between 1 and 100%.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rDisplacement').textContent = '\u2014';
+      document.getElementById('rLmin').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const sweptVolFullMm3 = (Math.PI/4) * Math.pow(D,2) * L;
+    const sweptVolAnnulusMm3 = (Math.PI/4) * (Math.pow(D,2) - Math.pow(rod,2)) * L;
+    // Single-acting: one stroke, full bore. Double-acting: head-end stroke (full bore) + crank-end stroke (annulus, reduced by rod).
+    const sweptVolPerRevMm3 = cfmActing === 'double' ? (sweptVolFullMm3 + sweptVolAnnulusMm3) : sweptVolFullMm3;
+    const displacementMm3PerMin = sweptVolPerRevMm3 * rpm * cylinders;
+    const displacementM3min = displacementMm3PerMin / 1e9;
+    const displacementLmin = displacementM3min * 1000;
+
+    const fadM3min = displacementM3min * (eta/100);
+    const fadLmin = fadM3min * 1000;
+    const fadCfm = fadLmin * 0.0353147;
+
+    document.getElementById('rResult').textContent = fadCfm.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' CFM';
+    document.getElementById('resultSub').textContent = cylinders + ' cyl (' + (cfmActing === 'double' ? 'double' : 'single') + '-acting), ' + rpm + ' RPM, ηᵥ=' + eta + '%';
+    document.getElementById('rDisplacement').textContent = displacementM3min.toFixed(3) + ' m³/min';
+    document.getElementById('rLmin').textContent = fadLmin.toFixed(1);
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Head-End Swept Volume (full bore)</td><td>${(sweptVolFullMm3/1000).toFixed(2)} cm³</td></tr>
+                ${cfmActing === 'double' ? '<tr><td>Crank-End Swept Volume (bore\u00b2\u2212rod\u00b2)</td><td>' + (sweptVolAnnulusMm3/1000).toFixed(2) + ' cm\u00b3</td></tr>' : ''}
+                <tr><td>Swept Volume per Revolution</td><td>${(sweptVolPerRevMm3/1000).toFixed(2)} cm³ (${cfmActing === 'double' ? 'double-acting, both ends' : 'single-acting'})</td></tr>
+
+                <tr><td>Number of Cylinders</td><td>${cylinders}</td></tr>
+                <tr><td>Compressor Speed</td><td>${rpm.toLocaleString('en-IN')} RPM</td></tr>
+                <tr><td><strong>Piston Displacement</strong></td><td><strong>${displacementM3min.toFixed(3)} m³/min (${displacementLmin.toFixed(1)} L/min)</strong></td></tr>
+                <tr><td>Volumetric Efficiency (ηᵥ)</td><td>${eta}%</td></tr>
+                <tr><td><strong>Free Air Delivery (FAD)</strong></td><td><strong>${fadM3min.toFixed(3)} m³/min</strong></td></tr>
+                <tr><td>FAD (L/min)</td><td>${fadLmin.toFixed(1)} L/min</td></tr>
+                <tr><td>FAD (CFM)</td><td>${fadCfm.toFixed(2)} CFM</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateCompressorCfm();
+
+</script>
+
+<script>
+  // ===== Generic Copy Result (added site-wide; does not touch page-specific calc logic) =====
+  function copyResultGeneric(){
+    var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
+    var btn = document.getElementById('copyResultBtn');
+    if (!panel || !btn) return;
+    var text = panel.innerText.trim();
+    function restore(){ btn.textContent = '📋 Copy Result'; }
+    if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = '✅ Copied';
+        setTimeout(restore, 1800);
+      }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+    } else {
+      btn.textContent = '⚠️ Not supported';
+      setTimeout(restore, 1800);
+    }
+  }
+
+  // ===== Generic number-input safety net (added site-wide; purely additive —
+  // runs on blur AFTER the page's own oninput/onchange calc handlers, and only
+  // corrects a value that is non-finite or outside the field's own declared
+  // min/max attributes, then re-fires "input" so the page's existing calc
+  // function recalculates with the corrected value. Never overrides or
+  // replaces any existing calculator logic. =====
+  (function(){
+    function clampNumberInput(el){
+      if (el.type !== 'number' || el.value === '') return;
+      var hasMin = el.hasAttribute('min');
+      var hasMax = el.hasAttribute('max');
+      var min = hasMin ? parseFloat(el.min) : null;
+      var max = hasMax ? parseFloat(el.max) : null;
+      var v = parseFloat(el.value);
+      var corrected = null;
+      if (!isFinite(v)) { corrected = (min !== null ? min : 0); }
+      else if (min !== null && v < min) { corrected = min; }
+      else if (max !== null && v > max) { corrected = max; }
+      if (corrected !== null && corrected !== v) {
+        el.value = corrected;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    document.querySelectorAll('input[type="number"]').forEach(function(el){
+      el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+</script>
+</body>
+</html>

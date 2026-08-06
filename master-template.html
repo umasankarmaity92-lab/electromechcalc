@@ -21,7 +21,16 @@
      {{STANDARDS_REFERENCED}}, {{SECOND_SECTION_EYEBROW}},
      {{SECOND_SECTION_HEADING}}, {{SECOND_SECTION_CONTENT}},
      {{MISTAKES_HEADING}}, {{MISTAKES_CONTENT}}, and FAQ_Q6/A6
-     through FAQ_Q8/A8 (8 FAQ entries minimum, not 5).
+     through FAQ_Q8/A8 (8 FAQ entries minimum, not 5). Also fill
+     {{PAGE_CATEGORY_TITLE}} (Title Case version of {{PAGE_CATEGORY}},
+     e.g. "Mechanical") for the BreadcrumbList JSON-LD block — keep
+     it in sync with the visible #breadcrumb middleware output, which
+     already derives its labels from the same category/slug data.
+     Position 2 of the breadcrumb points at the REAL category hub page
+     (electrical-calculators.html / mechanical-calculators.html /
+     financial-calculators.html — i.e. {{PAGE_CATEGORY}}-calculators),
+     not a bare /{{PAGE_CATEGORY}} folder root, since no index page
+     exists at that bare path and it would 404.
   2. Save the actual file as <category>/<slug>.html on disk (e.g.
      electrical/cable-derating.html) — the source FILE keeps the
      .html extension and lives inside its category folder. Only the
@@ -161,6 +170,23 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
   "description": "{{TOOL_DESCRIPTION}}",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<!-- {{PAGE_CATEGORY}} = electrical | mechanical | financial (Title Case for
+     display: Electrical | Mechanical | Financial). Keeps the visible
+     breadcrumb (filled server-side by _middleware.js from
+     search-index.json, see #breadcrumb below in body) and this
+     structured-data breadcrumb in sync — same 3-level path every time. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "{{PAGE_CATEGORY_TITLE}} Calculators", "item": "https://www.electromechcalc.com/{{PAGE_CATEGORY}}-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "{{TOOL_NAME}}", "item": "https://www.electromechcalc.com/{{PAGE_CATEGORY}}/{{PAGE_SLUG}}" }
+  ]
 }
 </script>
 
@@ -476,8 +502,11 @@
     <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
       {{CALCULATOR_RESULTS}}
 
-      <!-- related calculators -->
-      <div class="bg-white rounded-xl border border-gray-100 p-4">
+      <!-- related calculators — data-copy-exclude keeps this out of the
+           Copy Result output (see copyResultGeneric() in common.js);
+           without it, Copy Result includes these link labels along with
+           the actual calculation result. -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4" data-copy-exclude>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
         <div class="grid grid-cols-1 gap-1.5">
           {{RELATED_CALCULATOR_LINKS}}
@@ -492,16 +521,20 @@
      Standard section on every published calculator. The single Share
      Result button (openShareModal) and its modal are shared, site-wide
      logic living in common.js + theme.css — nothing to add here beyond
-     this markup. setFeedback() below is per-page (each calculator
-     tracks its own Yes/No feedback state), matching how every other
-     published calculator implements it; add it inside
-     {{CALCULATOR_JS}}. No like/dislike buttons — Share Result + Yes/No
-     + Feedback mail is the current standard, deliberately lighter than
-     the old three-group bar. -->
+     this markup. The Copy Result button (id="copyResultBtn") calls
+     copyResultGeneric(), which now lives in common.js (auto-injected
+     into every page by middleware, same as scrollToResult()) — nothing
+     to add here beyond this button markup. setFeedback()
+     below is per-page (each calculator tracks its own Yes/No feedback
+     state), matching how every other published calculator implements
+     it; add it inside {{CALCULATOR_JS}}. No like/dislike buttons —
+     Share Result + Copy Result + Yes/No + Feedback mail is the current
+     standard, deliberately lighter than the old three-group bar. -->
 <section class="max-w-6xl mx-auto px-4 mb-14">
   <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
     <div class="flex items-center gap-2 flex-wrap">
       <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
       <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>

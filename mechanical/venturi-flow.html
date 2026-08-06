@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- meta: {"category":"Mechanical"} -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== THEME (FLASH/CLS PREVENTION) =====================
+     Runs synchronously, before any stylesheet or paint, so the correct
+     dark-theme/light-theme class is already present on <html> the instant
+     CSS starts applying — no later class-add via site-nav.js's
+     DOMContentLoaded handler, which was causing a ~1.0 CLS hit as the
+     entire theme (colors AND several layout-affecting rules) snapped in
+     partway through the page's first paint. A matching inline script sits
+     right after <body> opens (see below) to cover the body.dark-theme /
+     body.light-theme selectors theme.css also relies on — site-nav.js
+     still re-applies both classes on DOMContentLoaded as a no-op safety
+     net (classList.add on an already-present class is a no-op) and is
+     what actually handles the toggle button switching themes later. -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Venturi Flow Meter Calculator (Flow Rate from ΔP) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free venturi flow meter calculator. Find volumetric flow rate from inlet and throat diameter, differential pressure, fluid density and discharge coefficient.">
+<meta name="keywords" content="venturi flow calculator, venturi meter formula, flow rate from differential pressure, venturi discharge coefficient, beta ratio venturi">
+<meta name="robots" content="index, follow">
+<!-- PAGE_CATEGORY = electrical | mechanical | financial (no slashes).
+     PAGE_SLUG = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/venturi-flow">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Venturi Flow Meter Calculator">
+<meta property="og:description" content="Volumetric flow rate through a venturi meter from inlet diameter, throat diameter, differential pressure, and fluid density.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/venturi-flow">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Venturi Flow Meter Calculator">
+<meta name="twitter:description" content="Volumetric flow rate through a venturi meter from inlet diameter, throat diameter, differential pressure, and fluid density.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA =====================
+     Minimum 8 FAQ entries (Q1-Q8) — matches the site-wide standard set
+     across all published calculators. Add more (Q9, Q10...) as needed;
+     never ship fewer than 8, and keep this JSON-LD block in sync with
+     the visible FAQ_ITEMS accordion below (same questions, same
+     order) so structured data never diverges from on-page content. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Venturi Flow Meter Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/venturi-flow",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free online calculator for volumetric flow rate through a venturi flow meter, using inlet diameter, throat diameter, differential pressure, fluid density and discharge coefficient.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Mechanical Calculators", "item": "https://www.electromechcalc.com/mechanical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "Venturi Flow Meter Calculator", "item": "https://www.electromechcalc.com/mechanical/venturi-flow" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for flow rate through a venturi meter?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Q equals the discharge coefficient times the throat area times the square root of (2 times differential pressure divided by density), all divided by the square root of (1 minus beta to the fourth power), where beta is the throat-to-inlet diameter ratio. This comes from combining the continuity equation and Bernoulli's principle across the constriction." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the beta ratio and why does it matter?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Beta is the ratio of throat diameter to inlet diameter (D2/D1). A smaller beta means a more aggressive constriction, which produces a larger, more easily measured differential pressure for a given flow rate, but also increases permanent pressure loss and cavitation risk in liquid service." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is there a velocity-of-approach correction factor in the formula?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The fluid arriving at the venturi's throat was already moving at the inlet, not starting from rest, so the measured pressure drop reflects the change in velocity between inlet and throat rather than the throat velocity alone. The (1 minus beta to the fourth) term corrects for this, and becomes more significant as the throat gets closer in size to the inlet (higher beta)." }
+    },
+    {
+      "@type": "Question",
+      "name": "What discharge coefficient should I use if I don't have a calibration certificate?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For a classical venturi tube manufactured to a recognized standard, a Cd around 0.98 for a machined convergent section (or roughly 0.995 for a rough-cast one) is a reasonable estimate, but the manufacturer's actual calibrated value should be used whenever available, since Cd affects flow rate directly and proportionally." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can this calculator be used for gas flow measurement?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This formula assumes incompressible flow, which is a good approximation for liquids and for gases at low differential pressure relative to line pressure. For gas flow at higher differential pressures, a compressibility (expansibility) factor needs to be applied on top of this basic formula, since gas density changes measurably across the constriction." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does a venturi meter cause less permanent pressure loss than an orifice plate for the same flow measurement?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The venturi's gradual, streamlined convergent and divergent sections allow much of the kinetic energy gained at the throat to be recovered as the pipe expands back to full bore, unlike an orifice plate's abrupt edges which cause more turbulent, non-recoverable energy loss. This makes venturi meters attractive where minimizing permanent pressure loss matters, despite their higher manufacturing cost." }
+    },
+    {
+      "@type": "Question",
+      "name": "How much straight pipe run do I need upstream of a venturi meter?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This depends on the beta ratio and the type of upstream fitting (elbow, valve, etc.), and is specified in detail by measurement standards like ISO 5167 — typically it ranges from several to over twenty pipe diameters. Insufficient straight run before the meter distorts the velocity profile and introduces measurement error beyond what this basic formula accounts for." }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if the throat diameter is very close to the inlet diameter (beta close to 1)?",
+      "acceptedAnswer": { "@type": "Answer", "text": "As beta approaches 1, the constriction becomes very mild, producing a very small, hard-to-measure differential pressure for a given flow rate, and the velocity-of-approach correction term becomes increasingly significant and sensitive to small errors. Practical venturi meters are usually designed with beta well below 1, commonly in the 0.4 to 0.75 range, to keep the measurement both sensitive and robust." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Free · Instant results
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Venturi Flow Meter <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Flow rate through a venturi meter from inlet diameter, throat diameter, differential pressure and fluid density — with the beta ratio and discharge coefficient shown.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+      
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-5">Venturi Geometry &amp; Pressure Inputs</h2>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Inlet Diameter, D₁ (mm)</label>
+          <input id="vfD1" type="number" value="100" step="1" min="0" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Throat Diameter, D₂ (mm)</label>
+          <input id="vfD2" type="number" value="50" step="1" min="0" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Differential Pressure, ΔP (kPa)</label>
+        <input id="vfDp" type="number" value="20" step="1" min="0" class="input-field mt-2">
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Fluid Density (kg/m³)</label>
+        <input id="vfRho" type="number" value="1000" step="10" min="0" class="input-field mt-2">
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Discharge Coefficient, Cd</label>
+        <input id="vfCd" type="number" value="0.98" step="0.01" min="0" max="1.2" class="input-field mt-2">
+        <p class="text-[11px] text-gray-400 mt-1">Typical classical venturi tube: 0.95–0.99</p>
+      </div>
+
+      <button onclick="calculateVenturiFlow()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 rounded-lg transition">Calculate Flow Rate</button>
+
+      <div id="validationBox" class="hidden mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3"></div>
+
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+      
+      <div class="result-tile rounded-2xl p-6 text-white">
+        <span class="font-mono text-[11px] uppercase tracking-wider text-sky-300">Volumetric Flow Rate</span>
+        <div id="rResult" class="text-4xl font-display font-bold mt-1">—</div>
+        <div id="resultSub" class="text-gray-400 text-xs mt-2">—</div>
+        <div id="formulaChip" class="formula-chip mt-3">Q = Cd·A₂√(2ΔP/ρ)/√(1−β⁴)</div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">Beta Ratio (D₂/D₁)</span>
+          <div id="rBeta" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">Throat Velocity</span>
+          <div id="rVelocity" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+      </div>
+
+      <div id="vfBetaWarning" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+        <strong>Beta ratio outside ISO 5167 recommended range (0.3–0.75):</strong> <span id="rBetaWarningText"></span>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Calculation Breakdown</span>
+        <div class="breakdown-wrap">
+          <div id="breakdownBox"></div>
+        </div>
+      </div>
+
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          
+          <a href="/mechanical/nozzle-flow" class="nav-dropdown-link border border-gray-100">Nozzle Flow Calculator</a>
+          <a href="/mechanical/pipe-pressure-drop" class="nav-dropdown-link border border-gray-100">Pipe Pressure Drop Calculator</a>
+          <a href="/mechanical/pump-power" class="nav-dropdown-link border border-gray-100">Pump Power Calculator</a>
+          <a href="/mechanical/hydraulic-cylinder-force" class="nav-dropdown-link border border-gray-100">Hydraulic Cylinder Force Calculator</a>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR =====================
+     Standard section on every published calculator. The single Share
+     Result button (openShareModal) and its modal are shared, site-wide
+     logic living in common.js + theme.css — nothing to add here beyond
+     this markup. setFeedback() below is per-page (each calculator
+     tracks its own Yes/No feedback state), matching how every other
+     published calculator implements it; add it inside
+     CALCULATOR_JS. No like/dislike buttons — Share Result + Yes/No
+     + Feedback mail is the current standard, deliberately lighter than
+     the old three-group bar. -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Venturi Flow Meter Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS =====================
+     Standard 5-row TOC used across every published calculator.
+     Keep the anchors (#calculator, #how-it-works, #second, #mistakes,
+     #faqs) in sync with the actual section ids below — if a page
+     skips the optional SECOND_SECTION block, remove that li too
+     and renumber the rest. -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. How venturi flow measurement works</a></li>
+      <li><a href="#second" class="hover:underline">3. Choosing a beta ratio and discharge coefficient</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== [PER-PAGE] EXPLANATION =====================
+     Target length across how-it-works + second + mistakes + FAQ
+     combined: 3000+ words of genuine, non-duplicated content (this is
+     the site-wide content-depth standard, not just a suggestion —
+     thin pages are the #1 AdSense/SEO risk on this site). Include a
+     worked numeric example with real figures, not just the formula. -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Venturi meter flow rate, explained</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: ISO 5167 (venturi meter flow measurement), Bernoulli/continuity principle</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p>A venturi meter measures flow rate by narrowing the pipe to a smaller "throat" section and measuring the pressure drop between the full-bore inlet and the throat. As the pipe narrows, the fluid must speed up to maintain the same mass flow rate (a direct consequence of the continuity equation — the same mass has to pass through a smaller area per unit time), and that increase in velocity comes at the cost of a measurable drop in pressure, following Bernoulli's principle. Measuring that pressure drop lets you work backward to calculate the flow rate that caused it.</p>
+      <p class="formula-chip text-sm">Q = Cd × A₂ × √(2ΔP/ρ) / √(1 − β⁴)</p>
+      <p>Here, A₂ is the throat's cross-sectional area, ΔP is the measured differential pressure between inlet and throat, ρ is the fluid density, and β (beta) is the ratio of throat diameter to inlet diameter, D₂/D₁. The term (1 − β⁴) under the square root is the velocity-of-approach factor — it corrects for the fact that the fluid at the inlet is already moving, not stationary, before it reaches the throat, so the pressure drop reflects the change in velocity between the two sections rather than the throat velocity alone.</p>
+      <p>Cd, the discharge coefficient, is an empirical correction factor (typically 0.95–0.99 for a well-made classical venturi tube) that accounts for small real-world deviations from the idealized, frictionless Bernoulli assumption — primarily minor friction losses and the fact that the flow profile isn't perfectly uniform. A venturi meter's Cd is notably closer to 1.0 (i.e. closer to ideal) than most other differential-pressure meters like orifice plates, which is one reason venturi meters are favoured where measurement accuracy and low permanent pressure loss both matter.</p>
+      <p>The beta ratio itself is a key design choice: a smaller β (a more aggressive throat constriction) gives a larger, easier-to-measure ΔP for a given flow rate, improving low-flow sensitivity, but also increases permanent pressure loss and the risk of cavitation in liquids at low downstream pressure. Typical beta ratios for general service fall in the 0.4–0.75 range, balancing measurement sensitivity against pressure loss.</p>
+
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      
+      <h3 class="font-display font-semibold text-brandDark mb-3">Worked Example</h3>
+      <p class="text-sm text-gray-600 mb-2">A venturi meter has a 100 mm inlet and 50 mm throat, measuring water flow with a 20 kPa differential pressure, Cd = 0.98.</p>
+      <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+        <li>β = 50/100 = 0.5; A₂ = π/4 × 0.05² = 0.0019635 m²</li>
+        <li>1 − β⁴ = 1 − 0.5⁴ = 1 − 0.0625 = 0.9375</li>
+        <li>√(2×20,000/1000) = √40 = 6.3246 m/s</li>
+        <li>Q = 0.98 × 0.0019635 × 6.3246 / √0.9375 = 0.01217 / 0.9682 ≈ <strong>0.01257 m³/s</strong></li>
+        <li>Q ≈ <strong>45.2 m³/hr</strong> (≈ 754 L/min)</li>
+        <li>Throat velocity = Q / A₂ = 0.01257 / 0.0019635 ≈ <strong>6.40 m/s</strong></li>
+      </ul>
+
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator assumes incompressible, single-phase flow with a reasonably developed velocity profile upstream; compressible (gas, high ΔP) flow and non-standard installations need compressibility and installation correction factors per ISO 5167.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION (optional but standard) =====================
+     Every published calculator carries a second content block here —
+     a comparison table, a second worked scenario, a rate/limit
+     reference table, or a related-topic deep-dive (e.g. "how tenure
+     changes total interest", "GST slabs at a glance"). Drop the whole
+     <section> and its TOC <li> only if there is genuinely nothing
+     page-specific to add — don't leave it thin just to check the box. -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Design guidance</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Choosing beta ratio and discharge coefficient</h2>
+  
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead><tr class="text-left text-gray-500 text-xs uppercase border-b border-gray-200">
+          <th class="py-2 pr-4">Consideration</th><th class="py-2">Effect of a smaller β (more constriction)</th>
+        </tr></thead>
+        <tbody class="divide-y divide-gray-100 text-gray-700">
+          <tr><td class="py-2 pr-4">Differential pressure signal</td><td class="py-2">Larger, easier to measure accurately at low flow</td></tr>
+          <tr><td class="py-2 pr-4">Permanent pressure loss</td><td class="py-2">Higher — more energy is not recovered downstream</td></tr>
+          <tr><td class="py-2 pr-4">Cavitation risk (liquids)</td><td class="py-2">Higher, since throat velocity and local pressure drop are larger</td></tr>
+          <tr><td class="py-2 pr-4">Turndown ratio</td><td class="py-2">Generally better at low flow, since ΔP is a larger fraction of measurement range</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="text-sm text-gray-600 mt-4">The discharge coefficient Cd for a classical (Herschel-type) venturi tube manufactured to recognized standards is typically taken as 0.995 for a rough-cast inlet cone or around 0.98 for a machined one, though the exact figure should come from the meter manufacturer's calibration certificate or the applicable measurement standard rather than assumed — accurate flow measurement depends on using the correct, verified Cd for the specific meter.</p>
+
+</section>
+
+<!-- ===================== COMMON MISTAKES =====================
+     Standard section on every published calculator. Minimum 5
+     numbered mistakes, each 1-2 sentences: state the mistake, then
+     why it's wrong / what it costs the user. -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common mistakes when using a venturi flow calculation</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p><strong>1. Using the inlet area instead of the throat area in the flow formula.</strong> The Q formula uses A₂, the throat area — substituting the larger inlet area gives a badly wrong flow rate, since the whole point of the venturi is measuring the pressure change caused by the area change.</p>
+      <p><strong>2. Forgetting the velocity-of-approach correction, (1 − β⁴).</strong> Skipping this term (effectively assuming β = 0, as if the inlet were infinitely large) overstates the calculated flow rate, with the error growing larger as β increases toward 1.</p>
+      <p><strong>3. Using an assumed Cd of 1.0.</strong> A real venturi meter is not perfectly ideal — even a well-made one has a Cd slightly below 1.0. Assuming Cd = 1.0 overstates the true flow rate by a small but real margin (typically 1–5% depending on the meter).</p>
+      <p><strong>4. Applying this incompressible-flow formula to a high-ΔP gas measurement.</strong> For gases at higher differential pressures relative to line pressure, density changes meaningfully across the venturi and a compressibility (expansibility) factor must be applied — the simple incompressible formula alone understates flow rate for compressible fluids at significant ΔP.</p>
+      <p><strong>5. Ignoring upstream flow disturbance.</strong> Venturi meters (like most differential-pressure meters) need a sufficiently long straight, undisturbed pipe run upstream to develop a normal flow profile — elbows, valves, or other fittings too close upstream distort the flow profile and introduce measurement error not captured by this basic formula.</p>
+      <p><strong>6. Mixing differential pressure units.</strong> ΔP is easy to receive in different units (kPa, mbar, inches of water, psi) from different instruments — converting incorrectly to the Pa this formula expects is a common source of an order-of-magnitude error.</p>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] FAQ =====================
+     Minimum 8 <details> items, matching the 8 JSON-LD entries above
+     1-for-1 (same question text, same order) — schema and visible
+     content must never diverge. First item gets the `open` attribute. -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2">Straight answers on beta ratio, discharge coefficient, and differential pressure flow measurement.</p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    
+    <details class="py-4" open>
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What is the formula for flow rate through a venturi meter?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Q equals the discharge coefficient times the throat area times the square root of (2 times differential pressure divided by density), all divided by the square root of (1 minus beta to the fourth power), where beta is the throat-to-inlet diameter ratio. This comes from combining the continuity equation and Bernoulli's principle across the constriction.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What is the beta ratio and why does it matter?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Beta is the ratio of throat diameter to inlet diameter (D2/D1). A smaller beta means a more aggressive constriction, which produces a larger, more easily measured differential pressure for a given flow rate, but also increases permanent pressure loss and cavitation risk in liquid service.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why is there a velocity-of-approach correction factor in the formula?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">The fluid arriving at the venturi's throat was already moving at the inlet, not starting from rest, so the measured pressure drop reflects the change in velocity between inlet and throat rather than the throat velocity alone. The (1 minus beta to the fourth) term corrects for this, and becomes more significant as the throat gets closer in size to the inlet (higher beta).</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What discharge coefficient should I use if I don't have a calibration certificate?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">For a classical venturi tube manufactured to a recognized standard, a Cd around 0.98 for a machined convergent section (or roughly 0.995 for a rough-cast one) is a reasonable estimate, but the manufacturer's actual calibrated value should be used whenever available, since Cd affects flow rate directly and proportionally.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Can this calculator be used for gas flow measurement?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">This formula assumes incompressible flow, which is a good approximation for liquids and for gases at low differential pressure relative to line pressure. For gas flow at higher differential pressures, a compressibility (expansibility) factor needs to be applied on top of this basic formula, since gas density changes measurably across the constriction.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why does a venturi meter cause less permanent pressure loss than an orifice plate for the same flow measurement?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">The venturi's gradual, streamlined convergent and divergent sections allow much of the kinetic energy gained at the throat to be recovered as the pipe expands back to full bore, unlike an orifice plate's abrupt edges which cause more turbulent, non-recoverable energy loss. This makes venturi meters attractive where minimizing permanent pressure loss matters, despite their higher manufacturing cost.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How much straight pipe run do I need upstream of a venturi meter?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">This depends on the beta ratio and the type of upstream fitting (elbow, valve, etc.), and is specified in detail by measurement standards like ISO 5167 — typically it ranges from several to over twenty pipe diameters. Insufficient straight run before the meter distorts the velocity profile and introduces measurement error beyond what this basic formula accounts for.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What happens if the throat diameter is very close to the inlet diameter (beta close to 1)?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">As beta approaches 1, the constriction becomes very mild, producing a very small, hard-to-measure differential pressure for a given flow rate, and the velocity-of-approach correction term becomes increasingly significant and sensitive to small errors. Practical venturi meters are usually designed with beta well below 1, commonly in the 0.4 to 0.75 range, to keep the measurement both sensitive and robust.</p>
+    </details>
+
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+  
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+
+  function calculateVenturiFlow(){
+    const D1 = parseFloat(document.getElementById('vfD1').value);
+    const D2 = parseFloat(document.getElementById('vfD2').value);
+    const dpKpa = parseFloat(document.getElementById('vfDp').value);
+    const rho = parseFloat(document.getElementById('vfRho').value);
+    const Cd = parseFloat(document.getElementById('vfCd').value);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(D1) || D1 <= 0){ errors.push('Enter a valid inlet diameter greater than 0.'); }
+    if(isNaN(D2) || D2 <= 0 || D2 >= D1){ errors.push('Throat diameter must be greater than 0 and smaller than the inlet diameter.'); }
+    if(isNaN(dpKpa) || dpKpa <= 0){ errors.push('Enter a valid differential pressure greater than 0.'); }
+    if(isNaN(rho) || rho <= 0){ errors.push('Enter a valid fluid density greater than 0.'); }
+    if(isNaN(Cd) || Cd <= 0){ errors.push('Enter a valid discharge coefficient greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rBeta').textContent = '\u2014';
+      document.getElementById('rVelocity').textContent = '\u2014';
+      document.getElementById('vfBetaWarning').classList.add('hidden');
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const beta = D2 / D1;
+    const A2_m2 = (Math.PI/4) * Math.pow(D2/1000, 2);
+    const dpPa = dpKpa * 1000;
+
+    const Q_m3s = Cd * A2_m2 * Math.sqrt((2*dpPa)/rho) / Math.sqrt(1 - Math.pow(beta,4));
+    const Q_m3hr = Q_m3s * 3600;
+    const Q_lpm = Q_m3s * 60000;
+
+    const throatVelocity = Q_m3s / A2_m2;
+
+    document.getElementById('rResult').textContent = Q_m3hr.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' m³/hr';
+    document.getElementById('resultSub').textContent = 'D₁=' + D1 + 'mm, D₂=' + D2 + 'mm, ΔP=' + dpKpa + 'kPa';
+    document.getElementById('rBeta').textContent = beta.toFixed(3);
+
+    if(beta < 0.3 || beta > 0.75){
+      document.getElementById('vfBetaWarning').classList.remove('hidden');
+      document.getElementById('rBetaWarningText').textContent = beta < 0.3
+        ? 'Beta = ' + beta.toFixed(3) + ' is below 0.3 — measurement sensitivity and accuracy may be reduced; consider a larger throat.'
+        : 'Beta = ' + beta.toFixed(3) + ' is above 0.75 — the differential pressure signal may be too small to measure accurately; consider a smaller throat.';
+    } else {
+      document.getElementById('vfBetaWarning').classList.add('hidden');
+    }
+    document.getElementById('rVelocity').textContent = throatVelocity.toFixed(2) + ' m/s';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Inlet Diameter (D₁)</td><td>${D1} mm</td></tr>
+                <tr><td>Throat Diameter (D₂)</td><td>${D2} mm</td></tr>
+                <tr><td>Beta Ratio (β = D₂/D₁)</td><td>${beta.toFixed(4)}</td></tr>
+                <tr><td>Throat Area (A₂)</td><td>${(A2_m2*1e6).toFixed(1)} mm²</td></tr>
+                <tr><td>Differential Pressure (ΔP)</td><td>${dpKpa} kPa (${dpPa.toFixed(0)} Pa)</td></tr>
+                <tr><td>Fluid Density (ρ)</td><td>${rho} kg/m³</td></tr>
+                <tr><td>Discharge Coefficient (Cd)</td><td>${Cd}</td></tr>
+                <tr><td>1 − β⁴ (velocity of approach factor)</td><td>${(1-Math.pow(beta,4)).toFixed(4)}</td></tr>
+                <tr><td><strong>Volumetric Flow Rate (Q)</strong></td><td><strong>${Q_m3s.toFixed(5)} m³/s (${Q_m3hr.toFixed(2)} m³/hr)</strong></td></tr>
+                <tr><td>Flow Rate (LPM)</td><td>${Q_lpm.toFixed(1)} L/min</td></tr>
+                <tr><td>Throat Velocity</td><td>${throatVelocity.toFixed(2)} m/s</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateVenturiFlow();
+
+</script>
+
+<script>
+  // ===== Generic Copy Result (added site-wide; does not touch page-specific calc logic) =====
+  function copyResultGeneric(){
+    var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
+    var btn = document.getElementById('copyResultBtn');
+    if (!panel || !btn) return;
+    var text = panel.innerText.trim();
+    function restore(){ btn.textContent = '📋 Copy Result'; }
+    if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = '✅ Copied';
+        setTimeout(restore, 1800);
+      }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+    } else {
+      btn.textContent = '⚠️ Not supported';
+      setTimeout(restore, 1800);
+    }
+  }
+
+  // ===== Generic number-input safety net (added site-wide; purely additive —
+  // runs on blur AFTER the page's own oninput/onchange calc handlers, and only
+  // corrects a value that is non-finite or outside the field's own declared
+  // min/max attributes, then re-fires "input" so the page's existing calc
+  // function recalculates with the corrected value. Never overrides or
+  // replaces any existing calculator logic. =====
+  (function(){
+    function clampNumberInput(el){
+      if (el.type !== 'number' || el.value === '') return;
+      var hasMin = el.hasAttribute('min');
+      var hasMax = el.hasAttribute('max');
+      var min = hasMin ? parseFloat(el.min) : null;
+      var max = hasMax ? parseFloat(el.max) : null;
+      var v = parseFloat(el.value);
+      var corrected = null;
+      if (!isFinite(v)) { corrected = (min !== null ? min : 0); }
+      else if (min !== null && v < min) { corrected = min; }
+      else if (max !== null && v > max) { corrected = max; }
+      if (corrected !== null && corrected !== v) {
+        el.value = corrected;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    document.querySelectorAll('input[type="number"]').forEach(function(el){
+      el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+</script>
+</body>
+</html>

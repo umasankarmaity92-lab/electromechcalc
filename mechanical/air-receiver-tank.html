@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- meta: {"category":"Mechanical"} -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== THEME (FLASH/CLS PREVENTION) =====================
+     Runs synchronously, before any stylesheet or paint, so the correct
+     dark-theme/light-theme class is already present on <html> the instant
+     CSS starts applying — no later class-add via site-nav.js's
+     DOMContentLoaded handler, which was causing a ~1.0 CLS hit as the
+     entire theme (colors AND several layout-affecting rules) snapped in
+     partway through the page's first paint. A matching inline script sits
+     right after <body> opens (see below) to cover the body.dark-theme /
+     body.light-theme selectors theme.css also relies on — site-nav.js
+     still re-applies both classes on DOMContentLoaded as a no-op safety
+     net (classList.add on an already-present class is a no-op) and is
+     what actually handles the toggle button switching themes later. -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Air Receiver Tank Size Calculator (Compressor Buffer Volume) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free air receiver tank sizing calculator. Find the minimum receiver tank volume from compressor free air delivery (FAD), cut-in/cut-out pressure, and minimum allowable cycle time.">
+<meta name="keywords" content="air receiver tank calculator, air receiver sizing formula, compressor tank size calculator, receiver tank volume calculator, cut-in cut-out pressure sizing">
+<meta name="robots" content="index, follow">
+<!-- PAGE_CATEGORY = electrical | mechanical | financial (no slashes).
+     PAGE_SLUG = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/air-receiver-tank">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Air Receiver Tank Size Calculator">
+<meta property="og:description" content="Minimum air receiver tank volume from compressor FAD, cut-in/cut-out pressure and minimum cycle time — to avoid excessive compressor short-cycling.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/air-receiver-tank">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Air Receiver Tank Size Calculator">
+<meta name="twitter:description" content="Minimum air receiver tank volume from compressor FAD, cut-in/cut-out pressure and minimum cycle time — to avoid excessive compressor short-cycling.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA =====================
+     Minimum 8 FAQ entries (Q1-Q8) — matches the site-wide standard set
+     across all published calculators. Add more (Q9, Q10...) as needed;
+     never ship fewer than 8, and keep this JSON-LD block in sync with
+     the visible FAQ_ITEMS accordion below (same questions, same
+     order) so structured data never diverges from on-page content. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Air Receiver Tank Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/air-receiver-tank",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free online calculator for minimum compressed air receiver tank volume, based on compressor free air delivery, cut-in and cut-out pressure settings, and the minimum acceptable time between compressor starts.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Mechanical Calculators", "item": "https://www.electromechcalc.com/mechanical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "Air Receiver Tank Calculator", "item": "https://www.electromechcalc.com/mechanical/air-receiver-tank" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the formula for air receiver tank sizing?",
+      "acceptedAnswer": { "@type": "Answer", "text": "V = (t times C times Pa) divided by (P1 minus P2), where t is the minimum acceptable time between compressor starts in minutes, C is compressor free air delivery in cubic metres per minute, Pa is atmospheric pressure (1.013 bar absolute), and P1 and P2 are the cut-out and cut-in pressures in bar." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does a bigger pressure differential between cut-in and cut-out mean a smaller tank is needed?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A wider pressure band means more usable air is stored in the tank per bar of pressure change, so it takes longer for the same demand to drain that pressure range even in a smaller tank. Narrowing the pressure band for tighter downstream control means a larger tank is needed to hold the same minimum cycling time." }
+    },
+    {
+      "@type": "Question",
+      "name": "What minimum time between compressor starts should I target?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This should match the specific compressor motor's maximum starts-per-hour rating from the manufacturer, converted to a minimum minutes-between-starts figure. Smaller motors can typically tolerate more frequent starts than larger ones, so there isn't one universal target time — check the motor's actual specification." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this calculator size the receiver for sudden demand spikes, like a high-flow air tool switching on?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — this formula sizes the receiver against normal compressor cycling behavior. A sudden large demand spike from equipment like a sandblast pot or a high-flow tool needs a separate check, sizing the receiver's available stored air against that specific event's flow rate and duration." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is atmospheric pressure (1.013 bar) part of the formula?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The formula converts the tank's physical (compressed) volume change into an equivalent free-air volume, similar to the compression-ratio principle used in air consumption calculations — atmospheric pressure is the reference point that free air volume is always measured against." }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if I install a receiver smaller than the calculated minimum?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The compressor will cycle (start and stop) more frequently than the target time, which increases electrical inrush stress on the motor, wastes energy on repeated unloaded starts, and can shorten compressor and motor service life over time — particularly relevant for larger motors with lower rated starts-per-hour limits." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a bigger receiver than the calculated minimum cause any problems?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Generally not for cycling control — a larger-than-minimum receiver only improves cycling behavior and adds extra buffer capacity for demand spikes and moisture settling. The main trade-off is simply the additional cost and footprint of a larger tank, not a functional downside." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I size a receiver for a system with more than one compressor?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Use the effective combined free air delivery relevant to the compressor staging strategy actually in use (for example, the FAD of the lead compressor if only one runs at low demand, or the combined FAD if multiple run together), since the receiver needs to smooth the cycling behavior of whichever compressor(s) are actually starting and stopping under the demand condition being checked." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Free · Instant results
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Air Receiver Tank <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Minimum receiver tank volume from compressor FAD, cut-in/cut-out pressure and minimum cycle time — to avoid excessive compressor short-cycling.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+      
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-5">Compressor &amp; Pressure Inputs</h2>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Compressor FAD (m³/min)</label>
+        <input id="artFad" type="number" value="2.0" step="0.1" min="0" class="input-field mt-2">
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Cut-Out (Max) Pressure, P₁ (bar)</label>
+          <input id="artP1" type="number" value="8" step="0.1" min="0" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Cut-In (Min) Pressure, P₂ (bar)</label>
+          <input id="artP2" type="number" value="6.5" step="0.1" min="0" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Minimum Time Between Starts (minutes)</label>
+        <input id="artTime" type="number" value="1" step="0.1" min="0" class="input-field mt-2">
+        <p class="text-[11px] text-gray-400 mt-1">Typical minimum 1 minute for standard motors; check manufacturer's max starts/hour rating</p>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Safety Margin (%)</label>
+        <input id="artMargin" type="number" value="15" step="1" min="0" class="input-field mt-2">
+        <p class="text-[11px] text-gray-400 mt-1">Added on top of the calculated minimum — covers demand spikes, future growth, and vessel design allowance</p>
+      </div>
+
+      <button onclick="calculateReceiverTank()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 rounded-lg transition">Calculate Tank Size</button>
+
+      <div id="validationBox" class="hidden mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3"></div>
+
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+      
+      <div class="result-tile rounded-2xl p-6 text-white">
+        <span class="font-mono text-[11px] uppercase tracking-wider text-sky-300">Minimum Receiver Volume</span>
+        <div id="rResult" class="text-4xl font-display font-bold mt-1">—</div>
+        <div id="resultSub" class="text-gray-400 text-xs mt-2">—</div>
+        <div id="formulaChip" class="formula-chip mt-3">V = t×C×Pa / (P₁−P₂)</div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">In Litres</span>
+          <div id="rLitres" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">Suggested Standard Size</span>
+          <div id="rStdSize" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Calculation Breakdown</span>
+        <div class="breakdown-wrap">
+          <div id="breakdownBox"></div>
+        </div>
+      </div>
+
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          
+          <a href="/mechanical/compressor-cfm" class="nav-dropdown-link border border-gray-100">Compressor CFM Calculator</a>
+          <a href="/mechanical/compressed-air-consumption" class="nav-dropdown-link border border-gray-100">Compressed Air Consumption Calculator</a>
+          <a href="/mechanical/pipe-pressure-drop" class="nav-dropdown-link border border-gray-100">Pipe Pressure Drop Calculator</a>
+          <a href="/mechanical/nozzle-flow" class="nav-dropdown-link border border-gray-100">Nozzle Flow Calculator</a>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR =====================
+     Standard section on every published calculator. The single Share
+     Result button (openShareModal) and its modal are shared, site-wide
+     logic living in common.js + theme.css — nothing to add here beyond
+     this markup. setFeedback() below is per-page (each calculator
+     tracks its own Yes/No feedback state), matching how every other
+     published calculator implements it; add it inside
+     CALCULATOR_JS. No like/dislike buttons — Share Result + Yes/No
+     + Feedback mail is the current standard, deliberately lighter than
+     the old three-group bar. -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Air Receiver Tank Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS =====================
+     Standard 5-row TOC used across every published calculator.
+     Keep the anchors (#calculator, #how-it-works, #second, #mistakes,
+     #faqs) in sync with the actual section ids below — if a page
+     skips the optional SECOND_SECTION block, remove that li too
+     and renumber the rest. -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. How receiver tank size is calculated</a></li>
+      <li><a href="#second" class="hover:underline">3. Why cycling frequency matters for compressor life</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== [PER-PAGE] EXPLANATION =====================
+     Target length across how-it-works + second + mistakes + FAQ
+     combined: 3000+ words of genuine, non-duplicated content (this is
+     the site-wide content-depth standard, not just a suggestion —
+     thin pages are the #1 AdSense/SEO risk on this site). Include a
+     worked numeric example with real figures, not just the formula. -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Air receiver tank sizing, explained</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: General compressed air system design practice (compressor manufacturer receiver sizing guidelines)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p>An air receiver tank acts as a buffer between a compressor's intermittent on/off (or load/unload) operation and the plant's continuous air demand. Without a large enough receiver, a compressor controlled by simple pressure switches would start and stop far too frequently — a problem called short-cycling, which stresses the motor, wastes energy on repeated starts, and shortens compressor life.</p>
+      <p>The standard sizing approach works from the compressor's cycle: the compressor runs (filling the receiver) until pressure reaches the cut-out (maximum) setting, then stops; system demand then draws the pressure back down until it reaches the cut-in (minimum) setting, at which point the compressor restarts. A larger receiver takes longer to swing between these two pressures for a given demand, which directly increases the time between compressor starts. This gives the standard receiver sizing formula:</p>
+      <p class="formula-chip text-sm">V = (t × C × Pₐ) / (P₁ − P₂)</p>
+      <p>Here, t is the minimum acceptable time between compressor starts (in minutes), C is the compressor's free air delivery (in m³/min), Pₐ is atmospheric pressure (1.013 bar absolute), and P₁ and P₂ are the cut-out and cut-in pressures respectively (in bar gauge, since the difference P₁−P₂ is what matters and the atmospheric offset cancels in that subtraction). The result gives the minimum receiver volume that ensures at least t minutes pass between compressor starts under the assumed demand condition.</p>
+      <p>The formula effectively answers: "how large does the tank need to be so that, filling from P₂ to P₁ (or draining from P₁ to P₂ under load), at least t minutes elapse?" A wider pressure differential (P₁−P₂) means less receiver volume is needed for the same cycle time, since more usable air is stored per bar of pressure swing — which is why compressor control pressure bands are usually set at least 1–2 bar apart rather than very tight, in addition to the receiver size itself.</p>
+
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      
+      <h3 class="font-display font-semibold text-brandDark mb-3">Worked Example</h3>
+      <p class="text-sm text-gray-600 mb-2">A compressor delivers 2.0 m³/min FAD, with pressure switch settings of 8 bar cut-out and 6.5 bar cut-in, a target minimum of 1 minute between starts, and a 15% safety margin.</p>
+      <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+        <li>ΔP = 8 − 6.5 = 1.5 bar</li>
+        <li>Bare minimum V = (1 × 2.0 × 1.013) / 1.5 = <strong>1.351 m³</strong> = 1,351 litres</li>
+        <li>With 15% margin: 1,351 × 1.15 ≈ <strong>1,553 litres</strong></li>
+        <li>Nearest standard commercial tank size above this: <strong>2000 L</strong></li>
+      </ul>
+      <p class="text-sm text-gray-600 mt-2">If the pressure band were tightened to a 0.5 bar swing (e.g. 7.5–8 bar) instead, the bare minimum for the same 1-minute cycle time target would be V = (1×2.0×1.013)/0.5 ≈ 4.05 m³ — nearly three times the tank volume, illustrating why a narrow control band drives up receiver size fast.</p>
+
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This gives a minimum buffer volume against motor short-cycling; systems with large intermittent demand spikes (e.g. sudden high-flow tools) may need a larger receiver sized against the demand event itself, not just the cycling formula shown here.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION (optional but standard) =====================
+     Every published calculator carries a second content block here —
+     a comparison table, a second worked scenario, a rate/limit
+     reference table, or a related-topic deep-dive (e.g. "how tenure
+     changes total interest", "GST slabs at a glance"). Drop the whole
+     <section> and its TOC <li> only if there is genuinely nothing
+     page-specific to add — don't leave it thin just to check the box. -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Why it matters</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Compressor cycling and motor life</h2>
+  
+      <p class="text-sm text-gray-600 mb-4">Most standard induction motors used to drive reciprocating and small rotary screw compressors have a manufacturer-specified maximum number of starts per hour, because each start draws a large inrush current that heats the motor windings well beyond normal running current:</p>
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead><tr class="text-left text-gray-500 text-xs uppercase border-b border-gray-200">
+          <th class="py-2 pr-4">Motor size / type</th><th class="py-2">Typical max starts/hour</th>
+        </tr></thead>
+        <tbody class="divide-y divide-gray-100 text-gray-700">
+          <tr><td class="py-2 pr-4">Small motors, up to ~5 HP</td><td class="py-2">Up to 15–20</td></tr>
+          <tr><td class="py-2 pr-4">Medium motors, ~5–30 HP</td><td class="py-2">10–12</td></tr>
+          <tr><td class="py-2 pr-4">Large motors, above ~30 HP</td><td class="py-2">4–6</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="text-sm text-gray-600 mt-4">A minimum time between starts of 1 minute allows up to 60 starts an hour in the worst case — too frequent for most motors above a few horsepower — so the actual target cycle time used in receiver sizing should be checked against the specific compressor motor's rated maximum starts per hour, not assumed as a fixed 1-minute default; larger motors need proportionally larger receivers or a variable-speed/load-unload control strategy instead of simple start-stop control.</p>
+
+</section>
+
+<!-- ===================== COMMON MISTAKES =====================
+     Standard section on every published calculator. Minimum 5
+     numbered mistakes, each 1-2 sentences: state the mistake, then
+     why it's wrong / what it costs the user. -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common mistakes when sizing an air receiver</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p><strong>1. Using too small a pressure differential without increasing tank size to compensate.</strong> A tight cut-in/cut-out band (for tighter downstream pressure control) requires a proportionally larger receiver to hold the same minimum cycle time — tightening the band without resizing the tank causes excessive short-cycling.</p>
+      <p><strong>2. Assuming a fixed 1-minute cycle time regardless of motor size.</strong> Larger compressor motors need longer minimum times between starts than small ones — check the actual motor manufacturer's maximum starts-per-hour rating rather than defaulting to a generic 1-minute assumption for every size.</p>
+      <p><strong>3. Sizing the receiver only against average demand, ignoring intermittent high-flow spikes.</strong> A receiver sized purely for compressor cycling may still be too small to buffer sudden short-duration demand spikes from a high-flow tool or process — that scenario needs a separate check against the actual peak demand event.</p>
+      <p><strong>4. Mixing gauge and absolute pressure inconsistently.</strong> The formula's atmospheric pressure term (Pₐ) is in absolute units, but P₁ and P₂ are used as a gauge-pressure difference — as long as this convention is followed consistently, the formula works correctly, but mixing conventions inconsistently introduces an error.</p>
+      <p><strong>5. Undersizing when multiple compressors share one receiver.</strong> With multiple compressors on a shared header, the effective combined FAD used in sizing needs to reflect the actual staged/cascaded control strategy of the compressors, not just a single compressor's FAD, or the receiver will be undersized for the true combined cycling behavior.</p>
+      <p><strong>6. Forgetting that receiver size also affects moisture drop-out and pulsation damping.</strong> Beyond cycling control, the receiver also allows compressed air to cool and drop out condensate, and dampens pressure pulsations from reciprocating compressors — a tank sized to the bare minimum cycling requirement may be undersized for these secondary benefits in some applications.</p>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] FAQ =====================
+     Minimum 8 <details> items, matching the 8 JSON-LD entries above
+     1-for-1 (same question text, same order) — schema and visible
+     content must never diverge. First item gets the `open` attribute. -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2">Straight answers on receiver sizing, cut-in/cut-out pressure, and compressor cycling.</p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    
+    <details class="py-4" open>
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What is the formula for air receiver tank sizing?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">V = (t times C times Pa) divided by (P1 minus P2), where t is the minimum acceptable time between compressor starts in minutes, C is compressor free air delivery in cubic metres per minute, Pa is atmospheric pressure (1.013 bar absolute), and P1 and P2 are the cut-out and cut-in pressures in bar.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why does a bigger pressure differential between cut-in and cut-out mean a smaller tank is needed?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">A wider pressure band means more usable air is stored in the tank per bar of pressure change, so it takes longer for the same demand to drain that pressure range even in a smaller tank. Narrowing the pressure band for tighter downstream control means a larger tank is needed to hold the same minimum cycling time.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What minimum time between compressor starts should I target?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">This should match the specific compressor motor's maximum starts-per-hour rating from the manufacturer, converted to a minimum minutes-between-starts figure. Smaller motors can typically tolerate more frequent starts than larger ones, so there isn't one universal target time — check the motor's actual specification.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Does this calculator size the receiver for sudden demand spikes, like a high-flow air tool switching on?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">No — this formula sizes the receiver against normal compressor cycling behavior. A sudden large demand spike from equipment like a sandblast pot or a high-flow tool needs a separate check, sizing the receiver's available stored air against that specific event's flow rate and duration.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why is atmospheric pressure (1.013 bar) part of the formula?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">The formula converts the tank's physical (compressed) volume change into an equivalent free-air volume, similar to the compression-ratio principle used in air consumption calculations — atmospheric pressure is the reference point that free air volume is always measured against.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What happens if I install a receiver smaller than the calculated minimum?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">The compressor will cycle (start and stop) more frequently than the target time, which increases electrical inrush stress on the motor, wastes energy on repeated unloaded starts, and can shorten compressor and motor service life over time — particularly relevant for larger motors with lower rated starts-per-hour limits.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Does a bigger receiver than the calculated minimum cause any problems?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Generally not for cycling control — a larger-than-minimum receiver only improves cycling behavior and adds extra buffer capacity for demand spikes and moisture settling. The main trade-off is simply the additional cost and footprint of a larger tank, not a functional downside.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How do I size a receiver for a system with more than one compressor?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Use the effective combined free air delivery relevant to the compressor staging strategy actually in use (for example, the FAD of the lead compressor if only one runs at low demand, or the combined FAD if multiple run together), since the receiver needs to smooth the cycling behavior of whichever compressor(s) are actually starting and stopping under the demand condition being checked.</p>
+    </details>
+
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+  
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+
+  const standardTankSizesL = [100, 150, 200, 250, 300, 500, 750, 1000, 1500, 2000, 3000, 5000, 8000, 10000];
+
+  function calculateReceiverTank(){
+    const C = parseFloat(document.getElementById('artFad').value);
+    const P1 = parseFloat(document.getElementById('artP1').value);
+    const P2 = parseFloat(document.getElementById('artP2').value);
+    const t = parseFloat(document.getElementById('artTime').value);
+    const marginPct = parseFloat(document.getElementById('artMargin').value) || 0;
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(C) || C <= 0){ errors.push('Enter a valid compressor FAD greater than 0.'); }
+    if(isNaN(P1) || P1 <= 0){ errors.push('Enter a valid cut-out pressure greater than 0.'); }
+    if(isNaN(P2) || P2 <= 0){ errors.push('Enter a valid cut-in pressure greater than 0.'); }
+    if(!isNaN(P1) && !isNaN(P2) && P2 >= P1){ errors.push('Cut-in pressure must be lower than cut-out pressure.'); }
+    if(isNaN(t) || t <= 0){ errors.push('Enter a valid minimum time between starts greater than 0.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rLitres').textContent = '\u2014';
+      document.getElementById('rStdSize').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const Pa = 1.013; // atmospheric, bar absolute
+    const deltaP = P1 - P2;
+    const volumeM3 = (t * C * Pa) / deltaP;
+    const volumeL = volumeM3 * 1000;
+    const volumeWithMarginL = volumeL * (1 + marginPct/100);
+    const suggested = standardTankSizesL.find(s => s >= volumeWithMarginL);
+
+    document.getElementById('rResult').textContent = volumeM3.toLocaleString('en-IN', {maximumFractionDigits:3}) + ' m³';
+    document.getElementById('resultSub').textContent = 'FAD=' + C + ' m³/min, ΔP=' + deltaP.toFixed(1) + ' bar, t=' + t + ' min';
+    document.getElementById('rLitres').textContent = Math.round(volumeL).toLocaleString('en-IN') + ' L';
+    document.getElementById('rStdSize').textContent = suggested ? suggested.toLocaleString('en-IN') + ' L' : 'Above ' + standardTankSizesL[standardTankSizesL.length-1] + ' L — custom/multiple tanks';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Compressor FAD (C)</td><td>${C} m³/min</td></tr>
+                <tr><td>Cut-Out Pressure (P₁)</td><td>${P1} bar</td></tr>
+                <tr><td>Cut-In Pressure (P₂)</td><td>${P2} bar</td></tr>
+                <tr><td>Pressure Swing (ΔP = P₁−P₂)</td><td>${deltaP.toFixed(2)} bar</td></tr>
+                <tr><td>Atmospheric Pressure (Pa)</td><td>${Pa} bar (abs)</td></tr>
+                <tr><td>Minimum Time Between Starts (t)</td><td>${t} min</td></tr>
+                <tr><td><strong>Minimum Receiver Volume (bare)</strong></td><td><strong>${volumeM3.toFixed(3)} m³ (${Math.round(volumeL).toLocaleString('en-IN')} L)</strong></td></tr>
+                <tr><td>Safety Margin</td><td>${marginPct}%</td></tr>
+                <tr><td><strong>Volume with Margin</strong></td><td><strong>${(volumeWithMarginL/1000).toFixed(3)} m³ (${Math.round(volumeWithMarginL).toLocaleString('en-IN')} L)</strong></td></tr>
+                <tr><td>Nearest Standard Tank Size</td><td>${suggested ? suggested.toLocaleString('en-IN') + ' L' : 'Above largest standard size'}</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateReceiverTank();
+
+</script>
+
+<script>
+  // ===== Generic Copy Result (added site-wide; does not touch page-specific calc logic) =====
+  function copyResultGeneric(){
+    var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
+    var btn = document.getElementById('copyResultBtn');
+    if (!panel || !btn) return;
+    var text = panel.innerText.trim();
+    function restore(){ btn.textContent = '📋 Copy Result'; }
+    if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = '✅ Copied';
+        setTimeout(restore, 1800);
+      }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+    } else {
+      btn.textContent = '⚠️ Not supported';
+      setTimeout(restore, 1800);
+    }
+  }
+
+  // ===== Generic number-input safety net (added site-wide; purely additive —
+  // runs on blur AFTER the page's own oninput/onchange calc handlers, and only
+  // corrects a value that is non-finite or outside the field's own declared
+  // min/max attributes, then re-fires "input" so the page's existing calc
+  // function recalculates with the corrected value. Never overrides or
+  // replaces any existing calculator logic. =====
+  (function(){
+    function clampNumberInput(el){
+      if (el.type !== 'number' || el.value === '') return;
+      var hasMin = el.hasAttribute('min');
+      var hasMax = el.hasAttribute('max');
+      var min = hasMin ? parseFloat(el.min) : null;
+      var max = hasMax ? parseFloat(el.max) : null;
+      var v = parseFloat(el.value);
+      var corrected = null;
+      if (!isFinite(v)) { corrected = (min !== null ? min : 0); }
+      else if (min !== null && v < min) { corrected = min; }
+      else if (max !== null && v > max) { corrected = max; }
+      if (corrected !== null && corrected !== v) {
+        el.value = corrected;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    document.querySelectorAll('input[type="number"]').forEach(function(el){
+      el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+</script>
+</body>
+</html>

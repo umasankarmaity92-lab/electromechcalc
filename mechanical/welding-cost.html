@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- meta: {"category":"Mechanical"} -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== THEME (FLASH/CLS PREVENTION) =====================
+     Runs synchronously, before any stylesheet or paint, so the correct
+     dark-theme/light-theme class is already present on <html> the instant
+     CSS starts applying — no later class-add via site-nav.js's
+     DOMContentLoaded handler, which was causing a ~1.0 CLS hit as the
+     entire theme (colors AND several layout-affecting rules) snapped in
+     partway through the page's first paint. A matching inline script sits
+     right after <body> opens (see below) to cover the body.dark-theme /
+     body.light-theme selectors theme.css also relies on — site-nav.js
+     still re-applies both classes on DOMContentLoaded as a no-op safety
+     net (classList.add on an already-present class is a no-op) and is
+     what actually handles the toggle button switching themes later. -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Welding Cost Calculator (Filler, Labour &amp; Gas) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free welding cost calculator. Find total welding cost per job from weld length, filler consumption, filler price, welding speed, labour rate and gas/consumable cost.">
+<meta name="keywords" content="welding cost calculator, welding cost estimation, filler metal cost calculator, welding labour cost, cost per meter of weld, welding cost per kg">
+<meta name="robots" content="index, follow">
+<!-- PAGE_CATEGORY = electrical | mechanical | financial (no slashes).
+     PAGE_SLUG = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/welding-cost">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Welding Cost Calculator">
+<meta property="og:description" content="Total welding cost from weld length, filler consumption and price, welding speed, labour rate, and gas/consumable cost — with a per-metre cost breakdown.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/welding-cost">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Welding Cost Calculator">
+<meta name="twitter:description" content="Total welding cost from weld length, filler consumption and price, welding speed, labour rate, and gas/consumable cost — with a per-metre cost breakdown.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA =====================
+     Minimum 8 FAQ entries (Q1-Q8) — matches the site-wide standard set
+     across all published calculators. Add more (Q9, Q10...) as needed;
+     never ship fewer than 8, and keep this JSON-LD block in sync with
+     the visible FAQ_ITEMS accordion below (same questions, same
+     order) so structured data never diverges from on-page content. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Welding Cost Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/welding-cost",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free online calculator for total welding job cost, combining filler metal cost, labour cost from welding speed, and gas/consumable cost, with a cost-per-metre breakdown.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Mechanical Calculators", "item": "https://www.electromechcalc.com/mechanical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "Welding Cost Calculator", "item": "https://www.electromechcalc.com/mechanical/welding-cost" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What are the main components of welding cost?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Welding cost has three direct components: filler metal cost (weight of filler used times its price), labour and machine cost (total time, including non-arc time, times the hourly rate), and gas or consumable cost. An overhead percentage is then added on top to cover indirect shop costs." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the arc-on (duty) factor and why does it matter so much?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The duty factor is the fraction of total working time actually spent welding, as opposed to time spent on setup, repositioning, and cleaning. Because labour cost is based on total time, not just arc-on time, a low duty factor can make labour cost several times higher than a naive calculation using only welding speed would suggest." }
+    },
+    {
+      "@type": "Question",
+      "name": "What duty factor should I use for manual welding versus mechanised welding?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Manual stick or TIG welding commonly runs a duty factor of roughly 20 to 40 percent due to frequent stops for repositioning and electrode changes, while mechanised or robotic welding can reach 60 to 90 percent since travel and positioning are automated. Use shop time-study data for the specific process where possible, since this varies a lot by job complexity." }
+    },
+    {
+      "@type": "Question",
+      "name": "How is filler metal consumption per metre estimated?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It depends on the weld size (throat thickness and joint type), the number of passes, and the deposition efficiency of the process, which is not 100 percent due to spatter and other losses. A good estimate usually comes from shop records for similar joints and processes rather than a purely theoretical bead-volume calculation." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does labour cost usually outweigh filler metal cost in a welding cost estimate?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Because welding is a relatively slow, skilled manual process compared to the cost of the material being deposited — a welder's time, including the non-arc time captured by the duty factor, typically accounts for the majority of total cost on manual jobs, often 60 to 80 percent, with filler metal a smaller share." }
+    },
+    {
+      "@type": "Question",
+      "name": "Should gas and consumables be estimated per metre of weld or per hour of welding?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Either can work depending on the process: gas-shielded processes like MIG and TIG often track gas cost by flow rate over arc-on time, but a simplified per-metre-of-weld estimate (used in this calculator) is common for quick job costing when detailed flow-rate data isn't available." }
+    },
+    {
+      "@type": "Question",
+      "name": "What overhead percentage is typical for a fabrication shop?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This varies widely by shop size, equipment investment, and business model, but 10 to 25 percent on top of direct labour, filler and consumable cost is a common range for covering equipment depreciation, power, facility cost, and supervision — check your own shop's actual overhead rate for accurate quoting." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this calculator include joint preparation time like bevelling and fit-up?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — this calculator estimates the cost of the welding operation itself (filler, arc time with duty factor, gas) plus overhead. Joint preparation, fit-up, and inspection time are separate cost items that should be added on top for jobs where that preparation work is significant." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Free · Instant results
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Welding Cost <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Total welding cost from weld length, filler consumption, welding speed, labour rate and gas cost — with a full cost breakdown.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+      
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-5">Weld &amp; Cost Inputs</h2>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Total Weld Length (metres)</label>
+        <input id="wcLength" type="number" value="10" step="0.1" min="0" class="input-field mt-2">
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Filler Consumption (kg/m)</label>
+          <input id="wcFillerRate" type="number" value="0.25" step="0.01" min="0" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Filler Cost (₹/kg)</label>
+          <input id="wcFillerCost" type="number" value="450" step="5" min="0" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Deposition Efficiency (%)</label>
+        <input id="wcDepositionEff" type="number" value="65" step="1" min="1" max="100" class="input-field mt-2">
+        <p class="text-[11px] text-gray-400 mt-1">Filler actually purchased/used is higher than deposited weight — typical SMAW (stick) 60–65%, GMAW (MIG) 85–95%, GTAW (TIG) close to 100%</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Welding Speed (cm/min)</label>
+          <input id="wcSpeed" type="number" value="15" step="0.5" min="0" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Labour + Machine Rate (₹/hr)</label>
+          <input id="wcLabourRate" type="number" value="350" step="10" min="0" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Arc-On (Duty) Factor (%)</label>
+          <input id="wcDuty" type="number" value="35" step="1" min="1" max="100" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Shielding Gas Flow (L/min)</label>
+          <input id="wcGasFlow" type="number" value="12" step="1" min="0" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Gas Cylinder Size (L)</label>
+          <input id="wcCylinderSize" type="number" value="7000" step="100" min="1" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Gas Cylinder Price (₹)</label>
+          <input id="wcCylinderPrice" type="number" value="850" step="10" min="0" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Overhead Margin (%)</label>
+        <input id="wcOverhead" type="number" value="10" step="1" min="0" class="input-field mt-2">
+      </div>
+
+      <button onclick="calculateWeldingCost()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 rounded-lg transition">Calculate Cost</button>
+
+      <div id="validationBox" class="hidden mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3"></div>
+
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+      
+      <div class="result-tile rounded-2xl p-6 text-white">
+        <span class="font-mono text-[11px] uppercase tracking-wider text-sky-300">Total Welding Cost</span>
+        <div id="rResult" class="text-4xl font-display font-bold mt-1">—</div>
+        <div id="resultSub" class="text-gray-400 text-xs mt-2">—</div>
+        <div id="formulaChip" class="formula-chip mt-3">Cost = Filler + Labour + Gas + Overhead</div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">Cost per Metre</span>
+          <div id="rPerMetre" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">Total Weld Time</span>
+          <div id="rTime" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Calculation Breakdown</span>
+        <div class="breakdown-wrap">
+          <div id="breakdownBox"></div>
+        </div>
+      </div>
+
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          
+          <a href="/mechanical/metal-weight" class="nav-dropdown-link border border-gray-100">Metal Weight Calculator</a>
+          <a href="/mechanical/beam-stress" class="nav-dropdown-link border border-gray-100">Beam Bending Stress Calculator</a>
+          <a href="/mechanical/bolt-torque" class="nav-dropdown-link border border-gray-100">Bolt Torque Calculator</a>
+          <a href="/mechanical/key-size" class="nav-dropdown-link border border-gray-100">Key Size Calculator</a>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR =====================
+     Standard section on every published calculator. The single Share
+     Result button (openShareModal) and its modal are shared, site-wide
+     logic living in common.js + theme.css — nothing to add here beyond
+     this markup. setFeedback() below is per-page (each calculator
+     tracks its own Yes/No feedback state), matching how every other
+     published calculator implements it; add it inside
+     CALCULATOR_JS. No like/dislike buttons — Share Result + Yes/No
+     + Feedback mail is the current standard, deliberately lighter than
+     the old three-group bar. -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Welding Cost Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS =====================
+     Standard 5-row TOC used across every published calculator.
+     Keep the anchors (#calculator, #how-it-works, #second, #mistakes,
+     #faqs) in sync with the actual section ids below — if a page
+     skips the optional SECOND_SECTION block, remove that li too
+     and renumber the rest. -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. How welding cost is calculated</a></li>
+      <li><a href="#second" class="hover:underline">3. Where welding cost typically goes</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== [PER-PAGE] EXPLANATION =====================
+     Target length across how-it-works + second + mistakes + FAQ
+     combined: 3000+ words of genuine, non-duplicated content (this is
+     the site-wide content-depth standard, not just a suggestion —
+     thin pages are the #1 AdSense/SEO risk on this site). Include a
+     worked numeric example with real figures, not just the formula. -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Welding cost estimation, explained</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: General fabrication shop costing practice; AWS welding cost estimation principles</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p>Welding cost is made up of three main components — filler metal, labour and machine time, and shielding gas or other consumables — plus an overhead margin to cover shop costs not tied to any single job. Getting a realistic total means treating each component correctly rather than just multiplying weld length by a flat rate per metre, because filler cost and labour cost scale very differently.</p>
+      <p><strong>Filler metal cost</strong> is straightforward: the total filler weight used (weld length times a consumption rate in kg per metre, which depends on joint size, weld type, and process) multiplied by the cost per kilogram of that filler.</p>
+      <p><strong>Labour and machine cost</strong> is where the biggest estimating error usually happens. Welding speed (how fast the arc travels along the joint, in cm/min) only tells you the arc-on time — the time the welder is actually welding. In real shop conditions, a welder is not welding continuously; time is spent on setup, repositioning, changing electrodes, cleaning slag, and fit-up checks. This is captured by the <strong>arc-on (duty) factor</strong> — the fraction of total working time actually spent welding, typically 20–40% for manual stick or TIG welding and higher for mechanised or robotic welding. Total time is the arc-on time divided by this duty factor, and that total time — not just the arc-on time — is what the labour and machine rate should be applied against.</p>
+      <p class="formula-chip text-sm">Total Time = Arc-On Time ÷ Duty Factor</p>
+      <p><strong>Gas and consumables</strong> (shielding gas, tungsten electrodes, nozzles, grinding discs) are usually estimated as a cost per metre of weld based on shop experience, since they don't scale as cleanly with filler weight as the filler cost itself does.</p>
+      <p>Adding these three together gives the subtotal direct cost, and an overhead percentage on top accounts for indirect shop costs — equipment depreciation, power, general supervision — that aren't tied to any one weld but still need to be recovered across all jobs.</p>
+
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      
+      <h3 class="font-display font-semibold text-brandDark mb-3">Worked Example</h3>
+      <p class="text-sm text-gray-600 mb-2">A 10 m fillet weld job deposits 0.25 kg/m filler at 65% deposition efficiency, filler priced at ₹450/kg, welds at 15 cm/min with a 35% arc-on duty factor, at a combined labour + machine rate of ₹350/hr, using 12 L/min shielding gas from a ₹850, 7000 L cylinder, plus a 10% overhead margin.</p>
+      <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+        <li>Deposited weld metal = 10 × 0.25 = 2.5 kg; Purchased filler = 2.5 ÷ 0.65 = 3.846 kg</li>
+        <li>Filler cost = 3.846 × 450 = <strong>₹1,730.8</strong></li>
+        <li>Arc-on time = (10×100 cm) ÷ 15 cm/min = 66.7 min; Total time = 66.7 ÷ 0.35 = 190.5 min = 3.17 hr</li>
+        <li>Labour cost = 3.17 × 350 = <strong>₹1,111.1</strong></li>
+        <li>Gas consumed = 12 × 66.7 = 800 L; Cost/L = 850 ÷ 7000 = ₹0.1214; Gas cost = <strong>₹97.1</strong></li>
+        <li>Subtotal = 1730.8 + 1111.1 + 97.1 = ₹2,939.0; Overhead (10%) = ₹293.9</li>
+        <li><strong>Total cost ≈ ₹3,233</strong>, or about ₹323/m</li>
+      </ul>
+      <p class="text-sm text-gray-600 mt-2">Note how much the deposition efficiency assumption matters here: at a more efficient GMAW-typical 90% instead of 65%, purchased filler would drop to 2.78 kg and filler cost to ₹1,250 — a real cost difference the process choice alone drives.</p>
+
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Figures are a cost estimate based on the inputs given; actual shop cost also depends on joint preparation time, rework/rejection rate, and overhead allocation not captured by a simple per-weld calculation.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION (optional but standard) =====================
+     Every published calculator carries a second content block here —
+     a comparison table, a second worked scenario, a rate/limit
+     reference table, or a related-topic deep-dive (e.g. "how tenure
+     changes total interest", "GST slabs at a glance"). Drop the whole
+     <section> and its TOC <li> only if there is genuinely nothing
+     page-specific to add — don't leave it thin just to check the box. -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Cost breakdown</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Where welding cost typically goes</h2>
+  
+      <p class="text-sm text-gray-600 mb-4">Across most manual arc welding jobs, labour and machine time — not filler metal — is usually the largest single cost component, which is why arc-on duty factor has such an outsized effect on total cost:</p>
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead><tr class="text-left text-gray-500 text-xs uppercase border-b border-gray-200">
+          <th class="py-2 pr-4">Cost component</th><th class="py-2 pr-4">Typical share (manual welding)</th><th class="py-2">Main driver</th>
+        </tr></thead>
+        <tbody class="divide-y divide-gray-100 text-gray-700">
+          <tr><td class="py-2 pr-4">Labour + machine time</td><td class="py-2 pr-4">60–80%</td><td class="py-2">Duty factor and welding speed</td></tr>
+          <tr><td class="py-2 pr-4">Filler metal</td><td class="py-2 pr-4">10–25%</td><td class="py-2">Joint size (weld volume) and filler price</td></tr>
+          <tr><td class="py-2 pr-4">Gas &amp; consumables</td><td class="py-2 pr-4">5–15%</td><td class="py-2">Process type (MIG/TIG use more gas than stick)</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="text-sm text-gray-600 mt-4">This is also why improving the arc-on duty factor — better fixturing, mechanised travel, reduced repositioning — usually has a bigger effect on total welding cost than switching to a slightly cheaper filler metal, even though filler cost is the more visible line item on a materials invoice.</p>
+
+</section>
+
+<!-- ===================== COMMON MISTAKES =====================
+     Standard section on every published calculator. Minimum 5
+     numbered mistakes, each 1-2 sentences: state the mistake, then
+     why it's wrong / what it costs the user. -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common mistakes when estimating welding cost</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p><strong>1. Costing labour on arc-on time alone.</strong> Welding speed only measures the time the arc is actually running; ignoring the duty factor and costing labour on arc-on time alone can understate the true labour cost by half or more.</p>
+      <p><strong>2. Using an unrealistic duty factor.</strong> A duty factor that's too optimistic (assuming continuous welding) badly underestimates cost, while too conservative a figure overestimates it — base this on actual shop time studies for the specific job type rather than a generic guess.</p>
+      <p><strong>3. Forgetting filler losses (spatter, stub ends, grinding).</strong> Actual filler consumption is usually somewhat higher than the theoretical weld-metal volume alone, due to spatter loss, stick-electrode stub ends left unused, and deposition efficiency below 100% — use a consumption rate based on real shop data, not just theoretical bead volume.</p>
+      <p><strong>4. Ignoring joint preparation and fit-up time.</strong> Bevelling, cleaning, tacking and fit-up checks are real time costs that happen before the arc is even struck — for jobs with heavy preparation, this can be a bigger cost driver than the welding itself and needs its own separate estimate.</p>
+      <p><strong>5. Applying one cost-per-metre rate across very different joint sizes.</strong> A thick multi-pass weld and a thin single-pass weld have very different filler and time requirements per metre — a single blanket rate across a job with mixed joint sizes will misprice the smaller and larger welds in opposite directions.</p>
+      <p><strong>6. Skipping the overhead margin.</strong> Direct costs (filler, labour, gas) don't cover indirect shop costs like equipment depreciation, power, and supervision — quoting a job at direct cost alone erodes the margin needed to keep the shop running.</p>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] FAQ =====================
+     Minimum 8 <details> items, matching the 8 JSON-LD entries above
+     1-for-1 (same question text, same order) — schema and visible
+     content must never diverge. First item gets the `open` attribute. -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2">Straight answers on filler cost, labour cost, duty cycle, and total cost per metre.</p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    
+    <details class="py-4" open>
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What are the main components of welding cost?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Welding cost has three direct components: filler metal cost (weight of filler used times its price), labour and machine cost (total time, including non-arc time, times the hourly rate), and gas or consumable cost. An overhead percentage is then added on top to cover indirect shop costs.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What is the arc-on (duty) factor and why does it matter so much?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">The duty factor is the fraction of total working time actually spent welding, as opposed to time spent on setup, repositioning, and cleaning. Because labour cost is based on total time, not just arc-on time, a low duty factor can make labour cost several times higher than a naive calculation using only welding speed would suggest.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What duty factor should I use for manual welding versus mechanised welding?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Manual stick or TIG welding commonly runs a duty factor of roughly 20 to 40 percent due to frequent stops for repositioning and electrode changes, while mechanised or robotic welding can reach 60 to 90 percent since travel and positioning are automated. Use shop time-study data for the specific process where possible, since this varies a lot by job complexity.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How is filler metal consumption per metre estimated?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">It depends on the weld size (throat thickness and joint type), the number of passes, and the deposition efficiency of the process, which is not 100 percent due to spatter and other losses. A good estimate usually comes from shop records for similar joints and processes rather than a purely theoretical bead-volume calculation.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why does labour cost usually outweigh filler metal cost in a welding cost estimate?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Because welding is a relatively slow, skilled manual process compared to the cost of the material being deposited — a welder's time, including the non-arc time captured by the duty factor, typically accounts for the majority of total cost on manual jobs, often 60 to 80 percent, with filler metal a smaller share.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Should gas and consumables be estimated per metre of weld or per hour of welding?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Either can work depending on the process: gas-shielded processes like MIG and TIG often track gas cost by flow rate over arc-on time, but a simplified per-metre-of-weld estimate (used in this calculator) is common for quick job costing when detailed flow-rate data isn't available.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What overhead percentage is typical for a fabrication shop?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">This varies widely by shop size, equipment investment, and business model, but 10 to 25 percent on top of direct labour, filler and consumable cost is a common range for covering equipment depreciation, power, facility cost, and supervision — check your own shop's actual overhead rate for accurate quoting.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Does this calculator include joint preparation time like bevelling and fit-up?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">No — this calculator estimates the cost of the welding operation itself (filler, arc time with duty factor, gas) plus overhead. Joint preparation, fit-up, and inspection time are separate cost items that should be added on top for jobs where that preparation work is significant.</p>
+    </details>
+
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+  
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+
+  function calculateWeldingCost(){
+    const length = parseFloat(document.getElementById('wcLength').value);
+    const fillerRate = parseFloat(document.getElementById('wcFillerRate').value);
+    const fillerCost = parseFloat(document.getElementById('wcFillerCost').value);
+    const depositionEff = parseFloat(document.getElementById('wcDepositionEff').value);
+    const speed = parseFloat(document.getElementById('wcSpeed').value);
+    const labourRate = parseFloat(document.getElementById('wcLabourRate').value);
+    const duty = parseFloat(document.getElementById('wcDuty').value);
+    const gasFlow = parseFloat(document.getElementById('wcGasFlow').value) || 0;
+    const cylinderSize = parseFloat(document.getElementById('wcCylinderSize').value) || 1;
+    const cylinderPrice = parseFloat(document.getElementById('wcCylinderPrice').value) || 0;
+    const overheadPct = parseFloat(document.getElementById('wcOverhead').value) || 0;
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(length) || length <= 0){ errors.push('Enter a valid total weld length greater than 0.'); }
+    if(isNaN(fillerRate) || fillerRate < 0){ errors.push('Enter a valid filler consumption rate (0 or more).'); }
+    if(isNaN(fillerCost) || fillerCost < 0){ errors.push('Enter a valid filler cost.'); }
+    if(isNaN(depositionEff) || depositionEff <= 0 || depositionEff > 100){ errors.push('Deposition efficiency must be between 1 and 100%.'); }
+    if(isNaN(speed) || speed <= 0){ errors.push('Enter a valid welding speed greater than 0.'); }
+    if(isNaN(labourRate) || labourRate < 0){ errors.push('Enter a valid labour + machine rate.'); }
+    if(isNaN(duty) || duty <= 0 || duty > 100){ errors.push('Arc-on duty factor must be between 1 and 100%.'); }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rPerMetre').textContent = '\u2014';
+      document.getElementById('rTime').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const depositedWeightKg = length * fillerRate;
+    const fillerPurchasedKg = depositedWeightKg / (depositionEff / 100);
+    const fillerTotalCost = fillerPurchasedKg * fillerCost;
+
+    const lengthCm = length * 100;
+    const arcOnMinutes = lengthCm / speed;
+    const totalMinutes = arcOnMinutes / (duty / 100);
+    const totalHours = totalMinutes / 60;
+    const labourTotalCost = totalHours * labourRate;
+
+    const costPerLitreGas = cylinderPrice / cylinderSize;
+    const gasConsumedL = gasFlow * arcOnMinutes;
+    const gasTotalCost = gasConsumedL * costPerLitreGas;
+
+    const subtotal = fillerTotalCost + labourTotalCost + gasTotalCost;
+    const overheadAmount = subtotal * (overheadPct / 100);
+    const totalCost = subtotal + overheadAmount;
+    const costPerMetre = totalCost / length;
+
+    document.getElementById('rResult').textContent = '\u20b9' + totalCost.toLocaleString('en-IN', {maximumFractionDigits:2});
+    document.getElementById('resultSub').textContent = length + ' m weld, ' + duty + '% arc-on factor, ' + depositionEff + '% deposition eff.';
+    document.getElementById('rPerMetre').textContent = '\u20b9' + costPerMetre.toFixed(2) + '/m';
+    document.getElementById('rTime').textContent = totalHours.toFixed(2) + ' hr';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Deposited Weld Metal</td><td>${depositedWeightKg.toFixed(3)} kg</td></tr>
+                <tr><td>Deposition Efficiency</td><td>${depositionEff}%</td></tr>
+                <tr><td>Filler Metal Purchased</td><td>${fillerPurchasedKg.toFixed(3)} kg</td></tr>
+                <tr><td>Filler Metal Cost</td><td>\u20b9${fillerTotalCost.toFixed(2)}</td></tr>
+                <tr><td>Arc-On Time</td><td>${arcOnMinutes.toFixed(1)} min</td></tr>
+                <tr><td>Total Time (incl. duty factor)</td><td>${totalMinutes.toFixed(1)} min (${totalHours.toFixed(2)} hr)</td></tr>
+                <tr><td>Labour + Machine Cost</td><td>\u20b9${labourTotalCost.toFixed(2)}</td></tr>
+                <tr><td>Gas Consumed (flow × arc-on time)</td><td>${gasConsumedL.toFixed(1)} L</td></tr>
+                <tr><td>Gas Cost (cylinder price ÷ size)</td><td>\u20b9${gasTotalCost.toFixed(2)}</td></tr>
+                <tr><td>Subtotal</td><td>\u20b9${subtotal.toFixed(2)}</td></tr>
+                <tr><td>Overhead (${overheadPct}%)</td><td>\u20b9${overheadAmount.toFixed(2)}</td></tr>
+                <tr><td><strong>Total Welding Cost</strong></td><td><strong>\u20b9${totalCost.toFixed(2)}</strong></td></tr>
+                <tr><td>Cost per Metre</td><td>\u20b9${costPerMetre.toFixed(2)}/m</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateWeldingCost();
+
+</script>
+
+<script>
+  // ===== Generic Copy Result (added site-wide; does not touch page-specific calc logic) =====
+  function copyResultGeneric(){
+    var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
+    var btn = document.getElementById('copyResultBtn');
+    if (!panel || !btn) return;
+    var text = panel.innerText.trim();
+    function restore(){ btn.textContent = '📋 Copy Result'; }
+    if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = '✅ Copied';
+        setTimeout(restore, 1800);
+      }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+    } else {
+      btn.textContent = '⚠️ Not supported';
+      setTimeout(restore, 1800);
+    }
+  }
+
+  // ===== Generic number-input safety net (added site-wide; purely additive —
+  // runs on blur AFTER the page's own oninput/onchange calc handlers, and only
+  // corrects a value that is non-finite or outside the field's own declared
+  // min/max attributes, then re-fires "input" so the page's existing calc
+  // function recalculates with the corrected value. Never overrides or
+  // replaces any existing calculator logic. =====
+  (function(){
+    function clampNumberInput(el){
+      if (el.type !== 'number' || el.value === '') return;
+      var hasMin = el.hasAttribute('min');
+      var hasMax = el.hasAttribute('max');
+      var min = hasMin ? parseFloat(el.min) : null;
+      var max = hasMax ? parseFloat(el.max) : null;
+      var v = parseFloat(el.value);
+      var corrected = null;
+      if (!isFinite(v)) { corrected = (min !== null ? min : 0); }
+      else if (min !== null && v < min) { corrected = min; }
+      else if (max !== null && v > max) { corrected = max; }
+      if (corrected !== null && corrected !== v) {
+        el.value = corrected;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    document.querySelectorAll('input[type="number"]').forEach(function(el){
+      el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+</script>
+</body>
+</html>

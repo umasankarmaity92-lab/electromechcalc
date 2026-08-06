@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- meta: {"category":"Mechanical"} -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== THEME (FLASH/CLS PREVENTION) =====================
+     Runs synchronously, before any stylesheet or paint, so the correct
+     dark-theme/light-theme class is already present on <html> the instant
+     CSS starts applying — no later class-add via site-nav.js's
+     DOMContentLoaded handler, which was causing a ~1.0 CLS hit as the
+     entire theme (colors AND several layout-affecting rules) snapped in
+     partway through the page's first paint. A matching inline script sits
+     right after <body> opens (see below) to cover the body.dark-theme /
+     body.light-theme selectors theme.css also relies on — site-nav.js
+     still re-applies both classes on DOMContentLoaded as a no-op safety
+     net (classList.add on an already-present class is a no-op) and is
+     what actually handles the toggle button switching themes later. -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>Metal Weight Calculator (Round, Square, Flat, Pipe &amp; Hex) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free metal weight calculator for round bar, square bar, flat plate, round tube/pipe and hexagonal bar. Find weight in kg from dimensions and material density (steel, SS304, aluminium, brass, copper, cast iron).">
+<meta name="keywords" content="metal weight calculator, round bar weight calculator, steel weight calculator, pipe weight calculator, hex bar weight calculator, MS plate weight calculator">
+<meta name="robots" content="index, follow">
+<!-- PAGE_CATEGORY = electrical | mechanical | financial (no slashes).
+     PAGE_SLUG = extensionless slug only, e.g. "cable-derating" — NOT
+     "cable-derating.html". Cloudflare Pages 308-redirects any .html
+     request to its extensionless URL, so canonical/og:url/JSON-LD must
+     always describe the extensionless /<category>/<slug> URL, or
+     Google logs "Page with redirect" and won't index the page. -->
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/metal-weight">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Metal Weight Calculator">
+<meta property="og:description" content="Weight of round bar, square bar, flat plate, round tube/pipe or hex bar from dimensions and material — steel, stainless, aluminium, brass, copper and cast iron.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/metal-weight">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Metal Weight Calculator">
+<meta name="twitter:description" content="Weight of round bar, square bar, flat plate, round tube/pipe or hex bar from dimensions and material — steel, stainless, aluminium, brass, copper and cast iron.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA =====================
+     Minimum 8 FAQ entries (Q1-Q8) — matches the site-wide standard set
+     across all published calculators. Add more (Q9, Q10...) as needed;
+     never ship fewer than 8, and keep this JSON-LD block in sync with
+     the visible FAQ_ITEMS accordion below (same questions, same
+     order) so structured data never diverges from on-page content. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Metal Weight Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/metal-weight",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free online calculator for the weight of common metal stock shapes — round bar, square bar, flat plate, round tube, and hexagonal bar — from dimensions and a material density lookup for steel, stainless steel, aluminium, brass, copper, and cast iron.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Mechanical Calculators", "item": "https://www.electromechcalc.com/mechanical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "Metal Weight Calculator", "item": "https://www.electromechcalc.com/mechanical/metal-weight" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the general formula for metal weight?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Weight equals volume times density, where volume is the cross-sectional area of the shape multiplied by its length. The cross-sectional area formula changes by shape: a circle for round bar, a square for square bar, width times thickness for flat plate, an annulus for tube, and a hexagon area formula for hex bar." }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the cross-sectional area of a round tube or pipe calculated?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It's the area of the outer circle minus the area of the inner (bore) circle: pi over 4 times (outer diameter squared minus inner diameter squared), where inner diameter equals outer diameter minus twice the wall thickness. This annular area is what actually contains metal, unlike a solid round bar." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does hexagonal bar use across-flats rather than across-corners for its size?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Across-flats is the conventional way hex bar is specified and sold, since it's the dimension that matters for fitting a spanner or socket, and it directly relates to the standard hex area formula used here. The across-corners dimension is larger and would give a different, incorrect area if used in that formula." }
+    },
+    {
+      "@type": "Question",
+      "name": "How much does weight change if I double a round bar's diameter?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Weight per unit length roughly quadruples, not doubles, because cross-sectional area for a circle depends on diameter squared. This squared relationship applies to all the solid shapes here (round, square, hex) and is a common source of underestimating how much heavier a larger stock size actually is." }
+    },
+    {
+      "@type": "Question",
+      "name": "How accurate are the density values used in this calculator?",
+      "acceptedAnswer": { "@type": "Answer", "text": "They are typical reference figures for common grades of each material, accurate enough for general estimating and budgeting. For precise weight-based billing, freight calculation, or engineering-critical mass properties, use the exact density from the specific alloy's mill certificate or material datasheet, since density varies slightly with alloy composition." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this calculator account for cutting losses or kerf when estimating material to purchase?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — the result is the net weight of the finished piece's exact dimensions. When estimating material to purchase or consume, add an allowance for saw kerf, cutting tolerance, and scrap on top of this net calculated weight, since actual consumption is typically somewhat higher." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use this calculator to estimate the weight of a non-standard or irregular shape?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not directly — this calculator covers the five common stock shapes with defined area formulas (round, square, flat, tube, hex). For an irregular or compound cross-section, the section would need to be broken into simpler shapes, each calculated separately and summed, or its area found by another method like CAD software." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does an aluminium part need a larger cross-section than an equivalent steel part?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Aluminium has lower strength than most steels for a given cross-section, so a part designed for equivalent load capacity often needs more material (a larger cross-section) in aluminium than in steel. Even with that larger cross-section, aluminium's much lower density usually still results in a lighter overall part, which is why it remains popular for weight-sensitive design despite needing more volume." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<!-- Tailwind, Google Fonts, and theme.css all use the same
+     preload + media=print swap trick so none of them block first
+     paint. The <noscript> fallbacks make sure styling still applies
+     with JS disabled. -->
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+  
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical · Free · Instant results
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Metal Weight <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Weight of round bar, square bar, flat plate, round tube or hex bar from dimensions and material — steel, stainless, aluminium, brass, copper and cast iron.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+      
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-5">Shape &amp; Dimension Inputs</h2>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Shape</label>
+        <select id="mwShape" onchange="toggleShapeFields()" class="input-field mt-2">
+          <option value="round">Round Bar</option>
+          <option value="square">Square Bar</option>
+          <option value="flat">Flat / Plate (Rectangular)</option>
+          <option value="tube">Round Tube / Pipe</option>
+          <option value="hex">Hexagonal Bar</option>
+          <option value="angle">Angle Bar (Equal, L-shape)</option>
+          <option value="channel">Channel (C-shape)</option>
+        </select>
+      </div>
+
+      <div id="mwField_round" class="shape-field mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Diameter (mm)</label>
+        <input id="mwDiameter" type="number" value="25" step="1" min="0" class="input-field mt-2">
+      </div>
+
+      <div id="mwField_square" class="shape-field mb-5 hidden-field">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Side (mm)</label>
+        <input id="mwSide" type="number" value="25" step="1" min="0" class="input-field mt-2">
+      </div>
+
+      <div id="mwField_flat" class="shape-field mb-5 hidden-field">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Width (mm)</label>
+            <input id="mwWidth" type="number" value="100" step="1" min="0" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Thickness (mm)</label>
+            <input id="mwThickness" type="number" value="10" step="0.5" min="0" class="input-field mt-2">
+          </div>
+        </div>
+      </div>
+
+      <div id="mwField_tube" class="shape-field mb-5 hidden-field">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Outer Diameter (mm)</label>
+            <input id="mwOD" type="number" value="50" step="1" min="0" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Wall Thickness (mm)</label>
+            <input id="mwWallT" type="number" value="4" step="0.5" min="0" class="input-field mt-2">
+          </div>
+        </div>
+      </div>
+
+      <div id="mwField_hex" class="shape-field mb-5 hidden-field">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Across Flats, AF (mm)</label>
+        <input id="mwAF" type="number" value="25" step="1" min="0" class="input-field mt-2">
+      </div>
+
+      <div id="mwField_angle" class="shape-field mb-5 hidden-field">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Leg Length, a (mm)</label>
+            <input id="mwAngleLeg" type="number" value="50" step="1" min="0" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Thickness, t (mm)</label>
+            <input id="mwAngleT" type="number" value="6" step="0.5" min="0" class="input-field mt-2">
+          </div>
+        </div>
+        <p class="text-[11px] text-gray-400 mt-1">Equal angle — both legs the same length, uniform thickness</p>
+      </div>
+
+      <div id="mwField_channel" class="shape-field mb-5 hidden-field">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Height / Web, H (mm)</label>
+            <input id="mwChannelH" type="number" value="100" step="1" min="0" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Flange Width, B (mm)</label>
+            <input id="mwChannelB" type="number" value="50" step="1" min="0" class="input-field mt-2">
+          </div>
+        </div>
+        <div class="mt-4">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Thickness, t (mm)</label>
+          <input id="mwChannelT" type="number" value="6" step="0.5" min="0" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Length (mm)</label>
+        <input id="mwLength" type="number" value="1000" step="10" min="0" class="input-field mt-2">
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Material</label>
+        <select id="mwMaterial" onchange="toggleMwCustom()" class="input-field mt-2">
+          <option value="7850">Mild / Carbon Steel (7850 kg/m³)</option>
+          <option value="8000">Stainless Steel 304 (8000 kg/m³)</option>
+          <option value="2700">Aluminium (2700 kg/m³)</option>
+          <option value="8500">Brass (8500 kg/m³)</option>
+          <option value="8960">Copper (8960 kg/m³)</option>
+          <option value="7200">Cast Iron (7200 kg/m³)</option>
+          <option value="custom">Custom — enter density below</option>
+        </select>
+      </div>
+
+      <div id="mwCustomField" class="mb-5 hidden-field">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Custom Density (kg/m³)</label>
+        <input id="mwDensityCustom" type="number" value="7850" step="10" min="0" class="input-field mt-2">
+      </div>
+
+      <button onclick="calculateMetalWeight()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 rounded-lg transition">Calculate Weight</button>
+
+      <div id="validationBox" class="hidden mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3"></div>
+
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+      
+      <div class="result-tile rounded-2xl p-6 text-white">
+        <span class="font-mono text-[11px] uppercase tracking-wider text-sky-300">Weight</span>
+        <div id="rResult" class="text-4xl font-display font-bold mt-1">—</div>
+        <div id="resultSub" class="text-gray-400 text-xs mt-2">—</div>
+        <div id="formulaChip" class="formula-chip mt-3">Weight = Volume × Density</div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">Volume</span>
+          <div id="rVolume" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 p-4">
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">Weight per Metre</span>
+          <div id="rPerMetre" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Calculation Breakdown</span>
+        <div class="breakdown-wrap">
+          <div id="breakdownBox"></div>
+        </div>
+      </div>
+
+
+      <!-- related calculators -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          
+          <a href="/mechanical/welding-cost" class="nav-dropdown-link border border-gray-100">Welding Cost Calculator</a>
+          <a href="/mechanical/thermal-expansion" class="nav-dropdown-link border border-gray-100">Thermal Expansion Calculator</a>
+          <a href="/mechanical/shaft-diameter" class="nav-dropdown-link border border-gray-100">Shaft Diameter Calculator</a>
+          <a href="/mechanical/key-size" class="nav-dropdown-link border border-gray-100">Key Size Calculator</a>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR =====================
+     Standard section on every published calculator. The single Share
+     Result button (openShareModal) and its modal are shared, site-wide
+     logic living in common.js + theme.css — nothing to add here beyond
+     this markup. setFeedback() below is per-page (each calculator
+     tracks its own Yes/No feedback state), matching how every other
+     published calculator implements it; add it inside
+     CALCULATOR_JS. No like/dislike buttons — Share Result + Yes/No
+     + Feedback mail is the current standard, deliberately lighter than
+     the old three-group bar. -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Metal Weight Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS =====================
+     Standard 5-row TOC used across every published calculator.
+     Keep the anchors (#calculator, #how-it-works, #second, #mistakes,
+     #faqs) in sync with the actual section ids below — if a page
+     skips the optional SECOND_SECTION block, remove that li too
+     and renumber the rest. -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. How metal weight is calculated</a></li>
+      <li><a href="#second" class="hover:underline">3. Density of common engineering metals</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== [PER-PAGE] EXPLANATION =====================
+     Target length across how-it-works + second + mistakes + FAQ
+     combined: 3000+ words of genuine, non-duplicated content (this is
+     the site-wide content-depth standard, not just a suggestion —
+     thin pages are the #1 AdSense/SEO risk on this site). Include a
+     worked numeric example with real figures, not just the formula. -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Metal stock weight, explained</h2>
+
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard material density references (IS 1387 general stock weight practice)</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p>Calculating the weight of any metal stock shape follows the same basic relationship: weight equals volume multiplied by density.</p>
+      <p class="formula-chip text-sm">Weight = Volume × Density</p>
+      <p>Volume, in turn, is the cross-sectional area of the shape multiplied by its length. The cross-sectional area formula changes depending on the shape, which is where each stock type differs:</p>
+      <ul class="list-disc list-inside space-y-1">
+        <li><strong>Round bar:</strong> Area = π/4 × D², where D is the diameter</li>
+        <li><strong>Square bar:</strong> Area = S², where S is the side length</li>
+        <li><strong>Flat plate:</strong> Area = W × T, where W is width and T is thickness</li>
+        <li><strong>Round tube / pipe:</strong> Area = π/4 × (OD² − ID²), where OD is outer diameter and ID = OD − 2 × wall thickness</li>
+        <li><strong>Hexagonal bar:</strong> Area = (√3/2) × AF², where AF is the across-flats dimension (the distance between two parallel faces)</li>
+        <li><strong>Equal angle bar (L-shape):</strong> Area = t × (2a − t), where a is the leg length and t is the uniform thickness</li>
+        <li><strong>Channel (C-shape):</strong> Area = t × (2B + H − 2t), where H is the web height, B is the flange width, and t is the uniform thickness</li>
+      </ul>
+      <p>Once the area is known, multiplying by length gives volume, and multiplying volume by the material's density gives weight. Density is a fixed material property (in kg/m³) that varies by metal — steel and cast iron are denser than aluminium, for instance, so an aluminium bar of identical dimensions to a steel bar weighs roughly a third as much.</p>
+      <p>This calculator also gives a <strong>weight per metre</strong> figure, which is the standard way stock metal is often priced and specified in catalogues and mill certificates — useful for quickly estimating the weight of a longer or shorter length of the same cross-section without recalculating from scratch.</p>
+
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      
+      <h3 class="font-display font-semibold text-brandDark mb-3">Worked Example</h3>
+      <p class="text-sm text-gray-600 mb-2">A 1-metre (1000 mm) length of 25 mm diameter mild steel round bar.</p>
+      <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+        <li>Area = π/4 × 25² = 490.87 mm²</li>
+        <li>Volume = 490.87 × 1000 = 490,874 mm³ = 490.87 cm³ = 0.00049087 m³</li>
+        <li>Weight = 0.00049087 × 7850 kg/m³ = <strong>3.853 kg</strong> (i.e. 3.853 kg/m)</li>
+      </ul>
+      <p class="text-sm text-gray-600 mt-2">For comparison, the same 25 mm round bar in aluminium (density 2700 kg/m³) would weigh 0.00049087 × 2700 = <strong>1.325 kg/m</strong> — about 34% of the steel bar's weight for the identical size.</p>
+
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Density values are typical figures for common grades; exact density varies slightly by alloy composition and should be confirmed against the mill certificate for precise weight-based billing or freight calculations.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION (optional but standard) =====================
+     Every published calculator carries a second content block here —
+     a comparison table, a second worked scenario, a rate/limit
+     reference table, or a related-topic deep-dive (e.g. "how tenure
+     changes total interest", "GST slabs at a glance"). Drop the whole
+     <section> and its TOC <li> only if there is genuinely nothing
+     page-specific to add — don't leave it thin just to check the box. -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference table</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Density of common engineering metals</h2>
+  
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead><tr class="text-left text-gray-500 text-xs uppercase border-b border-gray-200">
+          <th class="py-2 pr-4">Material</th><th class="py-2 pr-4">Density (kg/m³)</th><th class="py-2">Relative to steel</th>
+        </tr></thead>
+        <tbody class="divide-y divide-gray-100 text-gray-700">
+          <tr><td class="py-2 pr-4">Mild / Carbon Steel</td><td class="py-2 pr-4">7850</td><td class="py-2">1.00× (reference)</td></tr>
+          <tr><td class="py-2 pr-4">Stainless Steel 304</td><td class="py-2 pr-4">8000</td><td class="py-2">1.02×</td></tr>
+          <tr><td class="py-2 pr-4">Cast Iron</td><td class="py-2 pr-4">7200</td><td class="py-2">0.92×</td></tr>
+          <tr><td class="py-2 pr-4">Brass</td><td class="py-2 pr-4">8500</td><td class="py-2">1.08×</td></tr>
+          <tr><td class="py-2 pr-4">Copper</td><td class="py-2 pr-4">8960</td><td class="py-2">1.14×</td></tr>
+          <tr><td class="py-2 pr-4">Aluminium</td><td class="py-2 pr-4">2700</td><td class="py-2">0.34×</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="text-sm text-gray-600 mt-4">Aluminium's low density relative to its strength is exactly why it's favoured for weight-sensitive applications — a component sized for equivalent strength in aluminium rather than steel is still meaningfully lighter overall, even after accounting for the larger cross-sections aluminium parts often need to match steel's strength.</p>
+
+</section>
+
+<!-- ===================== COMMON MISTAKES =====================
+     Standard section on every published calculator. Minimum 5
+     numbered mistakes, each 1-2 sentences: state the mistake, then
+     why it's wrong / what it costs the user. -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common mistakes when calculating metal weight</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      
+      <p><strong>1. Using outer diameter for a tube's area without subtracting the bore.</strong> A pipe or tube's weight comes from the annular (ring-shaped) cross-section only — using the full outer-diameter circle as if it were solid bar dramatically overstates the weight.</p>
+      <p><strong>2. Confusing across-flats and across-corners for hex bar.</strong> Hex bar size is conventionally specified as the across-flats (AF) dimension — the distance between two parallel faces — not the across-corners (larger) dimension; using the wrong one skews the area calculation.</p>
+      <p><strong>3. Mixing units between dimensions.</strong> All dimensions should be in the same unit (this calculator uses millimetres throughout) before multiplying — a width in mm combined with a thickness in cm without converting gives a result that's off by a factor of 10 or 100.</p>
+      <p><strong>4. Using a generic steel density for a specific alloy.</strong> Different steel grades and other alloys have slightly different densities — for precise weight-based costing or freight calculations, confirm the exact grade's density from the mill certificate rather than a rounded reference figure.</p>
+      <p><strong>5. Forgetting that weight scales with the square of a linear dimension for solid shapes.</strong> Doubling the diameter of a round bar quadruples its cross-sectional area (and therefore its weight per unit length), not just doubles it — easy to underestimate when comparing two different stock sizes casually.</p>
+      <p><strong>6. Not accounting for cut allowance or kerf loss when estimating material needed.</strong> The calculated weight is for the finished piece's net dimensions; actual material purchased or consumed is typically somewhat more once saw kerf, cutting allowance, and scrap are factored in.</p>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] FAQ =====================
+     Minimum 8 <details> items, matching the 8 JSON-LD entries above
+     1-for-1 (same question text, same order) — schema and visible
+     content must never diverge. First item gets the `open` attribute. -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2">Straight answers on volume formulas, density, and stock weight estimating.</p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    
+    <details class="py-4" open>
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What is the general formula for metal weight?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Weight equals volume times density, where volume is the cross-sectional area of the shape multiplied by its length. The cross-sectional area formula changes by shape: a circle for round bar, a square for square bar, width times thickness for flat plate, an annulus for tube, and a hexagon area formula for hex bar.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How is the cross-sectional area of a round tube or pipe calculated?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">It's the area of the outer circle minus the area of the inner (bore) circle: pi over 4 times (outer diameter squared minus inner diameter squared), where inner diameter equals outer diameter minus twice the wall thickness. This annular area is what actually contains metal, unlike a solid round bar.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why does hexagonal bar use across-flats rather than across-corners for its size?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Across-flats is the conventional way hex bar is specified and sold, since it's the dimension that matters for fitting a spanner or socket, and it directly relates to the standard hex area formula used here. The across-corners dimension is larger and would give a different, incorrect area if used in that formula.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How much does weight change if I double a round bar's diameter?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Weight per unit length roughly quadruples, not doubles, because cross-sectional area for a circle depends on diameter squared. This squared relationship applies to all the solid shapes here (round, square, hex) and is a common source of underestimating how much heavier a larger stock size actually is.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How accurate are the density values used in this calculator?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">They are typical reference figures for common grades of each material, accurate enough for general estimating and budgeting. For precise weight-based billing, freight calculation, or engineering-critical mass properties, use the exact density from the specific alloy's mill certificate or material datasheet, since density varies slightly with alloy composition.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Does this calculator account for cutting losses or kerf when estimating material to purchase?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">No — the result is the net weight of the finished piece's exact dimensions. When estimating material to purchase or consume, add an allowance for saw kerf, cutting tolerance, and scrap on top of this net calculated weight, since actual consumption is typically somewhat higher.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Can I use this calculator to estimate the weight of a non-standard or irregular shape?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Not directly — this calculator covers the five common stock shapes with defined area formulas (round, square, flat, tube, hex). For an irregular or compound cross-section, the section would need to be broken into simpler shapes, each calculated separately and summed, or its area found by another method like CAD software.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why does an aluminium part need a larger cross-section than an equivalent steel part?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Aluminium has lower strength than most steels for a given cross-section, so a part designed for equivalent load capacity often needs more material (a larger cross-section) in aluminium than in steel. Even with that larger cross-section, aluminium's much lower density usually still results in a lighter overall part, which is why it remains popular for weight-sensitive design despite needing more volume.</p>
+    </details>
+
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+  
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+
+  function toggleShapeFields(){
+    const shape = document.getElementById('mwShape').value;
+    document.querySelectorAll('.shape-field').forEach(el => el.classList.add('hidden-field'));
+    document.getElementById('mwField_' + shape).classList.remove('hidden-field');
+  }
+  function toggleMwCustom(){
+    const sel = document.getElementById('mwMaterial').value;
+    document.getElementById('mwCustomField').classList.toggle('hidden-field', sel !== 'custom');
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    document.getElementById('mwShape').addEventListener('change', toggleShapeFields);
+    document.getElementById('mwMaterial').addEventListener('change', toggleMwCustom);
+  });
+
+  function calculateMetalWeight(){
+    const shape = document.getElementById('mwShape').value;
+    const length = parseFloat(document.getElementById('mwLength').value);
+    const matSel = document.getElementById('mwMaterial').value;
+    const density = matSel === 'custom' ? parseFloat(document.getElementById('mwDensityCustom').value) : parseFloat(matSel);
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    if(isNaN(length) || length <= 0){ errors.push('Enter a valid length greater than 0.'); }
+    if(isNaN(density) || density <= 0){ errors.push('Enter a valid material density greater than 0.'); }
+
+    let areaMm2 = 0;
+    let shapeDesc = '';
+    if(shape === 'round'){
+      const D = parseFloat(document.getElementById('mwDiameter').value);
+      if(isNaN(D) || D <= 0){ errors.push('Enter a valid diameter greater than 0.'); }
+      areaMm2 = (Math.PI/4) * Math.pow(D,2);
+      shapeDesc = 'Round bar, Ø' + D + 'mm';
+    } else if(shape === 'square'){
+      const S = parseFloat(document.getElementById('mwSide').value);
+      if(isNaN(S) || S <= 0){ errors.push('Enter a valid side length greater than 0.'); }
+      areaMm2 = Math.pow(S,2);
+      shapeDesc = 'Square bar, ' + S + 'mm side';
+    } else if(shape === 'flat'){
+      const W = parseFloat(document.getElementById('mwWidth').value);
+      const T = parseFloat(document.getElementById('mwThickness').value);
+      if(isNaN(W) || W <= 0 || isNaN(T) || T <= 0){ errors.push('Enter valid width and thickness greater than 0.'); }
+      areaMm2 = W * T;
+      shapeDesc = 'Flat plate, ' + W + '×' + T + 'mm';
+    } else if(shape === 'tube'){
+      const OD = parseFloat(document.getElementById('mwOD').value);
+      const wallT = parseFloat(document.getElementById('mwWallT').value);
+      if(isNaN(OD) || OD <= 0 || isNaN(wallT) || wallT <= 0 || wallT*2 >= OD){ errors.push('Enter a valid outer diameter and wall thickness (2×wall must be less than OD).'); }
+      const ID = OD - 2*wallT;
+      areaMm2 = (Math.PI/4) * (Math.pow(OD,2) - Math.pow(ID,2));
+      shapeDesc = 'Tube, OD ' + OD + 'mm × ' + wallT + 'mm wall (ID ' + ID.toFixed(1) + 'mm)';
+    } else if(shape === 'hex'){
+      const AF = parseFloat(document.getElementById('mwAF').value);
+      if(isNaN(AF) || AF <= 0){ errors.push('Enter a valid across-flats dimension greater than 0.'); }
+      areaMm2 = (Math.sqrt(3)/2) * Math.pow(AF,2);
+      shapeDesc = 'Hex bar, AF ' + AF + 'mm';
+    } else if(shape === 'angle'){
+      const a = parseFloat(document.getElementById('mwAngleLeg').value);
+      const t = parseFloat(document.getElementById('mwAngleT').value);
+      if(isNaN(a) || a <= 0 || isNaN(t) || t <= 0 || t*2 >= a){ errors.push('Enter a valid leg length and thickness (2\u00d7thickness must be less than leg length).'); }
+      areaMm2 = t * (2*a - t);
+      shapeDesc = 'Equal angle, ' + a + '\u00d7' + a + '\u00d7' + t + 'mm';
+    } else if(shape === 'channel'){
+      const H = parseFloat(document.getElementById('mwChannelH').value);
+      const B = parseFloat(document.getElementById('mwChannelB').value);
+      const t = parseFloat(document.getElementById('mwChannelT').value);
+      if(isNaN(H) || H <= 0 || isNaN(B) || B <= 0 || isNaN(t) || t <= 0 || t*2 >= H){ errors.push('Enter valid channel dimensions (2\u00d7thickness must be less than height).'); }
+      areaMm2 = t * (2*B + H - 2*t);
+      shapeDesc = 'Channel, H' + H + '\u00d7B' + B + '\u00d7t' + t + 'mm';
+    }
+
+    if(errors.length){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rVolume').textContent = '\u2014';
+      document.getElementById('rPerMetre').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    const volumeMm3 = areaMm2 * length;
+    const volumeM3 = volumeMm3 / 1e9;
+    const weightKg = volumeM3 * density;
+
+    const areaM2 = areaMm2 / 1e6;
+    const weightPerMetreKg = areaM2 * 1 * density;
+
+    document.getElementById('rResult').textContent = weightKg.toLocaleString('en-IN', {maximumFractionDigits:3}) + ' kg';
+    document.getElementById('resultSub').textContent = shapeDesc + ', L=' + length + 'mm';
+    document.getElementById('rVolume').textContent = (volumeMm3/1000).toFixed(2) + ' cm³';
+    document.getElementById('rPerMetre').textContent = weightPerMetreKg.toFixed(3) + ' kg/m';
+
+    document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Shape</td><td>${shapeDesc}</td></tr>
+                <tr><td>Cross-Sectional Area</td><td>${areaMm2.toFixed(2)} mm²</td></tr>
+                <tr><td>Length</td><td>${length} mm</td></tr>
+                <tr><td>Volume</td><td>${(volumeMm3/1000).toFixed(2)} cm³ (${volumeM3.toExponential(4)} m³)</td></tr>
+                <tr><td>Material Density</td><td>${density} kg/m³</td></tr>
+                <tr><td><strong>Total Weight</strong></td><td><strong>${weightKg.toFixed(4)} kg</strong></td></tr>
+                <tr><td>Weight per Metre</td><td>${weightPerMetreKg.toFixed(4)} kg/m</td></tr>
+            </tbody>
+        </table>
+    `;
+  }
+
+  calculateMetalWeight();
+
+</script>
+
+<script>
+  // ===== Generic Copy Result (added site-wide; does not touch page-specific calc logic) =====
+  function copyResultGeneric(){
+    var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
+    var btn = document.getElementById('copyResultBtn');
+    if (!panel || !btn) return;
+    var text = panel.innerText.trim();
+    function restore(){ btn.textContent = '📋 Copy Result'; }
+    if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = '✅ Copied';
+        setTimeout(restore, 1800);
+      }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+    } else {
+      btn.textContent = '⚠️ Not supported';
+      setTimeout(restore, 1800);
+    }
+  }
+
+  // ===== Generic number-input safety net (added site-wide; purely additive —
+  // runs on blur AFTER the page's own oninput/onchange calc handlers, and only
+  // corrects a value that is non-finite or outside the field's own declared
+  // min/max attributes, then re-fires "input" so the page's existing calc
+  // function recalculates with the corrected value. Never overrides or
+  // replaces any existing calculator logic. =====
+  (function(){
+    function clampNumberInput(el){
+      if (el.type !== 'number' || el.value === '') return;
+      var hasMin = el.hasAttribute('min');
+      var hasMax = el.hasAttribute('max');
+      var min = hasMin ? parseFloat(el.min) : null;
+      var max = hasMax ? parseFloat(el.max) : null;
+      var v = parseFloat(el.value);
+      var corrected = null;
+      if (!isFinite(v)) { corrected = (min !== null ? min : 0); }
+      else if (min !== null && v < min) { corrected = min; }
+      else if (max !== null && v > max) { corrected = max; }
+      if (corrected !== null && corrected !== v) {
+        el.value = corrected;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    document.querySelectorAll('input[type="number"]').forEach(function(el){
+      el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+</script>
+</body>
+</html>

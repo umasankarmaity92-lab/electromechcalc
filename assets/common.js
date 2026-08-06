@@ -61,6 +61,44 @@ document.addEventListener('click', function(e){
 });
 
 // ---------------------------------------------------------------------
+// Copy Result button (id="copyResultBtn") -> copies the rendered text
+// of #resultPanel to the clipboard. Site-wide, identical on every
+// calculator page (moved here from a per-page duplicate <script>
+// block), so it works unchanged regardless of what each calculator's
+// result markup looks like — never needs a per-page edit.
+// ---------------------------------------------------------------------
+function copyResultGeneric(){
+  const panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
+  const btn = document.getElementById('copyResultBtn');
+  if (!panel || !btn) return;
+
+  // Clone the panel so we can strip non-result blocks (Related Calculators,
+  // or anything else future pages mark) before reading innerText, without
+  // touching the live DOM. innerText requires the clone to be measured in
+  // layout, so it's rendered off-screen rather than left detached.
+  const clone = panel.cloneNode(true);
+  clone.querySelectorAll('[data-copy-exclude]').forEach(function(node){ node.remove(); });
+  clone.style.position = 'absolute';
+  clone.style.left = '-9999px';
+  clone.style.top = '0';
+  document.body.appendChild(clone);
+  const text = clone.innerText.trim();
+  document.body.removeChild(clone);
+
+  function restore(){ btn.textContent = '📋 Copy Result'; }
+  if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function(){
+      btn.textContent = '✅ Copied';
+      setTimeout(restore, 1800);
+    }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+  } else {
+    btn.textContent = '⚠️ Not supported';
+    setTimeout(restore, 1800);
+  }
+}
+
+// ---------------------------------------------------------------------
 // Share Result modal loader — the modal's DOM/logic lives in
 // /assets/share-modal.js and is NOT part of this file, so pages that
 // never open Share pay nothing for it. This loader fetches that file

@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- category: Mechanical -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+<title>Advanced Boiler Efficiency Calculator | Direct &amp; Indirect (Loss) Method</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<meta name="description" content="Free Advanced Boiler Efficiency Calculator — find boiler efficiency by the Direct Method (heat output ÷ heat input) and the Indirect / Heat Loss Method (100 − total losses: dry flue gas, hydrogen in fuel, moisture in fuel, moisture in air, CO, radiation, unburnt). Instant results with BEE/IS 8753-referenced formulas.">
+<meta name="keywords" content="boiler efficiency calculator, direct method boiler efficiency, indirect method boiler efficiency, heat loss method boiler, dry flue gas loss calculator, boiler heat balance calculator, BEE boiler efficiency, IS 8753 boiler efficiency">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/advanced-boiler-efficiency-calculator">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Advanced Boiler Efficiency Calculator | Direct &amp; Indirect (Loss) Method">
+<meta property="og:description" content="Free boiler efficiency calculator covering both the Direct Method and the Indirect (Heat Loss) Method — dry flue gas loss, H2 in fuel, moisture in fuel, moisture in air, CO, radiation and unburnt losses.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/advanced-boiler-efficiency-calculator">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Advanced Boiler Efficiency Calculator | Direct &amp; Indirect (Loss) Method">
+<meta name="twitter:description" content="Free calculator for boiler efficiency by Direct Method and Indirect (Heat Loss) Method, with a full L1-L7 loss breakdown.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Advanced Boiler Efficiency Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/advanced-boiler-efficiency-calculator",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free online boiler efficiency calculator supporting both the Direct Method (heat output over heat input) and the Indirect / Heat Loss Method (100% minus dry flue gas loss, hydrogen-in-fuel loss, moisture-in-fuel loss, moisture-in-air loss, CO loss, radiation loss and unburnt loss), following BEE / IS 8753 conventions.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Mechanical Calculators", "item": "https://www.electromechcalc.com/mechanical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "Advanced Boiler Efficiency Calculator", "item": "https://www.electromechcalc.com/mechanical/advanced-boiler-efficiency-calculator" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "What is the difference between the Direct Method and Indirect Method of boiler efficiency?", "acceptedAnswer": { "@type": "Answer", "text": "The Direct Method divides useful heat output (steam generated) by heat input (fuel fired) and needs only steam flow, steam/feed water enthalpy, fuel consumption and fuel GCV. The Indirect Method instead measures every individual heat loss (flue gas, unburnt fuel, radiation, etc.) and subtracts their sum from 100%, which needs more measurements but pinpoints exactly where heat is being lost." } },
+    { "@type": "Question", "name": "Which method is more accurate for boiler efficiency?", "acceptedAnswer": { "@type": "Answer", "text": "The Indirect Method is generally considered more accurate and is the preferred method in energy audits (per BEE and ASME PTC 4.1 guidance), because a small measurement error in fuel or steam flow affects the Direct Method's result directly, while the Indirect Method's errors are distributed across several smaller loss terms and it also reveals where efficiency is being lost." } },
+    { "@type": "Question", "name": "What is dry flue gas loss (L1) in a boiler?", "acceptedAnswer": { "@type": "Answer", "text": "Dry flue gas loss is the sensible heat carried away by the dry combustion gases leaving the stack. It depends on the mass of dry flue gas produced per kg of fuel, the specific heat of flue gas (commonly taken as 0.23 kcal/kg°C), and the temperature difference between the flue gas and the ambient/combustion air. It is usually the single largest loss in a boiler." } },
+    { "@type": "Question", "name": "Why is there a loss due to hydrogen in the fuel?", "acceptedAnswer": { "@type": "Answer", "text": "Hydrogen in the fuel combines with oxygen during combustion to form water vapour, which carries away latent heat (and some sensible heat) as it leaves with the flue gas rather than being recovered. This loss (L2) is proportional to the fuel's hydrogen content and is significant for hydrogen-rich fuels like natural gas and light oils." } },
+    { "@type": "Question", "name": "What is a typical boiler efficiency by fuel type?", "acceptedAnswer": { "@type": "Answer", "text": "Well-maintained oil- or gas-fired boilers commonly achieve 82-88% efficiency, coal-fired boilers typically run 75-83%, and biomass-fired boilers often run somewhat lower, around 65-75%, mainly due to higher moisture content and dry flue gas loss." } },
+    { "@type": "Question", "name": "How much does flue gas temperature affect boiler efficiency?", "acceptedAnswer": { "@type": "Answer", "text": "As a rule of thumb, every 22°C rise in flue gas exit temperature above the optimum reduces boiler efficiency by roughly 1%, since more sensible heat is being carried away unused. Keeping flue gas temperature close to the design value (via clean heat-transfer surfaces and correct excess air) is one of the most effective efficiency levers." } },
+    { "@type": "Question", "name": "What is a reasonable radiation and surface loss (L6) to assume?", "acceptedAnswer": { "@type": "Answer", "text": "Surface and radiation loss is typically 1-2% for large, well-insulated boilers and can be higher (up to 3-5%) for small or older boilers with more surface area relative to output and more insulation wear. It is usually taken from standard ABMA/BEE charts rather than calculated directly." } },
+    { "@type": "Question", "name": "Does this calculator use exact steam table values?", "acceptedAnswer": { "@type": "Answer", "text": "No — the Direct Method here uses a simplified feed water enthalpy approximation (roughly equal to feed water temperature in kcal/kg) and expects you to enter the steam enthalpy from your own steam table lookup at operating pressure, since a full interactive steam table is outside this tool's scope. For precise energy-audit-grade results, use exact steam table enthalpies." } }
+  ]
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<link rel="preload" as="style" href="/assets/tailwind.min.css">
+<link rel="stylesheet" href="/assets/tailwind.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/tailwind.min.css"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+
+  .action-icon-btn{
+    display:inline-flex; align-items:center; gap:6px; border:1px solid #e2e8f0;
+    border-radius:8px; padding:8px 12px; font-size:13px; color:#334155;
+    background:#fff; cursor:pointer; transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
+  .input-field{
+    width:100%; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;
+    padding:10px 12px; font-size:14px; color:#0B1220; outline:none;
+  }
+  .input-field:focus{ border-color:#0ea5e9; background:#fff; box-shadow:0 0 0 3px rgba(14,165,233,0.12); }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{ padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{ color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px; letter-spacing:0.4px; background:#f8fafc; }
+  .breakdown-table td{ color:#111827; }
+
+  .author-box{ border:2px solid #000000; }
+  body.dark-theme .author-box{ border-color:#ffffff; background:#0B1220; color:#e2e8f0; }
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<div id="site-header"></div>
+<div id="breadcrumb"></div>
+
+<!-- ===================== HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+          Direct &amp; Indirect Method &middot; Free &middot; Instant results
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Advanced Boiler <span class="text-sky-400">Efficiency</span> Calculator
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Find boiler efficiency by the Direct Method (heat output ÷ heat input) or the Indirect / Heat Loss Method, with a full L1–L7 loss breakdown.
+        </p>
+      </div>
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CALCULATOR ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+
+  <div class="flex flex-wrap gap-2 justify-center mb-8" id="tabBar">
+    <button class="tab-pill active" data-cat="direct" onclick="switchCalc('direct')">🔥 Direct Method</button>
+    <button class="tab-pill" data-cat="indirect" onclick="switchCalc('indirect')">📉 Indirect (Loss) Method</button>
+  </div>
+
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+
+      <!-- DIRECT METHOD -->
+      <div class="calc-panel active" id="panel-direct">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Direct Method</h2>
+        <p class="text-xs text-gray-500 mb-6">Efficiency = Heat Output ÷ Heat Input × 100, from steam and fuel flow.</p>
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Steam Generation Rate Q (kg/hr)</label>
+            <input id="d_steam" type="number" value="5000" step="any" min="0" class="input-field mt-2" oninput="calcDirect()">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Enthalpy of Steam hg (kcal/kg)</label>
+              <input id="d_hg" type="number" value="660" step="any" min="0" class="input-field mt-2" oninput="calcDirect()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Feed Water Temp (°C)</label>
+              <input id="d_tfw" type="number" value="90" step="any" min="0" class="input-field mt-2" oninput="calcDirect()">
+            </div>
+          </div>
+          <p class="text-[11px] text-gray-400 -mt-2">Feed water enthalpy hf is approximated as ≈ Feed Water Temp (kcal/kg). Use exact steam-table values for audit-grade accuracy.</p>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Fuel Consumption q (kg/hr)</label>
+              <input id="d_fuel" type="number" value="350" step="any" min="0.0001" class="input-field mt-2" oninput="calcDirect()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Fuel GCV (kcal/kg)</label>
+              <input id="d_gcv" type="number" value="10000" step="any" min="0.0001" class="input-field mt-2" oninput="calcDirect()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INDIRECT METHOD -->
+      <div class="calc-panel" id="panel-indirect">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Indirect (Heat Loss) Method</h2>
+        <p class="text-xs text-gray-500 mb-6">Efficiency = 100 − (L1 + L2 + L3 + L4 + L5 + L6 + L7). L1–L3 are calculated; L4–L7 are entered directly.</p>
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Fuel GCV (kcal/kg)</label>
+              <input id="i_gcv" type="number" value="10000" step="any" min="0.0001" class="input-field mt-2" oninput="calcIndirect()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Flue Gas Temp Tf (°C)</label>
+              <input id="i_tf" type="number" value="220" step="any" class="input-field mt-2" oninput="calcIndirect()">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Ambient / Air Temp Ta (°C)</label>
+              <input id="i_ta" type="number" value="27" step="any" class="input-field mt-2" oninput="calcIndirect()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Mass of Dry Flue Gas (kg/kg fuel)</label>
+              <input id="i_mfg" type="number" value="18" step="any" min="0" class="input-field mt-2" oninput="calcIndirect()">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Hydrogen in Fuel H2 (% by mass)</label>
+              <input id="i_h2" type="number" value="11" step="any" min="0" max="100" class="input-field mt-2" oninput="calcIndirect()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Moisture in Fuel M (% by mass)</label>
+              <input id="i_m" type="number" value="0.5" step="any" min="0" max="100" class="input-field mt-2" oninput="calcIndirect()">
+            </div>
+          </div>
+          <p class="text-[11px] text-gray-400 -mt-2">L1 (dry flue gas), L2 (H2 in fuel) and L3 (moisture in fuel) are calculated from the fields above.</p>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">L4: Moisture in Air Loss (%)</label>
+              <input id="i_l4" type="number" value="1" step="any" min="0" max="20" class="input-field mt-2" oninput="calcIndirect()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">L5: CO Loss (%)</label>
+              <input id="i_l5" type="number" value="0" step="any" min="0" max="20" class="input-field mt-2" oninput="calcIndirect()">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">L6: Radiation &amp; Surface Loss (%)</label>
+              <input id="i_l6" type="number" value="2" step="any" min="0" max="20" class="input-field mt-2" oninput="calcIndirect()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">L7: Unburnt / Other Losses (%)</label>
+              <input id="i_l7" type="number" value="1" step="any" min="0" max="20" class="input-field mt-2" oninput="calcIndirect()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="calcErrors" class="hidden bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl p-3 space-y-1 mt-4"></div>
+
+      <button onclick="calculateActive()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition mt-6">
+        Calculate
+      </button>
+
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden" role="status" aria-live="polite">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="rLabel">Boiler Efficiency</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1 break-all">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values to calculate</p>
+        <div class="mt-4 pt-4 border-t border-white/10">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Formula</span>
+          <span id="rFormula" class="font-display font-semibold text-sm">—</span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div class="grid grid-cols-2 gap-2 text-xs" id="quickTable"></div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4" id="lossTableWrap" style="display:none;">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Loss-by-Loss Breakdown</span>
+        <table class="breakdown-table">
+          <thead><tr><th>Loss</th><th>%</th></tr></thead>
+          <tbody id="lossTable"></tbody>
+        </table>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/mechanical/wtp-pro-cal" class="flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark hover:border-sky-400">💧 WTP Pro Cal (12-in-1) <span class="text-sky-500">→</span></a>
+          <a href="/maintenance-pro-cal" class="flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark hover:border-sky-400">🔧 Maintenance Pro Cal <span class="text-sky-500">→</span></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResult()">📋 Copy Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Advanced%20Boiler%20Efficiency%20Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Direct vs Indirect Method</a></li>
+      <li><a href="#second" class="hover:underline">3. Understanding the L1–L7 losses</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Direct Method vs Indirect (Heat Loss) Method</h2>
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IS 8753, BEE (Bureau of Energy Efficiency) energy audit guidelines, ASME PTC 4.1</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Boiler efficiency can be measured two very different ways, and both are on this page. The <strong>Direct Method</strong> is the simple input/output view: how much useful heat did the steam carry away, compared to how much heat the fuel could theoretically supply. It needs only four numbers — steam flow, steam and feed water enthalpy, fuel flow, and fuel GCV — and gives a fast, defensible efficiency figure with minimal instrumentation.</p>
+      <p>The <strong>Indirect (Heat Loss) Method</strong> instead asks where the missing heat actually went. Every major loss — hot flue gas up the stack, water vapour formed from hydrogen in the fuel, moisture evaporating from the fuel and combustion air, incomplete combustion (CO), radiation from the boiler shell, and unburnt fuel in the ash — is estimated separately, and efficiency is simply 100% minus the sum of all of them. This is more work to measure, but it directly shows an operator which loss to attack first to improve efficiency, which the Direct Method cannot do on its own.</p>
+      <p>In this tool, the three largest and most calculable indirect losses — dry flue gas loss (L1), hydrogen-in-fuel loss (L2), and moisture-in-fuel loss (L3) — are computed from the inputs you give. The remaining losses (moisture in combustion air, CO/incomplete combustion, radiation and surface loss, and unburnt fuel) are typically taken from a separate flue gas analysis or standard reference charts, so they're entered directly as percentages.</p>
+      <p>Sizing the fuel and combustion air side of a boiler plant? Pair this with the <a href="/mechanical/wtp-pro-cal" class="text-sky-600 hover:underline">WTP Pro Cal</a> toolkit's Pump Head &amp; Power tab for feed pump sizing, or the <a href="/maintenance-pro-cal" class="text-sky-600 hover:underline">Maintenance Pro Cal</a> toolkit for boiler downtime cost and availability tracking.</p>
+    </div>
+  </div>
+</section>
+
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding the Seven Losses (L1–L7)</h2>
+  <div class="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-100">
+    <div class="p-4"><span class="font-mono text-xs text-sky-600 font-semibold">L1 — Dry Flue Gas Loss</span><p class="text-sm text-gray-600 mt-1">L1 = (m × 0.23 × (Tf − Ta) × 100) ÷ GCV. Usually the single biggest loss — sensible heat carried away by hot combustion gases up the stack.</p></div>
+    <div class="p-4"><span class="font-mono text-xs text-sky-600 font-semibold">L2 — Loss due to Hydrogen in Fuel</span><p class="text-sm text-gray-600 mt-1">L2 = 9 × H2% × [584 + 0.45 × (Tf − Ta)] ÷ GCV × 100. Water vapour formed from fuel hydrogen carries away latent heat.</p></div>
+    <div class="p-4"><span class="font-mono text-xs text-sky-600 font-semibold">L3 — Loss due to Moisture in Fuel</span><p class="text-sm text-gray-600 mt-1">L3 = M% × [584 + 0.45 × (Tf − Ta)] ÷ GCV × 100. Moisture already present in the fuel absorbs latent heat to evaporate.</p></div>
+    <div class="p-4"><span class="font-mono text-xs text-sky-600 font-semibold">L4 — Loss due to Moisture in Air</span><p class="text-sm text-gray-600 mt-1">Sensible heat carried away by moisture present in the combustion air supply — usually small (~1%) except in very humid climates.</p></div>
+    <div class="p-4"><span class="font-mono text-xs text-sky-600 font-semibold">L5 — Loss due to CO Formation</span><p class="text-sm text-gray-600 mt-1">Incomplete combustion forms CO instead of CO₂, wasting a portion of the fuel's chemical energy — should be near zero with good combustion control.</p></div>
+    <div class="p-4"><span class="font-mono text-xs text-sky-600 font-semibold">L6 — Surface &amp; Radiation Loss</span><p class="text-sm text-gray-600 mt-1">Heat lost from the boiler shell to the surrounding boiler house — depends on insulation condition and boiler size, typically 1-2% for large units.</p></div>
+    <div class="p-4"><span class="font-mono text-xs text-sky-600 font-semibold">L7 — Unburnt Fuel / Other Losses</span><p class="text-sm text-gray-600 mt-1">Combustible material left in bottom ash or fly ash (mainly for solid fuels), plus any other unaccounted losses.</p></div>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes in Boiler Efficiency Testing</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <ol class="list-decimal pl-5 space-y-3">
+        <li><strong>Using feed water temperature as a stand-in for exact enthalpy on high-pressure systems.</strong> The kcal/kg ≈ °C approximation is fine for typical industrial feed water temperatures, but for precise energy audits, always pull hf and hg from steam tables at actual operating pressure.</li>
+        <li><strong>Comparing Direct Method efficiency across boilers without matching test conditions.</strong> Efficiency changes with load, fuel quality and ambient conditions — comparing two boilers tested at different loads or on different fuel batches isn't a fair comparison.</li>
+        <li><strong>Ignoring flue gas temperature drift over time.</strong> A rising flue gas exit temperature (from fouled tubes or scaling) quietly erodes efficiency — roughly 1% efficiency lost per 22°C rise above design — and is easy to miss without regular monitoring.</li>
+        <li><strong>Treating L4–L7 as fixed numbers forever.</strong> Moisture-in-air loss varies with humidity and season, CO loss should be checked after every major combustion tune, and radiation loss rises as insulation degrades — these aren't "set once" constants.</li>
+        <li><strong>Not cross-checking Direct and Indirect Method results against each other.</strong> If measurements are good, the two methods should broadly agree; a large mismatch usually points to a measurement error (fuel flow, steam flow, or an unaccounted loss) rather than genuinely different efficiencies.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2">Answers reflect BEE/IS 8753-referenced general practice — always confirm against your local standard.</p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">What is the difference between the Direct Method and Indirect Method of boiler efficiency?<span class="plus text-sky-500 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3 leading-relaxed">The Direct Method divides useful heat output (steam generated) by heat input (fuel fired) and needs only steam flow, steam/feed water enthalpy, fuel consumption and fuel GCV. The Indirect Method instead measures every individual heat loss and subtracts their sum from 100%, which needs more measurements but pinpoints exactly where heat is being lost.</p>
+    </details>
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">Which method is more accurate for boiler efficiency?<span class="plus text-sky-500 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3 leading-relaxed">The Indirect Method is generally considered more accurate and is the preferred method in energy audits, because a small measurement error in fuel or steam flow affects the Direct Method's result directly, while the Indirect Method's errors are distributed across several smaller loss terms and it also reveals where efficiency is being lost.</p>
+    </details>
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">What is dry flue gas loss (L1) in a boiler?<span class="plus text-sky-500 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3 leading-relaxed">Dry flue gas loss is the sensible heat carried away by the dry combustion gases leaving the stack. It depends on the mass of dry flue gas produced per kg of fuel, the specific heat of flue gas (commonly 0.23 kcal/kg°C), and the temperature difference between the flue gas and ambient air. It is usually the largest loss in a boiler.</p>
+    </details>
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">Why is there a loss due to hydrogen in the fuel?<span class="plus text-sky-500 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3 leading-relaxed">Hydrogen in the fuel combines with oxygen during combustion to form water vapour, which carries away latent heat as it leaves with the flue gas rather than being recovered. This loss (L2) is proportional to the fuel's hydrogen content and is significant for hydrogen-rich fuels like natural gas and light oils.</p>
+    </details>
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">What is a typical boiler efficiency by fuel type?<span class="plus text-sky-500 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3 leading-relaxed">Well-maintained oil- or gas-fired boilers commonly achieve 82-88% efficiency, coal-fired boilers typically run 75-83%, and biomass-fired boilers often run around 65-75%, mainly due to higher moisture content and dry flue gas loss.</p>
+    </details>
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">How much does flue gas temperature affect boiler efficiency?<span class="plus text-sky-500 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3 leading-relaxed">As a rule of thumb, every 22°C rise in flue gas exit temperature above the optimum reduces boiler efficiency by roughly 1%, since more sensible heat is carried away unused. Keeping flue gas temperature close to design (clean heat-transfer surfaces, correct excess air) is one of the most effective efficiency levers.</p>
+    </details>
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">What is a reasonable radiation and surface loss (L6) to assume?<span class="plus text-sky-500 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3 leading-relaxed">Surface and radiation loss is typically 1-2% for large, well-insulated boilers and can be higher (3-5%) for small or older boilers with more surface area relative to output and more insulation wear. It is usually taken from standard reference charts rather than calculated directly.</p>
+    </details>
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">Does this calculator use exact steam table values?<span class="plus text-sky-500 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3 leading-relaxed">No — the Direct Method here uses a simplified feed water enthalpy approximation (roughly equal to feed water temperature in kcal/kg) and expects you to enter the steam enthalpy from your own steam table lookup at operating pressure. For precise energy-audit-grade results, use exact steam table enthalpies.</p>
+    </details>
+  </div>
+  <p class="text-xs text-gray-400 mt-6">Results from this tool are for preliminary planning and educational use. For safety-critical or capital-intensive decisions, verify against IS 8753, BEE energy audit guidelines and a qualified process/energy engineer. See our <a href="/editorial-policy" class="text-sky-600 hover:underline">Editorial Policy</a> for how formulas on this site are sourced and reviewed.</p>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<script>
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+
+  function formatNum(n){
+    if(!isFinite(n)) return '—';
+    if(Math.abs(n) >= 1e9 || (Math.abs(n) < 0.0001 && n !== 0)) return n.toExponential(3);
+    return parseFloat(n.toFixed(3)).toLocaleString('en-US', { maximumFractionDigits: 3 });
+  }
+
+  function setQuickTable(rows){
+    document.getElementById('quickTable').innerHTML = rows.map(r => `
+      <div class="quick-chip"><span class="qval">${r.v}</span><span class="qunit">${r.l}</span></div>
+    `).join('');
+  }
+
+  // Clamps a raw parsed number into [min, max] (max optional); returns the
+  // usable value plus a message if the raw input had to be corrected
+  // (non-finite, below min, or above max).
+  function sanitize(raw, min, max, label){
+    let v = raw;
+    let msg = null;
+    if (!isFinite(v)) { v = min; msg = `${label} must be a valid number — reset to ${min}.`; }
+    else if (v < min) { v = min; msg = `${label} cannot be below ${min} — clamped to ${min}.`; }
+    else if (max !== undefined && v > max) { v = max; msg = `${label} cannot exceed ${max} — clamped to ${max}.`; }
+    return { v, msg };
+  }
+
+  function showErrors(errors){
+    const box = document.getElementById('calcErrors');
+    if (errors.length) {
+      box.innerHTML = errors.map(m => `<div>⚠️ ${m}</div>`).join('');
+      box.classList.remove('hidden');
+    } else {
+      box.classList.add('hidden');
+      box.innerHTML = '';
+    }
+  }
+
+  let lastResultText = '';
+  const calcFns = { direct: calcDirect, indirect: calcIndirect };
+
+  function calculateActive(){
+    const activeTab = document.querySelector('.tab-pill.active');
+    const key = activeTab ? activeTab.dataset.cat : 'direct';
+    calcFns[key]();
+  }
+
+  function switchCalc(key){
+    document.querySelectorAll('.tab-pill').forEach(btn => btn.classList.toggle('active', btn.dataset.cat === key));
+    document.querySelectorAll('.calc-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + key));
+    document.getElementById('lossTableWrap').style.display = key === 'indirect' ? 'block' : 'none';
+    calcFns[key]();
+    if (typeof scrollToCalculator === 'function') scrollToCalculator();
+  }
+
+  // ---- Direct Method ----
+  function calcDirect(){
+    const steamS = sanitize(parseFloat(document.getElementById('d_steam').value), 0, undefined, 'Steam Generation Rate');
+    const hgS = sanitize(parseFloat(document.getElementById('d_hg').value), 0, undefined, 'Enthalpy of Steam');
+    const tfwS = sanitize(parseFloat(document.getElementById('d_tfw').value), 0, undefined, 'Feed Water Temp');
+    const fuelS = sanitize(parseFloat(document.getElementById('d_fuel').value), 0.0001, undefined, 'Fuel Consumption');
+    const gcvS = sanitize(parseFloat(document.getElementById('d_gcv').value), 0.0001, undefined, 'Fuel GCV');
+
+    showErrors([steamS.msg, hgS.msg, tfwS.msg, fuelS.msg, gcvS.msg].filter(Boolean));
+
+    const Q = steamS.v, hg = hgS.v, hf = tfwS.v, q = fuelS.v, gcv = gcvS.v;
+    const heatOutput = Q * (hg - hf);       // kcal/hr
+    const heatInput = q * gcv;              // kcal/hr
+    const efficiency = heatInput > 0 ? (heatOutput / heatInput) * 100 : 0;
+
+    document.getElementById('rLabel').textContent = 'Boiler Efficiency (Direct Method)';
+    document.getElementById('rResult').textContent = formatNum(efficiency) + ' %';
+    document.getElementById('resultSub').textContent = 'Heat Output ÷ Heat Input × 100';
+    document.getElementById('rFormula').textContent = 'η = Q(hg − hf) ÷ (q × GCV) × 100';
+
+    setQuickTable([
+      { v: formatNum(heatOutput) + ' kcal/hr', l: 'Heat Output' },
+      { v: formatNum(heatInput) + ' kcal/hr', l: 'Heat Input' },
+      { v: formatNum(hg - hf) + ' kcal/kg', l: 'Δh (Steam − Feed)' },
+      { v: formatNum(efficiency) + ' %', l: 'Efficiency' }
+    ]);
+
+    lastResultText = `Advanced Boiler Efficiency Calculator — Direct Method\nSteam Rate: ${formatNum(Q)} kg/hr\nEnthalpy of Steam: ${formatNum(hg)} kcal/kg\nFeed Water Temp: ${formatNum(hf)} °C\nFuel Consumption: ${formatNum(q)} kg/hr\nFuel GCV: ${formatNum(gcv)} kcal/kg\n—\nHeat Output: ${formatNum(heatOutput)} kcal/hr\nHeat Input: ${formatNum(heatInput)} kcal/hr\nBoiler Efficiency: ${formatNum(efficiency)} %`;
+  }
+
+  // ---- Indirect (Loss) Method ----
+  function calcIndirect(){
+    const gcvS = sanitize(parseFloat(document.getElementById('i_gcv').value), 0.0001, undefined, 'Fuel GCV');
+    const tfS = sanitize(parseFloat(document.getElementById('i_tf').value), -50, 2000, 'Flue Gas Temp');
+    const taS = sanitize(parseFloat(document.getElementById('i_ta').value), -50, 100, 'Ambient Temp');
+    const mfgS = sanitize(parseFloat(document.getElementById('i_mfg').value), 0, undefined, 'Mass of Dry Flue Gas');
+    const h2S = sanitize(parseFloat(document.getElementById('i_h2').value), 0, 100, 'Hydrogen in Fuel');
+    const mS = sanitize(parseFloat(document.getElementById('i_m').value), 0, 100, 'Moisture in Fuel');
+    const l4S = sanitize(parseFloat(document.getElementById('i_l4').value), 0, 100, 'L4 Moisture in Air Loss');
+    const l5S = sanitize(parseFloat(document.getElementById('i_l5').value), 0, 100, 'L5 CO Loss');
+    const l6S = sanitize(parseFloat(document.getElementById('i_l6').value), 0, 100, 'L6 Radiation Loss');
+    const l7S = sanitize(parseFloat(document.getElementById('i_l7').value), 0, 100, 'L7 Unburnt Loss');
+
+    showErrors([gcvS.msg, tfS.msg, taS.msg, mfgS.msg, h2S.msg, mS.msg, l4S.msg, l5S.msg, l6S.msg, l7S.msg].filter(Boolean));
+
+    const gcv = gcvS.v, tf = tfS.v, ta = taS.v, mfg = mfgS.v, h2 = h2S.v, m = mS.v;
+    const dT = tf - ta;
+
+    const L1 = (mfg * 0.23 * dT * 100) / gcv;
+    const L2 = (9 * (h2/100) * (584 + 0.45 * dT) / gcv) * 100;
+    const L3 = ((m/100) * (584 + 0.45 * dT) / gcv) * 100;
+    const L4 = l4S.v, L5 = l5S.v, L6 = l6S.v, L7 = l7S.v;
+
+    const totalLoss = L1 + L2 + L3 + L4 + L5 + L6 + L7;
+    const efficiency = 100 - totalLoss;
+
+    document.getElementById('rLabel').textContent = 'Boiler Efficiency (Indirect Method)';
+    document.getElementById('rResult').textContent = formatNum(efficiency) + ' %';
+    document.getElementById('resultSub').textContent = '100% minus total heat losses (L1–L7)';
+    document.getElementById('rFormula').textContent = 'η = 100 − (L1+L2+L3+L4+L5+L6+L7)';
+
+    setQuickTable([
+      { v: formatNum(totalLoss) + ' %', l: 'Total Losses' },
+      { v: formatNum(dT) + ' °C', l: 'ΔT (Flue − Ambient)' },
+      { v: formatNum(L1) + ' %', l: 'L1 Dry Flue Gas' },
+      { v: formatNum(L2 + L3) + ' %', l: 'L2+L3 Fuel Moisture/H2' }
+    ]);
+
+    document.getElementById('lossTableWrap').style.display = 'block';
+    document.getElementById('lossTable').innerHTML = [
+      ['L1 — Dry Flue Gas', L1],
+      ['L2 — Hydrogen in Fuel', L2],
+      ['L3 — Moisture in Fuel', L3],
+      ['L4 — Moisture in Air', L4],
+      ['L5 — CO Formation', L5],
+      ['L6 — Radiation & Surface', L6],
+      ['L7 — Unburnt / Other', L7]
+    ].map(([label, val]) => `<tr><td>${label}</td><td>${formatNum(val)}%</td></tr>`).join('') +
+      `<tr><td style="font-weight:600;">Total Loss</td><td style="font-weight:600;">${formatNum(totalLoss)}%</td></tr>`;
+
+    lastResultText = `Advanced Boiler Efficiency Calculator — Indirect Method\nFuel GCV: ${formatNum(gcv)} kcal/kg\nFlue Gas Temp: ${formatNum(tf)} °C\nAmbient Temp: ${formatNum(ta)} °C\n—\nL1 Dry Flue Gas: ${formatNum(L1)}%\nL2 H2 in Fuel: ${formatNum(L2)}%\nL3 Moisture in Fuel: ${formatNum(L3)}%\nL4 Moisture in Air: ${formatNum(L4)}%\nL5 CO Loss: ${formatNum(L5)}%\nL6 Radiation Loss: ${formatNum(L6)}%\nL7 Unburnt/Other: ${formatNum(L7)}%\nTotal Loss: ${formatNum(totalLoss)}%\nBoiler Efficiency: ${formatNum(efficiency)} %`;
+  }
+
+  function copyResult(){
+    if (!lastResultText) return;
+    const btn = document.getElementById('copyResultBtn');
+    const restore = () => { btn.textContent = '📋 Copy Result'; };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(lastResultText).then(() => {
+        btn.textContent = '✅ Copied';
+        setTimeout(restore, 1800);
+      }).catch(() => { btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+    } else {
+      btn.textContent = '⚠️ Not supported';
+      setTimeout(restore, 1800);
+    }
+  }
+
+  // Init
+  calcDirect();
+</script>
+
+</body>
+</html>
