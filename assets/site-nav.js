@@ -63,8 +63,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const lottieScript = document.createElement("script");
       // lottie_light: SVG-renderer-only build (no expressions/interactivity
       // support we don't use for a simple looping hero animation) — much
-      // smaller download than the full lottie.min.js bundle.
-      lottieScript.src = "https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie_light.min.js";
+      // smaller download than the full lottie.min.js bundle. Self-hosted
+      // under /assets so the site doesn't depend on cdnjs.cloudflare.com
+      // (also lets the CSP script-src drop that origin entirely).
+      lottieScript.src = "/assets/lottie-light.min.js";
       lottieScript.onload = playHeroLottie;
       document.head.appendChild(lottieScript);
     };
