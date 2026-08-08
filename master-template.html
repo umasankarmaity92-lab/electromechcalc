@@ -88,6 +88,30 @@
      <script src="/assets/common.js"> tag manually in
      {{PAGE_EXTRA_STYLES}} or {{CALCULATOR_JS}}, it would just be a
      harmless but redundant duplicate.
+  9. When writing {{CALCULATOR_INPUTS}}, three site-wide bugs were
+     found and fixed across every existing page (Aug 2026) — don't
+     reintroduce them in new pages:
+       - EVERY <label> for a real field must carry a for="fieldId"
+         attribute matching that field's id (or nest the <input>
+         inside the <label>). Chrome DevTools' "No label associated
+         with a form field" audit flags any <label> that has neither.
+       - For a toggle-button-GROUP heading (e.g. "System Type" sitting
+         above two/three .toggle-btn divs, not a single real field) —
+         do NOT use a <label> for that heading text; a <label> only
+         satisfies the audit above when it points at one real form
+         control, and a button group isn't one. Use
+         <span id="uniqueId">Heading Text</span> instead, and add
+         role="group" aria-labelledby="uniqueId" to the toggle-btn
+         wrapper <div>. (Ids just need to be unique within the page.)
+       - The Calculate button must use
+         class="w-full bg-brandBlue hover:bg-sky-600 text-white
+         font-semibold text-sm py-3.5 rounded-lg shadow transition"
+         — NOT bg-sky-600 hover:bg-sky-700 (an older pattern that
+         turned out to be missing from the compiled
+         /assets/tailwind.min.css on every page that still used it,
+         making the button render as unstyled text with no
+         background). bg-brandBlue + hover:bg-sky-600 are the
+         proven-safe classes already used everywhere else on the site.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -242,7 +266,6 @@
 <!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
 
 <!-- Tailwind, Google Fonts, and theme.css all use the same
