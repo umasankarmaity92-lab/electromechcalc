@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== THEME (FLASH/CLS PREVENTION) ===================== -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>RTD Resistance to Temperature Calculator (PT100, PT200, PT500, PT1000) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free RTD Resistance to Temperature Calculator for PT100, PT200, PT500 and PT1000. Convert resistance to temperature or temperature to resistance using the IEC 60751 or ASTM E1137 Callendar-Van Dusen equation, with formula and worked example.">
+<meta name="keywords" content="rtd resistance to temperature calculator, pt100 resistance to temperature calculator, pt100 temperature to resistance calculator, rtd temperature calculator, callendar van dusen calculator, pt100 pt200 pt500 pt1000 calculator, iec 60751 rtd calculator, astm e1137 rtd calculator, rtd ohms to temperature calculator">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/rtd-resistance-temperature">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="RTD Resistance to Temperature Calculator (PT100, PT200, PT500, PT1000)">
+<meta property="og:description" content="Free RTD Resistance to Temperature Calculator — convert resistance to temperature or temperature to resistance for PT100, PT200, PT500 or PT1000 instantly.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/rtd-resistance-temperature">
+<meta property="og:image" content="https://www.electromechcalc.com/logo.png">
+<meta property="og:locale" content="en_IN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RTD Resistance to Temperature Calculator (PT100, PT200, PT500, PT1000)">
+<meta name="twitter:description" content="Free RTD Resistance to Temperature Calculator — convert resistance to temperature or temperature to resistance for PT100, PT200, PT500 or PT1000 instantly.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "RTD Resistance to Temperature Calculator",
+  "url": "https://www.electromechcalc.com/electrical/rtd-resistance-temperature",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "description": "Free RTD Resistance to Temperature Calculator for PT100, PT200, PT500 and PT1000. Convert resistance to temperature or temperature to resistance using the IEC 60751 or ASTM E1137 Callendar-Van Dusen equation, with formula and worked example.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electrical Calculators", "item": "https://www.electromechcalc.com/electrical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "RTD Resistance to Temperature Calculator", "item": "https://www.electromechcalc.com/electrical/rtd-resistance-temperature" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the Callendar-Van Dusen equation and how does this calculator use it?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The Callendar-Van Dusen equation is the standard mathematical model relating a platinum RTD's resistance to its temperature: R(T) = R0(1 + AT + BT^2) for temperatures at or above 0 degC, and R(T) = R0(1 + AT + BT^2 + C(T-100)T^3) below 0 degC, where R0 is the resistance at 0 degC and A, B, C are standard-specific constants. This calculator evaluates that equation directly for Temperature to Resistance conversion, and solves it (using the quadratic formula above 0 degC, and Newton-Raphson iteration below 0 degC) for Resistance to Temperature conversion." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between IEC 60751 and ASTM E1137 standards?",
+      "acceptedAnswer": { "@type": "Answer", "text": "IEC 60751, also called the European curve, uses a temperature coefficient of resistance (alpha) of 0.00385 ohm/ohm/degC and is the dominant standard worldwide, including in India. ASTM E1137, also called the American curve, uses alpha = 0.00392 ohm/ohm/degC and was historically common in some US industrial equipment. The two standards use different Callendar-Van Dusen A, B and C coefficients, so the same measured resistance yields a slightly different calculated temperature depending on which standard the sensor was actually wound and calibrated to." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the valid temperature and resistance range for PT100, PT200, PT500 and PT1000?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This calculator validates inputs against -200 degC to +850 degC for IEC 60751 and -200 degC to +630 degC for ASTM E1137, the standard calibration ranges each defines. The corresponding resistance range scales directly with the sensor's R0: PT100 spans roughly 18.5 to 390 ohm, PT200 roughly 37 to 780 ohm, PT500 roughly 92.5 to 1950 ohm, and PT1000 roughly 185 to 3900 ohm across the IEC 60751 range, since Callendar-Van Dusen coefficients are defined per degC and scale linearly with R0." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does resistance-to-temperature need a different calculation method below 0 degC?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Above 0 degC, the Callendar-Van Dusen equation is a simple quadratic in temperature, so it can be solved directly and exactly using the quadratic formula. Below 0 degC, a cubic correction term (the C coefficient) is added to fit the platinum resistance curve accurately at sub-zero temperatures, which turns the equation into a quartic in temperature with no simple closed-form inverse. This calculator solves that branch using Newton-Raphson iteration, starting from a linear estimate and refining until the computed resistance matches your input to within a very small tolerance." }
+    },
+    {
+      "@type": "Question",
+      "name": "How does lead wire configuration (2-wire, 3-wire, 4-wire) affect accuracy?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A 2-wire connection includes both lead wires' resistance directly in the measured value, adding a fixed positive error that grows with cable length and is not compensated by this or any calculator unless you subtract it separately. A 3-wire connection, the industrial standard for RTDs, uses a bridge arrangement to cancel lead resistance provided both leads are matched in length and gauge. A 4-wire (Kelvin) connection carries current on one pair and senses voltage on a separate pair, eliminating lead resistance error almost entirely and is used for calibration-grade and laboratory measurements. This field is informational only in this calculator and does not alter the calculated result." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the accuracy class (tolerance) for RTDs, and does this calculator include it?",
+      "acceptedAnswer": { "@type": "Answer", "text": "IEC 60751 defines tolerance classes AA, A, B and C for RTD sensors, each specifying a maximum allowed deviation in ohms (and equivalent degC) from the ideal Callendar-Van Dusen curve, tighter near 0 degC and widening at temperature extremes. This calculator computes the theoretical, error-free resistance or temperature from the reference equation for the selected standard; it does not add a tolerance-class margin, since that depends on the specific sensor's manufactured accuracy class, which should be read from its datasheet or calibration certificate and applied separately." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use this calculator for PT500 or PT1000, or only PT100?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. PT100, PT200, PT500 and PT1000 all follow the same Callendar-Van Dusen equation and the same IEC 60751 or ASTM E1137 coefficients; only the R0 term (100, 200, 500 or 1000 ohm at 0 degC respectively) changes, and the equation scales linearly with R0. Select the RTD type toggle to switch between them; the calculation mode, standard, unit and all other settings stay the same." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is my measured resistance different from the calculated value?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Common causes include lead wire resistance not being compensated in a 2-wire hookup, self-heating error from excitation current that is too high for the sensor's dissipation constant, using the wrong standard (IEC 60751 vs ASTM E1137) for the actual sensor's calibration, a sensor operating outside its rated accuracy class, contact or connector resistance in the measurement loop, or genuine sensor drift from thermal cycling, vibration or contamination over its service life." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="stylesheet" href="/assets/tailwind.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet">
+<link rel="preload" as="style" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/theme.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/theme.css"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    border-color:#0ea5e9;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+  body.dark-theme .toggle-btn{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES ===================== */
+  .advanced-summary{ display:flex; justify-content:space-between; align-items:center; }
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB ===================== -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Temperature Sensing
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          RTD Resistance <span class="text-sky-400">&harr; Temperature Calculator</span>
+        </h1>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          PT100, PT200, PT500 and PT1000 &mdash; convert resistance to temperature or temperature to resistance using the IEC 60751 or ASTM E1137 Callendar-Van Dusen equation.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-1">RTD Details</h2>
+      <p class="text-xs text-gray-500 mb-6">Choose a direction, select the RTD type and standard, then enter a value.</p>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Calculation Mode</label>
+        <div class="flex gap-2 mt-2" id="modeToggle">
+          <button type="button" class="toggle-btn active" data-mode="r2t" onclick="selectMode('r2t')">Resistance &rarr; Temperature</button>
+          <button type="button" class="toggle-btn" data-mode="t2r" onclick="selectMode('t2r')">Temperature &rarr; Resistance</button>
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">RTD Type</label>
+        <div class="flex gap-2 mt-2" id="typeToggle">
+          <button type="button" class="toggle-btn active" data-type="PT100" onclick="selectType('PT100')">PT100</button>
+          <button type="button" class="toggle-btn" data-type="PT200" onclick="selectType('PT200')">PT200</button>
+          <button type="button" class="toggle-btn" data-type="PT500" onclick="selectType('PT500')">PT500</button>
+          <button type="button" class="toggle-btn" data-type="PT1000" onclick="selectType('PT1000')">PT1000</button>
+        </div>
+        <p class="text-xs text-gray-400 mt-2" id="r0Note">PT100 &rarr; 100 &Omega; @ 0&deg;C</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1">
+            Standard
+            <button type="button" class="text-gray-400 hover:text-sky-600 normal-case font-normal" id="stdInfoBtn" onclick="toggleStdInfo()" aria-label="Standard info">&#8505;&#65039;</button>
+          </label>
+          <div class="flex gap-2 mt-2" id="stdToggle">
+            <button type="button" class="toggle-btn active" data-std="IEC" onclick="selectStd('IEC')">IEC 60751</button>
+            <button type="button" class="toggle-btn" data-std="ASTM" onclick="selectStd('ASTM')">ASTM E1137</button>
+          </div>
+          <p class="hidden text-xs text-gray-400 mt-2" id="stdInfoNote"></p>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Temperature Unit</label>
+          <div class="flex gap-2 mt-2" id="unitToggle">
+            <button type="button" class="toggle-btn active" data-unit="C" onclick="selectUnit('C')">&deg;C</button>
+            <button type="button" class="toggle-btn" data-unit="F" onclick="selectUnit('F')">&deg;F</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-4 mb-5">
+        <div id="resInputWrap">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Resistance, R (&Omega;)</label>
+          <input id="resInput" type="number" value="138.50" step="0.01" placeholder="e.g. 138.50 &Omega;" class="input-field mt-2">
+          <p class="text-xs font-semibold text-sky-600 mt-1.5" id="resRangeNote"></p>
+        </div>
+        <div id="tempInputWrap" class="hidden-field">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Temperature, T (<span id="tempUnitLabel">&deg;C</span>)</label>
+          <input id="tempInput" type="number" value="100" step="1" placeholder="e.g. 100" class="input-field mt-2">
+          <p class="text-xs font-semibold text-sky-600 mt-1.5" id="tempRangeNote"></p>
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Lead Wire Configuration <span class="text-gray-400 normal-case">(informational only)</span></label>
+        <select id="leadConfig" class="input-field mt-2" onchange="updateLeadNote()">
+          <option value="2">2-wire</option>
+          <option value="3" selected>3-wire</option>
+          <option value="4">4-wire</option>
+        </select>
+        <p class="text-xs text-gray-400 mt-1" id="leadNote"></p>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <div class="flex gap-2">
+        <button onclick="calculateRTD()" class="flex-1 bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+          Calculate
+        </button>
+        <button type="button" onclick="resetRTD()" class="px-5 border border-gray-200 hover:border-sky-400 text-gray-500 hover:text-sky-600 font-semibold text-sm py-3.5 rounded-lg transition">
+          Reset
+        </button>
+      </div>
+
+      <details class="mt-6 pt-5 border-t border-gray-100">
+        <summary class="advanced-summary text-xs font-semibold text-gray-600 uppercase tracking-wide">
+          Advanced Settings <span class="plus text-sky-500 text-base">+</span>
+        </summary>
+        <div class="mt-4 space-y-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Alpha (&alpha;)</label>
+            <div class="flex gap-2 mt-2" id="alphaToggle">
+              <button type="button" class="toggle-btn active" data-alpha-std="IEC" onclick="selectStd('IEC')">0.00385 (IEC Default)</button>
+              <button type="button" class="toggle-btn" data-alpha-std="ASTM" onclick="selectStd('ASTM')">0.00392</button>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Decimal Places</label>
+            <select id="decimalPlaces" class="input-field mt-2" onchange="calculateRTD()">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Ambient Compensation Offset <span class="text-gray-400 normal-case">(optional)</span></label>
+            <input id="ambientOffset" type="number" value="0" step="0.1" class="input-field mt-2">
+            <p class="text-xs text-gray-400 mt-1">Adds a known offset to the computed temperature. Applies to Resistance &rarr; Temperature mode only.</p>
+          </div>
+        </div>
+      </details>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">R(T) = R&#8320;(1+AT+BT&sup2;), T&#8805;0&deg;C</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Temperature</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">&mdash;</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Select options above and hit calculate</p>
+        <div class="mt-2 flex flex-wrap gap-1.5" id="profTouch">
+          <span class="formula-chip" id="ptChipType">PT100</span>
+          <span class="formula-chip" id="ptChipStd">IEC 60751</span>
+          <span class="formula-chip" id="ptChipAlpha">&alpha; = 0.00385</span>
+        </div>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rAltLabel">Alternate Unit</span>
+            <span id="rAlt" class="font-display font-semibold text-lg">&mdash;</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Sensitivity (&Omega;/&deg;C)</span>
+            <span id="rSens" class="font-display font-semibold text-lg">&mdash;</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <!-- related calculators — data-copy-exclude keeps this out of the
+           Copy Result output (see copyResultGeneric() in common.js) -->
+      <div class="bg-white rounded-xl border border-gray-100 p-4" data-copy-exclude>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid grid-cols-1 gap-1.5">
+          <a href="/electrical/thermocouple-voltage" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Thermocouple Voltage Calculator <span class="text-sky-500">&rarr;</span>
+          </a>
+          <a href="/transformer-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Transformer Size Calculator <span class="text-sky-500">&rarr;</span>
+          </a>
+          <a href="/motor-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Motor Current Calculator <span class="text-sky-500">&rarr;</span>
+          </a>
+          <a href="/electrical-calculators" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            All Electrical Calculators <span class="text-sky-500">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20RTD%20Resistance%20to%20Temperature%20Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Understanding RTD resistance-temperature conversion</a></li>
+      <li><a href="#second" class="hover:underline">3. PT100 vs PT200 vs PT500 vs PT1000 quick reference</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How RTD Resistance-Temperature Conversion Is Calculated</h2>
+
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IEC 60751; ASTM E1137</p>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>A Resistance Temperature Detector (RTD) is a temperature sensor built from a length of pure platinum wire or film whose electrical resistance increases in a well-defined, repeatable way as its temperature rises. Unlike a thermocouple, which generates its own small voltage, an RTD is a passive resistor — you pass a small excitation current through it and measure the voltage drop to determine its resistance, then convert that resistance into a temperature using a standard reference equation. This calculator performs that conversion in both directions: resistance to temperature, and temperature to resistance.</p>
+
+      <p><strong>What "PT100" actually means:</strong> the number in PT100, PT200, PT500 and PT1000 is the sensor's nominal resistance in ohms at exactly 0&deg;C, called R0. A PT100 reads 100.00&Omega; at 0&deg;C, a PT1000 reads 1000.00&Omega; at 0&deg;C, and so on. This is a reference point, not a room-temperature reading — a PT100 at typical room temperature (around 25&deg;C) actually reads close to 109.7&Omega;, not 100&Omega;. All four types (PT100/200/500/1000) follow the exact same temperature-resistance curve shape; only the R0 scaling factor differs, since standard platinum RTDs are wound to the same alpha (temperature coefficient) regardless of their base resistance.</p>
+
+      <p><strong>Formula used &mdash; the Callendar-Van Dusen equation:</strong> the internationally standard model for platinum RTDs is a two-branch polynomial. For temperatures at or above 0&deg;C: R(T) = R0 &times; (1 + AT + BT&sup2;). For temperatures below 0&deg;C, a cubic correction term is added to keep the curve accurate at sub-zero temperatures: R(T) = R0 &times; (1 + AT + BT&sup2; + C(T&minus;100)T&sup3;). R0 is the sensor's 0&deg;C resistance (100, 200, 500 or 1000&Omega;), and A, B, C are constants fixed by the standard the sensor is calibrated to &mdash; IEC 60751 or ASTM E1137 &mdash; not by the sensor's R0 value.</p>
+
+      <p><strong>Going the other way &mdash; resistance to temperature:</strong> when you already have a measured resistance and need the corresponding temperature, the calculator has to invert the equation above. For the T&#8805;0&deg;C branch, the equation is a simple quadratic in T, so it has a direct closed-form solution using the quadratic formula. For the T&lt;0&deg;C branch, the added cubic term makes the equation a quartic in T with no simple closed-form inverse, so this calculator solves it numerically using Newton-Raphson iteration &mdash; starting from a linear estimate and refining the answer step by step until the resistance the equation predicts for that temperature matches your input to within a fraction of a milliohm.</p>
+
+      <p><strong>IEC 60751 vs ASTM E1137:</strong> both standards describe the same physical phenomenon &mdash; platinum's resistance rising with temperature &mdash; but fit slightly different polynomial coefficients to slightly different reference platinum wire characteristics. IEC 60751 (the "European curve") uses alpha = 0.00385 &Omega;/&Omega;/&deg;C and dominates industrial use worldwide, including in India. ASTM E1137 (the "American curve") uses alpha = 0.00392 &Omega;/&Omega;/&deg;C and appears in some older or US-sourced instrumentation. Using the wrong standard's coefficients for a given physical sensor introduces a real, systematic conversion error even though both calculations are internally correct.</p>
+
+      <p><strong>Worked example:</strong> a PT100 sensor per IEC 60751 reads 138.50&Omega;. Since this is above R0 = 100&Omega;, the T&#8805;0&deg;C quadratic branch applies: solving A T + B T&sup2; = (R/R0 &minus; 1) with A = 3.9083&times;10&#8315;&sup3; and B = &minus;5.775&times;10&#8315;&#8311; gives T &asymp; 100.00&deg;C. Reversing this: a PT100 at exactly 100&deg;C per IEC 60751 gives R(100) = 100 &times; (1 + 3.9083&times;10&#8315;&sup3;&times;100 + (&minus;5.775&times;10&#8315;&#8311;)&times;100&sup2;) &asymp; 138.51&Omega;, confirming the two directions are consistent inverses of the same equation.</p>
+
+      <p><strong>The equation is not linear:</strong> a common shortcut treats RTD output as strictly linear (resistance = R0 + constant &times; temperature), and this is a reasonable approximation over a narrow span, but the B coefficient's quadratic term causes real, measurable deviation from linear as the span widens &mdash; roughly 0.4&deg;C of error near 100&deg;C span if you ignore B entirely for a PT100, growing larger at higher temperatures. This is exactly why the full Callendar-Van Dusen equation, not a single linear conversion factor, is the correct basis for any measurement expected to hold reasonable accuracy across more than a narrow temperature window.</p>
+
+      <p><strong>Lead wire resistance and self-heating:</strong> two practical error sources sit entirely outside the Callendar-Van Dusen equation itself. Lead wire resistance adds directly to the sensor's own resistance in a 2-wire hookup, making the sensor appear hotter (or colder, depending on wiring) than it actually is, unless a 3-wire or 4-wire configuration compensates for it. Self-heating occurs because the excitation current used to measure the RTD's resistance dissipates a small amount of power (I&sup2;R) inside the sensor itself, raising its temperature slightly above the medium being measured &mdash; datasheets specify a dissipation constant (typically in mW/&deg;C) to estimate this effect, and it grows disproportionately if too high an excitation current is used, especially in still air or gas rather than a liquid or solid medium with better heat transfer.</p>
+
+      <p><strong>Practical use of this calculator:</strong> use it to convert a measured resistance from a multimeter or data logger into a temperature reading when checking sensor health or calibration, to predict expected resistance at a known temperature before wiring a new installation or configuring a PLC/DCS analog input scaling table, to cross-check a printed PT100 resistance table without manual interpolation, or to compare how the same physical resistance reading would be interpreted differently under IEC 60751 versus ASTM E1137 assumptions.</p>
+
+      <p><strong>Summary:</strong> RTD resistance and temperature are related by the two-branch Callendar-Van Dusen equation, with coefficients set by the calibration standard (IEC 60751 or ASTM E1137) and scaled by the sensor's R0 (100/200/500/1000&Omega;); the forward direction (temperature to resistance) is a direct polynomial evaluation, while the reverse direction is solved exactly above 0&deg;C and iteratively below 0&deg;C; and lead wire resistance and self-heating are separate, real-world error sources that sit outside this equation and must be managed through correct wiring configuration and appropriate excitation current.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">PT100, IEC 60751, R = 138.50&Omega;: solving the T&#8805;0&deg;C branch of the Callendar-Van Dusen equation gives T &asymp; <strong>100.00&deg;C</strong>. Checking in reverse, R(100&deg;C) per the same standard &asymp; <strong>138.51&Omega;</strong>, confirming the conversion.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator gives the theoretical resistance or temperature from the IEC 60751 / ASTM E1137 Callendar-Van Dusen reference equations for an ideal sensor. Real sensor accuracy class tolerance, lead wire resistance, self-heating, and instrument input accuracy all add to this baseline figure in an actual installation.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Quick Reference</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Comparing PT100, PT200, PT500 and PT1000</h2>
+  <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Type</th>
+          <th class="text-left px-4 py-2 font-semibold">R0 at 0&deg;C</th>
+          <th class="text-left px-4 py-2 font-semibold">R @ 100&deg;C (IEC 60751)</th>
+          <th class="text-left px-4 py-2 font-semibold">Typical Use</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">PT100</td><td class="px-4 py-2">100&Omega;</td><td class="px-4 py-2">138.51&Omega;</td><td class="px-4 py-2">Most common; industrial process, HVAC, general purpose</td></tr>
+        <tr><td class="px-4 py-2">PT200</td><td class="px-4 py-2">200&Omega;</td><td class="px-4 py-2">277.01&Omega;</td><td class="px-4 py-2">Less common; used where a higher base resistance is preferred</td></tr>
+        <tr><td class="px-4 py-2">PT500</td><td class="px-4 py-2">500&Omega;</td><td class="px-4 py-2">692.53&Omega;</td><td class="px-4 py-2">Reduces relative effect of lead wire resistance vs PT100</td></tr>
+        <tr><td class="px-4 py-2">PT1000</td><td class="px-4 py-2">1000&Omega;</td><td class="px-4 py-2">1385.06&Omega;</td><td class="px-4 py-2">Building automation, HVAC; higher signal-to-noise over long cable runs</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>All four types share the identical Callendar-Van Dusen A, B and C coefficients for a given standard &mdash; the only difference is the R0 multiplier, so a PT1000 reading is, to a very close approximation, exactly ten times a PT100 reading at the same temperature. This is why the same calculator, and the same underlying formula, works for all four without any change to the core equation.</p>
+    <p>A higher R0 (PT500, PT1000) is often preferred over PT100 in installations with long cable runs, because a fixed amount of lead wire resistance represents a much smaller percentage error against a 1000&Omega; base reading than against a 100&Omega; base reading, even though the absolute error in ohms is identical. This makes PT1000 common in building automation and HVAC systems where 2-wire runs of tens of meters are routine.</p>
+    <p>IEC 60751 (alpha = 0.00385) and ASTM E1137 (alpha = 0.00392) are the two coefficient sets this calculator supports; always confirm which standard your specific sensor or instrument was calibrated to before comparing a measured resistance against either curve, since mixing the two introduces a systematic, standard-sized error that has nothing to do with sensor accuracy.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Working With RTD Resistance and Temperature</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p><strong>1. Assuming R0 is the room-temperature reading.</strong> R0 is the resistance at exactly 0&deg;C, not at typical ambient &mdash; a PT100 reads roughly 109.7&Omega;, not 100&Omega;, at 25&deg;C. Comparing a measured room-temperature reading directly against the nameplate "100" figure without converting through the equation leads to a false fault diagnosis.</p>
+      <p><strong>2. Ignoring the B coefficient and using a straight-line approximation.</strong> Linear conversion is close enough over a narrow span but drifts increasingly out of true as the measured range widens, since the real curve is quadratic (and cubic below 0&deg;C), not linear.</p>
+      <p><strong>3. Mixing up IEC 60751 and ASTM E1137 coefficients.</strong> Applying the wrong standard's A, B, C constants to a sensor calibrated to the other standard introduces a real, systematic conversion error that looks exactly like a sensor accuracy problem but is actually a calculation mismatch.</p>
+      <p><strong>4. Using a 2-wire connection without accounting for lead resistance.</strong> Every metre of lead wire adds resistance directly in series with the sensor, which the equation cannot distinguish from a genuine temperature change &mdash; this is why 3-wire and 4-wire configurations exist for anything beyond short bench-top runs.</p>
+      <p><strong>5. Applying the T&#8805;0&deg;C quadratic branch below 0&deg;C.</strong> Extrapolating the simpler above-zero formula into sub-zero temperatures ignores the cubic correction term and produces a result that looks plausible but is measurably wrong, growing worse the further below 0&deg;C the actual temperature sits.</p>
+      <p><strong>6. Excessive excitation current causing self-heating error.</strong> A higher-than-recommended measurement current dissipates more power inside the sensor itself, raising its own temperature above the medium being measured &mdash; this shows up as a small but real positive offset that has nothing to do with the Callendar-Van Dusen equation or wiring configuration.</p>
+      <p><strong>7. Assuming PT500 or PT1000 behave differently from PT100.</strong> All standard platinum RTDs share the same coefficient set for a given standard; only R0 scales. Treating a PT1000 as needing a different formula, rather than the same formula with a different R0, is unnecessary and a common source of spreadsheet errors when building custom scaling tables.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the Callendar-Van Dusen equation and how does this calculator use it?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The Callendar-Van Dusen equation is the standard mathematical model relating a platinum RTD's resistance to its temperature: R(T) = R0(1 + AT + BT&sup2;) for temperatures at or above 0&deg;C, and R(T) = R0(1 + AT + BT&sup2; + C(T&minus;100)T&sup3;) below 0&deg;C, where R0 is the resistance at 0&deg;C and A, B, C are standard-specific constants. This calculator evaluates that equation directly for Temperature to Resistance conversion, and solves it (using the quadratic formula above 0&deg;C, and Newton-Raphson iteration below 0&deg;C) for Resistance to Temperature conversion.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the difference between IEC 60751 and ASTM E1137 standards?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">IEC 60751, also called the European curve, uses a temperature coefficient of resistance (alpha) of 0.00385 &Omega;/&Omega;/&deg;C and is the dominant standard worldwide, including in India. ASTM E1137, also called the American curve, uses alpha = 0.00392 &Omega;/&Omega;/&deg;C and was historically common in some US industrial equipment. The two standards use different Callendar-Van Dusen A, B and C coefficients, so the same measured resistance yields a slightly different calculated temperature depending on which standard the sensor was actually wound and calibrated to.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the valid temperature and resistance range for PT100, PT200, PT500 and PT1000?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This calculator validates inputs against -200&deg;C to +850&deg;C for IEC 60751 and -200&deg;C to +630&deg;C for ASTM E1137, the standard calibration ranges each defines. The corresponding resistance range scales directly with the sensor's R0: PT100 spans roughly 18.5 to 390&Omega;, PT200 roughly 37 to 780&Omega;, PT500 roughly 92.5 to 1950&Omega;, and PT1000 roughly 185 to 3900&Omega; across the IEC 60751 range, since Callendar-Van Dusen coefficients are defined per &deg;C and scale linearly with R0.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does resistance-to-temperature need a different calculation method below 0&deg;C?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Above 0&deg;C, the Callendar-Van Dusen equation is a simple quadratic in temperature, so it can be solved directly and exactly using the quadratic formula. Below 0&deg;C, a cubic correction term (the C coefficient) is added to fit the platinum resistance curve accurately at sub-zero temperatures, which turns the equation into a quartic in temperature with no simple closed-form inverse. This calculator solves that branch using Newton-Raphson iteration, starting from a linear estimate and refining until the computed resistance matches your input to within a very small tolerance.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How does lead wire configuration (2-wire, 3-wire, 4-wire) affect accuracy?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A 2-wire connection includes both lead wires' resistance directly in the measured value, adding a fixed positive error that grows with cable length and is not compensated by this or any calculator unless you subtract it separately. A 3-wire connection, the industrial standard for RTDs, uses a bridge arrangement to cancel lead resistance provided both leads are matched in length and gauge. A 4-wire (Kelvin) connection carries current on one pair and senses voltage on a separate pair, eliminating lead resistance error almost entirely and is used for calibration-grade and laboratory measurements. This field is informational only in this calculator and does not alter the calculated result.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the accuracy class (tolerance) for RTDs, and does this calculator include it?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">IEC 60751 defines tolerance classes AA, A, B and C for RTD sensors, each specifying a maximum allowed deviation in ohms (and equivalent &deg;C) from the ideal Callendar-Van Dusen curve, tighter near 0&deg;C and widening at temperature extremes. This calculator computes the theoretical, error-free resistance or temperature from the reference equation for the selected standard; it does not add a tolerance-class margin, since that depends on the specific sensor's manufactured accuracy class, which should be read from its datasheet or calibration certificate and applied separately.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I use this calculator for PT500 or PT1000, or only PT100?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes. PT100, PT200, PT500 and PT1000 all follow the same Callendar-Van Dusen equation and the same IEC 60751 or ASTM E1137 coefficients; only the R0 term (100, 200, 500 or 1000&Omega; at 0&deg;C respectively) changes, and the equation scales linearly with R0. Select the RTD type toggle to switch between them; the calculation mode, standard, unit and all other settings stay the same.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is my measured resistance different from the calculated value?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Common causes include lead wire resistance not being compensated in a 2-wire hookup, self-heating error from excitation current that is too high for the sensor's dissipation constant, using the wrong standard (IEC 60751 vs ASTM E1137) for the actual sensor's calibration, a sensor operating outside its rated accuracy class, contact or connector resistance in the measurement loop, or genuine sensor drift from thermal cycling, vibration or contamination over its service life.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== EXPLORE MORE CALCULATORS ===================== -->
+<section id="explore-more" class="max-w-6xl mx-auto px-4 pb-16">
+  <h2 class="font-display font-semibold text-brandDark text-xl mb-5">Explore More Calculators</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+    <a href="/electrical-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#e0f2fe">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Electrical Calculators</h3>
+      <p class="text-sm text-gray-500">Transformer size, motor current, DG size, solar sizing &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="/mechanical-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#fef3c7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Mechanical Calculators</h3>
+      <p class="text-sm text-gray-500">Belt length, bearing life, cooling tower efficiency &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+    <a href="/financial-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#dcfce7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Financial Calculators</h3>
+      <p class="text-sm text-gray-500">EPF, PPF, SIP, gratuity, income tax, CAGR &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all →</span>
+    </a>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+
+  // ===== Share / Feedback bar =====
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+
+  // ===== RTD reference data =====
+  var RTD_R0 = { PT100:100, PT200:200, PT500:500, PT1000:1000 };
+  var RTD_STD = {
+    IEC:  { label:'IEC 60751',  A:3.9083e-3,  B:-5.775e-7,  C:-4.183e-12, alpha:'0.00385', rangeMin:-200, rangeMax:850 },
+    ASTM: { label:'ASTM E1137', A:3.9787e-3,  B:-5.8686e-7, C:-4.3400e-12, alpha:'0.00392', rangeMin:-200, rangeMax:630 }
+  };
+
+  var currentMode = 'r2t';   // 'r2t' or 't2r'
+  var currentType = 'PT100';
+  var currentStd  = 'IEC';
+  var currentUnit = 'C';
+
+  function rtdResistance(Tc, R0, std){
+    var A = std.A, B = std.B, C = std.C;
+    if (Tc >= 0){
+      return R0 * (1 + A*Tc + B*Tc*Tc);
+    }
+    return R0 * (1 + A*Tc + B*Tc*Tc + C*(Tc - 100)*Tc*Tc*Tc);
+  }
+
+  function rtdSensitivity(Tc, R0, std){
+    var A = std.A, B = std.B, C = std.C;
+    if (Tc >= 0){
+      return R0 * (A + 2*B*Tc);
+    }
+    return R0 * (A + 2*B*Tc + C*(4*Tc*Tc*Tc - 300*Tc*Tc));
+  }
+
+  function rtdTempFromResistance(R, R0, std){
+    var A = std.A, B = std.B, C = std.C;
+    var ratio = R / R0;
+    if (R >= R0){
+      var disc = A*A - 4*B*(1 - ratio);
+      return (-A + Math.sqrt(disc)) / (2*B);
+    }
+    var T = (ratio - 1) / A; // linear starting estimate
+    for (var i = 0; i < 30; i++){
+      var f  = R0*(1 + A*T + B*T*T + C*(T - 100)*T*T*T) - R;
+      var fp = R0*(A + 2*B*T + C*(4*T*T*T - 300*T*T));
+      var dT = f / fp;
+      T -= dT;
+      if (Math.abs(dT) < 1e-10) break;
+    }
+    return T;
+  }
+
+  function cToF(c){ return c * 9/5 + 32; }
+  function fToC(f){ return (f - 32) * 5/9; }
+
+  function updateLeadNote(){
+    var v = document.getElementById('leadConfig').value;
+    var notes = {
+      '2': '2-wire measurements include the lead wire resistance in the reading, adding a fixed positive error unless separately compensated. Informational note only \u2014 not applied to this calculation.',
+      '3': '3-wire is the industrial standard for RTDs; it compensates for lead resistance in a balanced bridge, provided both leads are matched in length and gauge. Informational note only.',
+      '4': '4-wire (Kelvin) connection eliminates lead resistance error almost entirely and is used for calibration-grade and laboratory measurements. Informational note only.'
+    };
+    document.getElementById('leadNote').textContent = notes[v] || '';
+  }
+
+  var STD_INFO = {
+    IEC: 'IEC 60751 is the international standard for platinum RTDs (alpha = 0.00385 \u03A9/\u03A9/\u00B0C), dominant worldwide including in India.',
+    ASTM: 'ASTM E1137 is the American standard for platinum RTDs (alpha = 0.00392 \u03A9/\u03A9/\u00B0C), historically common in some US-sourced instrumentation.'
+  };
+
+  function updateRangeNotes(){
+    var std = RTD_STD[currentStd];
+    var R0 = RTD_R0[currentType];
+    var Rmin = rtdResistance(std.rangeMin, R0, std);
+    var Rmax = rtdResistance(std.rangeMax, R0, std);
+    document.getElementById('resRangeNote').textContent =
+      'Valid range for ' + currentType + ' (' + std.label + '): ' + Rmin.toFixed(2) + ' \u03A9 to ' + Rmax.toFixed(2) + ' \u03A9 (' + std.rangeMin + '\u00B0C to ' + std.rangeMax + '\u00B0C).';
+
+    var tMin = currentUnit === 'F' ? cToF(std.rangeMin) : std.rangeMin;
+    var tMax = currentUnit === 'F' ? cToF(std.rangeMax) : std.rangeMax;
+    document.getElementById('tempRangeNote').textContent =
+      'Valid range for ' + std.label + ': ' + tMin.toFixed(0) + ' \u00B0' + currentUnit + ' to ' + tMax.toFixed(0) + ' \u00B0' + currentUnit + '.';
+
+    document.getElementById('r0Note').textContent =
+      currentType + ' \u2192 ' + R0 + ' \u03A9 @ 0\u00B0C';
+
+    var placeholderR = rtdResistance(100, R0, std);
+    document.getElementById('resInput').setAttribute('placeholder', 'e.g. ' + placeholderR.toFixed(2) + ' \u03A9');
+
+    if (!document.getElementById('stdInfoNote').classList.contains('hidden')){
+      document.getElementById('stdInfoNote').textContent = STD_INFO[currentStd];
+    }
+  }
+
+  function toggleStdInfo(){
+    var note = document.getElementById('stdInfoNote');
+    note.classList.toggle('hidden');
+    if (!note.classList.contains('hidden')){
+      note.textContent = STD_INFO[currentStd];
+    }
+  }
+
+  function resetRTD(){
+    currentMode = 'r2t';
+    currentType = 'PT100';
+    currentStd = 'IEC';
+    currentUnit = 'C';
+
+    document.querySelectorAll('#modeToggle .toggle-btn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-mode') === 'r2t');
+    });
+    document.querySelectorAll('#typeToggle .toggle-btn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-type') === 'PT100');
+    });
+    document.querySelectorAll('#stdToggle .toggle-btn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-std') === 'IEC');
+    });
+    document.querySelectorAll('#alphaToggle .toggle-btn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-alpha-std') === 'IEC');
+    });
+    document.querySelectorAll('#unitToggle .toggle-btn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-unit') === 'C');
+    });
+    document.getElementById('tempUnitLabel').textContent = '\u00B0C';
+    document.getElementById('resInputWrap').classList.remove('hidden-field');
+    document.getElementById('tempInputWrap').classList.add('hidden-field');
+
+    document.getElementById('resInput').value = '138.50';
+    document.getElementById('tempInput').value = '100';
+    document.getElementById('leadConfig').value = '3';
+    document.getElementById('decimalPlaces').value = '2';
+    document.getElementById('ambientOffset').value = '0';
+    document.getElementById('stdInfoNote').classList.add('hidden');
+
+    updateLeadNote();
+    updateRangeNotes();
+    calculateRTD();
+  }
+
+  function selectMode(mode){
+    currentMode = mode;
+    document.querySelectorAll('#modeToggle .toggle-btn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-mode') === mode);
+    });
+    document.getElementById('resInputWrap').classList.toggle('hidden-field', mode !== 'r2t');
+    document.getElementById('tempInputWrap').classList.toggle('hidden-field', mode !== 't2r');
+    calculateRTD();
+  }
+
+  function selectType(type){
+    currentType = type;
+    document.querySelectorAll('#typeToggle .toggle-btn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-type') === type);
+    });
+    updateRangeNotes();
+    calculateRTD();
+  }
+
+  function selectStd(std){
+    currentStd = std;
+    document.querySelectorAll('#stdToggle .toggle-btn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-std') === std);
+    });
+    document.querySelectorAll('#alphaToggle .toggle-btn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-alpha-std') === std);
+    });
+    updateRangeNotes();
+    calculateRTD();
+  }
+
+  function selectUnit(unit){
+    currentUnit = unit;
+    document.querySelectorAll('#unitToggle .toggle-btn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-unit') === unit);
+    });
+    document.getElementById('tempUnitLabel').textContent = unit === 'F' ? '\u00B0F' : '\u00B0C';
+    updateRangeNotes();
+    calculateRTD();
+  }
+
+  function calculateRTD(){
+    var std = RTD_STD[currentStd];
+    var R0 = RTD_R0[currentType];
+    var dp = parseInt(document.getElementById('decimalPlaces').value, 10);
+    var ambientRaw = parseFloat(document.getElementById('ambientOffset').value);
+    if (isNaN(ambientRaw)) ambientRaw = 0;
+    var ambientC = currentUnit === 'F' ? ambientRaw * 5/9 : ambientRaw;
+
+    var validationBox = document.getElementById('validationBox');
+    var errors = [];
+
+    var Rmin = rtdResistance(std.rangeMin, R0, std);
+    var Rmax = rtdResistance(std.rangeMax, R0, std);
+
+    document.getElementById('ptChipType').textContent = currentType;
+    document.getElementById('ptChipStd').textContent = std.label;
+    document.getElementById('ptChipAlpha').textContent = '\u03B1 = ' + std.alpha;
+
+    if (currentMode === 'r2t'){
+      var Rval = parseFloat(document.getElementById('resInput').value);
+      if (isNaN(Rval)){
+        errors.push('Enter a valid resistance value.');
+      } else if (Rval < Rmin || Rval > Rmax){
+        errors.push('Resistance must be between ' + Rmin.toFixed(2) + ' \u03A9 and ' + Rmax.toFixed(2) + ' \u03A9 for ' + currentType + ' per ' + std.label + ' (' + std.rangeMin + '\u00B0C to ' + std.rangeMax + '\u00B0C).');
+      }
+
+      if (errors.length){
+        validationBox.classList.remove('hidden');
+        validationBox.innerHTML = errors.map(function(e){ return '\u2022 ' + e; }).join('<br>');
+        document.getElementById('rResult').textContent = '\u2014';
+        document.getElementById('rAlt').textContent = '\u2014';
+        document.getElementById('rSens').textContent = '\u2014';
+        document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+        return;
+      }
+      validationBox.classList.add('hidden');
+      validationBox.innerHTML = '';
+
+      var Tc = rtdTempFromResistance(Rval, R0, std) + ambientC;
+      var Tdisplay = currentUnit === 'F' ? cToF(Tc) : Tc;
+      var altDisplay = currentUnit === 'F' ? Tc : cToF(Tc);
+      var sens = rtdSensitivity(Tc - ambientC, R0, std);
+
+      document.getElementById('resultLabel').textContent = 'Temperature';
+      document.getElementById('rResult').textContent = Tdisplay.toFixed(dp) + ' \u00B0' + currentUnit;
+      document.getElementById('resultSub').textContent = currentType + ' \u00B7 ' + std.label + ' \u00B7 R = ' + Rval + ' \u03A9';
+      document.getElementById('rAltLabel').textContent = 'Alternate Unit';
+      document.getElementById('rAlt').textContent = altDisplay.toFixed(dp) + ' \u00B0' + (currentUnit === 'F' ? 'C' : 'F');
+      document.getElementById('rSens').textContent = sens.toFixed(4);
+
+      document.getElementById('breakdownBox').innerHTML =
+        '<table class="breakdown-table">' +
+          '<thead><tr><th>Quantity</th><th>Value</th></tr></thead>' +
+          '<tbody>' +
+            '<tr><td>RTD Type</td><td>' + currentType + ' (R0 = ' + R0 + ' \u03A9)</td></tr>' +
+            '<tr><td>Standard</td><td>' + std.label + '</td></tr>' +
+            '<tr><td>Alpha (\u03B1)</td><td>' + std.alpha + ' \u03A9/\u03A9/\u00B0C</td></tr>' +
+            '<tr><td>Input Resistance</td><td>' + Rval.toFixed(2) + ' \u03A9</td></tr>' +
+            '<tr><td><strong>Temperature</strong></td><td><strong>' + Tdisplay.toFixed(dp) + ' \u00B0' + currentUnit + '</strong></td></tr>' +
+            '<tr><td>Alternate Unit</td><td>' + altDisplay.toFixed(dp) + ' \u00B0' + (currentUnit === 'F' ? 'C' : 'F') + '</td></tr>' +
+            '<tr><td>Sensitivity, dR/dT</td><td>' + sens.toFixed(4) + ' \u03A9/\u00B0C</td></tr>' +
+            '<tr><td>Formula Used</td><td>' + (Tc - ambientC >= 0 ? 'R=R0(1+AT+BT\u00B2), solved' : 'R=R0(1+AT+BT\u00B2+C(T-100)T\u00B3), Newton-Raphson') + '</td></tr>' +
+            '<tr><td>Compensation Applied</td><td>' + (ambientRaw !== 0 ? (ambientRaw > 0 ? '+' : '') + ambientRaw + ' \u00B0' + currentUnit : 'None') + '</td></tr>' +
+            '<tr><td>Valid Range</td><td>' + Rmin.toFixed(2) + '\u2013' + Rmax.toFixed(2) + ' \u03A9</td></tr>' +
+          '</tbody>' +
+        '</table>';
+
+    } else {
+      var Tin = parseFloat(document.getElementById('tempInput').value);
+      var TinC = isNaN(Tin) ? NaN : (currentUnit === 'F' ? fToC(Tin) : Tin);
+
+      if (isNaN(Tin)){
+        errors.push('Enter a valid temperature value.');
+      } else if (TinC < std.rangeMin || TinC > std.rangeMax){
+        var lo = currentUnit === 'F' ? cToF(std.rangeMin) : std.rangeMin;
+        var hi = currentUnit === 'F' ? cToF(std.rangeMax) : std.rangeMax;
+        errors.push('Temperature must be between ' + lo.toFixed(0) + ' \u00B0' + currentUnit + ' and ' + hi.toFixed(0) + ' \u00B0' + currentUnit + ' for ' + std.label + '.');
+      }
+
+      if (errors.length){
+        validationBox.classList.remove('hidden');
+        validationBox.innerHTML = errors.map(function(e){ return '\u2022 ' + e; }).join('<br>');
+        document.getElementById('rResult').textContent = '\u2014';
+        document.getElementById('rAlt').textContent = '\u2014';
+        document.getElementById('rSens').textContent = '\u2014';
+        document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+        return;
+      }
+      validationBox.classList.add('hidden');
+      validationBox.innerHTML = '';
+
+      var Rres = rtdResistance(TinC, R0, std);
+      var sens2 = rtdSensitivity(TinC, R0, std);
+      var altT = currentUnit === 'F' ? TinC : cToF(TinC);
+
+      document.getElementById('resultLabel').textContent = 'Resistance';
+      document.getElementById('rResult').textContent = Rres.toFixed(dp) + ' \u03A9';
+      document.getElementById('resultSub').textContent = currentType + ' \u00B7 ' + std.label + ' \u00B7 T = ' + Tin + ' \u00B0' + currentUnit;
+      document.getElementById('rAltLabel').textContent = 'Temperature (' + (currentUnit === 'F' ? '\u00B0C' : '\u00B0F') + ')';
+      document.getElementById('rAlt').textContent = altT.toFixed(dp) + ' \u00B0' + (currentUnit === 'F' ? 'C' : 'F');
+      document.getElementById('rSens').textContent = sens2.toFixed(4);
+
+      document.getElementById('breakdownBox').innerHTML =
+        '<table class="breakdown-table">' +
+          '<thead><tr><th>Quantity</th><th>Value</th></tr></thead>' +
+          '<tbody>' +
+            '<tr><td>RTD Type</td><td>' + currentType + ' (R0 = ' + R0 + ' \u03A9)</td></tr>' +
+            '<tr><td>Standard</td><td>' + std.label + '</td></tr>' +
+            '<tr><td>Alpha (\u03B1)</td><td>' + std.alpha + ' \u03A9/\u03A9/\u00B0C</td></tr>' +
+            '<tr><td>Input Temperature</td><td>' + Tin + ' \u00B0' + currentUnit + '</td></tr>' +
+            '<tr><td><strong>Resistance</strong></td><td><strong>' + Rres.toFixed(dp) + ' \u03A9</strong></td></tr>' +
+            '<tr><td>Alternate Unit Temp</td><td>' + altT.toFixed(dp) + ' \u00B0' + (currentUnit === 'F' ? 'C' : 'F') + '</td></tr>' +
+            '<tr><td>Sensitivity, dR/dT</td><td>' + sens2.toFixed(4) + ' \u03A9/\u00B0C</td></tr>' +
+            '<tr><td>Formula Used</td><td>' + (TinC >= 0 ? 'R=R0(1+AT+BT\u00B2)' : 'R=R0(1+AT+BT\u00B2+C(T-100)T\u00B3)') + '</td></tr>' +
+            '<tr><td>Compensation Applied</td><td>Not applicable in this mode</td></tr>' +
+            '<tr><td>Valid Range</td><td>' + std.rangeMin + '\u2013' + std.rangeMax + ' \u00B0C</td></tr>' +
+          '</tbody>' +
+        '</table>';
+    }
+  }
+
+  updateLeadNote();
+  updateRangeNotes();
+  calculateRTD();
+</script>
+
+<script>
+  // ===== copyResultGeneric() lives in common.js (auto-injected site-wide by middleware). =====
+
+  // ===== Generic number-input safety net (site-wide, purely additive). =====
+  (function(){
+    function clampNumberInput(el){
+      if (el.type !== 'number' || el.value === '') return;
+      var hasMin = el.hasAttribute('min');
+      var hasMax = el.hasAttribute('max');
+      var min = hasMin ? parseFloat(el.min) : null;
+      var max = hasMax ? parseFloat(el.max) : null;
+      var v = parseFloat(el.value);
+      var corrected = null;
+      if (!isFinite(v)) { corrected = (min !== null ? min : 0); }
+      else if (min !== null && v < min) { corrected = min; }
+      else if (max !== null && v > max) { corrected = max; }
+      if (corrected !== null && corrected !== v) {
+        el.value = corrected;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    document.querySelectorAll('input[type="number"]').forEach(function(el){
+      el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+</script>
+</body>
+</html>
