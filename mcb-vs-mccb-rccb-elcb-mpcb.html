@@ -323,7 +323,7 @@ href="https://www.electromechcalc.com/mcb-vs-mccb-rccb-elcb-mpcb">
 <section class="max-w-6xl mx-auto px-4 mb-14 mt-10">
   <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
     <div class="flex items-center gap-2 flex-wrap">
-      <button class="share-result-btn" onclick="openShareModal()">🔗 Share Result</button>
+      <button class="share-result-btn" onclick="loadShareModal()">🔗 Share Result</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
       <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
@@ -575,5 +575,19 @@ href="https://www.electromechcalc.com/mcb-vs-mccb-rccb-elcb-mpcb">
 </script>
 
 
+<script>
+  // ===== Share Result modal loader (lazy-loads /assets/share-modal.js on first click) =====
+  var __shareModalLoading = false;
+  function loadShareModal(){
+    if (typeof openShareModal === 'function'){ openShareModal(); return; }
+    if (__shareModalLoading) return;
+    __shareModalLoading = true;
+    var s = document.createElement('script');
+    s.src = '/assets/share-modal.js';
+    s.onload = function(){ __shareModalLoading = false; openShareModal(); };
+    s.onerror = function(){ __shareModalLoading = false; };
+    document.head.appendChild(s);
+  }
+</script>
 </body>
 </html>
