@@ -102,7 +102,7 @@ class AppendCommonScriptToHead {
 }
 
 // Calculator input panel: adds .calc-input-panel (border color rule
-// lives in theme-opt.css) without disturbing any existing classes.
+// lives in theme.css) without disturbing any existing classes.
 class AddCalcInputPanelClass {
   element(element) {
     const cls = element.getAttribute("class") || "";

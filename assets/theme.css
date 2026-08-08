@@ -1,0 +1,919 @@
+/* ==========================================================================
+   ElectroMechCalc — shared site theme
+   Single source of truth for typography, layout helpers, search UI,
+   and dark/light theming. Every page links this file instead of
+   carrying its own duplicated <style> block.
+
+   Theme model: body.dark-theme / body.light-theme is toggled by
+   site-nav.js. Everything themeable reads from the CSS custom
+   properties defined below (--bg, --surface, --text, etc.) rather
+   than hardcoded hex values, so there is exactly one place to change
+   a color for both themes.
+   ========================================================================== */
+
+body { font-family: 'Inter', system-ui, sans-serif; }
+h1, h2, h3, .font-display { font-family: 'Space Grotesk', system-ui, sans-serif; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+
+.blueprint-grid {
+  background-image:
+    linear-gradient(#1f2f47 1px, transparent 1px),
+    linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+  background-size: 42px 42px;
+  animation: gridDrift 30s linear infinite;
+}
+@keyframes gridDrift {
+  0% { background-position: 0px 0px, 0px 0px; }
+  100% { background-position: 42px 42px, 42px 42px; }
+}
+
+.featured-card {
+  background: linear-gradient(160deg, #0B1220, #15233a);
+}
+.featured-card .formula-chip {
+  background: rgba(255,255,255,.08);
+  color: #fbbf24;
+}
+
+.feedback-btn { transition: .15s ease; }
+.feedback-btn.selected {
+  /* was background:#0ea5e9 with white text -> only ~2.77:1, fails
+     AA. var(--accent-contrast) as the background keeps white text
+     readable (~5.9:1) while staying the same brand blue family. */
+  background: var(--accent-contrast);
+  color: #fff;
+  border-color: var(--accent-contrast);
+}
+
+.formula-block {
+  background: #0b1220;
+  border: 1px solid #1f2f47;
+  border-radius: 10px;
+  padding: 16px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: #a7f3d0;
+  white-space: pre-line;
+  line-height: 1.7;
+}
+
+.diagram-block {
+  background: #0b1220;
+  border: 1px solid #1f2f47;
+  border-radius: 10px;
+  padding: 16px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: #7dd3fc;
+  white-space: pre;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+
+.blog-prose h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+.blog-prose h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.blog-prose p {
+  color: var(--text-2);
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+.blog-prose strong { color: var(--text); }
+.blog-prose ul {
+  margin: 0 0 1rem 1.25rem;
+  color: var(--text-2);
+  line-height: 1.75;
+}
+.blog-prose li { margin-bottom: 0.4rem; }
+
+/* Inline links inside article prose had no dedicated rule, so they
+   likely fell back to a plain colored anchor with no underline —
+   distinguishable from surrounding paragraph text by color alone,
+   which fails Lighthouse's "links rely on color" audit. Underline +
+   offset gives a non-color cue too, on top of a contrast-safe color. */
+.blog-prose a,
+.page-prose a {
+  color: var(--accent-contrast);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.blog-prose a:hover,
+.page-prose a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.factor-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.factor-table th,
+.factor-table td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+}
+.factor-table th {
+  background: var(--surface-2);
+  font-weight: 600;
+  color: var(--text);
+}
+.factor-table td { color: var(--text-2); }
+
+.related-calc-card {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+}
+.related-calc-title { color: var(--text) !important; }
+.related-calc-category { color: var(--text-2) !important; }
+.related-calc-heading { color: var(--text) !important; }
+.related-calc-header { border-color: var(--border) !important; }
+
+.breadcrumb-nav {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 10px 16px;
+  font-size: 12.5px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+}
+.breadcrumb-nav a {
+  color: var(--text) !important;
+  font-weight: 600;
+  text-decoration: none;
+}
+.breadcrumb-nav a:hover { color: var(--accent-contrast) !important; }
+.breadcrumb-nav .breadcrumb-category {
+  color: var(--text) !important;
+  font-weight: 500;
+}
+.breadcrumb-nav .breadcrumb-sep {
+  margin: 0 6px;
+  /* was #0ea5e9, which is only ~2.77:1 on a light --bg and fails
+     WCAG AA (4.5:1 required). --accent-contrast is a darker shade
+     that passes in light theme while staying the original brand
+     accent in dark theme (see :root / html.dark-theme). */
+  color: var(--accent-contrast) !important;
+  font-weight: 700;
+  opacity: 1;
+}
+.breadcrumb-nav .breadcrumb-current {
+  color: var(--text) !important;
+  font-weight: 700;
+}
+
+.themeToggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+.calc-card {
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.calc-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -8px rgba(14,165,233,.25), 0 14px 28px rgba(11,18,32,0.10);
+  border-color: #38bdf8;
+}
+
+/* ---------------------------- badge pulse --------------------------------- */
+
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,.45); }
+  50% { box-shadow: 0 0 0 6px rgba(245,158,11,0); }
+}
+.badge-pulse { animation: badgePulse 2s ease-in-out infinite; }
+
+/* ---------------------------- scroll reveal -------------------------------- */
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);
+}
+.reveal-on-scroll.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------------------------- hero float ----------------------------------- */
+
+@keyframes subtleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.hero-float { animation: subtleFloat 6s ease-in-out infinite; }
+
+/* ---------------------------- button arrow --------------------------------- */
+
+.btn-arrow-wrap .btn-arrow {
+  display: inline-block;
+  transition: transform .2s ease;
+}
+.btn-arrow-wrap:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+.formula-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: #eaf6fd;
+  color: #0369a1;
+  padding: 3px 9px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+details summary::-webkit-details-marker { display: none; }
+details summary { list-style: none; cursor: pointer; }
+details summary .plus { transition: transform .2s ease; }
+details[open] summary .plus { transform: rotate(45deg); }
+
+@keyframes detailsSweep {
+  0% { opacity: 0; transform: translateY(-8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+details[open] summary ~ * { animation: detailsSweep .3s ease-in-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+  .blueprint-grid { animation: none !important; }
+  .reveal-on-scroll { opacity: 1 !important; transform: none !important; }
+}
+
+.nav-dropdown { position: relative; }
+
+.nav-dropdown .nav-dropdown-panel { display: none; }
+.nav-dropdown.nav-dropdown-open .nav-dropdown-panel { display: block; }
+
+.nav-dropdown-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  padding: 10px;
+  margin-top: 4px;
+  min-width: 260px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 14px 30px rgba(11,18,32,0.25);
+  z-index: 60;
+  /* Panel is position:absolute with no cap on its own height, so on
+     shorter viewports a long list (e.g. Electrical's 13 links) simply
+     ran past the bottom of the screen with no way to reach the rest —
+     it isn't clipped by any ancestor's overflow, it's just rendered
+     off-screen. Cap it to the remaining viewport height below the
+     header and let it scroll internally instead. */
+  max-height: calc(100vh - var(--header-height, 96px) - 24px);
+  overflow-y: auto;
+}
+
+.nav-dropdown-link {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 15px;
+  color: var(--text);
+}
+.nav-dropdown-link:hover {
+  background: rgba(14,165,233,.10);
+  color: var(--accent-contrast);
+}
+.nav-dropdown-link.active {
+  background: rgba(14,165,233,.14);
+  color: var(--accent-contrast);
+  font-weight: 600;
+}
+
+/* Some dropdown links (e.g. the "More" panel) pair an icon with text
+   using Tailwind's .flex class. .nav-dropdown-link's own "display:block"
+   above wins on source order alone since both are single-class rules,
+   which stacked the icon above the text instead of beside it. This
+   two-class selector has higher specificity so it wins regardless of
+   source order. */
+.nav-dropdown-link.flex {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-sublink {
+  display: block;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 17.5px;
+  color: var(--nav-text);
+  opacity: 0.85;
+}
+/* "More" section sublinks (About/Contact/Privacy/etc.) carry both
+   .mobile-sublink and Tailwind's .flex items-center gap-2 for the
+   inline icon + label layout. .mobile-sublink's own `display: block`
+   above has the same specificity as Tailwind's `.flex` and loads
+   later, so it was winning the cascade and stacking the icon above
+   the text. This higher-specificity rule (two classes) restores the
+   flex row only for links that already have both classes — plain
+   text-only sublinks elsewhere are untouched. */
+.mobile-sublink.flex {
+  display: flex;
+}
+.mobile-sublink:hover {
+  background: rgba(14,165,233,.12);
+  color: var(--accent-contrast);
+  opacity: 1;
+}
+.mobile-sublink.active {
+  background: rgba(14,165,233,.14);
+  color: var(--accent-contrast);
+  font-weight: 600;
+  font-size: 18px;
+  opacity: 1;
+}
+
+.mobile-dropdown summary::-webkit-details-marker { display: none; }
+.mobile-dropdown summary { list-style: none; }
+.mobile-dropdown summary .plus {
+  font-size: 22px;
+  line-height: 1;
+  opacity: 0.85;
+  transition: transform .2s ease;
+}
+.mobile-dropdown[open] summary .plus { transform: rotate(45deg); }
+
+.mobile-link { font-size: 21px; }
+
+.premium-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---------------------------- search bar --------------------------------- */
+/*
+ * FIX (search dropdown misalignment): .search-wrap is a flex item that
+ * stretches wide (lg:flex-1 lg:max-w-xl lg:mx-auto in header.html) so the
+ * whole search AREA sits centered in the header. Previously the <input>
+ * inside it had a fixed width (190/230px) far narrower than that area,
+ * so the input rendered near the left of the wide box while
+ * .search-results (anchored with right:0) rendered at the wide box's
+ * right edge — two different reference widths, hence the visual gap.
+ *
+ * Fix: make the input fill .search-wrap completely (width:100%), and
+ * anchor .search-results with left:0 + right:0 (instead of a fixed
+ * 280px + right:0) so the dropdown always exactly matches the input's
+ * rendered width and position, on every breakpoint, automatically.
+ */
+
+.search-wrap { position: relative !important; }
+
+/*
+ * !important on width/position below is intentional: several pages
+ * (index.html, editorial-policy.html, etc.) still carry an old
+ * per-page duplicate <style> block with the pre-fix .search-input /
+ * .search-results rules (width:190px, right:0, width:280px). Those
+ * inline blocks load AFTER this stylesheet in <head>, so at equal
+ * specificity they'd normally win the cascade and silently re-break
+ * this fix page-by-page. !important here guarantees the corrected
+ * layout applies everywhere from this one file, without having to
+ * hunt down and edit every page's inline <style> block individually.
+ */
+.search-input {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 12px 8px 40px;
+  font-size: 15px;
+  width: 100% !important;
+  outline: none;
+  transition: .15s ease;
+}
+.search-input::placeholder { color: var(--text-2); }
+.search-input:focus {
+  width: 100% !important;
+  border-color: #0ea5e9;
+  background: rgba(255,255,255,0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: #64748b;
+  pointer-events: none;
+}
+
+@media (max-width: 1023.98px) {
+  .search-wrap { width: 100%; margin-top: 2px; }
+}
+
+/*
+ * Visibility state: site-nav.js toggles the "hidden" class on
+ * #searchResults directly (classList.add/remove("hidden")). The
+ * rules below match that exact mechanism — no separate
+ * ".search-wrap.has-results" wrapper class is used anywhere, so
+ * there is only one signal that controls whether results show.
+ */
+/*
+ * !important on display below is critical: some pages (e.g.
+ * kw-kva.html) still carry an OLD per-page duplicate <style> block
+ * using a different, defunct visibility system:
+ *   .search-results { display:none; }
+ *   .search-wrap.has-results .search-results { display:block; }
+ * But site-nav.js only ever toggles a "hidden" CLASS on #searchResults
+ * directly — it never adds "has-results" to .search-wrap. So on any
+ * page still carrying that old block, results are permanently stuck
+ * at display:none no matter what site-nav.js does; the search LOGIC
+ * runs fine (innerHTML gets populated) but the box never becomes
+ * visible. Forcing display here guarantees the "hidden" class is the
+ * only thing controlling visibility, everywhere, regardless of any
+ * leftover local CSS.
+ */
+.search-results {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0 !important;
+  right: 0 !important;
+  width: auto !important;
+  display: block !important;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 14px 30px rgba(11,18,32,0.25);
+  overflow: hidden;
+  z-index: 60;
+}
+.search-results.hidden { display: none !important; }
+
+.search-results a {
+  display: block;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+.search-results a:last-child { border-bottom: none; }
+.search-results a:hover { background: rgba(14,165,233,.10) !important; }
+
+.search-empty {
+  padding: 12px 14px;
+  font-size: 12.5px;
+  color: var(--text-2);
+}
+
+/* ---------------------------- article prose ------------------------------ */
+
+.page-prose h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 1.75rem;
+  margin-bottom: 0.6rem;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+}
+.page-prose h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+}
+.page-prose p { color: var(--text-2); line-height: 1.75; margin-bottom: 1rem; }
+.page-prose strong { color: var(--text); }
+.page-prose ul { margin: 0 0 1rem 1.25rem; color: var(--text-2); line-height: 1.75; }
+.page-prose li { margin-bottom: 0.4rem; }
+
+.nav-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+}
+
+/* ---------------------------- theme switch -------------------------------- */
+
+.theme-switch {
+  width: 38px;
+  height: 20px;
+  border-radius: 9999px;
+  background: #64748b;
+  position: relative;
+  transition: .2s ease;
+  flex-shrink: 0;
+}
+.theme-switch-dot {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  transition: .2s ease;
+}
+body.dark-theme .theme-switch { background: #0ea5e9; }
+body.dark-theme .theme-switch-dot { transform: translateX(18px); }
+
+/* ================= UNIVERSAL THEME (CSS custom properties) ================= */
+
+:root {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --text: #111827;
+  --text-2: #475569;
+  --border: #e5e7eb;
+  --nav: #ffffff;
+  --nav-text: #111827;
+  --accent: #0ea5e9;
+  /* --accent (#0ea5e9) only clears WCAG AA contrast against DARK
+     backgrounds (~6.75:1). Used as literal text color (or as a
+     background under white text) on light surfaces — e.g. the
+     breadcrumb separator, active nav links, .feedback-btn.selected —
+     it drops to ~2.77:1 and fails. --accent-contrast is a darker
+     shade reserved for those text/foreground-on-light cases; --accent
+     itself is left untouched so backgrounds/borders/hover-tints keep
+     their original brand color. */
+  --accent-contrast: #0369a1;
+}
+
+/* html.dark-theme mirrors body.dark-theme's variables. The pre-paint
+   FOUC-prevention script (see _middleware.js) sets this class on
+   <html> synchronously, before <body> exists, so --bg/--text/etc.
+   resolve correctly on first paint instead of waiting for
+   site-nav.js to add the class to <body> on DOMContentLoaded. Keep
+   these two blocks in sync. */
+html.dark-theme {
+  --bg: #0B1220;
+  --surface: #111c2e;
+  --surface-2: #0f172a;
+  --text: #e2e8f0;
+  --text-2: #94a3b8;
+  --border: #1f2f47;
+  --nav: #111c2e;
+  --nav-text: #e2e8f0;
+  --accent-contrast: #0ea5e9;
+}
+
+body.dark-theme {
+  --bg: #0B1220;
+  --surface: #111c2e;
+  --surface-2: #0f172a;
+  --text: #e2e8f0;
+  --text-2: #94a3b8;
+  --border: #1f2f47;
+  --nav: #111c2e;
+  --nav-text: #e2e8f0;
+  --accent-contrast: #0ea5e9;
+}
+
+body {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  transition: background-color .25s ease, color .25s ease;
+  /* No padding-top needed: .site-header is position:sticky, so it
+     occupies its own real space in normal document flow on first
+     paint and simply sticks once scrolled. This replaces the old
+     "position:fixed header + JS-measured height pushed onto body"
+     approach, which was a major CLS source — the page rendered with
+     an approximate fallback padding, then jumped once
+     site-nav.js's ResizeObserver corrected it to the real height. */
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--nav) !important;
+  border-color: var(--border) !important;
+}
+
+#mainNav, #mobileNav {
+  color: var(--nav-text) !important;
+  background: var(--nav) !important;
+}
+
+.nav-link, .mobile-link {
+  color: var(--nav-text) !important;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: .15s ease;
+}
+.nav-link:hover, .mobile-link:hover {
+  background: rgba(14,165,233,.12);
+  color: var(--accent-contrast) !important;
+}
+.nav-link.active, .mobile-link.active {
+  background: rgba(14,165,233,.14);
+  color: var(--accent-contrast) !important;
+  font-weight: 600;
+}
+
+.bg-white, .bg-gray-50 { background: var(--surface) !important; }
+.border, .border-gray-100, .border-gray-200 { border-color: var(--border) !important; }
+.text-gray-800, .text-brandDark { color: var(--text) !important; }
+.text-gray-700, .text-gray-600, .text-gray-500 { color: var(--text-2) !important; }
+
+/* Footer intentionally stays dark in both themes — its own
+   bg-brandDark / text-gray-400 / text-white classes (set in
+   partials/footer.html) are left alone here on purpose.
+
+   BUT: the blanket ".text-gray-500 { color: var(--text-2) }" rule
+   above doesn't know that — it still matches any text-gray-500
+   element inside the footer or the other permanently-dark
+   bg-brandDark bar (the "MOST USED:" quick-links strip). In light
+   theme, var(--text-2) resolves to #475569 (a dark slate meant for
+   LIGHT surfaces), so on these permanently-dark backgrounds it
+   rendered as ~2.5:1 contrast — a near-invisible-text accessibility
+   fail (Lighthouse: "insufficient color contrast" on "MOST USED:",
+   the footer tagline/editorial-policy paragraphs, and the copyright
+   bar). Restoring a fixed, dark-bg-safe gray here (same value used
+   for --text-2 in dark theme, ~7.3:1 on these backgrounds) fixes it
+   regardless of which theme the visitor has toggled. */
+.bg-brandDark .text-gray-500, .bg-brandDark .text-gray-600, .bg-brandDark .text-gray-700,
+footer .text-gray-500, footer .text-gray-600, footer .text-gray-700 {
+  color: #94a3b8 !important;
+}
+
+/* text-sky-600 (#0284c7) on white/gray-50 section backgrounds — e.g.
+   the "05 — FAQ" / "06 — ABOUT..." eyebrow labels and the "...
+   editorial team" byline link — measures ~4.1:1, just under the
+   4.5:1 AA threshold. var(--accent-contrast) is the same brand blue
+   family but verified to pass (~5.4:1) on light surfaces; in dark
+   theme it resolves to the brighter #0ea5e9, which also passes. */
+.text-sky-600 { color: var(--accent-contrast) !important; }
+
+/* "Explore Electrical/Mechanical Calculators" CTA buttons: white
+   text on bg-brandBlue measured ~2.77:1 (same underlying color as
+   the --accent contrast issue fixed earlier). Scoped to this
+   specific button combo so other bg-brandBlue uses (non-text,
+   decorative) are untouched. Hover gets its own safe, slightly
+   darker shade so the hover effect isn't lost to !important. */
+.btn-arrow-wrap.bg-brandBlue {
+  background-color: var(--accent-contrast) !important;
+}
+.btn-arrow-wrap.bg-brandBlue:hover {
+  background-color: #075985 !important;
+}
+
+/* ================= HEADER (moved from partials/header.html) =================
+   These rules used to live in a <style> block inside header.html, which
+   _middleware.js injects as raw HTML into every single page response.
+   That meant ~120 lines of CSS were re-downloaded, uncached, on every
+   page load (the browser can't cache inline <style>, only external
+   files like this one). Moved here so it's fetched once and cached
+   like the rest of the theme.
+
+   Header is permanently dark (both themes) — solid colors, tightly
+   scoped to .site-header so the rest of the page still toggles
+   normally via body.dark-theme / body.light-theme. */
+.site-header,
+.site-header #mainNav,
+.site-header #mobileNav {
+  background: #0b0e14 !important;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+.site-header .logo-e { color: #38bdf8 !important; }
+.site-header .logo-m { color: #fbbf24 !important; }
+.site-header .logo-c { color: #34d399 !important; }
+.site-header .font-mono.uppercase { color: #ffffff !important; }
+
+.site-header .nav-link,
+.site-header .mobile-link {
+  color: #e5e7eb !important;
+}
+.site-header .nav-link:hover,
+.site-header .mobile-link:hover {
+  color: #38bdf8 !important;
+}
+
+.site-header .themeToggle .themeLabel {
+  color: #e5e7eb !important;
+}
+.site-header .themeToggle .themeIconMoon,
+.site-header .themeToggle .themeIconSun {
+  color: #e5e7eb !important;
+}
+
+.site-header .nav-dropdown-panel {
+  background: #11151c !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 4px 18px rgba(255,255,255,0.10),
+    0 10px 26px rgba(0,0,0,0.35) !important;
+}
+.site-header .nav-dropdown-link {
+  color: #e5e7eb !important;
+  background: transparent !important;
+}
+.site-header .nav-dropdown-link:hover {
+  background: rgba(255,255,255,0.08) !important;
+  color: #ffffff !important;
+}
+
+.site-header .mobile-dropdown { background: #0b0e14 !important; }
+.site-header .mobile-sublink { color: #d1d5db !important; }
+.site-header .mobile-sublink:hover { color: #ffffff !important; }
+
+.site-header .search-input {
+  background: #161b24 !important;
+  border: 1.5px solid #ffffff !important;
+  color: #e5e7eb !important;
+}
+.site-header .search-input::placeholder { color: #ffffff !important; opacity: 1; }
+.site-header .search-results {
+  background: #11151c !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  box-shadow: 0 4px 18px rgba(255,255,255,0.10), 0 10px 26px rgba(0,0,0,0.35) !important;
+}
+.site-header .search-results a { color: #e5e7eb !important; }
+.site-header .search-icon { color: #ffffff !important; width: 18px !important; height: 18px !important; }
+
+.site-header .site-logo {
+  width: 60px !important;
+  height: 60px !important;
+}
+@media (min-width: 1024px) {
+  .site-header .site-logo {
+    width: 44px !important;
+    height: 44px !important;
+  }
+}
+
+@media (max-width: 1023.98px) {
+  #mobileNav:not(.hidden) {
+    display: flex !important;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    /* Was height:100vh. Since this box starts at top:100% (i.e. already
+       pushed down by the header's own height), a full 100vh box extends
+       that same amount past the bottom of the actual viewport. Content
+       inside that overhang isn't reachable: body scroll is locked while
+       the menu is open (see site-nav.js), and overflow-y:auto here only
+       scrolls once content exceeds the BOX's height, not once content
+       exceeds the visible viewport. Sizing the box to the visible area
+       makes the internal scrollbar cover all the content instead. */
+    height: calc(100vh - var(--header-height, 148px));
+    overflow-y: auto;
+    background: #0b0e14 !important;
+    z-index: 100;
+    padding-bottom: 40px;
+  }
+}
+
+.site-header .mobile-link { font-size: 21px; }
+.site-header .mobile-sublink { font-size: 17.5px; }
+.site-header .mobile-sublink.active,
+.site-header .nav-dropdown-link.active {
+  background: rgba(56,189,248,.14) !important;
+  color: #38bdf8 !important;
+  font-weight: 600;
+  font-size: 18px;
+}
+.site-header .nav-link.active,
+.site-header .mobile-link.active {
+  background: rgba(56,189,248,.14) !important;
+  color: #38bdf8 !important;
+  font-weight: 600;
+}
+
+.site-header .mobile-dropdown summary .plus {
+  font-size: 22px;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.pro-star-icon { color: #f59e0b; }
+
+/* ---------------------------------------------------------------------
+   Calculator input panel border — black in light theme, white in dark
+   theme. Applied site-wide via _middleware.js (adds .calc-input-panel
+   to every calculator's input panel div automatically — no per-page
+   edit needed). !important because the blanket
+   ".border, .border-gray-100, .border-gray-200 { border-color: var(--border) !important }"
+   rule above would otherwise win over this on elements that still
+   carry the border-gray-100 class.
+   --------------------------------------------------------------------- */
+.calc-input-panel { border: 2px solid #000000 !important; }
+body.dark-theme .calc-input-panel { border-color: #ffffff !important; }
+
+/* ---------------------------------------------------------------------
+   Share Result modal — single button opens a Share/Embed/Cite modal
+   (replaces the old row of separate Copy Link/WhatsApp/X/Facebook
+   buttons). Modal DOM is built and injected by common.js on first use;
+   this file only supplies the styling.
+   --------------------------------------------------------------------- */
+.share-result-btn{
+  display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#0369a1;
+  background:#eaf6fd; border:1px solid #bae6fd; border-radius:8px; padding:8px 16px; cursor:pointer;
+  transition:background .15s;
+}
+.share-result-btn:hover{ background:#dbf0fb; }
+body.dark-theme .share-result-btn{ background:#0f253a; border-color:#1f3a52; color:#7dd3fc; }
+body.dark-theme .share-result-btn:hover{ background:#123049; }
+
+/* ---------------------------------------------------------------------
+   Action icon buttons — Copy Result, Yes/No feedback, Feedback (mailto)
+   in the Share/Feedback bar. Same visual family as .share-result-btn
+   but neutral by default; .active-like / .active-dislike are the
+   highlighted states setFeedback() (per-page inline script) toggles on
+   #fbYes / #fbNo via classList.toggle() — these were referenced in JS
+   and markup site-wide but never actually styled, so a click changed
+   the class with no visible effect.
+   --------------------------------------------------------------------- */
+.action-icon-btn{
+  display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#475569;
+  background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 16px; cursor:pointer;
+  transition:background .15s, border-color .15s, color .15s; text-decoration:none;
+}
+.action-icon-btn:hover{ background:#f1f5f9; border-color:#cbd5e1; }
+body.dark-theme .action-icon-btn{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+body.dark-theme .action-icon-btn:hover{ background:#16233a; border-color:#2c4059; }
+
+.action-icon-btn.active-like{ background:#ecfdf5; border-color:#a7f3d0; color:#059669; }
+.action-icon-btn.active-like:hover{ background:#d1fae5; }
+body.dark-theme .action-icon-btn.active-like{ background:#052e22; border-color:#0f5132; color:#34d399; }
+body.dark-theme .action-icon-btn.active-like:hover{ background:#063d2c; }
+
+.action-icon-btn.active-dislike{ background:#fef2f2; border-color:#fecaca; color:#dc2626; }
+.action-icon-btn.active-dislike:hover{ background:#fee2e2; }
+body.dark-theme .action-icon-btn.active-dislike{ background:#3a0d0d; border-color:#5c1414; color:#f87171; }
+body.dark-theme .action-icon-btn.active-dislike:hover{ background:#481212; }
+
+.share-modal-overlay{
+  position:fixed; inset:0; background:rgba(15,23,42,.55);
+  display:none; align-items:center; justify-content:center;
+  z-index:9999; padding:16px;
+}
+.share-modal-overlay.open{ display:flex; }
+.share-modal-box{
+  background:#ffffff; border-radius:16px; max-width:480px; width:100%;
+  padding:28px; box-shadow:0 20px 60px rgba(0,0,0,.25); position:relative;
+}
+body.dark-theme .share-modal-box{ background:#0f1c30; }
+.share-modal-close{
+  position:absolute; top:18px; right:18px; background:none; border:none;
+  font-size:22px; color:#94a3b8; cursor:pointer; line-height:1; padding:0;
+}
+.share-modal-close:hover{ color:#334155; }
+body.dark-theme .share-modal-close:hover{ color:#e2e8f0; }
+.share-modal-title{ font-weight:700; font-size:18px; color:#0B1220; }
+body.dark-theme .share-modal-title{ color:#e2e8f0; }
+.share-modal-subtitle{ font-size:13px; color:#64748b; margin-top:2px; margin-bottom:20px; }
+body.dark-theme .share-modal-subtitle{ color:#94a3b8; }
+.share-tabs{ display:flex; gap:24px; border-bottom:1px solid #e5e7eb; margin-bottom:20px; }
+body.dark-theme .share-tabs{ border-color:#1f2f47; }
+.share-tab{
+  background:none; border:none; padding:0 0 10px; font-size:14px; font-weight:600;
+  color:#94a3b8; cursor:pointer; border-bottom:2px solid transparent;
+}
+.share-tab.active{ color:#0369a1; border-bottom-color:#0369a1; }
+body.dark-theme .share-tab.active{ color:#7dd3fc; border-bottom-color:#7dd3fc; }
+.share-panel{ display:none; }
+.share-panel.active{ display:block; }
+.share-panel p{ font-size:13px; color:#64748b; margin-bottom:10px; }
+body.dark-theme .share-panel p{ color:#94a3b8; }
+.share-checkbox-row{ display:flex; align-items:center; gap:8px; font-size:13px; color:#475569; margin-bottom:22px; cursor:pointer; }
+body.dark-theme .share-checkbox-row{ color:#94a3b8; }
+.share-icons-row{ display:flex; justify-content:center; gap:24px; margin-bottom:22px; }
+.share-icon-item{ display:flex; flex-direction:column; align-items:center; gap:8px; background:none; border:none; cursor:pointer; }
+.share-icon-circle{
+  width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:20px; font-weight:700;
+}
+.share-icon-label{ font-size:12px; color:#475569; }
+body.dark-theme .share-icon-label{ color:#94a3b8; }
+.share-link-row{ display:flex; align-items:center; gap:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 14px; }
+body.dark-theme .share-link-row{ background:#111c2e; border-color:#1f2f47; }
+.share-link-text{ flex:1; font-size:13px; color:#475569; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+body.dark-theme .share-link-text{ color:#94a3b8; }
+.share-copy-btn{ font-size:13px; font-weight:600; color:#0369a1; background:none; border:none; cursor:pointer; flex-shrink:0; }
+body.dark-theme .share-copy-btn{ color:#7dd3fc; }
