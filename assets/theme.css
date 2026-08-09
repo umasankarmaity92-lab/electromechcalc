@@ -458,7 +458,14 @@ details[open] summary ~ * { animation: detailsSweep .3s ease-in-out; }
   border: 1px solid var(--border);
   border-radius: 10px;
   box-shadow: 0 14px 30px rgba(11,18,32,0.25);
-  overflow: hidden;
+  /* Was overflow:hidden with no height cap, so a query matching many
+     calculators (e.g. "transformer") just grew the box past the
+     bottom of the viewport with no way to reach the rest — same
+     off-screen-dropdown problem already solved for .nav-dropdown-panel
+     below, using the same var(--header-height) cap for consistency. */
+  max-height: calc(100vh - var(--header-height, 96px) - 24px);
+  overflow-x: hidden;
+  overflow-y: auto;
   z-index: 60;
 }
 .search-results.hidden { display: none !important; }
