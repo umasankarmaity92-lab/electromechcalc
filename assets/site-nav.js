@@ -406,17 +406,34 @@ document.addEventListener("DOMContentLoaded", () => {
         // Still the latest query? (guards against slow/out-of-order fetches)
         if (searchInput.value.trim().toLowerCase() !== q) return;
 
-        const matches = pages.filter(p =>
-          p.title.toLowerCase().includes(q) ||
-          (p.category && p.category.toLowerCase().includes(q)) ||
-          (p.keywords && p.keywords.toLowerCase().includes(q))
-        );
+        const matches = pages
+          .filter(p =>
+            p.title.toLowerCase().includes(q) ||
+            (p.category && p.category.toLowerCase().includes(q)) ||
+            (p.keywords && p.keywords.toLowerCase().includes(q))
+          )
+          // Rank so a direct title match (e.g. "Transformer Size
+          // Calculator" for query "transformer") always outranks a
+          // page that only matches via its keywords list (e.g. "CT
+          // Ratio Calculator" mentioning "transformer" once in its
+          // keywords) — otherwise relevant results could get pushed
+          // past the display cap by less-relevant keyword-only hits
+          // that simply appear earlier in search-index.json.
+          .map(p => {
+            const title = p.title.toLowerCase();
+            let rank = 2; // keyword/category-only match
+            if (title.startsWith(q)) rank = 0;
+            else if (title.includes(q)) rank = 1;
+            return { p, rank };
+          })
+          .sort((a, b) => a.rank - b.rank)
+          .map(m => m.p);
 
         if (!matches.length) {
           searchResults.innerHTML = '<div class="search-empty">No results found</div>';
         } else {
           searchResults.innerHTML = matches
-            .slice(0, 8)
+            .slice(0, 20)
             .map(p => `<a href="${escapeHTML(p.url)}">${escapeHTML(p.title)}</a>`)
             .join("");
         }
