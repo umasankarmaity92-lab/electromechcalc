@@ -217,8 +217,9 @@ function buildRelatedCalculatorsHTML(pathname, index) {
     .join("");
 
   const isGeneral = current.category === "General";
-  const kicker = isGeneral ? "You Might Also Need" : "You Might Also Need";
-  const heading = isGeneral ? "Related Pages" : "Related Calculators";
+  const isBlog = current.category === "Blog";
+  const kicker = "You Might Also Need";
+  const heading = isGeneral ? "Related Pages" : isBlog ? "Related Blog" : "Related Calculators";
 
   return `
 <section class="related-calc-section max-w-6xl mx-auto px-4 py-12">
