@@ -10,6 +10,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // since mobile wraps the search bar onto its own row).
   // -----------------------------------------------------------------------
   const siteHeader = document.querySelector(".site-header");
+  // Cached header height in px, kept in sync by setHeaderOffset() below.
+  // onScrollFrame() (further down) reads this instead of calling
+  // siteHeader.offsetHeight directly on every scroll frame — that direct
+  // read was showing up in PageSpeed/DevTools as a "forced reflow"
+  // (siteHeader.offsetHeight forces a synchronous layout whenever layout
+  // is dirty, and on a high-frequency scroll handler that adds up).
+  // Reading this cached number instead touches zero DOM geometry, so it
+  // can never force a reflow.
+  let headerHeight = 80;
   if (siteHeader) {
     // Wrapped in requestAnimationFrame so the offsetHeight read (which
     // forces a synchronous layout if it runs right after a DOM/style
@@ -19,7 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // invalidating layout, without changing the measured value itself.
     const setHeaderOffset = () => {
       requestAnimationFrame(() => {
-        document.documentElement.style.setProperty("--header-height", siteHeader.offsetHeight + "px");
+        headerHeight = siteHeader.offsetHeight || headerHeight;
+        document.documentElement.style.setProperty("--header-height", headerHeight + "px");
       });
     };
     setHeaderOffset();
@@ -126,7 +136,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const mobileMenuOpen = mobileNav && !mobileNav.classList.contains("hidden");
 
       if (siteHeader && !mobileMenuOpen) {
-        const revealAt = siteHeader.offsetHeight || 80;
+        // Cached value (kept fresh by the ResizeObserver above) — never
+        // reads siteHeader.offsetHeight directly here, since this runs on
+        // every scroll frame and a direct read would force a reflow.
+        const revealAt = headerHeight;
         if (currentScrollY <= revealAt) {
           siteHeader.classList.remove("site-header-hidden");
         } else if (delta > SCROLL_DELTA) {
