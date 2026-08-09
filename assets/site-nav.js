@@ -85,6 +85,71 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // ---------------------------------------------------------------------
+  // Header hide-on-scroll-down / show-on-scroll-up
+  //
+  // .site-header stays position:sticky (theme.css) — this only toggles a
+  // transform via the .site-header-hidden class, so the "stuck to top"
+  // behavior itself is untouched. Also drives the floating scroll-to-top
+  // + feedback buttons below off the same scroll listener (one passive
+  // listener, rAF-throttled, instead of two separate ones) to avoid
+  // adding extra forced-reflow-prone scroll handlers.
+  // ---------------------------------------------------------------------
+  const fabContainer = document.createElement("div");
+  fabContainer.className = "scroll-fab-container hidden";
+  fabContainer.innerHTML = `
+    <a href="mailto:support@electromechcalc.com" class="scroll-fab scroll-fab-message" aria-label="Send feedback">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <button type="button" class="scroll-fab scroll-fab-top" aria-label="Scroll to top">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 19V5M5 12l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  `;
+  document.body.appendChild(fabContainer);
+  fabContainer.querySelector(".scroll-fab-top").addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  if (siteHeader || fabContainer) {
+    let lastScrollY = window.scrollY;
+    let scrollTicking = false;
+    const SCROLL_DELTA = 8;      // ignore tiny jitters
+    const FAB_SHOW_AT = 400;     // px scrolled before FAB appears
+
+    const onScrollFrame = () => {
+      const currentScrollY = window.scrollY;
+      const delta = currentScrollY - lastScrollY;
+      const mobileMenuOpen = mobileNav && !mobileNav.classList.contains("hidden");
+
+      if (siteHeader && !mobileMenuOpen) {
+        const revealAt = siteHeader.offsetHeight || 80;
+        if (currentScrollY <= revealAt) {
+          siteHeader.classList.remove("site-header-hidden");
+        } else if (delta > SCROLL_DELTA) {
+          siteHeader.classList.add("site-header-hidden");
+        } else if (delta < -SCROLL_DELTA) {
+          siteHeader.classList.remove("site-header-hidden");
+        }
+      }
+
+      fabContainer.classList.toggle("hidden", currentScrollY < FAB_SHOW_AT);
+
+      lastScrollY = currentScrollY;
+      scrollTicking = false;
+    };
+
+    window.addEventListener("scroll", () => {
+      if (!scrollTicking) {
+        requestAnimationFrame(onScrollFrame);
+        scrollTicking = true;
+      }
+    }, { passive: true });
+  }
+
   // Desktop + Mobile toggles
   const toggles = document.querySelectorAll(".themeToggle");
   const labels = document.querySelectorAll(".themeLabel");

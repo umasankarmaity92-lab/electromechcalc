@@ -609,7 +609,130 @@ body {
   z-index: 50;
   background: var(--nav) !important;
   border-color: var(--border) !important;
+  transition: transform .25s ease;
 }
+
+/* Hide-on-scroll-down / show-on-scroll-up (class toggled by site-nav.js).
+   Header stays position:sticky — only its own transform moves, so it
+   still sticks to top:0 the instant it's shown again. */
+.site-header.site-header-hidden {
+  transform: translateY(-100%);
+}
+
+/* Floating scroll-to-top + feedback buttons (site-wide, injected by
+   site-nav.js, shown after scrolling ~400px). */
+.scroll-fab-container {
+  position: fixed;
+  right: 18px;
+  bottom: 22px;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.scroll-fab-container.hidden { display: none; }
+.scroll-fab {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.scroll-fab:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.3); }
+.scroll-fab-top { background: var(--accent-contrast, #0ea5e9); }
+.scroll-fab-message { background: #16a34a; }
+
+/* Recent Posts — blog pages only. Horizontal side-scroll strip of
+   post cards, snap-scrolling on touch devices. */
+.recent-posts-scroll {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+.recent-posts-scroll::-webkit-scrollbar { height: 6px; }
+.recent-posts-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+.recent-post-card {
+  flex: 0 0 240px;
+  scroll-snap-align: start;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.recent-post-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.12); }
+.recent-post-card img { width: 100%; height: 130px; object-fit: cover; display: block; }
+.recent-post-card .recent-post-body { padding: 12px 14px 16px; }
+.recent-post-card h3 { font-size: 14px; font-weight: 600; line-height: 1.35; color: var(--text) !important; }
+
+/* Blog hub cards — image on top, 3-dot "Share Post" menu top-right. */
+.blog-hub-card {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+}
+.blog-hub-card img { width: 100%; height: 170px; object-fit: cover; display: block; }
+.blog-hub-card .blog-hub-body { padding: 16px 18px 20px; flex: 1; display: flex; flex-direction: column; }
+.blog-hub-card h3 { font-size: 16px; font-weight: 700; color: var(--text) !important; margin-bottom: 6px; }
+.blog-hub-card p { font-size: 13.5px; color: #64748b; flex: 1; }
+.blog-hub-menu-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(11,18,32,.55);
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+}
+.blog-hub-menu-btn:hover { background: rgba(11,18,32,.8); }
+.blog-hub-menu-panel {
+  position: absolute;
+  top: 46px;
+  right: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.18);
+  padding: 4px;
+  z-index: 3;
+  display: none;
+  min-width: 140px;
+}
+.blog-hub-menu-panel.open { display: block; }
+.blog-hub-menu-panel button {
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 13.5px;
+  color: var(--text) !important;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.blog-hub-menu-panel button:hover { background: rgba(14,165,233,.12); }
 
 #mainNav, #mobileNav {
   color: var(--nav-text) !important;
