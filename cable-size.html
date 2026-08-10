@@ -298,10 +298,30 @@
     letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
   }
   .breakdown-table td{ color:#111827; }
+  .breakdown-table tr.breakdown-row-highlight{ background:#eaf6fd; font-weight:600; }
   .breakdown-wrap{
     max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
     border-radius:8px; border:1px solid #e5e7eb;
   }
+  /* Dark-mode fix: the comparison table and reference table below used
+     light-only hardcoded colors with no body.dark-theme override, so rows
+     went dark-text-on-dark-background (unreadable) in dark mode. */
+  body.dark-theme .breakdown-wrap{ border-color:#1e293b; }
+  body.dark-theme .breakdown-table th{
+    background:#0f172a; color:#7dd3fc; border-bottom-color:#1e293b;
+  }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1e293b; }
+  body.dark-theme .breakdown-table tr.breakdown-row-highlight{ background:rgba(14,165,233,0.18); }
+  body.dark-theme .breakdown-table tr.breakdown-row-highlight td{ color:#e0f2fe; }
+  body.dark-theme #cs-reference-box{
+    background:rgba(14,165,233,0.07); border-color:#164e63;
+  }
+  body.dark-theme #cs-reference-box thead tr{ border-color:#164e63; }
+  body.dark-theme #cs-reference-box th{ color:#7dd3fc; }
+  body.dark-theme #cs-reference-box tbody{ color:#cbd5e1; }
+  body.dark-theme #cs-reference-box tbody tr{ border-color:rgba(125,211,252,0.15); }
+  body.dark-theme #cs-reference-box .text-gray-400{ color:#64748b; }
+  body.dark-theme #cs-reference-box .text-gray-500{ color:#7dd3fc; }
 
   /* search bar styles moved to /assets/theme.css — removed the local
      duplicate block now that this page links the shared stylesheet as
@@ -612,7 +632,7 @@
     </div>
 
     <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
-    <div class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+    <div id="cs-reference-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
 
       <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mb-2">Reference: Copper Cable Sizes (Free-Air)</h6>
       <table class="w-full text-xs mb-3">
@@ -956,7 +976,7 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
     }
 
     const tableRows = rows.map(r => `
-        <tr${r.isRecommended ? ' style="background:#eaf6fd;font-weight:600;"' : ''}>
+        <tr${r.isRecommended ? ' class="breakdown-row-highlight"' : ''}>
             <td>${r.size} sq.mm${r.isRecommended ? ' ★' : ''}</td>
             <td>${r.rating} A</td>
             <td>${r.vdrop.toFixed(2)}%</td>
