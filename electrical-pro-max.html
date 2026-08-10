@@ -1041,6 +1041,14 @@
     </div>`;
   }
 
+  function checkboxHTML(id, label, checked){
+    return `
+    <label class="flex items-center gap-2.5 mb-4 cursor-pointer select-none">
+      <input id="${id}" type="checkbox" ${checked ? 'checked' : ''} class="w-4 h-4 accent-brandBlue">
+      <span class="text-xs font-semibold text-gray-600">${label}</span>
+    </label>`;
+  }
+
   // Field whose label + placeholder update dynamically to match a paired Input Type select
   function dynamicFieldHTML(id, labelId, label, opts){
     opts = opts || {};
@@ -1068,6 +1076,18 @@
       label.textContent = 'Load Value (kW)';
       input.placeholder = 'Enter value in kW';
     }
+  }
+
+  // Shared handler: auto-fills the Voltage field to match the selected Phase Type
+  // (matches the same single/three → 230/415 convention used site-wide, e.g.
+  // transformer-size.html, dg-size.html, cable-size.html) — the "phase" select
+  // in every tool below previously had no onchange wired, so switching phase
+  // never updated voltage.
+  function updatePhaseVoltage(voltageId, threeVal, singleVal, threeCode, singleCode){
+    const v = document.getElementById(voltageId);
+    if (!v) return;
+    const p = document.getElementById('phase').value;
+    v.value = (p === threeCode) ? threeVal : singleVal;
   }
 
   function infoBox(title, explanation, example, formula){
@@ -1111,16 +1131,17 @@
     else if (t === 'motor'){
       i.innerHTML =
         selectHTML('motorMode', 'Input Type', [['kw','kW'],['hp','HP'],['amp','Amp']], 'kw', "toggleLoadInput('motorMode','motorValueLabel','motorValue')") +
-        selectHTML('phase', 'Phase Type', [['3','3 Phase'],['1','1 Phase']], '3') +
-        fieldHTML('v', 'Voltage (V)', {value:415}) +
         dynamicFieldHTML('motorValue', 'motorValueLabel', 'Load Value (kW)', {value:10, step:0.1, placeholder:'Enter value in kW'}) +
-        fieldHTML('pf', 'Power Factor', {value:0.85, step:0.01});
+        selectHTML('phase', 'Phase Type', [['3','3 Phase'],['1','1 Phase']], '3', "updatePhaseVoltage('v',415,230,'3','1')") +
+        fieldHTML('v', 'Voltage (V)', {value:415}) +
+        fieldHTML('pf', 'Power Factor', {value:0.85, step:0.01}) +
+        fieldHTML('motorEff', 'Motor Efficiency (%)', {value:90, step:1});
 
       info.innerHTML = infoBox(
         'Motor Current Calculator',
-        'This calculates the full-load running current (Amps) drawn by a motor. Choose the Input Type — kW, HP, or Amp — to match whatever figure is on the nameplate or meter, and the tool converts internally before computing the current.',
-        'A 10 kW, 3-phase motor running on 415 V at PF 0.85 draws: (1000×10) ÷ (1.732×415×0.85) ≈ 16.4 A. This helps you select the right MCB, contactor, and cable size for the motor circuit.',
-        '3 Phase: I = (1000 × kW) ÷ (√3 × V × PF)\n1 Phase: I = (1000 × kW) ÷ (V × PF)'
+        'This calculates the full-load running current (Amps) drawn by a motor from the supply. Choose the Input Type — kW, HP, or Amp — to match whatever figure is on the nameplate or meter; the shaft-power entry is divided by motor efficiency to get real electrical input power before computing current.',
+        'A 10 kW, 3-phase motor running on 415 V at PF 0.85 and 90% efficiency draws: (1000×10) ÷ (1.732×415×0.85×0.90) ≈ 18.2 A. This helps you select the right MCB, contactor, and cable size for the motor circuit.',
+        '3 Phase: I = (1000 × kW) ÷ (√3 × V × PF × η)\n1 Phase: I = (1000 × kW) ÷ (V × PF × η)\nη = Motor Efficiency ÷ 100'
       );
     }
 
@@ -1141,16 +1162,17 @@
     else if (t === 'tx'){
       i.innerHTML =
         selectHTML('mode', 'Input Type', [['kw','kW'],['hp','HP'],['amp','Amp']], 'kw', "toggleLoadInput('mode','valueLabel','value')") +
-        selectHTML('phase', 'Phase Type', [['single','Single Phase'],['three','Three Phase']], 'single') +
+        dynamicFieldHTML('value', 'valueLabel', 'Load Value (kW)', {placeholder:'Enter value in kW'}) +
+        selectHTML('phase', 'Phase Type', [['single','Single Phase'],['three','Three Phase']], 'single', "updatePhaseVoltage('voltage',415,230,'three','single')") +
         fieldHTML('voltage', 'Voltage (V)', {value:415}) +
         fieldHTML('pf', 'Power Factor', {value:0.8, step:0.01}) +
-        dynamicFieldHTML('value', 'valueLabel', 'Load Value (kW)', {placeholder:'Enter value in kW'});
+        checkboxHTML('txMargin', 'Add 20% Safety Margin for future load growth', true);
 
       info.innerHTML = infoBox(
         'Transformer Size Calculator (kVA)',
-        'This finds the transformer kVA rating needed to supply a given load, then rounds up to the nearest standard transformer size. You can enter the load as kW, HP, or Amps — the calculator converts internally using voltage and power factor.',
-        'For a 3-phase load of 50 kW at 415 V and PF 0.8: kVA = 50 ÷ 0.8 = 62.5 kVA, so the recommended standard size shown would be 63 kVA — the smallest standard rating that can safely supply that load.',
-        'kVA = kW ÷ PF\nStandard size = next size up from table'
+        'This finds the transformer kVA rating needed to supply a given load, then rounds up to the nearest standard transformer size. You can enter the load as kW, HP, or Amps — the calculator converts internally using voltage and power factor. The 20% safety margin (on by default) covers future load growth and motor-starting inrush before rounding to a standard size; the reactive power (kVAR) figure is also shown.',
+        'For a 3-phase load of 50 kW at 415 V and PF 0.8: kVA = 50 ÷ 0.8 = 62.5 kVA. With the 20% margin applied, sizing kVA = 75 kVA, so the recommended standard size shown would be 75 kVA rather than the bare-minimum 63 kVA.',
+        'kVA = kW ÷ PF\nkVAR = √(kVA² − kW²)\nSizing kVA = kVA × 1.2 (if margin on)\nStandard size = next size up from table'
       );
     }
 
@@ -1158,7 +1180,7 @@
       i.innerHTML =
         selectHTML('cableMode', 'Input Type', [['kw','kW'],['hp','HP'],['amp','Amp']], 'amp', "toggleLoadInput('cableMode','cableValueLabel','cableValue')") +
         dynamicFieldHTML('cableValue', 'cableValueLabel', 'Load Value (Amp)', {value:32, placeholder:'Enter value in Amp'}) +
-        selectHTML('phase', 'Phase Type', [['single','Single Phase'],['three','Three Phase']], 'three') +
+        selectHTML('phase', 'Phase Type', [['single','Single Phase'],['three','Three Phase']], 'three', "updatePhaseVoltage('voltage',415,230,'three','single')") +
         fieldHTML('voltage', 'Voltage (V)', {value:415}) +
         fieldHTML('pf', 'Power Factor', {value:0.85, step:0.01}) +
         selectHTML('material', 'Conductor Material', [['cu','Copper'],['al','Aluminium']], 'cu');
@@ -1188,9 +1210,9 @@
     else if (t === 'solar'){
       i.innerHTML =
         selectHTML('loadMode', 'Load Input Type', [['kw','kW'],['hp','HP'],['amp','Amp']], 'kw', "toggleLoadInput('loadMode','solarValueLabel','solarVal')") +
-        selectHTML('phase', 'Phase Type', [['1','1 Phase'],['3','3 Phase']], '1') +
-        fieldHTML('voltage', 'Voltage (V)', {value:230}) +
         dynamicFieldHTML('solarVal', 'solarValueLabel', 'Load Value (kW)', {value:2, step:0.1, placeholder:'Enter value in kW'}) +
+        selectHTML('phase', 'Phase Type', [['1','1 Phase'],['3','3 Phase']], '1', "updatePhaseVoltage('voltage',415,230,'3','1')") +
+        fieldHTML('voltage', 'Voltage (V)', {value:230}) +
         fieldHTML('pf', 'Power Factor (for Amp mode)', {value:0.8, step:0.01}) +
         fieldHTML('usageHours', 'Daily Usage (Hours)', {value:6, step:0.5}) +
         fieldHTML('sunHours', 'Peak Sun Hours', {value:5, step:0.5}) +
@@ -1207,8 +1229,8 @@
     else if (t === 'dg'){
       i.innerHTML =
         selectHTML('dgMode', 'Input Type', [['kw','kW'],['hp','HP'],['amp','Amp']], 'kw', "toggleLoadInput('dgMode','dgValueLabel','dgValue')") +
-        selectHTML('phase', 'Phase Type', [['three','Three Phase'],['single','Single Phase']], 'three') +
         dynamicFieldHTML('dgValue', 'dgValueLabel', 'Load Value (kW)', {value:80, step:0.1, placeholder:'Enter value in kW'}) +
+        selectHTML('phase', 'Phase Type', [['three','Three Phase'],['single','Single Phase']], 'three', "updatePhaseVoltage('voltage',415,230,'three','single')") +
         fieldHTML('pf', 'Power Factor', {value:0.8, step:0.01}) +
         fieldHTML('voltage', 'Voltage (V)', {value:415}) +
         fieldHTML('margin', 'Safety Margin (%)', {value:20, step:1});
@@ -1259,17 +1281,24 @@
       const v = +document.getElementById('v').value;
       const val = +document.getElementById('motorValue').value;
       const pf = +document.getElementById('pf').value;
+      const eff = (+document.getElementById('motorEff').value || 90) / 100;
       if (!v || !val || !pf){ showError('Enter voltage, load value, and power factor.'); return; }
 
+      // Shaft kW is divided by efficiency to get real electrical input power
+      // before computing current — matches the standalone Motor Current
+      // Calculator (motor-current.html), which this tool previously omitted
+      // (it computed current straight from shaft kW with no efficiency
+      // term, understating the actual current draw).
       let kw, i;
       if (mode === 'amp'){
         i = val;
-        kw = (ph == '3') ? (1.732*v*i*pf)/1000 : (v*i*pf)/1000;
+        kw = ((ph == '3') ? (1.732*v*i*pf)/1000 : (v*i*pf)/1000) * eff;
       } else {
         kw = (mode === 'hp') ? val * 0.746 : val;
-        i = (ph == '3') ? (1000*kw)/(1.732*v*pf) : (1000*kw)/(v*pf);
+        const inputKw = kw / eff;
+        i = (ph == '3') ? (1000*inputKw)/(1.732*v*pf) : (1000*inputKw)/(v*pf);
       }
-      out = `Load = ${kw.toFixed(2)} kW\nFull-Load Current = ${i.toFixed(2)} A`;
+      out = `Shaft Load = ${kw.toFixed(2)} kW\nFull-Load Current = ${i.toFixed(2)} A`;
     }
 
     else if (t === 'hp'){
@@ -1321,9 +1350,13 @@
       }
 
       const kva = kw / pf;
-      const recommended = getRecommended(kva);
+      const kvar = Math.sqrt(Math.max(kva*kva - kw*kw, 0));
+      const marginOn = document.getElementById('txMargin').checked;
+      const sizingKva = marginOn ? kva * 1.2 : kva;
+      const recommended = getRecommended(sizingKva);
+      const sparePct = ((recommended - sizingKva) / recommended) * 100;
 
-      out = `TRANSFORMER RESULT\n\nkVA: ${kva.toFixed(2)}\nRecommended Size: ${recommended} kVA\nkW: ${kw.toFixed(2)}\nHP: ${hp.toFixed(2)}\nAmp: ${amp.toFixed(2)}`;
+      out = `TRANSFORMER RESULT\n\nkVA (calculated): ${kva.toFixed(2)}\nkVAR (reactive): ${kvar.toFixed(2)}\nRecommended Size: ${recommended} kVA${marginOn ? ' (incl. 20% margin)' : ''}\nSpare Capacity: ${sparePct.toFixed(1)}%\nkW: ${kw.toFixed(2)}\nHP: ${hp.toFixed(2)}\nAmp: ${amp.toFixed(2)}`;
     }
 
     else if (t === 'cable'){
@@ -1345,15 +1378,19 @@
         amp = (phase === 'single') ? (kw*1000)/(V*pf) : (kw*1000)/(1.732*V*pf);
       }
 
-      const cable = mat === 'cu'
-        ? (amp<=10?'1.5 sqmm Cu': amp<=16?'2.5 sqmm Cu': amp<=25?'4 sqmm Cu': amp<=32?'6 sqmm Cu':
-           amp<=40?'10 sqmm Cu': amp<=55?'16 sqmm Cu': amp<=70?'25 sqmm Cu': amp<=85?'35 sqmm Cu':
-           amp<=110?'50 sqmm Cu': amp<=140?'70 sqmm Cu': amp<=170?'95 sqmm Cu': amp<=200?'120 sqmm Cu':
-           amp<=240?'150 sqmm Cu': amp<=280?'185 sqmm Cu': amp<=320?'240 sqmm Cu': '400 sqmm Cu')
-        : (amp<=10?'2.5 sqmm Al': amp<=16?'4 sqmm Al': amp<=25?'6 sqmm Al': amp<=32?'10 sqmm Al':
-           amp<=40?'16 sqmm Al': amp<=55?'25 sqmm Al': amp<=70?'35 sqmm Al': amp<=85?'50 sqmm Al':
-           amp<=110?'70 sqmm Al': amp<=140?'95 sqmm Al': amp<=170?'120 sqmm Al': amp<=200?'150 sqmm Al':
-           amp<=240?'185 sqmm Al': amp<=280?'240 sqmm Al': amp<=320?'300 sqmm Al': '400 sqmm Al');
+      // Cable size lookup uses the exact same current-rating tables as the
+      // standalone Cable Size Calculator (cable-size.html) — this tool
+      // previously had its own hardcoded amp thresholds that didn't match
+      // that reference table (e.g. recommending 25 sqmm Cu at 70 A instead
+      // of the correct 80 A rating for 25 sqmm), giving a different, more
+      // conservative answer than the real calculator for the same input.
+      const cableSizesList = [1.5, 2.5, 4, 6, 10, 16, 25, 35, 50, 70, 95, 120, 150, 185, 240, 300, 400];
+      const copperRatingList    = [10,16,25,32,40,63,80,100,125,160,200,250,315,355,400,500,630];
+      const aluminiumRatingList = [null,10,16,25,32,40,63,80,100,125,160,200,250,315,355,400,500];
+      const ratingList = mat === 'cu' ? copperRatingList : aluminiumRatingList;
+      let cableIdx = ratingList.findIndex(r => r !== null && amp <= r);
+      if (cableIdx === -1) cableIdx = cableSizesList.length - 1;
+      const cable = `${cableSizesList[cableIdx]} sqmm ${mat === 'cu' ? 'Cu' : 'Al'}`;
 
       out = `CABLE SIZE RESULT\n\nCalculated Current: ${amp.toFixed(2)} A\nRecommended Cable = ${cable}`;
     }
@@ -1366,10 +1403,18 @@
 
       const volt = (phase == '3') ? 415 : 220;
       const kva = load / pf;
-      const current = (phase == '3') ? (1000*load)/(1.732*volt) : (1000*load)/volt;
+      // Current formula previously omitted PF entirely (used kW directly
+      // instead of kVA), overstating current — matches the standalone UPS
+      // Sizing Calculator (ups-size.html) now, which correctly divides by PF.
+      const current = (phase == '3') ? (1000*load)/(1.732*volt*pf) : (1000*load)/(volt*pf);
 
-      const std = kva<=1?1: kva<=5?5: kva<=10?10: kva<=20?20: kva<=30?30: kva<=50?50:
-                  kva<=100?100: kva<=200?200: kva<=300?300: kva<=400?400: 800;
+      // Standard UPS size list matches ups-size.html's getRecommendedUPS()
+      // table exactly — the old list here was missing several real standard
+      // sizes (2, 3, 7.5, 15, 40, 60, 80, 120, 160, 250, 500, 600, 800, 1000),
+      // so it was rounding up to the wrong (too-large) standard size.
+      const upsSizes = [1,2,3,5,7.5,10,15,20,30,40,50,60,80,100,120,160,200,250,300,400,500,600,800,1000];
+      let std = upsSizes[upsSizes.length - 1];
+      for (let s of upsSizes){ if (kva <= s){ std = s; break; } }
 
       out = `UPS RESULT\n\nPhase: ${phase}\nVoltage: ${volt} V\nkVA: ${kva.toFixed(2)}\nCurrent: ${current.toFixed(2)} A\nStd Size: ${std} kVA`;
     }
