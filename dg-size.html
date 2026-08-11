@@ -27,7 +27,7 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
      crossorigin="anonymous"></script>
 <meta name="description" content="Free DG size calculator. Find the required diesel generator (DG set) capacity in kVA, full-load current, and estimated fuel consumption from your kW load, power factor, voltage, and safety margin.">
-<meta name="keywords" content="DG size calculator, diesel generator sizing, kVA calculator, generator capacity calculator, DG set fuel consumption, kW to kVA generator, generator current rating, standby generator sizing India">
+<meta name="keywords" content="DG size calculator, diesel generator size calculator, generator sizing, genset sizing calculator, kVA calculator, generator capacity calculator, generator kVA calculator, generator fuel consumption">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.electromechcalc.com/dg-size">
 <link rel="icon" href="/favicon.png" type="image/png">
@@ -62,7 +62,7 @@
 }
 </script>
 
-<!-- Structured data: FAQPage -->
+<!-- Structured data: BreadcrumbList -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -88,17 +88,17 @@
     {
       "@type": "Question",
       "name": "How much safety margin should I add?",
-      "acceptedAnswer": { "@type": "Answer", "text": "A margin of 15 to 25 percent is typical for most facilities, covering motor starting surges and future load growth. Installations with large motors starting direct-on-line, or expected expansion, should lean toward the higher end of that range." }
+      "acceptedAnswer": { "@type": "Answer", "text": "There is no universal margin. A planning allowance such as 15 to 25 percent may be used for future load growth and normal operating variation, but motor starting performance should be assessed separately based on starting current, voltage dip, motor size and starting method. Installations with large motors starting direct-on-line, or expected rapid expansion, typically need a larger allowance." }
     },
     {
       "@type": "Question",
       "name": "How accurate is the fuel consumption estimate?",
-      "acceptedAnswer": { "@type": "Answer", "text": "The 0.27 litres per hour per kW figure is a widely used field rule of thumb for diesel gensets running near full load. Actual consumption depends on engine efficiency, altitude, ambient temperature, and how lightly or heavily loaded the generator runs, so always cross-check against the manufacturer's fuel consumption chart for critical sizing." }
+      "acceptedAnswer": { "@type": "Answer", "text": "The 0.27 L/kWh figure is a widely used field rule of thumb for diesel gensets running near full load. Actual fuel consumption depends on engine, load, ambient conditions, altitude and manufacturer data, so always cross-check against the manufacturer's fuel consumption chart for critical sizing." }
     },
     {
       "@type": "Question",
       "name": "Are these calculators accurate enough for professional use?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes, every formula used is the same standard formula taught in electrical engineering coursework and referenced in field handbooks. That said, for safety-critical or code-compliance decisions, always verify results against your local electrical code and have them reviewed by a licensed engineer." }
+      "acceptedAnswer": { "@type": "Answer", "text": "The calculator uses standard electrical sizing formulas and is suitable for preliminary planning and estimation. For safety-critical, procurement, protection, motor-starting, or code-compliance decisions, verify the result against the generator manufacturer's data and applicable local requirements, and have it reviewed by a licensed engineer." }
     },
     {
       "@type": "Question",
@@ -285,6 +285,26 @@
     color:#fff;
     box-shadow:0 4px 10px rgba(14,165,233,0.35);
   }
+  .qv-btn{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    font-weight:600;
+    color:#334155;
+    background:#f1f5f9;
+    border:1px solid #e2e8f0;
+    border-radius:6px;
+    padding:5px 9px;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .qv-btn:hover{ background:#e0f2fe; border-color:#0ea5e9; }
+  .qv-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    border-color:#0ea5e9;
+  }
+  body.dark-theme .qv-btn{ background:#15233a; border-color:#1f2f47; color:#cbd5e1; }
+  body.dark-theme .qv-btn.active{ background:#0ea5e9; color:#fff; border-color:#0ea5e9; }
   .result-tile{
     background:linear-gradient(160deg,#0B1220,#15233a);
   }
@@ -348,7 +368,7 @@
           DG Size Calculator
         </h1>
         <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
-          Free DG set (generator) sizing calculator — enter your connected load in kW to instantly get the correct standard generator kVA rating, full-load current, and fuel consumption.
+          Free DG set (diesel generator) sizing calculator — enter your connected load in kW, HP, or Amp to instantly estimate the required generator kVA, nearest reference size, full-load current, and fuel consumption.
         </p>
       </div>
 
@@ -388,13 +408,21 @@
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="inputType">Input Type</label>
           <select id="inputType" class="input-field mt-2" onchange="toggleLoadInput()">
             <option value="kw">Kilowatt (kW)</option>
-            <option value="hp">Horsepower (HP)</option>
+            <option value="hp">Motor Power (HP)</option>
             <option value="amp">Amp (A)</option>
           </select>
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="loadValueLabel" for="loadValue">Load Value (kW)</label>
           <input id="loadValue" type="number" value="80" step="0.1" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="motorEffField" class="grid grid-cols-2 gap-4 mb-5 hidden">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="motorEff">Motor Efficiency (%)</label>
+          <input id="motorEff" type="number" value="90" step="1" min="1" max="100" class="input-field mt-2">
+          <p class="text-[11px] text-gray-400 mt-1.5">For motor loads, enter the nameplate HP and actual motor efficiency when available — this converts shaft output power to the electrical input power the generator actually supplies.</p>
         </div>
       </div>
 
@@ -405,13 +433,35 @@
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="voltage">Voltage (V)</label>
-          <input id="voltage" type="number" value="415" step="1" class="input-field mt-2">
+          <input id="voltage" type="number" value="415" step="1" min="1" class="input-field mt-2" oninput="syncQuickVoltageActive()">
         </div>
       </div>
 
       <div class="mb-5">
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Common Voltages</span>
+        <div id="qvSingle" class="flex flex-wrap gap-1.5 mt-2 hidden" role="group" aria-label="Quick voltage presets, single phase">
+          <button type="button" class="qv-btn" data-v="120" onclick="setQuickVoltage(120)">120V</button>
+          <button type="button" class="qv-btn" data-v="208" onclick="setQuickVoltage(208)">208V</button>
+          <button type="button" class="qv-btn" data-v="220" onclick="setQuickVoltage(220)">220V</button>
+          <button type="button" class="qv-btn active" data-v="230" onclick="setQuickVoltage(230)">230V</button>
+          <button type="button" class="qv-btn" data-v="240" onclick="setQuickVoltage(240)">240V</button>
+        </div>
+        <div id="qvThree" class="flex flex-wrap gap-1.5 mt-2" role="group" aria-label="Quick voltage presets, three phase">
+          <button type="button" class="qv-btn" data-v="208" onclick="setQuickVoltage(208)">208V</button>
+          <button type="button" class="qv-btn" data-v="380" onclick="setQuickVoltage(380)">380V</button>
+          <button type="button" class="qv-btn" data-v="400" onclick="setQuickVoltage(400)">400V</button>
+          <button type="button" class="qv-btn active" data-v="415" onclick="setQuickVoltage(415)">415V</button>
+          <button type="button" class="qv-btn" data-v="440" onclick="setQuickVoltage(440)">440V</button>
+          <button type="button" class="qv-btn" data-v="460" onclick="setQuickVoltage(460)">460V</button>
+          <button type="button" class="qv-btn" data-v="480" onclick="setQuickVoltage(480)">480V</button>
+          <button type="button" class="qv-btn" data-v="600" onclick="setQuickVoltage(600)">600V</button>
+        </div>
+        <p class="text-[11px] text-gray-400 mt-1.5">Includes common voltage presets used in India, the UK &amp; Europe, the USA &amp; Canada, the Middle East, Australia and South Africa — or enter any custom voltage above.</p>
+      </div>
+
+      <div class="mb-5">
         <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="margin">Safety Margin (%)</label>
-        <input id="margin" type="number" value="20" step="1" min="0" class="input-field mt-2">
+        <input id="margin" type="number" value="20" step="1" min="0" max="100" class="input-field mt-2">
       </div>
 
       <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
@@ -423,8 +473,8 @@
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
         <span class="formula-chip">kVA = kW ÷ PF</span>
         <span class="formula-chip">I = (kVA × 1000) / (√3 × V)</span>
-        <span class="formula-chip">kW ↔ HP = kW × 1.341</span>
-        <span class="formula-chip">Fuel = kW × 0.27 L/hr</span>
+        <span class="formula-chip">Motor: kW = (HP × 0.746) ÷ Efficiency</span>
+        <span class="formula-chip">Fuel = Load kW × 0.27 L/kWh</span>
       </div>
     </div>
 
@@ -433,9 +483,9 @@
 
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full volt-badge opacity-20"></div>
-        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Recommended DG Size</span>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Reference DG Size</span>
         <div id="rResult" class="font-display font-bold text-3xl mt-1 text-white">— kVA</div>
-        <p class="text-xs text-slate-300 mt-1" id="resultSub">Nearest standard DG set size for your load</p>
+        <p class="text-xs text-slate-300 mt-1" id="resultSub">Nearest reference DG set size — actual standard availability varies by manufacturer and region</p>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
@@ -512,7 +562,8 @@
     <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
       <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
       <li><a href="#how-it-works" class="hover:underline">2. Understanding DG sizing</a></li>
-      <li><a href="#faqs" class="hover:underline">3. FAQs</a></li>
+      <li><a href="#dg-by-region" class="hover:underline">3. Sizing by voltage and region</a></li>
+      <li><a href="#faqs" class="hover:underline">4. FAQs</a></li>
     </ul>
   </div>
 </nav>
@@ -527,10 +578,10 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IEC / IEEE / BIS / NEC</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Technical references: IEC / IEEE / BIS / NEC and manufacturer guidance</p>
     </div>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-      <p><strong>DG set sizing rule of thumb:</strong> kVA = kW ÷ 0.8, then add a 20–25% margin for motor starting surges — for example, a steady 80 kW load needs roughly a 100–125 kVA generator, not the bare 100 kVA calculated figure. Sizing a diesel generator (DG set) correctly is a balance between reliability and cost: an undersized generator will stall, overheat, or trip under motor-starting surges and peak demand, while an oversized one runs inefficiently at light load, wastes fuel, and costs more upfront. This calculator estimates the right DG set capacity for a given electrical load by converting the real power demand (kW) into the apparent power (kVA) a generator must be rated for, then matching that figure against standard commercially available DG set sizes. It also estimates the full-load current the DG set will supply and the approximate diesel fuel consumption per hour, both useful figures when planning fuel storage and the outgoing cable or breaker from the generator.</p>
+      <p><strong>DG set sizing rule of thumb:</strong> kVA = kW ÷ 0.8, then add a planning margin for future load growth and normal operating variation — for example, a steady 80 kW load needs roughly a 100–125 kVA generator, not the bare 100 kVA calculated figure. Motor starting performance is a separate consideration from this margin and needs its own starting-kVA or voltage-drop assessment, especially for large motors starting direct-on-line — see the section below. Sizing a diesel generator (DG set) correctly is a balance between reliability and cost: an undersized generator will stall, overheat, or trip under motor-starting surges and peak demand, while an oversized one runs inefficiently at light load, wastes fuel, and costs more upfront. This calculator estimates the right DG set capacity for a given electrical load by converting the real power demand (kW) into the apparent power (kVA) a generator must be rated for, then matching that figure against a reference series of commonly available DG set sizes. It also estimates the full-load current the DG set will supply and the approximate diesel fuel consumption per hour, both useful figures when planning fuel storage and the outgoing cable or breaker from the generator.</p>
 
       <p>The required DG capacity is found from <strong>DG Size (kVA) = Load (kW) ÷ PF</strong>, since a generator's nameplate is always rated in kVA while the actual connected load is usually expressed in kW; dividing by the power factor accounts for the reactive power the generator must also supply. A safety margin is then added on top of this calculated value, since real installations rarely run at a perfectly steady, ideal load — motor starting surges, future load additions, and day-to-day demand fluctuations all call for some spare capacity.</p>
 
@@ -544,13 +595,13 @@
       <p>Real power (kW) is the power that actually does useful work — turning a motor shaft, lighting a bulb, heating an element. Apparent power (kVA) is the total power the generator's alternator and windings must be capable of delivering, including the reactive component absorbed and released by inductive loads such as motors, transformers, and fluorescent or induction lighting ballasts. The ratio between the two is the power factor: kW = kVA × PF. Because the generator's physical winding size and heat dissipation are governed by current (and therefore by kVA, not kW), manufacturers always publish a kVA nameplate rating. A DG set rated 100 kVA at 0.8 PF can deliver 80 kW of real power — trying to draw 100 kW of real load from it, even momentarily, will overload the alternator regardless of the kVA figure on the nameplate.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Why Motor Starting Loads Need Extra Margin</h3>
-      <p>Induction motors, pumps, compressors, and air-conditioning compressors typically draw 5 to 7 times their full-load current for a fraction of a second at start-up (direct-on-line starting). A generator sized only for the steady-state running load can experience a large, sudden voltage dip or stall entirely when such a motor starts, especially if the starting motor represents a large fraction of the total connected load. This is one of the main reasons the standard 15–25% safety margin exists, and why installations with large single motors — borewell pumps, chillers, or big compressors — often need either a larger safety margin, a soft starter/VFD on the motor, or a generator explicitly sized for the starting kVA rather than just the running kVA.</p>
+      <p>Induction motors, pumps, compressors, and air-conditioning compressors typically draw 5 to 7 times their full-load current for a fraction of a second at start-up (direct-on-line starting). A generator sized only for the steady-state running load can experience a large, sudden voltage dip or stall entirely when such a motor starts, especially if the starting motor represents a large fraction of the total connected load. This is one reason a planning margin is commonly applied on top of the calculated running kVA, and why installations with large single motors — borewell pumps, chillers, or big compressors — often need either a larger safety margin, a soft starter/VFD on the motor, or a generator explicitly sized for the starting kVA rather than just the running kVA.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">How to Use This DG Size Calculator</h3>
       <ol class="list-decimal pl-5 space-y-1">
         <li><strong>Select the phase type</strong> — single phase for smaller domestic or shop loads, three phase for industrial and commercial installations.</li>
         <li><strong>Enter the connected load in kW</strong> and the expected power factor (typically 0.8 for a mixed motor and lighting load; check your electricity bill or panel meter for a more accurate figure).</li>
-        <li><strong>Enter the supply voltage</strong> (commonly 230 V single-phase or 415 V three-phase in India) and a safety margin percentage — 15–25% covers most general-purpose backup applications.</li>
+        <li><strong>Enter the supply voltage</strong> (commonly 230V single-phase or 400/415V three-phase, or use the quick presets for your region) and a safety margin percentage as a planning allowance — the appropriate value depends on your motor starting loads and expected expansion.</li>
         <li>Click <em>Calculate DG Size</em> to see the recommended standard DG capacity in kVA, the full-load output current, and the estimated diesel consumption per hour.</li>
       </ol>
 
@@ -563,7 +614,7 @@
         <li><strong>Confusing standby and prime power ratings.</strong> A generator rated for occasional standby duty is not necessarily suitable for continuous, daily prime power operation at the same load — check the manufacturer's duty rating.</li>
       </ul>
 
-      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Typical DG Set Sizes and Common Applications</h3>
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Illustrative DG Capacity Ranges and Common Applications</h3>
       <div class="overflow-x-auto my-3">
         <table class="breakdown-table" style="min-width:480px;">
           <thead>
@@ -578,7 +629,39 @@
           </tbody>
         </table>
       </div>
-      <p class="text-xs text-gray-400">Figures are indicative only. Always confirm exact standard DG set sizes and duty ratings with the manufacturer's catalogue.</p>
+      <p class="text-xs text-gray-400">These are illustrative capacity ranges for context, not an exact match to this calculator's reference series — actual available DG set sizes vary by manufacturer and region. Always confirm exact standard sizes and duty ratings with the manufacturer's catalogue.</p>
+    </div>
+  </div>
+</section>
+
+<section id="dg-by-region" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">International Sizing</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-5">DG Sizing by Voltage and Region</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>The kVA sizing formula itself (kVA = kW ÷ PF) is universal — only the supply voltage, and which reference kVA sizes are locally common, change by region. This calculator supports common low-voltage generator output voltages used across India, the UK and Europe, the USA and Canada, the Middle East, Australia, and South Africa, plus any custom voltage.</p>
+    </div>
+    <div class="not-prose overflow-x-auto my-4">
+      <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-4 py-2 font-semibold">Region</th>
+            <th class="text-left px-4 py-2 font-semibold">Common Low-Voltage Generator Output</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr><td class="px-4 py-2">India</td><td class="px-4 py-2">415V three-phase / 230V single-phase</td></tr>
+          <tr><td class="px-4 py-2">UK &amp; Europe</td><td class="px-4 py-2">400V three-phase / 230V single-phase</td></tr>
+          <tr><td class="px-4 py-2">USA</td><td class="px-4 py-2">480V or 208V three-phase (varies by facility)</td></tr>
+          <tr><td class="px-4 py-2">Canada</td><td class="px-4 py-2">600V or 208V three-phase (varies by facility)</td></tr>
+          <tr><td class="px-4 py-2">Australia</td><td class="px-4 py-2">400V three-phase / 230V single-phase</td></tr>
+          <tr><td class="px-4 py-2">Middle East</td><td class="px-4 py-2">400V three-phase / 230V single-phase</td></tr>
+          <tr><td class="px-4 py-2">South Africa</td><td class="px-4 py-2">400V three-phase / 230V single-phase</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>For a given kW load and power factor, the DG kVA demand itself doesn't depend on voltage — voltage mainly determines the resulting line current. Which DG set sizes are readily available, and their standard step sizes, varies by manufacturer and region; treat the reference rating from this calculator as a planning starting point, then confirm actual standard availability with your local DG supplier before specifying.</p>
     </div>
   </div>
 </section>
@@ -605,7 +688,7 @@
         How much safety margin should I add?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A margin of 15–25% is typical for most facilities, covering motor starting surges and future load growth. Installations with large motors starting direct-on-line, or expected expansion, should lean toward the higher end of that range.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">There is no universal margin. A planning allowance such as 15–25% may be used for future load growth and normal operating variation, but motor starting performance should be assessed separately based on starting current, voltage dip, motor size and starting method. Installations with large motors starting direct-on-line, or expected rapid expansion, typically need a larger allowance.</p>
     </details>
 
     <details class="py-5">
@@ -613,7 +696,7 @@
         How accurate is the fuel consumption estimate?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The 0.27 L/hr per kW figure is a widely used field rule of thumb for diesel gensets running near full load. Actual consumption depends on engine efficiency, altitude, ambient temperature, and how lightly or heavily loaded the generator runs, so always cross-check against the manufacturer's fuel consumption chart for critical sizing.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The 0.27 L/kWh figure is a widely used field rule of thumb for diesel gensets running near full load. Actual fuel consumption depends on engine, load, ambient conditions, altitude and manufacturer data, so always cross-check against the manufacturer's fuel consumption chart for critical sizing.</p>
     </details>
 
     <details class="py-5">
@@ -621,7 +704,7 @@
         Are these calculators accurate enough for professional use?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — every formula used is the same standard formula taught in electrical engineering coursework and referenced in field handbooks. That said, for safety-critical or code-compliance decisions, always verify results against your local electrical code and have them reviewed by a licensed engineer.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The calculator uses standard electrical sizing formulas and is suitable for preliminary planning and estimation. For safety-critical, procurement, protection, motor-starting, or code-compliance decisions, verify the result against the generator manufacturer's data and applicable local requirements, and have it reviewed by a licensed engineer.</p>
     </details>
 
     <details class="py-5">
@@ -706,7 +789,7 @@
   const root3 = 1.732;
 
   const dgSizes = [
-    15,25,30,40,50,62.5,75,82.5,100,125,160,
+    5,7.5,10,15,20,25,30,40,50,62.5,75,82.5,100,125,160,
     200,250,320,380,500,625,750,1000,1250,
     1500,2000,2500
   ];
@@ -716,23 +799,44 @@
     document.getElementById('phase1').classList.toggle('active', p === 'single');
     document.getElementById('phase3').classList.toggle('active', p === 'three');
     document.getElementById('voltage').value = p === 'three' ? 415 : 230;
+    document.getElementById('qvSingle').classList.toggle('hidden', p!=='single');
+    document.getElementById('qvThree').classList.toggle('hidden', p!=='three');
+    syncQuickVoltageActive();
     calculate();
+  }
+
+  function setQuickVoltage(v){
+    document.getElementById('voltage').value = v;
+    syncQuickVoltageActive();
+    calculate();
+  }
+
+  function syncQuickVoltageActive(){
+    const current = parseFloat(document.getElementById('voltage').value);
+    document.querySelectorAll('.qv-btn').forEach(function(btn){
+      btn.classList.toggle('active', parseFloat(btn.dataset.v) === current);
+    });
   }
 
   function toggleLoadInput(){
     const type = document.getElementById('inputType').value;
     const label = document.getElementById('loadValueLabel');
     const input = document.getElementById('loadValue');
+    const effField = document.getElementById('motorEffField');
     if(type === 'hp'){
       label.textContent = 'Load Value (HP)';
       input.placeholder = 'Enter value in HP';
+      effField.classList.remove('hidden');
     } else if(type === 'amp'){
       label.textContent = 'Load Value (Amp)';
       input.placeholder = 'Enter value in Amp';
+      effField.classList.add('hidden');
     } else {
       label.textContent = 'Load Value (kW)';
       input.placeholder = 'Enter value in kW';
+      effField.classList.add('hidden');
     }
+    calculate();
   }
 
   function calculate(){
@@ -741,6 +845,7 @@
     const pf = parseFloat(document.getElementById('pf').value);
     const voltage = parseFloat(document.getElementById('voltage').value);
     let margin = parseFloat(document.getElementById('margin').value);
+    const motorEffPct = parseFloat(document.getElementById('motorEff').value);
 
     const validationBox = document.getElementById('validationBox');
     const errors = [];
@@ -748,6 +853,9 @@
     if (isNaN(pf) || pf <= 0 || pf > 1){ errors.push('Power Factor must be between 0 and 1.'); }
     if (isNaN(voltage) || voltage <= 0){ errors.push('Voltage must be greater than 0.'); }
     if (isNaN(margin) || margin < 0){ margin = 0; }
+    if (margin > 100){ errors.push('Safety Margin should realistically be 100% or less — please double-check this value.'); }
+    const effInvalid = inputType === 'hp' && (isNaN(motorEffPct) || motorEffPct <= 0 || motorEffPct > 100);
+    if (effInvalid){ errors.push('Motor Efficiency must be between 1% and 100%.'); }
 
     if (errors.length){
       validationBox.classList.remove('hidden');
@@ -763,8 +871,9 @@
 
     const phaseLabel = currentPhase === 'single' ? 'Single-phase' : 'Three-phase';
 
-    // ---- Load in kW, HP, Amp (same conversion logic as Transformer Size Calculator) ----
+    // ---- Load in kW, HP, Amp ----
     let kw = 0, hp = 0, amp = 0;
+    let hpLabel = 'HP equivalent';
     if (inputType === 'kw'){
       kw  = loadValue;
       hp  = kw * 1.341;
@@ -773,7 +882,9 @@
           : (kw * 1000) / (root3 * voltage * pf);
     } else if (inputType === 'hp'){
       hp  = loadValue;
-      kw  = hp / 1.341;
+      hpLabel = 'HP nameplate';
+      const eff = motorEffPct / 100;
+      kw  = (hp / 1.341) / eff;
       amp = currentPhase === 'single'
           ? (kw * 1000) / (voltage * pf)
           : (kw * 1000) / (root3 * voltage * pf);
@@ -794,9 +905,35 @@
 
     const fuel = kw * 0.27;
 
-    let recommended = dgSizes[dgSizes.length - 1];
+    let recommended = null;
     for (let i = 0; i < dgSizes.length; i++){
       if (kva <= dgSizes[i]){ recommended = dgSizes[i]; break; }
+    }
+
+    if (recommended === null){
+      document.getElementById('rResult').textContent = 'Above ' + dgSizes[dgSizes.length - 1] + ' kVA';
+      document.getElementById('resultSub').textContent = 'Custom/utility-specific DG selection required — see note below';
+      document.getElementById('detailBox').textContent =
+`Phase Type: ${phaseLabel}
+Load: ${kw.toFixed(2)} kW (${amp.toFixed(2)} A)
+Base DG Capacity (no margin): ${baseKva.toFixed(2)} kVA
+Safety Margin Applied: ${margin}%
+Required DG Capacity (with margin): ${kva.toFixed(2)} kVA
+Calculated Current: ${current.toFixed(2)} A
+Estimated Fuel Consumption: ${fuel.toFixed(2)} L/hr
+
+The required capacity is above this calculator's reference series (up to ${dgSizes[dgSizes.length - 1]} kVA). Generators this large are typically custom-configured or paralleled sets — get an engineering review from your DG manufacturer or consultant rather than reading a size off a standard table.`;
+      document.getElementById('formulaBox').textContent =
+`Base kVA = kW ÷ PF
+Base kVA = ${kw.toFixed(2)} ÷ ${pf}
+Base kVA = ${baseKva.toFixed(2)} kVA
+
+kVA with Margin = Base kVA × (1 + Margin% ÷ 100)
+kVA with Margin = ${baseKva.toFixed(2)} × (1 + ${margin} ÷ 100)
+kVA with Margin = ${kva.toFixed(2)} kVA
+
+Above the ${dgSizes[dgSizes.length - 1]} kVA reference series — engineering review required.`;
+      return;
     }
 
     document.getElementById('rResult').textContent = recommended + ' kVA';
@@ -804,12 +941,12 @@
 
     document.getElementById('detailBox').textContent =
 `Phase Type: ${phaseLabel}
-Load: ${kw.toFixed(2)} kW (${hp.toFixed(2)} HP / ${amp.toFixed(2)} A)
+Load: ${kw.toFixed(2)} kW (${amp.toFixed(2)} A)
 Base DG Capacity (no margin): ${baseKva.toFixed(2)} kVA
 Safety Margin Applied: ${margin}%
 Required DG Capacity (with margin): ${kva.toFixed(2)} kVA
 Calculated Current: ${current.toFixed(2)} A
-Recommended DG Size: ${recommended} kVA
+Reference DG Size: ${recommended} kVA
 Estimated Fuel Consumption: ${fuel.toFixed(2)} L/hr`;
 
     const currentFormulaText = currentPhase === 'single'
@@ -828,7 +965,7 @@ kVA with Margin = ${kva.toFixed(2)} kVA
 ${currentFormulaText}
 I = ${current.toFixed(2)} A
 
-Fuel (L/hr) = kW × 0.27
+Fuel (L/hr) = Load kW × 0.27 L/kWh
 Fuel (L/hr) = ${kw.toFixed(2)} × 0.27
 Fuel (L/hr) = ${fuel.toFixed(2)} L/hr`;
   }

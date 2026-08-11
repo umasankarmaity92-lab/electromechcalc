@@ -106,8 +106,8 @@
     },
     {
       "@type": "Question",
-      "name": "What size cable do I need for a given current in India?",
-      "acceptedAnswer": { "@type": "Answer", "text": "As a rough guide under IS 7098-based free-air ratings, a 4 sq.mm copper cable is typically good for around 25 A, 6 sq.mm for around 32 A, and 10 sq.mm for around 40 A, but the exact figure depends on insulation type, installation method, ambient temperature, and grouping, which is why this calculator also applies a length-based voltage drop check." }
+      "name": "What size cable do I need for a given current?",
+      "acceptedAnswer": { "@type": "Answer", "text": "As a rough guide under IS 7098-based free-air ratings (representative of IEC-family mm² sizing used across India, the UK and Europe, the Middle East, Australia, and South Africa), a 4 sq.mm copper cable is typically good for around 25 A, 6 sq.mm for around 32 A, and 10 sq.mm for around 40 A, but the exact figure depends on insulation type, installation method, ambient temperature, and grouping, which is why this calculator also applies a length-based voltage drop check. The USA and Canada use a different, AWG-based sizing system instead of mm²." }
     },
     {
       "@type": "Question",
@@ -284,6 +284,26 @@
     color:#fff;
     box-shadow:0 4px 10px rgba(14,165,233,0.35);
   }
+  .qv-btn{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    font-weight:600;
+    color:#334155;
+    background:#f1f5f9;
+    border:1px solid #e2e8f0;
+    border-radius:6px;
+    padding:5px 9px;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .qv-btn:hover{ background:#e0f2fe; border-color:#0ea5e9; }
+  .qv-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    border-color:#0ea5e9;
+  }
+  body.dark-theme .qv-btn{ background:#15233a; border-color:#1f2f47; color:#cbd5e1; }
+  body.dark-theme .qv-btn.active{ background:#0ea5e9; color:#fff; border-color:#0ea5e9; }
   .hidden-field{ display:none !important; }
   .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
   .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
@@ -445,12 +465,26 @@
       <div class="grid sm:grid-cols-2 gap-4 mb-5">
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="voltage">Supply Voltage (V)</label>
-          <input id="voltage" type="number" value="415" step="1" placeholder="e.g. 415" class="input-field mt-2">
+          <input id="voltage" type="number" value="415" step="1" placeholder="e.g. 415" class="input-field mt-2" oninput="syncQuickVoltageActive()">
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pf">Power Factor</label>
           <input id="pf" type="number" value="0.85" step="0.01" min="0.1" max="1" placeholder="e.g. 0.85" class="input-field mt-2">
         </div>
+      </div>
+
+      <div class="mb-5">
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Common Voltages</span>
+        <div class="flex flex-wrap gap-1.5 mt-2" role="group" aria-label="Quick voltage presets">
+          <button type="button" class="qv-btn" data-v="230" onclick="setQuickVoltage(230)">230V</button>
+          <button type="button" class="qv-btn" data-v="240" onclick="setQuickVoltage(240)">240V</button>
+          <button type="button" class="qv-btn" data-v="380" onclick="setQuickVoltage(380)">380V</button>
+          <button type="button" class="qv-btn" data-v="400" onclick="setQuickVoltage(400)">400V</button>
+          <button type="button" class="qv-btn active" data-v="415" onclick="setQuickVoltage(415)">415V</button>
+          <button type="button" class="qv-btn" data-v="440" onclick="setQuickVoltage(440)">440V</button>
+          <button type="button" class="qv-btn" data-v="690" onclick="setQuickVoltage(690)">690V</button>
+        </div>
+        <p class="text-[11px] text-gray-400 mt-1.5">Includes common voltage presets used in India, UK &amp; Europe, the Middle East, Australia and South Africa — or enter any custom voltage above. This calculator sizes cables in mm² (the metric standard used across these regions); the USA and Canada size cables in AWG/kcmil under the NEC/CEC instead, which this calculator does not cover.</p>
       </div>
 
       <div class="grid sm:grid-cols-2 gap-4 mb-5">
@@ -501,7 +535,7 @@
             <span id="rCurrent" class="font-display font-semibold text-lg text-white">— A</span>
           </div>
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Recommended MCCB</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Estimated MCCB Rating</span>
             <span id="rMccb" class="font-display font-semibold text-lg text-white">— A</span>
           </div>
         </div>
@@ -578,8 +612,9 @@
     <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
       <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
       <li><a href="#how-it-works" class="hover:underline">2. Understanding cable sizing</a></li>
-      <li><a href="#cs-derating" class="hover:underline">3. Derating factors in detail</a></li>
-      <li><a href="#faqs" class="hover:underline">4. FAQs</a></li>
+      <li><a href="#cs-by-region" class="hover:underline">3. Sizing by voltage and region</a></li>
+      <li><a href="#cs-derating" class="hover:underline">4. Derating factors in detail</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
     </ul>
   </div>
 </nav>
@@ -597,7 +632,7 @@
     </div>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
 
-      <p><strong>Cable size (mm²) depends on your load current and cable length.</strong> As a quick rule of thumb: a 2.5 mm² copper cable handles roughly 20–24 A, 4 mm² handles ~28–32 A, 6 mm² handles ~32–40 A, and 10 mm² handles ~45–55 A in free air — but for runs over 30 m, always check the voltage-drop-adjusted size below rather than the base current rating alone. Choosing the correct cable size is one of the most fundamental — and most frequently rushed — steps in any electrical installation. Undersize a cable and it can overheat, degrade its insulation, and become a fire risk. Oversize it by too much and you pay for copper or aluminium you don't need. This calculator estimates the right cable cross-sectional area for a given electrical load by first finding the full-load current from voltage, power, and power factor, then matching that current against a standard current-carrying-capacity table for copper or aluminium conductors. It also applies a length-based derating step, since longer cable runs suffer greater voltage drop and resistive losses, often requiring the next size up even when the base current rating would technically suffice.</p>
+      <p>This <strong>cable size calculator</strong> works as a wire size calculator, an mm²-to-amps calculator, and an IS 7098-based cable size chart in one tool. <strong>Cable size (mm²) depends on your load current and cable length.</strong> As a quick rule of thumb: a 2.5 mm² copper cable handles roughly 20–24 A, 4 mm² handles ~28–32 A, 6 mm² handles ~32–40 A, and 10 mm² handles ~45–55 A in free air — but for runs over 30 m, always check the voltage-drop-adjusted size below rather than the base current rating alone. Choosing the correct cable size is one of the most fundamental — and most frequently rushed — steps in any electrical installation. Undersize a cable and it can overheat, degrade its insulation, and become a fire risk. Oversize it by too much and you pay for copper or aluminium you don't need. This calculator estimates the right cable cross-sectional area for a given electrical load by first finding the full-load current from voltage, power, and power factor, then matching that current against a standard current-carrying-capacity table for copper or aluminium conductors. It also applies a length-based derating step, since longer cable runs suffer greater voltage drop and resistive losses, often requiring the next size up even when the base current rating would technically suffice.</p>
 
       <p>The current is derived from the same single-phase and three-phase relationships used throughout electrical sizing: for single-phase, I = (kW × 1000) ÷ (V × PF), and for three-phase, I = (kW × 1000) ÷ (√3 × V × PF). Once current is known, it's checked against a cable size table (sized differently for copper vs aluminium, since aluminium has lower conductivity and needs a larger cross-section for the same current). For runs longer than 30 m, the calculator bumps the cable size up a step or more to compensate for voltage drop over distance, and a matching MCCB rating is suggested based on the same calculated current.</p>
 
@@ -612,6 +647,10 @@
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Cable Sizing Standards Referenced (IS 7098 / IEC 60364)</h3>
       <p>In India, low-voltage power and control cables are commonly manufactured and rated to IS 7098 (PVC insulated cables) and related IS/IEC standards, while installation practices for derating and voltage drop typically follow IEC 60364 principles. These standards publish current-carrying capacity tables for different conductor sizes, insulation types, and installation methods (free air, tray, conduit, buried), along with correction factors for ambient temperature, grouping of multiple circuits, and soil resistivity for buried cables. The current-carrying capacity values and conductor resistance figures used in this calculator are representative, single-core, PVC-insulated, free-air/tray reference values commonly seen in such tables — useful for quick, preliminary sizing, but not a substitute for the full derated table specific to your exact installation condition.</p>
+
+      <h3 id="cs-by-region" class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Cable Sizing by Voltage and Region</h3>
+      <p>Cable size depends on load current, cable length, conductor material, and the local supply voltage — this calculator supports common low-voltage supplies used across India, the UK and Europe, the Middle East, Australia, and South Africa, plus any custom voltage. All of these regions size cables in <strong>mm² (square millimetres)</strong> under IEC-family standards (IS 7098 in India, BS 7671/IEC in the UK and Europe, AS/NZS in Australia), which is what this calculator uses throughout.</p>
+      <p>The <strong>USA and Canada</strong> are the notable exception: they size conductors in <strong>AWG or kcmil</strong> under the NEC (NFPA 70) or CEC/CSA C22.1, using different reference ampacity tables (e.g. NEC Table 310.16) rather than a metric mm² chart. Because that's a genuinely different sizing system, not just a unit conversion, this calculator does not attempt to output an AWG size — use an AWG-based wire size calculator or the NEC/CEC ampacity table for a USA or Canadian installation.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">How to Use This Cable Size Calculator</h3>
       <p>Getting an accurate recommendation only takes four inputs:</p>
@@ -752,10 +791,10 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        What size cable do I need for a given current in India?
+        What size cable do I need for a given current?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">As a rough guide under IS 7098-based free-air ratings, a 4 sq.mm copper cable is typically good for around 25 A, 6 sq.mm for around 32 A, and 10 sq.mm for around 40 A. The exact figure depends on insulation type, installation method, ambient temperature, and grouping with other cables, which is why this calculator also applies a length-based voltage drop check rather than relying on current rating alone. See the reference chart above for the full range of sizes.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">As a rough guide under IS 7098-based free-air ratings (representative of the IEC-family mm² sizing used across India, the UK and Europe, the Middle East, Australia, and South Africa), a 4 sq.mm copper cable is typically good for around 25 A, 6 sq.mm for around 32 A, and 10 sq.mm for around 40 A. The exact figure depends on insulation type, installation method, ambient temperature, and grouping with other cables, which is why this calculator also applies a length-based voltage drop check rather than relying on current rating alone. The USA and Canada use AWG-based sizing instead — see the reference chart above for the mm² range covered here.</p>
     </details>
 
     <details class="py-5">
@@ -829,6 +868,19 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
     document.getElementById('phaseSingle').classList.toggle('active', type === 'single');
     document.getElementById('phaseThree').classList.toggle('active', type === 'three');
     document.getElementById('voltage').value = type === 'three' ? 415 : 230;
+    syncQuickVoltageActive();
+  }
+
+  function setQuickVoltage(v){
+    document.getElementById('voltage').value = v;
+    syncQuickVoltageActive();
+  }
+
+  function syncQuickVoltageActive(){
+    const current = parseFloat(document.getElementById('voltage').value);
+    document.querySelectorAll('.qv-btn').forEach(function(btn){
+      btn.classList.toggle('active', parseFloat(btn.dataset.v) === current);
+    });
   }
 
   function setMaterial(type){
