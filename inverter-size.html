@@ -37,7 +37,7 @@
   "url": "https://www.electromechcalc.com/inverter-size",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free online calculator to determine the correct inverter VA/kVA rating for a home or office load, including surge requirement and the nearest standard commercial inverter size.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -74,7 +74,7 @@
     {
       "@type": "Question",
       "name": "Why round up to a standard commercial inverter size?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Manufacturers only produce inverters in a fixed set of VA ratings such as 650, 850, 1100, 1600, and 2000 VA. Rounding your calculated requirement up to the next available size ensures you can actually purchase a matching unit, rather than being stuck between two standard ratings." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Manufacturers commonly offer inverters in a range of standard VA ratings such as 650, 850, 1100, 1600, and 2000 VA, though the exact lineup varies by manufacturer and region. Rounding your calculated requirement up to the next available size improves the odds you can actually purchase a matching unit, rather than being stuck between two standard ratings." }
     },
     {
       "@type": "Question",
@@ -255,6 +255,9 @@
     padding:10px 8px;
     font-size:13px;
     font-weight:600;
+    font-family:inherit;
+    border:none;
+    background:transparent;
     border-radius:8px;
     cursor:pointer;
     color:#64748b;
@@ -265,6 +268,26 @@
     color:#fff;
     box-shadow:0 4px 10px rgba(14,165,233,0.35);
   }
+  .qv-btn{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    font-weight:600;
+    color:#334155;
+    background:#f1f5f9;
+    border:1px solid #e2e8f0;
+    border-radius:6px;
+    padding:5px 9px;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .qv-btn:hover{ background:#e0f2fe; border-color:#0ea5e9; }
+  .qv-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    border-color:#0ea5e9;
+  }
+  body.dark-theme .qv-btn{ background:#15233a; border-color:#1f2f47; color:#cbd5e1; }
+  body.dark-theme .qv-btn.active{ background:#0ea5e9; color:#fff; border-color:#0ea5e9; }
   .result-tile{
     background:linear-gradient(160deg,#0B1220,#15233a);
   }
@@ -351,8 +374,8 @@
       <div class="mb-5">
         <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_inverter_size">Phase Type</span>
         <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_inverter_size">
-          <div id="phase1" class="toggle-btn active" onclick="setPhase('single')">Single Phase</div>
-          <div id="phase3" class="toggle-btn" onclick="setPhase('three')">Three Phase</div>
+          <button type="button" id="phase1" class="toggle-btn active" aria-pressed="true" onclick="setPhase('single')">Single Phase</button>
+          <button type="button" id="phase3" class="toggle-btn" aria-pressed="false" onclick="setPhase('three')">Three Phase</button>
         </div>
       </div>
 
@@ -374,12 +397,34 @@
       <div class="grid grid-cols-2 gap-4 mb-5">
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="voltage">Voltage (V)</label>
-          <input id="voltage" type="number" value="230" step="1" class="input-field mt-2">
+          <input id="voltage" type="number" value="230" step="1" min="1" class="input-field mt-2" oninput="syncQuickVoltageActive()">
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="powerFactor">Power Factor of Load</label>
           <input id="powerFactor" type="number" value="0.8" step="0.01" min="0.01" max="1" placeholder="0.5–1 typical" class="input-field mt-2">
         </div>
+      </div>
+
+      <div class="mb-5">
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Common Voltages</span>
+        <div id="qvSingle" class="flex flex-wrap gap-1.5 mt-2" role="group" aria-label="Quick voltage presets, single phase">
+          <button type="button" class="qv-btn" data-v="120" onclick="setQuickVoltage(120)">120V</button>
+          <button type="button" class="qv-btn" data-v="208" onclick="setQuickVoltage(208)">208V</button>
+          <button type="button" class="qv-btn" data-v="220" onclick="setQuickVoltage(220)">220V</button>
+          <button type="button" class="qv-btn active" data-v="230" onclick="setQuickVoltage(230)">230V</button>
+          <button type="button" class="qv-btn" data-v="240" onclick="setQuickVoltage(240)">240V</button>
+        </div>
+        <div id="qvThree" class="flex flex-wrap gap-1.5 mt-2 hidden" role="group" aria-label="Quick voltage presets, three phase">
+          <button type="button" class="qv-btn" data-v="208" onclick="setQuickVoltage(208)">208V</button>
+          <button type="button" class="qv-btn" data-v="380" onclick="setQuickVoltage(380)">380V</button>
+          <button type="button" class="qv-btn" data-v="400" onclick="setQuickVoltage(400)">400V</button>
+          <button type="button" class="qv-btn" data-v="415" onclick="setQuickVoltage(415)">415V</button>
+          <button type="button" class="qv-btn" data-v="440" onclick="setQuickVoltage(440)">440V</button>
+          <button type="button" class="qv-btn" data-v="460" onclick="setQuickVoltage(460)">460V</button>
+          <button type="button" class="qv-btn" data-v="480" onclick="setQuickVoltage(480)">480V</button>
+          <button type="button" class="qv-btn" data-v="600" onclick="setQuickVoltage(600)">600V</button>
+        </div>
+        <p class="text-[11px] text-gray-400 mt-1.5">Includes common voltage presets used in India, the UK &amp; Europe, North America, the Middle East, Australia and South Africa — or enter any custom voltage above.</p>
       </div>
 
       <label class="flex items-center gap-2.5 mb-4 cursor-pointer select-none">
@@ -397,6 +442,7 @@
           <input id="surgeMultiplier" type="number" value="3" step="0.1" min="1" class="input-field mt-2">
         </div>
       </div>
+      <p class="text-[11px] text-gray-400 -mt-3 mb-5">This motor's running watts should already be included in your total connected load above — the surge calculation accounts for the rest of the load staying on plus this motor's own startup spike, not the motor's surge in isolation.</p>
 
       <div class="grid grid-cols-2 gap-4 mb-5">
         <div>
@@ -421,19 +467,19 @@
         <span class="formula-chip">Amp input: VA = V × A (direct)</span>
         <span class="formula-chip">kW ↔ HP = kW × 1.341</span>
         <span class="formula-chip">Inverter VA = VA × (1 + Margin%)</span>
-        <span class="formula-chip">Surge (W) = Motor W × Multiplier</span>
+        <span class="formula-chip">Surge (W) = (Total Load − Motor Running W) + (Motor Running W × Multiplier)</span>
         <span class="formula-chip">Battery-side Input (W) = Load W ÷ Efficiency</span>
       </div>
     </div>
 
     <!-- RESULT PANEL -->
-    <div class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
 
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full volt-badge opacity-20"></div>
-        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400">Recommended Inverter</span>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400">Reference Inverter Size</span>
         <div id="rRecommended" class="font-display font-bold text-3xl mt-1 text-white">— kVA</div>
-        <p class="text-xs text-slate-300 mt-1" id="rRecommendedKva">Nearest standard commercial rating</p>
+        <p class="text-xs text-slate-300 mt-1" id="rRecommendedKva">Nearest reference rating — actual standard availability varies by manufacturer and region</p>
       </div>
 
       <div class="grid grid-cols-2 gap-4">
@@ -522,8 +568,9 @@
     <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
       <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
       <li><a href="#how-it-works" class="hover:underline">2. Understanding inverter sizing</a></li>
-      <li><a href="#inv-battery" class="hover:underline">3. Matching battery bank to inverter</a></li>
-      <li><a href="#faqs" class="hover:underline">4. FAQs</a></li>
+      <li><a href="#inv-by-region" class="hover:underline">3. Sizing by voltage and region</a></li>
+      <li><a href="#inv-battery" class="hover:underline">4. Matching battery bank to inverter</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
     </ul>
   </div>
 </nav>
@@ -538,18 +585,18 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IEC / IEEE / BIS / NEC</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Engineering references: this calculator uses common electrical power and inverter sizing relationships; applicable IEC, IEEE, BIS, NEC, and local requirements should be checked for the specific installation.</p>
     </div>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
       <p><strong>Inverter sizing formula:</strong> Inverter VA = Total Load (W) ÷ Power Factor — for example, a 1000 W load at PF 0.8 needs a 1250 VA inverter as a baseline, before adding margin for motor-starting surge. An inverter converts stored DC battery power into the AC power your appliances need, and it has to be rated for two different things at once: the apparent power (VA) of everything running continuously, and the much higher surge power needed for a fraction of a second when a motor-based appliance — a fridge, pump, or air conditioner — starts up. Sizing for running watts alone is one of the most common reasons an inverter trips or fails shortly after installation.</p>
 
       <p>Since most household and office loads aren't purely resistive, the total watt figure has to be converted to VA using the load's power factor, because the inverter is limited by the apparent power it can deliver, not just the real power: <strong>Apparent Power (VA) = Total Watts ÷ Power Factor</strong>. A safety margin is then added on top to account for voltage sag, future load growth, and the fact that no inverter should be run right at its rated limit continuously: <strong>Recommended Inverter (VA) = Apparent Power × (1 + Safety Margin%)</strong>.</p>
 
-      <p>Separately, the surge rating must cover the single largest motor-driven appliance's startup current, since capacitor-start motors like pumps and compressors typically draw 2 to 7 times their running wattage for a second or two at switch-on — even if the inverter's continuous rating is otherwise more than enough: <strong>Surge Requirement (W) = Highest Motor Running Watts × Surge Multiplier</strong>. The chosen inverter's surge rating must always be greater than or equal to this figure.</p>
+      <p>Separately, the surge rating must cover the total instantaneous demand at the moment the single largest motor-driven appliance switches on, not just that motor's own surge in isolation — capacitor-start motors like pumps and compressors can often draw roughly 2 to 7 times their running wattage for a second or two at switch-on, and the rest of the connected load typically keeps drawing its usual power at the same time. This calculator models that as: <strong>Surge Requirement (W) = (Total Load − Motor's Running Watts) + (Motor's Running Watts × Surge Multiplier)</strong> — the load that isn't the starting motor stays roughly constant, while the motor itself jumps from its running watts to its surge watts. The chosen inverter's surge rating must always be greater than or equal to this figure; actual multipliers vary significantly by motor type, starting method, and manufacturer, so check the nameplate or datasheet where precision matters.</p>
 
-      <p>Once the recommended VA is known, this calculator also matches it against the common commercial inverter sizes sold in the market — 650, 850, 1100, 1600, 2000 (2 kVA), 3000, 3500, 5000, 7500, and 10,000 VA — and suggests the smallest standard size that comfortably covers your calculated requirement, since inverters are rarely sold in arbitrary VA ratings.</p>
+      <p>Once the recommended VA is known, this calculator also matches it against common commercially available inverter sizes — 650, 850, 1100, 1600, 2000 (2 kVA), 3000, 3500, 5000, 7500, and 10,000 VA and beyond — and suggests the smallest reference size that comfortably covers your calculated requirement, since inverters are rarely sold in arbitrary VA ratings; actual standard availability varies by manufacturer and region. If your load is given in HP, note that HP is treated as a direct 0.746 kW power conversion here — for motor nameplate HP, actual electrical input power may be higher due to motor losses, so for the most accurate result use a measured/input kW figure where available.</p>
 
-      <p><span class="font-semibold text-brandDark">Worked example:</span> A home with 1,100 W of continuous load (lights, fans, TV, router) at a 0.8 power factor needs 1,100 ÷ 0.8 = 1,375 VA. Adding a 25% safety margin: 1,375 × 1.25 ≈ 1,719 VA, so the nearest standard size — 1800 VA (1.8 kVA) — would be selected. If the highest motor load is a 200 W fridge compressor with a 3x surge multiplier, the surge requirement is 200 × 3 = 600 W — comfortably within a 1.8 kVA inverter's surge capability, which is typically rated well above its continuous VA.</p>
+      <p><span class="font-semibold text-brandDark">Worked example:</span> A home with 1,100 W of continuous load (lights, fans, TV, router, and a 200 W fridge compressor) at a 0.8 power factor needs 1,100 ÷ 0.8 = 1,375 VA. Adding a 25% safety margin: 1,375 × 1.25 ≈ 1,719 VA, so the nearest standard size — 1800 VA (1.8 kVA) — would be selected. If the fridge compressor has a 3× surge multiplier, the surge requirement is the rest of the load staying on (1,100 − 200 = 900 W) plus the fridge's surge (200 × 3 = 600 W), giving 900 + 600 = 1,500 W total — still within a 1.8 kVA inverter's surge capability, which is typically rated well above its continuous VA, but noticeably more than the fridge's own 600 W surge in isolation.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Continuous VA vs Surge VA: Why Both Matter</h3>
       <p>An inverter's continuous VA rating tells you how much steady-state load it can supply indefinitely, while its surge rating — usually a separate, higher figure specified by the manufacturer — tells you how much it can briefly deliver during a motor's start-up inrush. These two specifications are checked against completely different parts of your load: continuous VA is checked against the sum of everything running at once, while surge is checked against only the single largest motor-driven appliance's start-up demand, since motors rarely all start at the exact same instant. Sizing only for continuous VA and ignoring surge is one of the most common reasons a seemingly well-sized inverter still trips when a fridge or pump compressor kicks in.</p>
@@ -583,6 +630,38 @@
   </div>
 </section>
 
+<section id="inv-by-region" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">International Sizing</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-5">Inverter Sizing by Voltage and Region</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>The VA sizing formula itself (VA = W ÷ PF) is universal — only the supply voltage, and which reference VA sizes are locally common, change by region. This calculator supports common low-voltage distribution voltages used across India, the UK and Europe, North America, the Middle East, Australia, and South Africa, plus any custom voltage.</p>
+    </div>
+    <div class="not-prose overflow-x-auto my-4">
+      <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-4 py-2 font-semibold">Region</th>
+            <th class="text-left px-4 py-2 font-semibold">Common Low-Voltage Supply</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr><td class="px-4 py-2">India</td><td class="px-4 py-2">415V three-phase / 230V single-phase</td></tr>
+          <tr><td class="px-4 py-2">UK &amp; Europe</td><td class="px-4 py-2">400V three-phase / 230V single-phase</td></tr>
+          <tr><td class="px-4 py-2">USA</td><td class="px-4 py-2">120V single-phase (residential) / 480V or 208V three-phase (varies by facility)</td></tr>
+          <tr><td class="px-4 py-2">Canada</td><td class="px-4 py-2">120V single-phase (residential) / 600V or 208V three-phase (varies by facility)</td></tr>
+          <tr><td class="px-4 py-2">Australia</td><td class="px-4 py-2">400V three-phase / 230V single-phase</td></tr>
+          <tr><td class="px-4 py-2">Middle East</td><td class="px-4 py-2">400V three-phase / 230V single-phase</td></tr>
+          <tr><td class="px-4 py-2">South Africa</td><td class="px-4 py-2">400V three-phase / 230V single-phase</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Which inverter VA sizes are readily available, and their standard step sizes, varies by manufacturer and region; treat the reference rating from this calculator as a planning starting point, then confirm actual standard availability with your local supplier before specifying.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== BATTERY BANK MATCHING ===================== -->
 <section id="inv-battery" class="max-w-3xl mx-auto px-4 py-16">
   <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Battery Bank</span>
@@ -600,12 +679,13 @@
       </thead>
       <tbody class="divide-y divide-gray-100">
         <tr><td class="px-4 py-2">Up to 1000 VA</td><td class="px-4 py-2">12V</td></tr>
-        <tr><td class="px-4 py-2">1000–3000 VA</td><td class="px-4 py-2">24V</td></tr>
-        <tr><td class="px-4 py-2">3000–7500 VA</td><td class="px-4 py-2">48V</td></tr>
-        <tr><td class="px-4 py-2">7500 VA+</td><td class="px-4 py-2">96V or higher (custom systems)</td></tr>
+        <tr><td class="px-4 py-2">1001–3000 VA</td><td class="px-4 py-2">24V</td></tr>
+        <tr><td class="px-4 py-2">3001–7500 VA</td><td class="px-4 py-2">48V</td></tr>
+        <tr><td class="px-4 py-2">Above 7500 VA</td><td class="px-4 py-2">96V or higher (custom systems)</td></tr>
       </tbody>
     </table>
   </div>
+  <p class="text-xs text-gray-400">Typical battery voltage only — always follow the inverter manufacturer's specified DC input voltage, since some models are designed for a different bank voltage than this general table suggests.</p>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
     <p>The reason is simple: at a fixed power output, current = power ÷ voltage, so a low battery voltage means very high DC current for a large inverter — requiring impractically thick cables and connectors, and increasing resistive losses. Stepping up to a higher bank voltage (24V, 48V) for larger inverters keeps the current, and therefore the cabling, manageable. Batteries in a bank are wired in series to raise voltage (e.g. four 12V batteries in series make a 48V bank) while parallel strings of series banks add Ah capacity without changing voltage.</p>
   </div>
@@ -640,7 +720,7 @@
         Why round up to a standard commercial inverter size?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Manufacturers only produce inverters in a fixed set of VA ratings (650, 850, 1100, 1600, 2000 VA and so on). Rounding your calculated requirement up to the next available size ensures you can actually purchase a matching unit, rather than being stuck between two standard ratings.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Manufacturers commonly offer inverters in a range of standard VA ratings (650, 850, 1100, 1600, 2000 VA and so on), though the exact lineup varies by manufacturer and region. Rounding your calculated requirement up to the next available size improves the odds you can actually purchase a matching unit, rather than being stuck between two standard ratings.</p>
     </details>
 
     <details class="py-5">
@@ -737,9 +817,27 @@
   function setPhase(p){
     currentPhase = p;
     document.getElementById('phase1').classList.toggle('active', p === 'single');
+    document.getElementById('phase1').setAttribute('aria-pressed', p === 'single' ? 'true' : 'false');
     document.getElementById('phase3').classList.toggle('active', p === 'three');
+    document.getElementById('phase3').setAttribute('aria-pressed', p === 'three' ? 'true' : 'false');
     document.getElementById('voltage').value = p === 'three' ? 415 : 230;
+    document.getElementById('qvSingle').classList.toggle('hidden', p!=='single');
+    document.getElementById('qvThree').classList.toggle('hidden', p!=='three');
+    syncQuickVoltageActive();
     calculateInverter();
+  }
+
+  function setQuickVoltage(v){
+    document.getElementById('voltage').value = v;
+    syncQuickVoltageActive();
+    calculateInverter();
+  }
+
+  function syncQuickVoltageActive(){
+    const current = parseFloat(document.getElementById('voltage').value);
+    document.querySelectorAll('.qv-btn').forEach(function(btn){
+      btn.classList.toggle('active', parseFloat(btn.dataset.v) === current);
+    });
   }
 
   function toggleLoadInput(){
@@ -764,9 +862,10 @@
   }
 
   function minBatteryVoltage(va){
-    if (va <= 1500) return '12V';
-    if (va <= 4000) return '24V';
-    return '48V';
+    if (va <= 1000) return '12V';
+    if (va <= 3000) return '24V';
+    if (va <= 7500) return '48V';
+    return '96V or higher (custom system)';
   }
 
   function calculateInverter(){
@@ -775,36 +874,35 @@
     const voltage = parseFloat(document.getElementById('voltage').value);
     let pf = parseFloat(document.getElementById('powerFactor').value);
     const surgeWatts = parseFloat(document.getElementById('surgeWatts').value) || 0;
-    const surgeMultiplier = parseFloat(document.getElementById('surgeMultiplier').value) || 1;
-    const safetyMargin = parseFloat(document.getElementById('safetyMargin').value) || 0;
-    let efficiency = parseFloat(document.getElementById('efficiency').value);
-    if (isNaN(efficiency) || efficiency <= 0 || efficiency > 100) efficiency = 90;
+    const surgeMultiplier = parseFloat(document.getElementById('surgeMultiplier').value);
+    const safetyMargin = parseFloat(document.getElementById('safetyMargin').value);
+    const efficiency = parseFloat(document.getElementById('efficiency').value);
 
     const validationBox = document.getElementById('validationBox');
     const pfWarningBox = document.getElementById('pfWarningBox');
     const errors = [];
     if (isNaN(loadValue) || loadValue <= 0){ errors.push('Load Value must be greater than 0.'); }
     if (isNaN(voltage) || voltage <= 0){ errors.push('Voltage must be greater than 0.'); }
-    if (isNaN(pf) || pf <= 0 || pf > 1){ errors.push('Power Factor must be between 0.01 and 1. Reset to 0.8.'); pf = 0.8; }
-    if (safetyMargin < 0){ errors.push('Safety Margin cannot be negative.'); }
+    if (isNaN(pf) || pf <= 0 || pf > 1){ errors.push('Power Factor must be between 0.01 and 1.'); }
+    if (isNaN(safetyMargin) || safetyMargin < 0){ errors.push('Safety Margin cannot be negative.'); }
+    if (isNaN(surgeMultiplier) || surgeMultiplier < 1){ errors.push('Surge Multiplier must be 1 or greater.'); }
+    if (isNaN(efficiency) || efficiency <= 0 || efficiency > 100){ errors.push('Inverter Efficiency must be between 1% and 100%.'); }
 
     if (errors.length){
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
-      if (isNaN(loadValue) || loadValue <= 0 || isNaN(voltage) || voltage <= 0){
-        document.getElementById('rRecommended').textContent = '— kVA';
-        document.getElementById('rRecommendedKva').textContent = 'Fix the input errors above to see a valid result.';
-        document.getElementById('rApparent').textContent = '— kVA';
-        document.getElementById('rSurge').textContent = '— W';
-        document.getElementById('rLoadKw').textContent = '— kW';
-        document.getElementById('rAmp').textContent = '— A';
-        document.getElementById('rBatteryInput').textContent = '— W';
-        document.getElementById('rBatteryVoltage').textContent = '— V';
-        document.getElementById('rStandardSize').textContent = 'Fix the input errors above to see a valid result.';
-        pfWarningBox.classList.add('hidden');
-        document.getElementById('surgeWarningBox').classList.add('hidden');
-        return;
-      }
+      document.getElementById('rRecommended').textContent = '— kVA';
+      document.getElementById('rRecommendedKva').textContent = 'Fix the input errors above to see a valid result.';
+      document.getElementById('rApparent').textContent = '— kVA';
+      document.getElementById('rSurge').textContent = '— W';
+      document.getElementById('rLoadKw').textContent = '— kW';
+      document.getElementById('rAmp').textContent = '— A';
+      document.getElementById('rBatteryInput').textContent = '— W';
+      document.getElementById('rBatteryVoltage').textContent = '— V';
+      document.getElementById('rStandardSize').textContent = 'Fix the input errors above to see a valid result.';
+      pfWarningBox.classList.add('hidden');
+      document.getElementById('surgeWarningBox').classList.add('hidden');
+      return;
     } else {
       validationBox.classList.add('hidden');
       validationBox.innerHTML = '';
@@ -844,7 +942,15 @@
     }
 
     const recommendedVA = apparentPower * (1 + safetyMargin / 100);
-    const surgeRequirement = surgeWatts * surgeMultiplier;
+    // Total instantaneous demand during motor start-up = the rest of the
+    // connected load that keeps running unchanged + the motor's own peak
+    // surge watts (surgeWatts is already counted once inside the total
+    // load above, so it's the INCREMENT above its own running watts that
+    // adds to the rest of the load, not the full surge figure in isolation).
+    const totalLoadWatts = kw * 1000;
+    const baseNonMotorLoad = Math.max(0, totalLoadWatts - surgeWatts);
+    const motorSurgeWatts = surgeWatts * surgeMultiplier;
+    const surgeRequirement = baseNonMotorLoad + motorSurgeWatts;
     const batteryInputWatts = (kw * 1000) / (efficiency / 100);
 
     // Nearest standard commercial inverter size for the CONTINUOUS VA requirement only —
@@ -861,36 +967,33 @@
       document.getElementById('rRecommendedKva').textContent = `Exceeds largest standard single-unit size (${(maxStandardSize/1000).toFixed(0)} kVA) — needs a custom/industrial rating or multiple inverters in parallel.`;
     } else {
       document.getElementById('rRecommended').textContent = (suggestedSize/1000).toFixed(suggestedSize % 1000 === 0 ? 1 : 2) + ' kVA';
-      document.getElementById('rRecommendedKva').textContent = 'Nearest standard commercial rating';
+      document.getElementById('rRecommendedKva').textContent = 'Nearest reference rating — actual standard availability varies by manufacturer and region';
     }
     document.getElementById('rApparent').textContent = (recommendedVA / 1000).toFixed(2) + ' kVA';
-    document.getElementById('rSurge').textContent = Math.round(surgeRequirement).toLocaleString('en-IN') + ' W';
+    document.getElementById('rSurge').textContent = Math.round(surgeRequirement).toLocaleString('en-US') + ' W';
     document.getElementById('rLoadKw').textContent = kw.toFixed(2) + ' kW';
     document.getElementById('rAmp').textContent = amp.toFixed(2) + ' A';
-    document.getElementById('rBatteryInput').textContent = Math.round(batteryInputWatts).toLocaleString('en-IN') + ' W';
-    document.getElementById('rBatteryVoltage').textContent = outOfRange ? '48V (bank)' : minBatteryVoltage(suggestedSize);
+    document.getElementById('rBatteryInput').textContent = Math.round(batteryInputWatts).toLocaleString('en-US') + ' W';
+    document.getElementById('rBatteryVoltage').textContent = outOfRange ? '96V or higher (custom system)' : minBatteryVoltage(suggestedSize);
 
     if (outOfRange){
       document.getElementById('rStandardSize').textContent =
-        `Your ${Math.round(recommendedVA).toLocaleString('en-IN')} VA continuous requirement exceeds the largest single standard inverter (${maxStandardSize.toLocaleString('en-IN')} VA). At this scale, use paralleled inverter units or a custom/industrial-rated inverter-charger sized by the manufacturer — a single off-the-shelf unit will not cover this load.`;
+        `Your ${Math.round(recommendedVA).toLocaleString('en-US')} VA continuous requirement exceeds the largest single standard inverter (${maxStandardSize.toLocaleString('en-US')} VA). At this scale, use paralleled inverter units or a custom/industrial-rated inverter-charger sized by the manufacturer — a single off-the-shelf unit will not cover this load.`;
     } else {
       document.getElementById('rStandardSize').textContent =
-        `Choose a ${suggestedSize.toLocaleString('en-IN')} VA (${(suggestedSize/1000).toFixed(suggestedSize % 1000 === 0 ? 1 : 2)} kVA) inverter for the ${Math.round(recommendedVA).toLocaleString('en-IN')} VA continuous requirement — the smallest standard commercial rating that covers it. Verify the manufacturer's surge/peak rating separately against your ${Math.round(surgeRequirement).toLocaleString('en-IN')} W surge load, since surge capacity is a distinct spec from continuous VA.`;
+        `Choose a ${suggestedSize.toLocaleString('en-US')} VA (${(suggestedSize/1000).toFixed(suggestedSize % 1000 === 0 ? 1 : 2)} kVA) inverter for the ${Math.round(recommendedVA).toLocaleString('en-US')} VA continuous requirement — the smallest standard commercial rating that covers it. Verify the manufacturer's surge/peak rating separately against your ${Math.round(surgeRequirement).toLocaleString('en-US')} W surge load, since surge capacity is a distinct spec from continuous VA.`;
     }
 
-    // Assume a typical inverter can surge to roughly 2x its continuous VA rating for a
-    // few seconds — flag it if the calculated surge load exceeds that rough envelope.
+    // Surge/peak specs are given by manufacturers in varying units (VA, W, or a
+    // separate overload rating) and vary significantly by model — comparing the
+    // calculated surge demand against an assumed multiple of continuous VA would
+    // mix quantities that aren't reliably comparable, so this note always shows
+    // the calculated figure for the user to check against the actual datasheet
+    // rather than passing an unfounded pass/fail judgment on it.
     const surgeWarningBox = document.getElementById('surgeWarningBox');
-    const assumedSurgeCapability = (outOfRange ? maxStandardSize : suggestedSize) * 2;
-    if (surgeRequirement > assumedSurgeCapability){
-      surgeWarningBox.classList.remove('hidden');
-      surgeWarningBox.textContent = outOfRange
-        ? `Your ${Math.round(surgeRequirement).toLocaleString('en-IN')} W surge load also exceeds what the largest standard single unit (${maxStandardSize.toLocaleString('en-IN')} VA) can deliver — this load needs custom/industrial sizing for both continuous and surge capacity.`
-        : `Your ${Math.round(surgeRequirement).toLocaleString('en-IN')} W surge load likely exceeds what a ${suggestedSize.toLocaleString('en-IN')} VA inverter can deliver (typical surge capability is roughly 2× continuous VA). Check the manufacturer's peak/surge rating and consider a larger inverter for this motor load.`;
-    } else {
-      surgeWarningBox.classList.add('hidden');
-      surgeWarningBox.textContent = '';
-    }
+    surgeWarningBox.classList.remove('hidden');
+    surgeWarningBox.textContent =
+      `Verify the inverter manufacturer's actual peak/surge rating against your calculated ${Math.round(surgeRequirement).toLocaleString('en-US')} W startup demand — surge specs vary significantly by model and are not reliably predictable from the continuous VA rating alone.`;
   }
 
   // run once on load with default values
@@ -956,7 +1059,23 @@
     var s = document.createElement('script');
     s.src = '/assets/share-modal.js';
     s.onload = function(){ __shareModalLoading = false; openShareModal(); };
-    s.onerror = function(){ __shareModalLoading = false; };
+    s.onerror = function(){
+      __shareModalLoading = false;
+      // share-modal.js failed to load (network/CDN issue) — fall back to the
+      // browser's native share sheet, or copy the page URL, rather than the
+      // Share button silently doing nothing.
+      if (navigator.share){
+        navigator.share({ title: document.title, url: location.href }).catch(function(){});
+      } else if (navigator.clipboard){
+        navigator.clipboard.writeText(location.href).then(function(){
+          alert('Share is temporarily unavailable — the page link has been copied to your clipboard instead.');
+        }).catch(function(){
+          alert('Share is temporarily unavailable. Please copy the page URL from your browser\'s address bar.');
+        });
+      } else {
+        alert('Share is temporarily unavailable. Please copy the page URL from your browser\'s address bar.');
+      }
+    };
     document.head.appendChild(s);
   }
 </script>

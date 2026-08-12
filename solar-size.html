@@ -56,7 +56,7 @@
   "url": "https://www.electromechcalc.com/solar-size",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free online calculator to determine solar array size in kWp, panel count, roof area, battery bank Ah, and estimated CO2 savings for off-grid, grid-tied, or hybrid solar systems.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -233,6 +233,9 @@
     padding:10px 8px;
     font-size:13px;
     font-weight:600;
+    font-family:inherit;
+    border:none;
+    background:transparent;
     border-radius:8px;
     cursor:pointer;
     color:#64748b;
@@ -243,6 +246,26 @@
     color:#fff;
     box-shadow:0 4px 10px rgba(14,165,233,0.35);
   }
+  .qv-btn{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    font-weight:600;
+    color:#334155;
+    background:#f1f5f9;
+    border:1px solid #e2e8f0;
+    border-radius:6px;
+    padding:5px 9px;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .qv-btn:hover{ background:#e0f2fe; border-color:#0ea5e9; }
+  .qv-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    border-color:#0ea5e9;
+  }
+  body.dark-theme .qv-btn{ background:#15233a; border-color:#1f2f47; color:#cbd5e1; }
+  body.dark-theme .qv-btn.active{ background:#0ea5e9; color:#fff; border-color:#0ea5e9; }
   .result-tile{
     background:linear-gradient(160deg,#0B1220,#15233a);
   }
@@ -390,8 +413,8 @@
       <div class="mb-5">
         <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_solar_size">Supply Type</span>
         <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_solar_size">
-          <div id="phase1" class="toggle-btn active" onclick="setPhase('single')">Single Phase</div>
-          <div id="phase3" class="toggle-btn" onclick="setPhase('three')">Three Phase</div>
+          <button type="button" id="phase1" class="toggle-btn active" aria-pressed="true" onclick="setPhase('single')">Single Phase</button>
+          <button type="button" id="phase3" class="toggle-btn" aria-pressed="false" onclick="setPhase('three')">Three Phase</button>
         </div>
         <p id="phaseNote" class="text-[11px] text-gray-400 mt-1.5 hidden">Phase only affects the result when Input Type is Amp (A) — kW and HP loads are already phase-independent.</p>
       </div>
@@ -410,16 +433,39 @@
           <input id="loadValue" type="number" value="10" step="0.1" class="input-field mt-2">
         </div>
       </div>
+      <p class="text-[11px] text-gray-400 -mt-3 mb-5">Enter your average operating load during the daily usage period below, not the connected/nameplate total or a brief peak demand — this figure directly drives the energy and array-size calculation.</p>
 
       <div class="grid grid-cols-2 gap-4 mb-5">
         <div id="voltageWrap">
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="voltage">Voltage (V)</label>
-          <input id="voltage" type="number" value="230" step="1" class="input-field mt-2">
+          <label id="voltageLabel" class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="voltage">Voltage (V, line-to-neutral / single-phase)</label>
+          <input id="voltage" type="number" value="230" step="1" min="1" class="input-field mt-2" oninput="syncQuickVoltageActive()">
         </div>
         <div id="pfWrap">
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pf">Power Factor</label>
           <input id="pf" type="number" value="0.8" step="0.01" min="0.01" max="1" class="input-field mt-2">
         </div>
+      </div>
+
+      <div id="qvWrap" class="mb-5">
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Common Voltages</span>
+        <div id="qvSingle" class="flex flex-wrap gap-1.5 mt-2" role="group" aria-label="Quick voltage presets, single phase">
+          <button type="button" class="qv-btn" data-v="120" onclick="setQuickVoltage(120)">120V</button>
+          <button type="button" class="qv-btn" data-v="208" onclick="setQuickVoltage(208)">208V</button>
+          <button type="button" class="qv-btn" data-v="220" onclick="setQuickVoltage(220)">220V</button>
+          <button type="button" class="qv-btn active" data-v="230" onclick="setQuickVoltage(230)">230V</button>
+          <button type="button" class="qv-btn" data-v="240" onclick="setQuickVoltage(240)">240V</button>
+        </div>
+        <div id="qvThree" class="flex flex-wrap gap-1.5 mt-2 hidden" role="group" aria-label="Quick voltage presets, three phase">
+          <button type="button" class="qv-btn" data-v="208" onclick="setQuickVoltage(208)">208V</button>
+          <button type="button" class="qv-btn" data-v="380" onclick="setQuickVoltage(380)">380V</button>
+          <button type="button" class="qv-btn" data-v="400" onclick="setQuickVoltage(400)">400V</button>
+          <button type="button" class="qv-btn" data-v="415" onclick="setQuickVoltage(415)">415V</button>
+          <button type="button" class="qv-btn" data-v="440" onclick="setQuickVoltage(440)">440V</button>
+          <button type="button" class="qv-btn" data-v="460" onclick="setQuickVoltage(460)">460V</button>
+          <button type="button" class="qv-btn" data-v="480" onclick="setQuickVoltage(480)">480V</button>
+          <button type="button" class="qv-btn" data-v="600" onclick="setQuickVoltage(600)">600V</button>
+        </div>
+        <p class="text-[11px] text-gray-400 mt-1.5">Includes common voltage presets used in India, the UK &amp; Europe, North America, the Middle East, Australia and South Africa — or enter any custom voltage above.</p>
       </div>
 
       <div id="motorEffWrap" class="grid grid-cols-2 gap-4 mb-5" style="display:none;">
@@ -494,6 +540,7 @@
         </div>
       </div>
 
+      <div id="sunHoursWarningBox" class="hidden bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-lg px-4 py-3 mb-5"></div>
       <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculateSolar()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
@@ -507,7 +554,7 @@
     </div>
 
     <!-- RESULT PANEL -->
-    <div class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
 
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full sun-badge opacity-20"></div>
@@ -543,7 +590,7 @@
         </div>
         <div class="bg-white rounded-xl border border-gray-100 p-4">
           <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Roof Area Req.</span>
-          <div id="rRoof" class="font-display font-bold text-xl text-brandDark mt-1">— sq.ft</div>
+          <div id="rRoof" class="font-display font-bold text-xl text-brandDark mt-1">— sq.ft (m²)</div>
         </div>
         <div class="bg-white rounded-xl border border-gray-100 p-4">
           <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Daily Generation</span>
@@ -619,8 +666,9 @@
     <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
       <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
       <li><a href="#how-it-works" class="hover:underline">2. Understanding solar sizing</a></li>
-      <li><a href="#solar-types" class="hover:underline">3. On-grid vs off-grid vs hybrid</a></li>
-      <li><a href="#faqs" class="hover:underline">4. FAQs</a></li>
+      <li><a href="#solar-by-region" class="hover:underline">3. Sizing by voltage and region</a></li>
+      <li><a href="#solar-types" class="hover:underline">4. On-grid vs off-grid vs hybrid</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
     </ul>
   </div>
 </nav>
@@ -634,18 +682,18 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IEC / IEEE / BIS / NEC</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Engineering references: this calculator uses common electrical power and solar array sizing relationships; applicable IEC, IEEE, BIS, NEC, and local requirements should be checked for the specific installation.</p>
     </div>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-      <p><strong>Solar panel sizing basics:</strong> Daily energy (kWh) ÷ peak sun hours (typically 4–5 in India) gives the required solar array size in kW — for example, a 10 kWh/day load needs roughly a 2.2–2.5 kW array with standard system losses factored in. Sizing a solar power system correctly is one of the most common questions technicians, electricians, and homeowners run into once they decide to move part of their load off the grid. Undersize the array and the system will never fully charge the battery bank on a cloudy day; oversize it and you have spent money on panels that spend most of the afternoon doing nothing. This calculator walks through the same method used by solar installers in the field — start from the connected load, convert it to real power in kilowatts, work out how much energy that load consumes across a day, and then divide by how much usable sunlight your location actually receives.</p>
+      <p><strong>Solar panel sizing basics:</strong> Daily energy (kWh) ÷ peak sun hours (typically 3–6.5, depending on region) gives the required solar array size in kW — for example, a 10 kWh/day load at 4.5 peak sun hours needs roughly a 2.2–2.5 kW array with standard system losses factored in. Sizing a solar power system correctly is one of the most common questions technicians, electricians, and homeowners run into once they decide to move part of their load off the grid. Undersize the array and the system will never fully charge the battery bank on a cloudy day; oversize it and you have spent money on panels that spend most of the afternoon doing nothing. This calculator walks through the same method used by solar installers in the field — start from the connected load, convert it to real power in kilowatts, work out how much energy that load consumes across a day, and then divide by how much usable sunlight your location actually receives.</p>
 
       <p>The first step is figuring out your load in kilowatts, because kW is the unit solar panels, inverters, and batteries are all rated in. If you only know the current draw from a nameplate or a clamp meter, this tool converts it for you. For a single-phase supply, real power is calculated as <strong>kW = (V × I × PF) / 1000</strong>, where V is the line voltage, I is the current in amps, and PF is the power factor of the load. For a three-phase supply, the same relationship gains a √3 term to account for the phase geometry: <strong>kW = (V × I × √3 × PF) / 1000</strong>. If your load is already rated in horsepower — common on motors and pumps — the tool first converts shaft power to kW using <strong>0.7457 kW/HP</strong> and then divides by the motor's efficiency, since the motor draws more electrical input power than it delivers at the shaft: <strong>kW = (HP × 0.7457) / Motor Efficiency</strong>. A 10 HP motor at 90% efficiency, for example, actually draws about 8.29 kW from the supply, not 7.46 kW. If you already have the load in kW, the calculator uses that value directly.</p>
 
       <p>Once the load is known in kW, the calculator multiplies it by your daily usage hours to get the daily energy requirement in kWh — this is simply how much electrical energy the load consumes over a full day of operation. That figure is also extended into monthly (×30) and annual (×365) consumption, useful for comparing against your electricity bill or planning payback period.</p>
 
-      <p>Next comes the array sizing itself. Peak Sun Hours (PSH) is the number of hours per day the sun delivers energy at an intensity equivalent to 1,000 W/m² — it is not the same as daylight hours, and in most parts of India it typically falls between 4.5 and 6 hours depending on season and location. Because real systems lose some energy to wiring resistance, inverter conversion, dust on the panel surface, and temperature derating, a system efficiency factor (commonly 70–80%) is applied. Putting it together: <strong>Solar Array Size (kWp) = Daily Energy (kWh) ÷ (Peak Sun Hours × System Efficiency)</strong>. An optional 20% design margin can be added on top of this to absorb panel degradation over the years, soiling losses, and future load growth — a standard practice among field installers. Dividing the final array size by your chosen panel wattage then gives the number of physical panels required, rounded up to the next whole panel. Roof area required is estimated from typical panel footprint (roughly 18 sq.ft for a 330Wp panel, scaled proportionally for higher-wattage panels such as the 550Wp modules common in 2026 rooftop installations), and estimated daily generation and annual CO₂ savings (at ~0.82 kg CO₂ avoided per kWh, the approximate Indian grid emission factor) are shown to give a quick sense of environmental impact.</p>
+      <p>Next comes the array sizing itself. Peak Sun Hours (PSH) is the number of hours per day the sun delivers energy at an intensity equivalent to 1,000 W/m² — it is not the same as daylight hours, and typically falls between about 3 and 6.5 hours depending on latitude, climate, and season (for example, roughly 4.5–6 hours across much of India, 3–5 hours across the UK and much of Europe, and 4–6.5 hours across much of the USA, Australia, and the Middle East). Check a local solar resource map or PVGIS/NREL-style tool for your specific site rather than relying on a single regional average. Because real systems lose some energy to wiring resistance, inverter conversion, dust on the panel surface, and temperature derating, a system efficiency factor (commonly 70–80%) is applied. Putting it together: <strong>Solar Array Size (kWp) = Daily Energy (kWh) ÷ (Peak Sun Hours × System Efficiency)</strong>. An optional 20% design margin can be added on top of this to absorb panel degradation over the years, soiling losses, and future load growth — a common practice among field installers. Dividing the final array size by your chosen panel wattage then gives the number of physical panels required, rounded up to the next whole panel. Roof area required is estimated from typical panel footprint (roughly 18 sq.ft / 1.7 m² for a 330Wp panel, scaled proportionally for higher-wattage panels such as the 550Wp modules common in 2026 rooftop installations), and estimated daily generation and annual CO₂ savings are shown to give a quick sense of environmental impact — the CO₂ figure uses a fixed 0.82 kg CO₂/kWh grid emission factor (a commonly cited India grid average) as an illustrative estimate only, since the actual grid emission factor varies significantly by country and region.</p>
 
-      <p>The battery section works independently and is meant for systems that need to keep running after the sun goes down, or through a short outage. The calculator takes your desired backup duration in hours, multiplies it by the load in watts to get the backup energy requirement in Wh, and then converts that into Ah using your chosen battery bank voltage, its usable Depth of Discharge (DoD), and the inverter's round-trip efficiency, since real energy drawn from the battery is always more than the energy actually delivered to the load: <strong>Battery Ah = Backup Energy (Wh) ÷ (Battery Voltage × DoD × Inverter Efficiency)</strong>. DoD matters because deep-cycle lead-acid batteries are typically only discharged to 50% to preserve cycle life, while lithium (LiFePO₄) batteries can safely handle 80–90% DoD, giving you a smaller, lighter bank for the same backup time — selecting the chemistry from the dropdown automatically applies a sensible default DoD, which you can still override. The result is also translated into a practical series-parallel configuration using common 12V unit battery sizes, so you know exactly how many batteries to wire in series (to reach your bank voltage) and in parallel (to reach your Ah capacity) — for example, a 24V 400Ah requirement typically becomes two 12V 200Ah batteries in series.</p>
+      <p>The battery section works independently and is meant for systems that need to keep running after the sun goes down, or through a short outage. The calculator takes your desired backup duration in hours, multiplies it by the load in watts to get the backup energy requirement in Wh, and then converts that into Ah using your chosen battery bank voltage, its usable Depth of Discharge (DoD), and the inverter's efficiency, since real energy drawn from the battery is always more than the energy actually delivered to the load: <strong>Battery Ah = Backup Energy (Wh) ÷ (Battery Voltage × DoD × Inverter Efficiency)</strong>. DoD matters because deep-cycle lead-acid batteries are typically only discharged to 50% to preserve cycle life, while lithium (LiFePO₄) batteries can safely handle 80–90% DoD, giving you a smaller, lighter bank for the same backup time — selecting the chemistry from the dropdown automatically applies a sensible default DoD, which you can still override. The result is also translated into a practical series-parallel configuration using common 12V unit battery sizes: batteries are wired in series to reach your bank voltage, and multiple identical series strings are wired in parallel to reach your Ah capacity — for example, a 24V 400Ah requirement typically becomes two parallel strings of two 12V 200Ah batteries in series each (4 batteries total), since a single series string only adds voltage, not Ah capacity.</p>
 
       <p>As always with sizing calculators, treat the output as an engineering starting point rather than a final purchase order. Local solar irradiance, shading, panel orientation, cable losses, inverter efficiency curves, and battery ageing all shift the real-world number by a meaningful margin. Always get your final design reviewed by a licensed solar installer before purchase and installation, especially for grid-tied or hybrid systems that need to meet local net-metering rules.</p>
 
@@ -683,7 +731,40 @@
       <p class="text-xs text-gray-400">Figures are indicative planning estimates only. Enter your exact load, usage hours, and local sun-hour data in the calculator above for a precise recommendation.</p>
     </div>
 
-    <p class="text-xs text-gray-400 mt-6">Reference: Standard solar PV sizing conventions used across MNRE/state solar guidelines and industry design practice. This calculator is for preliminary, educational sizing only.</p>
+    <p class="text-xs text-gray-400 mt-6">Reference: Based on common electrical power and solar PV array sizing relationships used in industry design practice; specific IEC, IEEE, BIS/MNRE, NEC, and local requirements should be checked for the actual installation. This calculator is for preliminary, educational sizing only.</p>
+  </div>
+</section>
+
+<section id="solar-by-region" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">International Sizing</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-5">Solar Sizing by Voltage and Region</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>The array sizing formula itself (kWp = Daily Energy ÷ (Peak Sun Hours × System Efficiency)) is universal — only the supply voltage (relevant for Amp-mode load input), local peak sun hours, and the grid CO₂ factor change by region. This calculator supports common low-voltage distribution voltages used across India, the UK and Europe, North America, the Middle East, Australia, and South Africa, plus any custom voltage.</p>
+    </div>
+    <div class="not-prose overflow-x-auto my-4">
+      <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-4 py-2 font-semibold">Region</th>
+            <th class="text-left px-4 py-2 font-semibold">Common Low-Voltage Supply</th>
+            <th class="text-left px-4 py-2 font-semibold">Typical Peak Sun Hours</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr><td class="px-4 py-2">India</td><td class="px-4 py-2">415V three-phase / 230V single-phase</td><td class="px-4 py-2">~4.5–6</td></tr>
+          <tr><td class="px-4 py-2">UK &amp; Europe</td><td class="px-4 py-2">400V three-phase / 230V single-phase</td><td class="px-4 py-2">~3–5</td></tr>
+          <tr><td class="px-4 py-2">USA</td><td class="px-4 py-2">480V or 208V three-phase (varies by facility)</td><td class="px-4 py-2">~4–6.5</td></tr>
+          <tr><td class="px-4 py-2">Canada</td><td class="px-4 py-2">600V or 208V three-phase (varies by facility)</td><td class="px-4 py-2">~3–5</td></tr>
+          <tr><td class="px-4 py-2">Australia</td><td class="px-4 py-2">400V three-phase / 230V single-phase</td><td class="px-4 py-2">~4.5–6.5</td></tr>
+          <tr><td class="px-4 py-2">Middle East</td><td class="px-4 py-2">400V three-phase / 230V single-phase</td><td class="px-4 py-2">~5.5–6.5</td></tr>
+          <tr><td class="px-4 py-2">South Africa</td><td class="px-4 py-2">400V three-phase / 230V single-phase</td><td class="px-4 py-2">~4.5–6</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Peak sun hours vary considerably even within a single country depending on latitude and local climate — treat the figures above as a rough starting point, and check a local solar resource map or PVGIS/NREL-style tool for your specific site before finalizing an array size. Similarly, the grid CO₂ emission factor used for the CO₂-savings estimate is a fixed illustrative figure and varies significantly by country and region.</p>
+    </div>
   </div>
 </section>
 
@@ -838,13 +919,36 @@
   function setPhase(p){
     currentPhase = p;
     document.getElementById('phase1').classList.toggle('active', p==='single');
+    document.getElementById('phase1').setAttribute('aria-pressed', p==='single' ? 'true' : 'false');
     document.getElementById('phase3').classList.toggle('active', p==='three');
+    document.getElementById('phase3').setAttribute('aria-pressed', p==='three' ? 'true' : 'false');
     document.getElementById('voltage').value = p==='three' ? 415 : 230;
+    document.getElementById('qvSingle').classList.toggle('hidden', p!=='single');
+    document.getElementById('qvThree').classList.toggle('hidden', p!=='three');
+    syncQuickVoltageActive();
+    const label = document.getElementById('voltageLabel');
+    if (label){
+      label.textContent = p==='three' ? 'Voltage (V, line-to-line)' : 'Voltage (V, line-to-neutral / single-phase)';
+    }
+  }
+
+  function setQuickVoltage(v){
+    document.getElementById('voltage').value = v;
+    syncQuickVoltageActive();
+    calculateSolar();
+  }
+
+  function syncQuickVoltageActive(){
+    const current = parseFloat(document.getElementById('voltage').value);
+    document.querySelectorAll('.qv-btn').forEach(function(btn){
+      btn.classList.toggle('active', parseFloat(btn.dataset.v) === current);
+    });
   }
 
   function toggleInputFields(){
     const type = document.getElementById('inputType').value;
     document.getElementById('voltageWrap').style.display = (type==='kw') ? 'none' : 'block';
+    document.getElementById('qvWrap').style.display = (type==='kw') ? 'none' : 'block';
     document.getElementById('pfWrap').style.display = (type==='amp') ? 'block' : 'none';
     document.getElementById('motorEffWrap').style.display = (type==='hp') ? 'grid' : 'none';
     document.getElementById('phaseNote').classList.toggle('hidden', type === 'amp');
@@ -861,52 +965,80 @@
 
   function calculateSolar(){
     const inputType    = document.getElementById('inputType').value;
-    const loadValue    = parseFloat(document.getElementById('loadValue').value) || 0;
-    const voltage      = parseFloat(document.getElementById('voltage').value) || 0;
-    let   pf           = parseFloat(document.getElementById('pf').value) || 0.8;
-    const motorEff     = (parseFloat(document.getElementById('motorEff').value) || 90) / 100;
-    const usageHours   = parseFloat(document.getElementById('usageHours').value) || 0;
-    let   sunHours     = parseFloat(document.getElementById('sunHours').value) || 5;
-    let   sysEff       = (parseFloat(document.getElementById('sysEff').value) || 75) / 100;
-    const panelWatt    = parseFloat(document.getElementById('panelWatt').value) || 330;
+    const loadValue    = parseFloat(document.getElementById('loadValue').value);
+    const voltage      = parseFloat(document.getElementById('voltage').value);
+    const pf           = parseFloat(document.getElementById('pf').value);
+    const motorEffPct  = parseFloat(document.getElementById('motorEff').value);
+    const usageHours   = parseFloat(document.getElementById('usageHours').value);
+    const sunHours     = parseFloat(document.getElementById('sunHours').value);
+    const sysEffPct    = parseFloat(document.getElementById('sysEff').value);
+    const panelWatt    = parseFloat(document.getElementById('panelWatt').value);
     const marginOn     = document.getElementById('marginToggle').checked;
-    const backupHours  = parseFloat(document.getElementById('backupHours').value) || 0;
-    const battVoltage  = parseFloat(document.getElementById('battVoltage').value) || 24;
+    const backupHours  = parseFloat(document.getElementById('backupHours').value);
+    const battVoltage  = parseFloat(document.getElementById('battVoltage').value);
     const battChem     = document.getElementById('battChem').value;
-    let   dod          = (parseFloat(document.getElementById('dod').value) || 50) / 100;
-    let   invEff       = (parseFloat(document.getElementById('invEff').value) || 90) / 100;
+    const dodPct       = parseFloat(document.getElementById('dod').value);
+    const invEffPct    = parseFloat(document.getElementById('invEff').value);
 
     // ---- Input validation ----
+    // Every numeric field is validated explicitly with isNaN() rather than a
+    // `parseFloat(x) || default` fallback — that pattern silently converts a
+    // literal 0 or a blank field to the default BEFORE any check runs, so an
+    // actually-invalid entry (e.g. PF = 0) never triggered the error below.
     const errors = [];
-    if (loadValue <= 0){ errors.push('Load Value must be greater than 0.'); }
-    if (pf <= 0 || pf > 1){ errors.push('Power Factor must be between 0.01 and 1. Reset to 0.8.'); pf = 0.8; }
-    if (sysEff <= 0 || sysEff > 1){ errors.push('System Efficiency must be between 1% and 100%. Reset to 75%.'); sysEff = 0.75; }
-    if (dod <= 0 || dod > 0.95){ errors.push('Depth of Discharge must be between 1% and 95%. Reset to ' + (battChem==='lithium'?'85%.':'50%.')); dod = battChem === 'lithium' ? 0.85 : 0.50; }
-    if (invEff <= 0 || invEff > 1){ errors.push('Inverter Efficiency must be between 1% and 100%. Reset to 90%.'); invEff = 0.90; }
-    if (sunHours <= 0){ errors.push('Peak Sun Hours must be greater than 0. Reset to 5.'); sunHours = 5; }
+    if (isNaN(loadValue) || loadValue <= 0){ errors.push('Load Value must be greater than 0.'); }
+    if (inputType === 'amp' && (isNaN(voltage) || voltage <= 0)){ errors.push('Voltage must be greater than 0.'); }
+    if (inputType === 'amp' && (isNaN(pf) || pf <= 0 || pf > 1)){ errors.push('Power Factor must be between 0.01 and 1.'); }
+    if (inputType === 'hp' && (isNaN(motorEffPct) || motorEffPct <= 0 || motorEffPct > 100)){ errors.push('Motor Efficiency must be between 1% and 100%.'); }
+    if (isNaN(usageHours) || usageHours <= 0 || usageHours > 24){ errors.push('Daily Usage must be between 0 and 24 hours.'); }
+    if (isNaN(sunHours) || sunHours <= 0 || sunHours > 24){ errors.push('Peak Sun Hours must be between 0 and 24.'); }
+    if (isNaN(sysEffPct) || sysEffPct <= 0 || sysEffPct > 100){ errors.push('System Efficiency must be between 1% and 100%.'); }
+    if (isNaN(panelWatt) || panelWatt <= 0){ errors.push('Panel Wattage must be greater than 0.'); }
+    if (backupHours !== 0 && !isNaN(backupHours) && backupHours > 0){
+      if (isNaN(battVoltage) || battVoltage <= 0){ errors.push('Battery Voltage must be greater than 0.'); }
+      if (isNaN(dodPct) || dodPct <= 0 || dodPct > 95){ errors.push('Depth of Discharge must be between 1% and 95%.'); }
+      if (isNaN(invEffPct) || invEffPct <= 0 || invEffPct > 100){ errors.push('Inverter Efficiency must be between 1% and 100%.'); }
+    }
+    if (isNaN(backupHours) || backupHours < 0){ errors.push('Backup Hours must be 0 or greater (enter 0 if you don\'t need battery backup).'); }
 
     const validationBox = document.getElementById('validationBox');
     if (errors.length){
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
-      if (loadValue <= 0){
-        document.getElementById('rSolarKW').textContent = '— kWp';
-        document.getElementById('rLoadKW').textContent = '— kW';
-        document.getElementById('rEnergy').textContent = '— kWh';
-        document.getElementById('rPanels').textContent = '—';
-        document.getElementById('rBattery').textContent = '— Ah';
-        document.getElementById('rMonthly').textContent = '— kWh';
-        document.getElementById('rAnnual').textContent = '— kWh';
-        document.getElementById('rRoof').textContent = '— sq.ft';
-        document.getElementById('rDailyGen').textContent = '— kWh';
-        document.getElementById('rCO2').textContent = '— kg';
-        document.getElementById('rBattSuggest').textContent = 'Fix the input errors above to see a valid result.';
-        return;
-      }
+      document.getElementById('sunHoursWarningBox').classList.add('hidden');
+      document.getElementById('rSolarKW').textContent = '— kWp';
+      document.getElementById('rLoadKW').textContent = '— kW';
+      document.getElementById('rEnergy').textContent = '— kWh';
+      document.getElementById('rPanels').textContent = '—';
+      document.getElementById('rBattery').textContent = '— Ah';
+      document.getElementById('rMonthly').textContent = '— kWh';
+      document.getElementById('rAnnual').textContent = '— kWh';
+      document.getElementById('rRoof').textContent = '— sq.ft';
+      document.getElementById('rDailyGen').textContent = '— kWh';
+      document.getElementById('rCO2').textContent = '— kg';
+      document.getElementById('rBattSuggest').textContent = 'Fix the input errors above to see a valid result.';
+      return;
     } else {
       validationBox.classList.add('hidden');
       validationBox.innerHTML = '';
     }
+
+    const sunHoursWarningBox = document.getElementById('sunHoursWarningBox');
+    if (sunHours > 10){
+      sunHoursWarningBox.classList.remove('hidden');
+      sunHoursWarningBox.textContent = `${sunHours} peak sun hours is unusually high for any real-world location — even the sunniest desert regions rarely exceed about 6.5–7. Double-check this value; a typical range is roughly 3–6.5 depending on latitude and climate.`;
+    } else {
+      sunHoursWarningBox.classList.add('hidden');
+      sunHoursWarningBox.textContent = '';
+    }
+
+    // Convert percentage fields to fractions now that they're validated
+    const motorEff = (isNaN(motorEffPct) ? 90 : motorEffPct) / 100;
+    const sysEff = sysEffPct / 100;
+    const dod = (isNaN(dodPct) ? (battChem === 'lithium' ? 85 : 50) : dodPct) / 100;
+    const invEff = (isNaN(invEffPct) ? 90 : invEffPct) / 100;
+    const backupHrs = (isNaN(backupHours) || backupHours < 0) ? 0 : backupHours;
+    const battV = (isNaN(battVoltage) || battVoltage <= 0) ? 24 : battVoltage;
 
     // ---- Load in kW ----
     let loadKW = 0;
@@ -933,27 +1065,49 @@
     // ~18 sq.ft per 330Wp panel (industry avg ~1.7 m² per 330W) scaled dynamically by wattage
     const sqftPerWatt = 18 / 330;
     const roofAreaSqft = numPanels * panelWatt * sqftPerWatt;
+    const roofAreaSqm = roofAreaSqft * 0.092903;
 
     // Daily generation from the actual installed array (rounded panel count × wattage)
     const installedKW = (numPanels * panelWatt) / 1000;
     const dailyGenKWh = installedKW * sunHours * sysEff;
+    const annualGenKWh = dailyGenKWh * 365;
 
-    // CO2 savings: ~0.82 kg CO2 avoided per kWh of grid electricity (India grid avg factor)
-    const co2SavingsKg = annualEnergyKWh * 0.82;
+    // CO2 savings: based on the actual annual generation from the installed
+    // array (not the raw required load energy, which can diverge once panel
+    // rounding and margin are applied), using a fixed 0.82 kg CO2/kWh grid
+    // emission factor (a commonly cited India grid average) as an illustrative
+    // estimate — the actual grid emission factor varies significantly by
+    // country and region.
+    const co2SavingsKg = annualGenKWh * 0.82;
 
     // ---- Battery sizing (with inverter efficiency) ----
-    const backupEnergyWh = loadKW * 1000 * backupHours;
-    const batteryAh = (battVoltage > 0 && dod > 0 && invEff > 0)
-      ? backupEnergyWh / (battVoltage * dod * invEff)
+    const backupEnergyWh = loadKW * 1000 * backupHrs;
+    const batteryAh = (battV > 0 && dod > 0 && invEff > 0)
+      ? backupEnergyWh / (battV * dod * invEff)
       : 0;
 
     // ---- Series-parallel suggestion using common 12V unit battery sizes ----
     const unitVoltage = 12;
-    const seriesCount = Math.max(1, Math.round(battVoltage / unitVoltage));
+    const seriesCount = Math.max(1, Math.round(battV / unitVoltage));
     const commonAhSizes = [100, 150, 180, 200, 220, 250, 300];
-    let unitAh = commonAhSizes.find(a => a >= batteryAh) || Math.ceil(batteryAh / 50) * 50;
-    const parallelCount = Math.max(1, Math.ceil(batteryAh / unitAh));
-    const bankConfigText = `${seriesCount} × ${unitVoltage}V ${unitAh}Ah in series` + (parallelCount > 1 ? `, × ${parallelCount} strings in parallel` : '');
+    // Try every common unit size and pick whichever gives the least wasted
+    // capacity (parallelCount x unitAh - required), tie-broken by fewest
+    // parallel strings — this avoids the old logic's tendency to pick a
+    // single oversized non-standard unit (e.g. "400Ah") instead of a
+    // realistic multi-string configuration from common battery sizes.
+    let unitAh = commonAhSizes[commonAhSizes.length - 1];
+    let parallelCount = Math.max(1, Math.ceil(batteryAh / unitAh));
+    let bestWaste = (unitAh * parallelCount) - batteryAh;
+    for (const size of commonAhSizes){
+      const candidateParallel = Math.max(1, Math.ceil(batteryAh / size));
+      const candidateWaste = (size * candidateParallel) - batteryAh;
+      if (candidateWaste < bestWaste || (candidateWaste === bestWaste && candidateParallel < parallelCount)){
+        unitAh = size;
+        parallelCount = candidateParallel;
+        bestWaste = candidateWaste;
+      }
+    }
+    const bankConfigText = `${parallelCount} string(s) of ${seriesCount} × 12V ${unitAh}Ah in series` + (parallelCount > 1 ? `, strings wired in parallel (${seriesCount * parallelCount} batteries total)` : ` (${seriesCount} batteries total)`);
 
     // ---- Output ----
     document.getElementById('rSolarKW').textContent = solarSizeKW.toFixed(2) + ' kWp' + (marginOn ? ' (incl. 20% margin)' : '');
@@ -963,13 +1117,13 @@
     document.getElementById('rBattery').textContent = batteryAh.toFixed(0) + ' Ah';
     document.getElementById('rMonthly').textContent = monthlyEnergyKWh.toFixed(0) + ' kWh';
     document.getElementById('rAnnual').textContent = annualEnergyKWh.toFixed(0) + ' kWh';
-    document.getElementById('rRoof').textContent = roofAreaSqft.toFixed(0) + ' sq.ft';
+    document.getElementById('rRoof').textContent = roofAreaSqft.toFixed(0) + ' sq.ft (' + roofAreaSqm.toFixed(0) + ' m²)';
     document.getElementById('rDailyGen').textContent = dailyGenKWh.toFixed(1) + ' kWh';
-    document.getElementById('rCO2').textContent = co2SavingsKg.toFixed(0) + ' kg';
+    document.getElementById('rCO2').textContent = co2SavingsKg.toFixed(0) + ' kg (at an assumed 0.82 kg CO₂/kWh grid factor — varies by region)';
 
     const chemLabel = battChem === 'lithium' ? 'Lithium (LiFePO₄)' : 'Lead Acid';
     document.getElementById('rBattSuggest').textContent =
-      `For ${backupHours} hour(s) of backup on a ${loadKW.toFixed(2)} kW load, use a ${battVoltage}V ${chemLabel} battery bank rated around ${batteryAh.toFixed(0)} Ah (at ${(dod*100).toFixed(0)}% DoD and ${(invEff*100).toFixed(0)}% inverter efficiency). Suggested configuration: ${bankConfigText}. Round up to the nearest commercially available unit if exact Ah isn't sold.`;
+      `For ${backupHrs} hour(s) of backup on a ${loadKW.toFixed(2)} kW load, use a ${battV}V ${chemLabel} battery bank rated around ${batteryAh.toFixed(0)} Ah (at ${(dod*100).toFixed(0)}% DoD and ${(invEff*100).toFixed(0)}% inverter efficiency). Suggested configuration: ${bankConfigText}. Round up to the nearest commercially available unit if exact Ah isn't sold.`;
   }
 
   // run once on load with default values
@@ -1036,7 +1190,23 @@
     var s = document.createElement('script');
     s.src = '/assets/share-modal.js';
     s.onload = function(){ __shareModalLoading = false; openShareModal(); };
-    s.onerror = function(){ __shareModalLoading = false; };
+    s.onerror = function(){
+      __shareModalLoading = false;
+      // share-modal.js failed to load (network/CDN issue) — fall back to the
+      // browser's native share sheet, or copy the page URL, rather than the
+      // Share button silently doing nothing.
+      if (navigator.share){
+        navigator.share({ title: document.title, url: location.href }).catch(function(){});
+      } else if (navigator.clipboard){
+        navigator.clipboard.writeText(location.href).then(function(){
+          alert('Share is temporarily unavailable — the page link has been copied to your clipboard instead.');
+        }).catch(function(){
+          alert('Share is temporarily unavailable. Please copy the page URL from your browser\'s address bar.');
+        });
+      } else {
+        alert('Share is temporarily unavailable. Please copy the page URL from your browser\'s address bar.');
+      }
+    };
     document.head.appendChild(s);
   }
 </script>

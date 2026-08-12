@@ -479,7 +479,7 @@
     </div>
 
     <!-- RESULT PANEL -->
-    <div class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
 
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full volt-badge opacity-20"></div>
@@ -1033,7 +1033,23 @@ Fuel (L/hr) = ${fuel.toFixed(2)} L/hr`;
     var s = document.createElement('script');
     s.src = '/assets/share-modal.js';
     s.onload = function(){ __shareModalLoading = false; openShareModal(); };
-    s.onerror = function(){ __shareModalLoading = false; };
+    s.onerror = function(){
+      __shareModalLoading = false;
+      // share-modal.js failed to load (network/CDN issue) — fall back to the
+      // browser's native share sheet, or copy the page URL, rather than the
+      // Share button silently doing nothing.
+      if (navigator.share){
+        navigator.share({ title: document.title, url: location.href }).catch(function(){});
+      } else if (navigator.clipboard){
+        navigator.clipboard.writeText(location.href).then(function(){
+          alert('Share is temporarily unavailable — the page link has been copied to your clipboard instead.');
+        }).catch(function(){
+          alert('Share is temporarily unavailable. Please copy the page URL from your browser\'s address bar.');
+        });
+      } else {
+        alert('Share is temporarily unavailable. Please copy the page URL from your browser\'s address bar.');
+      }
+    };
     document.head.appendChild(s);
   }
 </script>
