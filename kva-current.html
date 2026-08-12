@@ -39,7 +39,10 @@
 <meta property="og:description" content="Convert apparent power (kVA) to current and back for single-phase and three-phase systems, with formula and worked example.">
 <meta property="og:url" content="https://www.electromechcalc.com/kva-current">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="en_AU">
+<meta property="og:locale:alternate" content="en_CA">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -56,7 +59,7 @@
   "url": "https://www.electromechcalc.com/kva-current",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free online calculator to convert apparent power (kVA) to current (Amps) and back, for single-phase and three-phase electrical systems.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -108,7 +111,7 @@
     {
       "@type": "Question",
       "name": "Does this calculator work for DC systems?",
-      "acceptedAnswer": { "@type": "Answer", "text": "No. kVA and the square root of 3 relationship are AC concepts tied to alternating voltage and current with phase relationships; DC circuits have no reactive power, so DC systems are rated in kW directly, and current is simply kW times 1000 divided by voltage." }
+      "acceptedAnswer": { "@type": "Answer", "text": "No. kVA and the square root of 3 relationship are AC concepts tied to alternating voltage and current with phase relationships; DC circuits have no reactive power, so DC systems are generally described using voltage, current, and real power (kW) rather than kVA, and current is simply kW times 1000 divided by voltage." }
     },
     {
       "@type": "Question",
@@ -278,6 +281,9 @@
     cursor:pointer;
     color:#64748b;
     transition:.15s ease;
+    border:none;
+    background:transparent;
+    font-family:inherit;
   }
   .toggle-btn.active{
     background:#0ea5e9;
@@ -388,16 +394,16 @@
       <div class="mb-5">
         <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_kva_current">Supply Type</span>
         <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_kva_current">
-          <div id="phase1" class="toggle-btn active" onclick="setPhase('single')">Single Phase</div>
-          <div id="phase3" class="toggle-btn" onclick="setPhase('three')">Three Phase</div>
+          <button type="button" id="phase1" class="toggle-btn active" aria-pressed="true" onclick="setPhase('single')">Single Phase</button>
+          <button type="button" id="phase3" class="toggle-btn" aria-pressed="false" onclick="setPhase('three')">Three Phase</button>
         </div>
       </div>
 
       <div class="mb-5">
         <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel2_kva_current">Conversion Direction</span>
         <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel2_kva_current">
-          <div id="dirKvaAmp" class="toggle-btn active" onclick="setDirection('kvaToAmp')">kVA to Amp</div>
-          <div id="dirAmpKva" class="toggle-btn" onclick="setDirection('ampToKva')">Amp to kVA</div>
+          <button type="button" id="dirKvaAmp" class="toggle-btn active" aria-pressed="true" onclick="setDirection('kvaToAmp')">kVA to Amp</button>
+          <button type="button" id="dirAmpKva" class="toggle-btn" aria-pressed="false" onclick="setDirection('ampToKva')">Amp to kVA</button>
         </div>
       </div>
 
@@ -426,7 +432,7 @@
     </div>
 
     <!-- RESULT PANEL -->
-    <div class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
 
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full volt-badge opacity-20"></div>
@@ -448,13 +454,13 @@
             Transformer Size Calculator <span class="text-sky-500">→</span>
           </a>
           <a href="/kw-kva" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
-            kVA ↔ kW Calculator <span class="text-sky-500">→</span>
+            kVA to kW Calculator <span class="text-sky-500">→</span>
           </a>
           <a href="/kw-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
-            kW ↔ Current Calculator <span class="text-sky-500">→</span>
+            kW to Current Calculator <span class="text-sky-500">→</span>
           </a>
           <a href="/hp-kw" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
-            HP ↔ kW Calculator <span class="text-sky-500">→</span>
+            HP to kW Calculator <span class="text-sky-500">→</span>
           </a>
           <a href="/motor-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
             Motor Current Calculator <span class="text-sky-500">→</span>
@@ -796,7 +802,7 @@
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Transformer Sizing Examples</h3>
       <p>Distribution transformers are rated in kVA on their nameplate together with primary and secondary voltage, and the current calculator above is the direct route from that rating to the full-load current on either winding. A 63 kVA transformer with a 415 V secondary has a full-load secondary current of about 87.7 A, which is the number used to select the secondary breaker and outgoing feeder cable. The same transformer's primary current is found the same way using the primary voltage instead — for an 11 kV primary, current = (63 × 1000) / (1.732 × 11000) ≈ 3.3 A, an order of magnitude lower because the primary operates at much higher voltage.</p>
-      <p>When a facility's total connected load is known only in kW, it must first be converted to kVA using the expected power factor (see the kW ↔ kVA calculator) before this current formula can be applied, since a transformer's current-carrying limit is governed by kVA, not kW. Utilities and consultants commonly add 15–20% headroom above the calculated peak kVA demand when selecting a transformer size, to allow for load growth and to avoid running the unit continuously at its thermal limit.</p>
+      <p>When a facility's total connected load is known only in kW, it must first be converted to kVA using the expected power factor (see the kW to kVA calculator) before this current formula can be applied, since a transformer's current-carrying limit is governed by kVA, not kW. Utilities and consultants commonly add 15–20% headroom above the calculated peak kVA demand when selecting a transformer size, to allow for load growth and to avoid running the unit continuously at its thermal limit.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Industrial Use Cases</h3>
       <ul class="list-disc pl-5 space-y-1">
@@ -872,10 +878,10 @@
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        How is this different from the kW ↔ Current calculator?
+        How is this different from the kW to Current calculator?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This tool converts current to apparent power (kVA), which is what most nameplates, transformers, and generators are actually rated in. The kW ↔ Current calculator instead converts current to real power (kW), which requires a power factor since kW is only the useful portion of the total apparent power.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This tool converts current to apparent power (kVA), which is what most nameplates, transformers, and generators are actually rated in. The kW to Current calculator instead converts current to real power (kW), which requires a power factor since kW is only the useful portion of the total apparent power.</p>
     </details>
 
     <details class="py-5">
@@ -891,7 +897,7 @@
         Does this calculator work for DC systems?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No. kVA and the √3 relationship are AC concepts tied to alternating voltage and current with phase relationships. DC circuits have no reactive power, so DC systems are rated in kW directly, and current is simply (kW × 1000) ÷ voltage.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No. kVA and the √3 relationship are AC concepts tied to alternating voltage and current with phase relationships. DC circuits have no reactive power, so DC systems are generally described using voltage, current, and real power (kW) rather than kVA — current is simply (kW × 1000) ÷ voltage.</p>
     </details>
 
     <details class="py-5">
@@ -964,15 +970,26 @@
   function setPhase(p){
     currentPhase = p;
     document.getElementById('phase1').classList.toggle('active', p === 'single');
+    document.getElementById('phase1').setAttribute('aria-pressed', p === 'single');
     document.getElementById('phase3').classList.toggle('active', p === 'three');
-    document.getElementById('voltage').value = p === 'three' ? 415 : 230;
+    document.getElementById('phase3').setAttribute('aria-pressed', p === 'three');
+    var voltageEl = document.getElementById('voltage');
+    var otherPhaseDefault = p === 'three' ? 230 : 415;
+    // Only auto-fill the voltage if it still holds the untouched default for
+    // the phase we're switching AWAY from — never overwrite a value the
+    // user has deliberately customized.
+    if (voltageEl.value === '' || parseFloat(voltageEl.value) === otherPhaseDefault){
+      voltageEl.value = p === 'three' ? 415 : 230;
+    }
     calculate();
   }
 
   function setDirection(dir){
     currentDirection = dir;
     document.getElementById('dirKvaAmp').classList.toggle('active', dir === 'kvaToAmp');
+    document.getElementById('dirKvaAmp').setAttribute('aria-pressed', dir === 'kvaToAmp');
     document.getElementById('dirAmpKva').classList.toggle('active', dir === 'ampToKva');
+    document.getElementById('dirAmpKva').setAttribute('aria-pressed', dir === 'ampToKva');
     document.getElementById('valueLabel').textContent = dir === 'kvaToAmp' ? 'Apparent Power (kVA)' : 'Current (A)';
     calculate();
   }
@@ -1090,8 +1107,26 @@
     var s = document.createElement('script');
     s.src = '/assets/share-modal.js';
     s.onload = function(){ __shareModalLoading = false; openShareModal(); };
-    s.onerror = function(){ __shareModalLoading = false; };
+    s.onerror = function(){ __shareModalLoading = false; shareResultFallback(); };
     document.head.appendChild(s);
+  }
+  function shareResultFallback(){
+    var panel = document.getElementById('resultPanel');
+    var text = panel ? panel.innerText.trim() : document.title;
+    var shareData = { title: document.title, text: text, url: location.href };
+    if (navigator.share) {
+      navigator.share(shareData).catch(function(){});
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text + '\n' + location.href).then(function(){
+        alert('Share link unavailable right now — result copied to clipboard instead.');
+      }).catch(function(){
+        alert('Sharing is unavailable right now. Please copy the URL manually: ' + location.href);
+      });
+      return;
+    }
+    alert('Sharing is unavailable right now. Please copy the URL manually: ' + location.href);
   }
 </script>
 <script>

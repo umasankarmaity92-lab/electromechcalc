@@ -39,7 +39,10 @@
 <meta property="og:description" content="Free online calculator to convert real power (kW) to load current and back, for single-phase and three-phase electrical circuits, with formula.">
 <meta property="og:url" content="https://www.electromechcalc.com/kw-current">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="en_AU">
+<meta property="og:locale:alternate" content="en_CA">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -56,7 +59,7 @@
   "url": "https://www.electromechcalc.com/kw-current",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free online calculator to convert real power (kW) to load current and back, for single-phase and three-phase electrical circuits, with formula.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -237,6 +240,9 @@
     cursor:pointer;
     color:#64748b;
     transition:.15s ease;
+    border:none;
+    background:transparent;
+    font-family:inherit;
   }
   .toggle-btn.active{
     background:#0ea5e9;
@@ -369,7 +375,7 @@
           kW to Current &amp; Current to kW Calculator
         </h1>
         <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
-          Free kW to Amps calculator — enter kilowatts, voltage, and power factor to get the exact current draw for single-phase or three-phase motors, panels, and generators.
+          Free kW to Amps calculator — enter kilowatts, voltage, and power factor to calculate the expected current draw for single-phase or three-phase motors, panels, and generators.
         </p>
       </div>
 
@@ -399,16 +405,16 @@
       <div class="mb-5">
         <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_kw_current">Supply Type</span>
         <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_kw_current">
-          <div id="phase1" class="toggle-btn active" onclick="setPhase('single')">Single Phase</div>
-          <div id="phase3" class="toggle-btn" onclick="setPhase('three')">Three Phase</div>
+          <button type="button" id="phase1" class="toggle-btn active" aria-pressed="true" onclick="setPhase('single')">Single Phase</button>
+          <button type="button" id="phase3" class="toggle-btn" aria-pressed="false" onclick="setPhase('three')">Three Phase</button>
         </div>
       </div>
 
       <div class="mb-5">
         <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel2_kw_current">Conversion Direction</span>
         <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel2_kw_current">
-          <div id="dirCurrentKw" class="toggle-btn active" onclick="setDirection('currentToKw')">Current to kW</div>
-          <div id="dirKwCurrent" class="toggle-btn" onclick="setDirection('kwToCurrent')">kW to Current</div>
+          <button type="button" id="dirCurrentKw" class="toggle-btn active" aria-pressed="true" onclick="setDirection('currentToKw')">Current to kW</button>
+          <button type="button" id="dirKwCurrent" class="toggle-btn" aria-pressed="false" onclick="setDirection('kwToCurrent')">kW to Current</button>
         </div>
       </div>
 
@@ -442,7 +448,7 @@
     </div>
 
     <!-- RESULT PANEL -->
-    <div class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
 
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full volt-badge opacity-20"></div>
@@ -464,13 +470,13 @@
             Transformer Size Calculator <span class="text-sky-500">→</span>
           </a>
           <a href="/kw-kva" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
-            kVA ↔ kW Calculator <span class="text-sky-500">→</span>
+            kVA to kW Calculator <span class="text-sky-500">→</span>
           </a>
           <a href="/hp-kw" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
-            HP ↔ kW Calculator <span class="text-sky-500">→</span>
+            HP to kW Calculator <span class="text-sky-500">→</span>
           </a>
           <a href="/kva-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
-            kVA ↔ Current Calculator <span class="text-sky-500">→</span>
+            kVA to Current Calculator <span class="text-sky-500">→</span>
           </a>
           <a href="/motor-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
             Motor Current Calculator <span class="text-sky-500">→</span>
@@ -552,7 +558,7 @@
       <p>Always confirm the actual line voltage and power factor for your installation — nominal voltage can vary regionally, and power factor changes with load type and loading percentage — before using the result to size cables, breakers, or protective devices.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Single-Phase vs Three-Phase Current for the Same kW Load</h3>
-      <p>For an identical real-power load, a three-phase supply always draws less current per conductor than an equivalent single-phase supply at the same voltage, because the power is shared across three current-carrying conductors instead of two. This is the main reason three-phase distribution is preferred for loads above a few kW — it keeps conductor sizes, voltage drop, and I²R losses lower for the same delivered power. The table below compares the current drawn for a few common kW loads at PF 0.9, showing single-phase at 230 V against three-phase at 415 V.</p>
+      <p>For an identical real-power load, three-phase distribution typically results in less current per conductor than an equivalent single-phase supply, both because the power is shared across three current-carrying conductors instead of two, and because three-phase systems are conventionally run at a higher line voltage. This is the main reason three-phase distribution is preferred for loads above a few kW — it keeps conductor sizes, voltage drop, and I²R losses lower for the same delivered power. The table below compares the current drawn for a few common kW loads at PF 0.9, showing single-phase at 230 V against three-phase at 415 V.</p>
       <div class="overflow-x-auto my-3">
         <table class="breakdown-table" style="min-width:480px;">
           <thead>
@@ -850,7 +856,7 @@
       <p><strong>1. Forgetting power factor entirely.</strong> Using PF = 1.0 by default when the actual load has a lower PF understates the true current draw — always use the nameplate PF or a realistic assumed value for the load type, not unity, unless it's a purely resistive load like a heater.</p>
       <p><strong>2. Mixing up line and phase voltage on three-phase systems.</strong> This calculator expects line-to-line voltage (e.g. 415V) for three-phase — plugging in phase voltage (240V) instead produces a result off by a factor of √3, a common and easy-to-miss error.</p>
       <p><strong>3. Using nameplate kW (mechanical output) instead of electrical input for motors.</strong> A motor's nameplate kW is its mechanical shaft output, not its electrical input power — electrical input = shaft kW ÷ efficiency, which is higher. Using shaft kW directly in the current formula understates the actual current the motor draws from the supply.</p>
-      <p><strong>4. Ignoring starting/inrush current when sizing protection.</strong> The current calculated here is steady-state running current — motor starting current is typically 5-7× this value for a fraction of a second, which is why breakers (not overload relays) are sized well above FLA specifically to ride through starting inrush without nuisance tripping.</p>
+      <p><strong>4. Ignoring starting/inrush current when sizing protection.</strong> The current calculated here is steady-state running current — motor starting current is commonly 5-8× this value for a fraction of a second (varying by motor design and starting method), which is why breakers (not overload relays) are sized well above FLA specifically to ride through starting inrush without nuisance tripping.</p>
       <p><strong>5. Not re-checking current after a power factor correction retrofit.</strong> Installing APFC capacitors changes the current drawn from the supply for the same kW load — recalculate cable and breaker adequacy after a PF correction project, since existing infrastructure sized for the old (lower) PF may now have unnecessary headroom, or in rare cases need review for resonance with harmonic loads.</p>
     </div>
   </div>
@@ -861,7 +867,7 @@
   <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Protection Sizing</span>
   <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">From Current to Breaker &amp; Overload Rating</h2>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-    <p>Once you know the load current, the next practical steps are selecting a circuit breaker and, for motors, a thermal overload relay. A general-purpose (non-motor) circuit breaker is typically selected at the next standard size at or above the full-load current, often with a 20-25% margin for continuous loads per local wiring code. Motor circuits are different: the breaker (or motor circuit protector) is sized to handle the motor's starting inrush current without nuisance tripping — often 150-250% of FLA — while a separate thermal overload relay is set close to the actual FLA (typically 100-115%) to protect the motor winding from sustained overload, since the breaker alone won't react fast enough to a slow, moderate overcurrent.</p>
+    <p>Once you know the load current, the next practical steps are selecting a circuit breaker and, for motors, a thermal overload relay. As a general starting point, a general-purpose (non-motor) circuit breaker is often selected at the next standard size at or above the full-load current, commonly with a 20-25% margin for continuous loads, though the exact figure depends on the applicable local wiring code. Motor circuits are different: the breaker (or motor circuit protector) is typically sized to handle the motor's starting inrush current without nuisance tripping — often in the 150-250% of FLA range — while a separate thermal overload relay is usually set close to the actual FLA (commonly around 100-115%) to protect the motor winding from sustained overload, since the breaker alone won't react fast enough to a slow, moderate overcurrent. Exact figures depend on the protective device type, trip curve, motor data, installation method, and applicable code — always confirm against the specific equipment datasheet and local code.</p>
     <p>This split — a breaker sized generously for starting current, paired with a tightly-set overload relay for running protection — is standard motor protection practice and is why a "one size fits all" breaker selection approach doesn't work safely for motor circuits the way it can for simple resistive loads like heaters or lighting panels.</p>
 
     <h3>Starting methods and their effect on inrush current</h3>
@@ -994,15 +1000,26 @@
   function setPhase(p){
     currentPhase = p;
     document.getElementById('phase1').classList.toggle('active', p === 'single');
+    document.getElementById('phase1').setAttribute('aria-pressed', p === 'single');
     document.getElementById('phase3').classList.toggle('active', p === 'three');
-    document.getElementById('voltage').value = p === 'three' ? 415 : 230;
+    document.getElementById('phase3').setAttribute('aria-pressed', p === 'three');
+    var voltageEl = document.getElementById('voltage');
+    var otherPhaseDefault = p === 'three' ? 230 : 415;
+    // Only auto-fill the voltage if it still holds the untouched default for
+    // the phase we're switching AWAY from — never overwrite a value the
+    // user has deliberately customized.
+    if (voltageEl.value === '' || parseFloat(voltageEl.value) === otherPhaseDefault){
+      voltageEl.value = p === 'three' ? 415 : 230;
+    }
     calculate();
   }
 
   function setDirection(dir){
     currentDirection = dir;
     document.getElementById('dirCurrentKw').classList.toggle('active', dir === 'currentToKw');
+    document.getElementById('dirCurrentKw').setAttribute('aria-pressed', dir === 'currentToKw');
     document.getElementById('dirKwCurrent').classList.toggle('active', dir === 'kwToCurrent');
+    document.getElementById('dirKwCurrent').setAttribute('aria-pressed', dir === 'kwToCurrent');
     document.getElementById('valueLabel').textContent = dir === 'currentToKw' ? 'Current (A)' : 'Power (kW)';
     calculate();
   }
@@ -1015,17 +1032,19 @@
     const validationBox = document.getElementById('validationBox');
     const errors = [];
     if (isNaN(voltage) || voltage <= 0){ errors.push('Voltage must be greater than 0.'); }
-    if (isNaN(pf) || pf <= 0 || pf > 1){ errors.push('Power Factor must be between 0.01 and 1. Reset to 0.8.'); pf = 0.8; }
+    if (isNaN(pf) || pf <= 0 || pf > 1){
+      errors.push('Power Factor must be between 0.01 and 1. Reset to 0.8.');
+      pf = 0.8;
+      document.getElementById('pf').value = 0.8;
+    }
     if (isNaN(value) || value <= 0){ errors.push('Enter a value greater than 0.'); }
 
     if (errors.length){
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
-      if (isNaN(voltage) || voltage <= 0 || isNaN(value) || value <= 0){
-        document.getElementById('rResult').textContent = '— ' + (currentDirection === 'currentToKw' ? 'kW' : 'A');
-        document.getElementById('formulaBox').textContent = 'Fix the input errors above to see a valid result.';
-        return;
-      }
+      document.getElementById('rResult').textContent = '— ' + (currentDirection === 'currentToKw' ? 'kW' : 'A');
+      document.getElementById('formulaBox').textContent = 'Fix the input errors above to see a valid result.';
+      return;
     } else {
       validationBox.classList.add('hidden');
       validationBox.innerHTML = '';
@@ -1064,6 +1083,11 @@
 
   // run once on load with default values
   calculate();
+
+  // Live auto-recalculate as the user types, in addition to the Calculate button.
+  ['voltage','pf','value'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', calculate);
+  });
 </script>
 
 <script>
@@ -1124,8 +1148,26 @@
     var s = document.createElement('script');
     s.src = '/assets/share-modal.js';
     s.onload = function(){ __shareModalLoading = false; openShareModal(); };
-    s.onerror = function(){ __shareModalLoading = false; };
+    s.onerror = function(){ __shareModalLoading = false; shareResultFallback(); };
     document.head.appendChild(s);
+  }
+  function shareResultFallback(){
+    var panel = document.getElementById('resultPanel');
+    var text = panel ? panel.innerText.trim() : document.title;
+    var shareData = { title: document.title, text: text, url: location.href };
+    if (navigator.share) {
+      navigator.share(shareData).catch(function(){});
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text + '\n' + location.href).then(function(){
+        alert('Share link unavailable right now — result copied to clipboard instead.');
+      }).catch(function(){
+        alert('Sharing is unavailable right now. Please copy the URL manually: ' + location.href);
+      });
+      return;
+    }
+    alert('Sharing is unavailable right now. Please copy the URL manually: ' + location.href);
   }
 </script>
 <script>

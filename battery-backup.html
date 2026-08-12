@@ -39,7 +39,10 @@
 <meta property="og:description" content="Estimate battery backup runtime from voltage, capacity, load, and efficiency, with a depth-of-discharge check for lead-acid vs lithium batteries.">
 <meta property="og:url" content="https://www.electromechcalc.com/battery-backup">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="en_AU">
+<meta property="og:locale:alternate" content="en_CA">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -47,7 +50,7 @@
 <meta name="twitter:description" content="Free tool to estimate UPS/inverter battery backup runtime with a depth-of-discharge check for lead-acid vs lithium batteries.">
 <meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
 
-<!-- Structured data: WebApplication -->
+<!-- Structured data: SoftwareApplication -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -56,13 +59,13 @@
   "url": "https://www.electromechcalc.com/battery-backup",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free online calculator to estimate battery backup runtime from voltage, amp-hour capacity, load power, efficiency, and depth of discharge.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
 </script>
 
-<!-- Structured data: FAQPage -->
+<!-- Structured data: BreadcrumbList -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -272,6 +275,9 @@
     cursor:pointer;
     color:#64748b;
     transition:.15s ease;
+    border:none;
+    background:transparent;
+    font-family:inherit;
   }
   .toggle-btn.active{
     background:#0ea5e9;
@@ -455,8 +461,8 @@
       <div class="mb-5">
         <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_battery_backup">Battery Type</span>
         <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_battery_backup">
-          <div id="typeLead" class="toggle-btn active" onclick="setBatteryType('lead')">Lead-Acid</div>
-          <div id="typeLithium" class="toggle-btn" onclick="setBatteryType('lithium')">Lithium-ion</div>
+          <button type="button" id="typeLead" class="toggle-btn active" aria-pressed="true" onclick="setBatteryType('lead')">Lead-Acid</button>
+          <button type="button" id="typeLithium" class="toggle-btn" aria-pressed="false" onclick="setBatteryType('lithium')">Lithium-ion</button>
         </div>
         <p class="text-[11px] text-gray-400 mt-2">Sets a suggested safe depth-of-discharge below — edit it if your battery datasheet specifies a different value.</p>
       </div>
@@ -501,7 +507,7 @@
     </div>
 
     <!-- RESULT PANEL -->
-    <div class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
 
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
@@ -605,39 +611,39 @@
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
       <p>This calculator estimates how long a battery can power a connected load by first working out the total energy stored in the battery (voltage × amp-hour capacity), then limiting that to a safely usable portion using a depth-of-discharge (DoD) percentage, and finally accounting for conversion losses through the inverter or charge controller using an efficiency factor. The result is a realistic backup-time estimate rather than an optimistic one based on the battery's full rated capacity — a distinction that matters a great deal once you're actually planning around an outage.</p>
 
-      <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mt-2">Battery Capacity: What Voltage and Amp-Hours Actually Mean</h6>
-      <p>Every battery has two headline numbers on its label: voltage (V) and amp-hour capacity (Ah). Voltage is the electrical "pressure" the battery pushes out — common values are 12V, 24V, and 48V for backup systems, with higher voltages generally used for larger battery banks to keep current, and therefore cable size and losses, manageable. Amp-hour capacity is a measure of charge, roughly describing how much current the battery can deliver over how much time — a 150Ah battery can theoretically supply 150 amps for one hour, or 15 amps for ten hours, or 1 amp for 150 hours, though real-world discharge behaviour isn't perfectly linear at very high or very low currents. Multiplying voltage by amp-hours gives watt-hours (Wh), the actual energy content of the battery, which is the number this calculator works from because it lets batteries of different voltage be compared on equal terms and lets you divide directly by a load expressed in watts.</p>
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Battery Capacity: What Voltage and Amp-Hours Actually Mean</h3>
+      <p>Every battery has two headline numbers on its label: voltage (V) and amp-hour capacity (Ah). Voltage is the electrical "pressure" the battery pushes out — common values are 12V, 24V, and 48V for backup systems, with higher voltages generally used for larger battery banks to keep current, and therefore cable size and losses, manageable. Amp-hour capacity is a rated charge capacity measured under specified test conditions (commonly a fixed discharge rate, such as the 20-hour or C/20 rate) — nominally, a 150Ah battery corresponds to 150 amps for one hour, or 15 amps for ten hours, or 1 amp for 150 hours, but actual usable capacity varies with discharge rate, temperature, age, and battery chemistry, and isn't perfectly linear at very high or very low currents. Multiplying voltage by amp-hours gives watt-hours (Wh), the actual energy content of the battery, which is the number this calculator works from because it lets batteries of different voltage be compared on equal terms and lets you divide directly by a load expressed in watts.</p>
 
-      <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mt-2">Depth of Discharge: Why the Full Rated Capacity Is a Trap</h6>
-      <p>Depth of discharge matters because most batteries shouldn't be drained to 0% on every cycle — doing so shortens their usable life dramatically, sometimes cutting total cycle count by more than half compared to a shallower, more conservative discharge pattern. Flooded and standard lead-acid batteries are typically limited to around 50% DoD for a reasonable cycle life (roughly 300–500 cycles at that depth), while sealed/AGM lead-acid can often tolerate a bit more, sometimes 60–70%, with a corresponding trade-off in longevity. Lithium-ion, and specifically LiFePO4 (lithium iron phosphate) chemistries increasingly used in home and telecom backup systems, are commonly rated for 80–90% DoD and can sustain 2,000–6,000 cycles at that depth, which is why they've become the default recommendation for anyone who cycles a battery bank frequently. Choosing the battery type toggle above fills in a sensible starting DoD, which can be overridden if your battery's datasheet specifies a different figure — always defer to the manufacturer's number over a generic default when one is available, since DoD ratings vary meaningfully even within the same broad chemistry family depending on construction quality and intended duty cycle.</p>
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Depth of Discharge: Why the Full Rated Capacity Is a Trap</h3>
+      <p>Depth of discharge matters because most batteries shouldn't be drained to 0% on every cycle — doing so shortens their usable life dramatically, sometimes cutting total cycle count by more than half compared to a shallower, more conservative discharge pattern. Flooded and standard lead-acid batteries are typically limited to around 50% DoD for a reasonable cycle life (a typical/illustrative range of roughly 300–500 cycles at that depth), while sealed/AGM lead-acid can often tolerate a bit more, sometimes 60–70%, with a corresponding trade-off in longevity. Lithium-ion, and specifically LiFePO4 (lithium iron phosphate) chemistries increasingly used in home and telecom backup systems, are commonly rated for 80–90% DoD and can sustain a typical/illustrative 2,000–6,000 cycles at that depth, which is why they've become the default recommendation for anyone who cycles a battery bank frequently — actual cycle life varies meaningfully by chemistry, brand, construction, and duty cycle, so always check the specific manufacturer's datasheet. Choosing the battery type toggle above fills in a sensible starting DoD, which can be overridden if your battery's datasheet specifies a different figure — always defer to the manufacturer's number over a generic default when one is available, since DoD ratings vary meaningfully even within the same broad chemistry family depending on construction quality and intended duty cycle.</p>
 
       <p>It's worth being explicit about why DoD exists as a concept at all rather than just "use the battery until it's empty." Every discharge cycle causes some degree of physical and chemical wear inside the cell — plate corrosion and sulfation in lead-acid, and electrode stress and lithium-plating risk in lithium-ion. The deeper each discharge goes, the more wear accumulates per cycle, so manufacturers publish cycle-life curves that trade off discharge depth against total cycle count. A battery cycled to 50% DoD might deliver two to three times as many total cycles as the same battery cycled to 80% DoD, even though each individual cycle at 80% delivers more usable energy. This is a genuine engineering trade-off, not an arbitrary conservatism, and it's the reason serious battery-bank sizing always starts from a target DoD rather than the battery's absolute top-line Ah rating.</p>
 
-      <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mt-2">System Efficiency and Where the Losses Come From</h6>
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">System Efficiency and Where the Losses Come From</h3>
       <p><strong>Usable energy</strong> is calculated as Wh = V × Ah × (DoD ÷ 100). This is then multiplied by system efficiency (covering inverter conversion losses, cable losses, and battery internal resistance) to estimate the energy actually available to the load: Runtime (h) = (Usable Energy × Efficiency ÷ 100) ÷ Load Power. Efficiency isn't a single fixed number for any given piece of equipment — it typically varies with load, dipping lower at very light loads (where fixed losses in the inverter's control circuitry are a larger fraction of total power) and at very heavy loads near the inverter's rated maximum (where conduction and switching losses rise). Most modern pure sine wave inverters and UPS systems sit in the 85–95% range across their normal operating band, and using 85% as a default when the datasheet is unavailable is a reasonably conservative assumption that won't overstate your runtime. The result panel also shows the theoretical runtime at 100% discharge for reference — useful for comparison, but not a number to plan around, since draining a battery fully on a regular basis significantly shortens its service life and, for many chemistries, can also void the manufacturer's warranty.</p>
 
-      <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mt-2">Reading the Load-Level Comparison Table</h6>
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Reading the Load-Level Comparison Table</h3>
       <p>The comparison table shows how runtime changes at a few load levels around your entered value — typically half, three-quarters, full, and one-and-a-quarter to one-and-a-half times your entered load. This is useful for two related but distinct planning tasks. First, it helps you decide how much load to shed during an outage to stretch backup time: if halving your connected load roughly doubles your runtime (which it will, since the relationship is close to linear for a fixed DoD and efficiency), it's often worth switching off non-critical circuits like water heaters, air conditioning, or decorative lighting to keep essential loads like refrigeration, lighting, and communications equipment running longer. Second, it helps with sizing a battery bank against a load that might vary over the course of an outage — a home office setup might draw 150W most of the day but spike to 400W when a laptop charger, monitor, and router are all active simultaneously, and seeing runtime at both ends of that range gives a more honest picture than a single point estimate.</p>
 
-      <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mt-2">Lead-Acid vs Lithium-Ion: Choosing the Right Chemistry</h6>
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Lead-Acid vs Lithium-Ion: Choosing the Right Chemistry</h3>
       <p>The battery type toggle isn't just a convenience for auto-filling a DoD value — it reflects a genuinely different set of trade-offs between the two dominant chemistries used in backup applications today. Lead-acid batteries (flooded, AGM, or gel) remain popular because of their lower upfront cost per Ah, their tolerance of high surge currents, and decades of proven field reliability, but they're heavier per unit of stored energy, more sensitive to deep discharge, self-discharge faster when sitting idle, and generally deliver a shorter total cycle life. Lithium-ion, particularly LiFePO4, costs more upfront but typically delivers three to five times the usable cycle life at a much deeper DoD, weighs a fraction of the equivalent lead-acid bank, tolerates a wider temperature range without as steep a capacity penalty, and often includes an integrated battery management system (BMS) that actively protects against over-discharge, over-charge, and cell imbalance. For installations that cycle daily — solar-plus-storage systems, frequent-outage regions, or telecom sites — the higher lithium cycle life usually wins on total cost of ownership despite the higher purchase price. For infrequent backup duty, such as a rarely-used UPS for occasional grid outages, the lower upfront cost of lead-acid can still make sense, since the battery may reach end-of-life from age and self-discharge before cycle count becomes the limiting factor.</p>
 
-      <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mt-2">C-Rate and Discharge Current Limits</h6>
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">C-Rate and Discharge Current Limits</h3>
       <p>One factor this calculator doesn't model directly, but which matters for real-world sizing, is C-rate — the relationship between discharge current and a battery's rated capacity. A battery's Ah rating is usually specified at a particular discharge rate (commonly the 10-hour or 20-hour rate for lead-acid), and pulling significantly more current than that rate implies — for example, running a large motor's inrush current, or drawing several kilowatts from a modest battery bank — can reduce the effective usable capacity below what a simple Wh calculation suggests, especially for lead-acid chemistries whose internal resistance rises meaningfully at high discharge currents. Lithium-ion batteries generally hold their rated capacity better across a wider range of discharge rates, which is part of why they're often specified for backup applications with high peak loads. If your load includes motor-driven equipment, refrigeration compressors, or other devices with a high starting surge, it's worth checking the battery or battery bank's continuous and peak discharge current ratings against your load's peak draw, not just its steady-state wattage.</p>
 
-      <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mt-2">Temperature Effects on Available Capacity</h6>
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Temperature Effects on Available Capacity</h3>
       <p>Battery capacity is also temperature-dependent, and this calculator assumes conditions close to a battery's rated test temperature, typically around 25°C (77°F). Cold temperatures reduce the chemical reaction rate inside the cell, which lowers effective capacity — lead-acid batteries can lose 20–50% of rated capacity as temperature drops toward freezing, while lithium-ion is somewhat less affected in discharge (though charging lithium below freezing carries its own risks and is often restricted by the BMS). Conversely, elevated temperatures can temporarily boost apparent capacity but accelerate long-term degradation and, in extreme cases, pose safety risks. If your battery bank is installed somewhere unconditioned — an outdoor enclosure, an unheated garage, or a rooftop cabinet — it's worth applying an additional safety margin to any runtime estimate, or checking the manufacturer's capacity-versus-temperature derating curve for a more precise adjustment.</p>
 
-      <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mt-2">Series and Parallel Battery Bank Configurations</h6>
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Series and Parallel Battery Bank Configurations</h3>
       <p>When a single battery doesn't provide enough voltage or capacity for the application, batteries are combined into a bank using series and/or parallel wiring. Connecting batteries in series adds their voltages while keeping Ah capacity the same as a single unit — for example, two 12V 100Ah batteries in series produce a 24V 100Ah bank. Connecting batteries in parallel adds their Ah capacity while keeping voltage the same — two 12V 100Ah batteries in parallel produce a 12V 200Ah bank. Larger installations often combine both, forming a series-parallel bank to hit a target system voltage (commonly 24V or 48V for larger systems, to keep current and cable sizing reasonable) while also reaching the required total Ah capacity. When entering values into this calculator for a multi-battery bank, use the bank's combined voltage and combined Ah rating, not the rating of a single unit, and be aware that mixing batteries of different age, capacity, or state of health within a bank — especially in parallel — can lead to uneven current sharing and premature failure of the weaker unit, so banks are best built from matched, same-age batteries wherever possible.</p>
 
-      <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mt-2">Common Sizing Mistakes to Avoid</h6>
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Common Sizing Mistakes to Avoid</h3>
       <p>A handful of mistakes come up repeatedly when people size battery backup systems by hand. The most common is using the full rated Ah capacity without applying any DoD limit, which produces a runtime estimate that looks great on paper but either shortens battery life dramatically in practice or simply isn't achievable if the battery's low-voltage cutoff triggers before the theoretical 100% discharge point is reached. A related mistake is ignoring inverter and system efficiency entirely, treating the battery's stored energy as if it transfers to the load with no losses — a reasonable-looking 10% or 15% error that compounds with the DoD mistake to produce runtime estimates that can be double the achievable real-world figure. Another frequent issue is sizing against a load's nameplate or peak rating rather than its typical running wattage — most household and office equipment draws meaningfully less than its nameplate figure under normal operation, though it's still worth checking peak/surge current separately against the battery bank's discharge current limits, as covered above. Finally, people sometimes overlook that battery capacity degrades with age even when cycle count and DoD are well managed — a battery rated for 500 cycles at 50% DoD when new will typically deliver noticeably less than its original Ah rating after a few years of service, so a runtime estimate based on a brand-new battery's nameplate figures should be treated as a best-case number for an aging bank, with a safety margin added for batteries more than a couple of years old.</p>
 
-      <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mt-2">Who This Calculator Is For</h6>
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Who This Calculator Is For</h3>
       <p>This tool is useful for anyone sizing a UPS, inverter battery bank, or solar backup system. Homeowners use it to work out how long their inverter-battery setup will realistically cover essential loads — lighting, a refrigerator, a router, a few fans — during a typical grid outage, and to decide whether their existing battery bank needs upgrading before the next monsoon or storm season. Solar installers and system integrators use it as a quick cross-check during battery bank sizing, comparing a proposed configuration's estimated runtime against a client's stated backup requirement before running a full, chemistry-specific sizing calculation. Facility and maintenance teams use it to estimate backup duration for critical infrastructure loads — server rooms, telecom base stations, security and access-control systems, and emergency lighting — where a documented, defensible runtime estimate is often required for compliance or insurance purposes. And students and early-career engineers use it as a hands-on way to build intuition for how voltage, capacity, DoD, and efficiency interact, since seeing the runtime change in real time as each input is adjusted makes the underlying relationship far more concrete than working through the formula on paper alone.</p>
 
-      <h6 class="text-xs uppercase tracking-wide text-sky-600 font-semibold mt-2">Formulas Used</h6>
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Formulas Used</h3>
       <div class="formula-chip block w-fit whitespace-pre-line">Usable Energy (Wh) = V × Ah × (DoD% ÷ 100)
 Runtime (h) = (Usable Energy × Efficiency% ÷ 100) ÷ Load (W)
 
@@ -774,8 +780,18 @@ DoD% = Depth of discharge, Efficiency% = System/inverter efficiency</div>
   function setBatteryType(type){
     batteryType = type;
     document.getElementById('typeLead').classList.toggle('active', type === 'lead');
+    document.getElementById('typeLead').setAttribute('aria-pressed', type === 'lead');
     document.getElementById('typeLithium').classList.toggle('active', type === 'lithium');
+    document.getElementById('typeLithium').setAttribute('aria-pressed', type === 'lithium');
     document.getElementById('dod').value = (type === 'lithium') ? 85 : 50;
+    calculateRuntime();
+  }
+
+  function formatHm(runtimeHours){
+    const totalMinutes = Math.round(runtimeHours * 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return hours + 'h ' + minutes + 'm';
   }
 
   function computeRuntime(voltage, ah, dod, efficiency, load){
@@ -817,13 +833,10 @@ DoD% = Depth of discharge, Efficiency% = System/inverter efficiency</div>
     const { usableEnergy, runtime } = computeRuntime(voltage, ah, dod, efficiency, load);
     const fullResult = computeRuntime(voltage, ah, 100, efficiency, load);
 
-    const hours = Math.floor(runtime);
-    const minutes = Math.round((runtime - hours) * 60);
-
     document.getElementById('rResult').textContent = runtime.toFixed(2) + ' hours';
     document.getElementById('resultSub').textContent = `At ${dod}% depth of discharge and ${efficiency}% efficiency`;
     document.getElementById('rEnergy').textContent = usableEnergy.toFixed(0) + ' Wh';
-    document.getElementById('rHm').textContent = hours + 'h ' + minutes + 'm';
+    document.getElementById('rHm').textContent = formatHm(runtime);
     document.getElementById('rFullRuntime').textContent = fullResult.runtime.toFixed(2) + ' h';
 
     // Comparison table: runtime at a spread of load levels around the entered load
@@ -838,7 +851,7 @@ DoD% = Depth of discharge, Efficiency% = System/inverter efficiency</div>
         <tr${r.isCurrent ? ' style="background:#eaf6fd;font-weight:600;"' : ''}>
             <td>${r.load.toFixed(0)} W${r.isCurrent ? ' ★' : ''}</td>
             <td>${r.runtime.toFixed(2)} h</td>
-            <td>${Math.floor(r.runtime)}h ${Math.round((r.runtime - Math.floor(r.runtime)) * 60)}m</td>
+            <td>${formatHm(r.runtime)}</td>
         </tr>
     `).join('');
 
@@ -920,8 +933,26 @@ DoD% = Depth of discharge, Efficiency% = System/inverter efficiency</div>
     var s = document.createElement('script');
     s.src = '/assets/share-modal.js';
     s.onload = function(){ __shareModalLoading = false; openShareModal(); };
-    s.onerror = function(){ __shareModalLoading = false; };
+    s.onerror = function(){ __shareModalLoading = false; shareResultFallback(); };
     document.head.appendChild(s);
+  }
+  function shareResultFallback(){
+    var panel = document.getElementById('resultPanel');
+    var text = panel ? panel.innerText.trim() : document.title;
+    var shareData = { title: document.title, text: text, url: location.href };
+    if (navigator.share) {
+      navigator.share(shareData).catch(function(){});
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text + '\n' + location.href).then(function(){
+        alert('Share link unavailable right now — result copied to clipboard instead.');
+      }).catch(function(){
+        alert('Sharing is unavailable right now. Please copy the URL manually: ' + location.href);
+      });
+      return;
+    }
+    alert('Sharing is unavailable right now. Please copy the URL manually: ' + location.href);
   }
 </script>
 <script>
