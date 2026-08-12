@@ -39,7 +39,10 @@
 <meta property="og:description" content="Instantly convert horsepower and kilowatts for motors and engines, with formula and conversion factor.">
 <meta property="og:url" content="https://www.electromechcalc.com/hp-kw">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="en_AU">
+<meta property="og:locale:alternate" content="en_CA">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -56,7 +59,7 @@
   "url": "https://www.electromechcalc.com/hp-kw",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free online calculator to convert between horsepower (HP) and kilowatts (kW) for motors, pumps, and engines using the standard 0.746 conversion factor.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -279,6 +282,9 @@
     cursor:pointer;
     color:#64748b;
     transition:.15s ease;
+    border:none;
+    background:transparent;
+    font-family:inherit;
   }
   .toggle-btn.active{
     background:#0ea5e9;
@@ -389,9 +395,17 @@
       <div class="mb-5">
         <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_hp_kw">Conversion Direction</span>
         <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_hp_kw">
-          <div id="dirHpKw" class="toggle-btn active" onclick="setDirection('hpToKw')">HP to kW</div>
-          <div id="dirKwHp" class="toggle-btn" onclick="setDirection('kwToHp')">kW to HP</div>
+          <button type="button" id="dirHpKw" class="toggle-btn active" aria-pressed="true" onclick="setDirection('hpToKw')">HP to kW</button>
+          <button type="button" id="dirKwHp" class="toggle-btn" aria-pressed="false" onclick="setDirection('kwToHp')">kW to HP</button>
         </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="hpType">Horsepower Type</label>
+        <select id="hpType" class="input-field mt-2" onchange="calculate()">
+          <option value="mechanical" selected>Mechanical HP — 0.746 kW (most nameplates)</option>
+          <option value="metric">Metric HP / PS / CV — 0.7355 kW</option>
+        </select>
       </div>
 
       <div class="mb-5">
@@ -406,13 +420,13 @@
       </button>
 
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
-        <span class="formula-chip">kW = HP × 0.746</span>
-        <span class="formula-chip">HP = kW ÷ 0.746</span>
+        <span class="formula-chip" id="chipMul">kW = HP × 0.746</span>
+        <span class="formula-chip" id="chipDiv">HP = kW ÷ 0.746</span>
       </div>
     </div>
 
     <!-- RESULT PANEL -->
-    <div class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
 
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full volt-badge opacity-20"></div>
@@ -437,7 +451,7 @@
             kW to Current Calculator <span class="text-sky-500">→</span>
           </a>
           <a href="/kw-kva" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
-            kW ↔ kVA Calculator <span class="text-sky-500">→</span>
+            kW to kVA Calculator <span class="text-sky-500">→</span>
           </a>
           <a href="/electrical/motor-starting-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
             Motor Starting Current Calculator <span class="text-sky-500">→</span>
@@ -501,7 +515,7 @@
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
       <p>To convert HP to kW, multiply horsepower by 0.746 — for example, 10 HP = 10 × 0.746 = <strong>7.46 kW</strong>. To convert kW to HP, divide kilowatts by 0.746 — for example, 7.46 kW ÷ 0.746 = <strong>10 HP</strong>. Horsepower (HP) and kilowatts (kW) are two different units used to express the same physical quantity: power, the rate at which work is done. Horsepower dates back to the 18th century, when engineer James Watt needed a way to compare the output of his early steam engines to the pulling capacity of a horse, since horses were the dominant source of mechanical power at the time. The unit stuck, and even today it remains the standard way many motor, engine, and pump nameplates express their rated power, particularly in the United States and on older or imported industrial equipment.</p>
 
-      <p>The kilowatt, by contrast, is part of the International System of Units (SI) and is the standard unit of power used almost everywhere else in electrical and mechanical engineering — on motor nameplates, generator ratings, transformer specifications, and utility billing. Because HP and kW measure the exact same physical quantity, just scaled differently, the conversion between them is a fixed, unchanging constant: 1 HP is defined as exactly 0.746 kW (more precisely 0.7457 kW for mechanical horsepower, commonly rounded to 0.746 in engineering practice). This means converting in either direction is a simple multiplication or division — no other variables like voltage, current, or power factor are involved, unlike a conversion to kVA.</p>
+      <p>The kilowatt, by contrast, is part of the International System of Units (SI) and is the standard unit of power used almost everywhere else in electrical and mechanical engineering — on motor nameplates, generator ratings, transformer specifications, and utility billing. Because HP and kW measure the exact same physical quantity, just scaled differently, the conversion between them is a fixed, unchanging constant: 1 mechanical HP equals approximately 0.7457 kW, commonly rounded to 0.746 kW in engineering practice — the figure this calculator uses by default. This means converting in either direction is a simple multiplication or division — no other variables like voltage, current, or power factor are involved, unlike a conversion to kVA.</p>
 
       <p>This conversion is used constantly in real engineering work: comparing an imported pump rated in HP against a locally available motor rated in kW, cross-checking nameplate data between two pieces of equipment specified in different unit systems, or converting an engine's HP rating into kW for inclusion in an SI-based technical report or specification sheet.</p>
 
@@ -513,7 +527,7 @@
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Common Mistakes When Converting HP to kW</h3>
       <ul class="list-disc pl-5 space-y-1">
         <li><strong>Treating the nameplate HP/kW figure as electrical input power.</strong> It is shaft output power; the actual power drawn from the mains is higher due to motor losses (efficiency) and, for AC motors, is further related through power factor if converting to current.</li>
-        <li><strong>Mixing up metric and mechanical horsepower.</strong> Mechanical (imperial) horsepower uses 0.746 kW, while metric horsepower (PS, common on older European and Japanese equipment) is very slightly different at 0.7355 kW — the difference is small but can matter for precise specification matching.</li>
+        <li><strong>Mixing up metric and mechanical horsepower.</strong> Mechanical (imperial) horsepower uses 0.746 kW, while metric horsepower (PS, common on older European and Japanese equipment) is very slightly different at 0.7355 kW — the difference is small but can matter for precise specification matching. Use the "Horsepower Type" selector above the input field to switch which figure this calculator uses.</li>
         <li><strong>Picking an undersized standard motor after conversion.</strong> A converted value like 11.19 kW should generally be rounded up to the next standard motor size (e.g. 11 kW or 15 kW) rather than down, to ensure the replacement motor isn't underpowered for the driven load.</li>
         <li><strong>Ignoring duty cycle and ambient conditions.</strong> A converted power rating assumes continuous duty at standard ambient temperature; motors used intermittently or in hot environments may need a rating with additional margin beyond the raw converted figure.</li>
       </ul>
@@ -764,7 +778,7 @@
       <p>Motor efficiency is the ratio of useful mechanical shaft output to the total electrical power drawn from the supply, expressed as a percentage. A motor rated at 90% efficiency delivering 10 kW at the shaft is actually drawing about 11.1 kW of electrical input power, with the remaining ~1.1 kW dissipated as heat in the windings, core, friction, and windage losses. Efficiency generally improves with motor size — small sub-1 kW motors often run 70–80% efficient, while large industrial motors above 50 kW routinely exceed 94–96%, especially in premium efficiency (IE3/IE4) classes. This matters for two very practical reasons: it determines the true electrical demand a motor places on the supply (and therefore the correct cable and breaker size), and it directly affects running cost, since a less efficient motor consumes more electricity for the same mechanical work over its operating life.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">HP vs BHP vs kW: What's the Difference?</h3>
-      <p>These three terms are often used loosely, but they describe related-but-distinct quantities. <strong>HP (Horsepower)</strong> is simply the unit of power itself — 0.746 kW — and can refer to either mechanical or electrical power depending on context. <strong>BHP (Brake Horsepower)</strong> specifically means the actual usable mechanical power measured at the output shaft (or "brake") of an engine or motor, after internal friction losses are already accounted for — it's the real, deliverable power, as opposed to a theoretical or gross rating. <strong>kW</strong> is the SI equivalent of HP and, on a motor nameplate, almost always refers to the same shaft output quantity as BHP, just expressed in metric units. In short: BHP and nameplate kW both describe real, delivered shaft power; "HP" alone is just the unit those quantities can be expressed in, and doesn't by itself indicate whether losses have been accounted for — that context usually needs to come from how the manufacturer defines the rating.</p>
+      <p>These three terms are often used loosely, but they describe related-but-distinct quantities. <strong>HP (Horsepower)</strong> is a unit of power — 0.746 kW for the mechanical (imperial) definition this calculator uses by default. In this calculator, and on the vast majority of motor and pump nameplates, HP means mechanical shaft power unless otherwise stated. <strong>BHP (Brake Horsepower)</strong> specifically means the actual usable mechanical power measured at the output shaft (or "brake") of an engine or motor, after internal friction losses are already accounted for — it's the real, deliverable power, as opposed to a theoretical or gross rating. <strong>kW</strong> is the SI equivalent of HP and, on a motor nameplate, almost always refers to the same shaft output quantity as BHP, just expressed in metric units. In short: BHP and nameplate kW both describe real, delivered shaft power; "HP" alone is just the unit those quantities can be expressed in, and doesn't by itself indicate whether losses have been accounted for — that context usually needs to come from how the manufacturer defines the rating.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Typical Motor Rating Chart (Frame Size Reference)</h3>
       <p>Standard industrial motors are manufactured in fixed size steps rather than arbitrary ratings, so a converted HP-to-kW figure is usually rounded to the nearest standard size below. The table below lists commonly available standard motor ratings and their typical frame association for a four-pole (1450 rpm) induction motor.</p>
@@ -913,18 +927,23 @@
 
   // ===== HP <-> kW Calculator Logic =====
   let currentDirection = 'hpToKw';
-  const factor = 0.746;
+  const hpFactors = { mechanical: 0.746, metric: 0.7355 };
 
   function setDirection(dir){
     currentDirection = dir;
     document.getElementById('dirHpKw').classList.toggle('active', dir === 'hpToKw');
+    document.getElementById('dirHpKw').setAttribute('aria-pressed', dir === 'hpToKw');
     document.getElementById('dirKwHp').classList.toggle('active', dir === 'kwToHp');
+    document.getElementById('dirKwHp').setAttribute('aria-pressed', dir === 'kwToHp');
     document.getElementById('valueLabel').textContent = dir === 'hpToKw' ? 'Power (HP)' : 'Power (kW)';
     calculate();
   }
 
   function calculate(){
     const value = parseFloat(document.getElementById('value').value);
+    const hpType = document.getElementById('hpType').value;
+    const factor = hpFactors[hpType] || hpFactors.mechanical;
+    const factorLabel = hpType === 'metric' ? 'Metric HP (PS/CV)' : 'Mechanical HP';
 
     const validationBox = document.getElementById('validationBox');
     const errors = [];
@@ -947,20 +966,22 @@
       result = value * factor;
       resultUnit = 'kW';
       resultLabel = 'Real Power';
-      subText = `Converted from ${value} HP`;
-      formulaText = `kW = HP × 0.746\nkW = ${value} × 0.746\nkW = ${result.toFixed(3)} kW`;
+      subText = `Converted from ${value} ${factorLabel}`;
+      formulaText = `kW = HP × ${factor}\nkW = ${value} × ${factor}\nkW = ${result.toFixed(3)} kW\n(${factorLabel})`;
     } else {
       result = value / factor;
       resultUnit = 'HP';
       resultLabel = 'Horsepower';
-      subText = `Converted from ${value} kW`;
-      formulaText = `HP = kW ÷ 0.746\nHP = ${value} ÷ 0.746\nHP = ${result.toFixed(3)} HP`;
+      subText = `Converted from ${value} kW (${factorLabel})`;
+      formulaText = `HP = kW ÷ ${factor}\nHP = ${value} ÷ ${factor}\nHP = ${result.toFixed(3)} HP\n(${factorLabel})`;
     }
 
     document.getElementById('rResult').textContent = result.toFixed(2) + ' ' + resultUnit;
     document.getElementById('resultLabel').textContent = resultLabel;
     document.getElementById('resultSub').textContent = subText;
     document.getElementById('formulaBox').textContent = formulaText;
+    document.getElementById('chipMul').textContent = `kW = HP × ${factor}`;
+    document.getElementById('chipDiv').textContent = `HP = kW ÷ ${factor}`;
   }
 
   // run once on load with default values
@@ -1025,8 +1046,26 @@
     var s = document.createElement('script');
     s.src = '/assets/share-modal.js';
     s.onload = function(){ __shareModalLoading = false; openShareModal(); };
-    s.onerror = function(){ __shareModalLoading = false; };
+    s.onerror = function(){ __shareModalLoading = false; shareResultFallback(); };
     document.head.appendChild(s);
+  }
+  function shareResultFallback(){
+    var panel = document.getElementById('resultPanel');
+    var text = panel ? panel.innerText.trim() : document.title;
+    var shareData = { title: document.title, text: text, url: location.href };
+    if (navigator.share) {
+      navigator.share(shareData).catch(function(){});
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text + '\n' + location.href).then(function(){
+        alert('Share link unavailable right now — result copied to clipboard instead.');
+      }).catch(function(){
+        alert('Sharing is unavailable right now. Please copy the URL manually: ' + location.href);
+      });
+      return;
+    }
+    alert('Sharing is unavailable right now. Please copy the URL manually: ' + location.href);
   }
 </script>
 <script>

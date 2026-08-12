@@ -40,7 +40,10 @@
 <meta property="og:description" content="Free Maintenance Calculator with MTBF, MTTR, OEE, Downtime Cost, Reliability, PM Interval, Lubrication, Spare Parts, Availability and Maintenance Cost tools.">
 <meta property="og:url" content="https://www.electromechcalc.com/maintenance-pro-cal">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="en_AU">
+<meta property="og:locale:alternate" content="en_CA">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -57,7 +60,7 @@
   "url": "https://www.electromechcalc.com/maintenance-pro-cal",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free online industrial maintenance calculator covering MTBF, MTTR, OEE, Downtime Cost, PM Interval, Lubrication Interval, Spare Parts Inventory, Maintenance Cost, Equipment Availability and Reliability.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -347,12 +350,20 @@
       Currency
       <select id="currencySelect" class="font-mono text-xs font-semibold text-brandDark bg-transparent outline-none" onchange="changeCurrency(this.value)">
         <option value="USD" selected>USD ($)</option>
-        <option value="INR">INR (₹)</option>
         <option value="EUR">EUR (€)</option>
         <option value="GBP">GBP (£)</option>
+        <option value="CAD">CAD ($)</option>
+        <option value="AUD">AUD ($)</option>
+        <option value="NZD">NZD ($)</option>
+        <option value="SGD">SGD ($)</option>
+        <option value="AED">AED (د.إ)</option>
+        <option value="SAR">SAR (﷼)</option>
+        <option value="INR">INR (₹)</option>
+        <option value="JPY">JPY (¥)</option>
       </select>
     </label>
   </div>
+  <p class="text-center text-[10px] text-gray-400 mb-4">Currency selection changes the displayed symbol only — no exchange-rate conversion is performed; enter your cost inputs directly in your chosen currency.</p>
 
   <!-- Category Tabs -->
   <div class="flex flex-wrap gap-2 justify-center mb-8" id="tabBar">
@@ -481,9 +492,13 @@
       <div class="calc-panel" id="panel-lube">
         <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Lubrication Interval Calculator</h2>
         <p class="text-xs text-gray-500 mb-6">Bearing relubrication interval using bore diameter, speed, temperature &amp; contamination.</p>
+        <div class="flex gap-2 mb-4" role="group" aria-label="Unit system">
+          <button type="button" id="lubeUnitMetric" class="tab-pill active" aria-pressed="true" onclick="setLubeUnit('metric')">Metric (mm / °C)</button>
+          <button type="button" id="lubeUnitImperial" class="tab-pill" aria-pressed="false" onclick="setLubeUnit('imperial')">Imperial (in / °F)</button>
+        </div>
         <div class="space-y-4">
           <div>
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="lube_d">Bearing Bore Diameter (mm)</label>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="lube_d" id="lube_d_label">Bearing Bore Diameter (mm)</label>
             <input id="lube_d" type="number" value="50" step="any" min="0" class="input-field mt-2" oninput="calcLube()">
           </div>
           <div>
@@ -491,7 +506,7 @@
             <input id="lube_n" type="number" value="1450" step="any" min="0" class="input-field mt-2" oninput="calcLube()">
           </div>
           <div>
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="lube_temp">Operating Temperature (°C)</label>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="lube_temp" id="lube_temp_label">Operating Temperature (°C)</label>
             <input id="lube_temp" type="number" value="70" step="any" class="input-field mt-2" oninput="calcLube()">
           </div>
           <div>
@@ -623,6 +638,7 @@
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="rLabel">Result</span>
         <div id="rResult" class="font-display font-bold text-3xl mt-1 break-all">—</div>
         <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values to calculate</p>
+        <p class="text-xs text-amber-400 mt-2" id="rWarning" role="status" style="display:none;"></p>
 
         <div class="mt-4 pt-4 border-t border-white/10">
           <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Formula</span>
@@ -883,7 +899,7 @@
             </ul>
           </div>
           <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
-            <span class="font-mono text-[10px] uppercase tracking-wider text-amber-600 block mb-2">Typical Hourly Downtime Cost</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-amber-600 block mb-2">Illustrative Hourly Downtime Cost</span>
             <table class="w-full text-xs text-gray-600">
               <tbody>
                 <tr><td class="py-0.5 font-medium text-brandDark">Small workshop</td><td class="py-0.5 text-right">$200–500/hr</td></tr>
@@ -891,6 +907,7 @@
                 <tr><td class="py-0.5 font-medium text-brandDark">Continuous process (steel/petrochem)</td><td class="py-0.5 text-right">$20,000–100,000+/hr</td></tr>
               </tbody>
             </table>
+            <p class="text-[10px] text-gray-400 mt-2">Illustrative ranges only, shown in USD as a reference point; actual downtime cost varies substantially by plant, product, throughput, margins, contracts, and local operating costs.</p>
           </div>
         </div>
         <div class="mt-4 bg-rose-50 border border-rose-100 rounded-xl p-4">
@@ -955,7 +972,7 @@
         </summary>
         <div class="text-sm text-gray-600 leading-relaxed mt-4 space-y-4">
           <p class="formula-chip">t = (14×10⁶ ÷ (n × √d)) × Temperature Factor × Contamination Factor</p>
-          <p>Bearing lubrication failure is one of the leading causes of premature bearing failure in rotating equipment, and yet relubrication intervals are frequently set by habit ("grease it every quarter") rather than by the actual operating conditions of the bearing. This calculator uses the widely-published bearing-industry base formula, where n is rotational speed in RPM and d is the bearing bore diameter in millimetres, to estimate a base relubrication interval in hours before applying two real-world de-rating factors.</p>
+          <p>Bearing lubrication failure is one of the leading causes of premature bearing failure in rotating equipment, and yet relubrication intervals are frequently set by habit ("grease it every quarter") rather than by the actual operating conditions of the bearing. This calculator uses the widely-published bearing-industry base formula, where n is rotational speed in RPM and d is the bearing bore diameter, to estimate a base relubrication interval in hours before applying two real-world de-rating factors. The formula itself always works in millimetres and °C internally; use the Metric/Imperial toggle above the inputs to enter bore diameter in inches and temperature in °F instead — the calculator converts automatically.</p>
           <p>The base formula reflects a well-established relationship in bearing engineering: grease life shortens as speed increases (faster rotation shears and works the grease more aggressively) and as bore diameter increases (larger bearings have higher surface speeds at the same RPM and larger, harder-to-lubricate internal geometry). This relationship is why the interval is inversely proportional to speed and to the square root of bore diameter — a relatively gentle diameter penalty compared to the much steeper speed penalty.</p>
           <p>The <strong>Temperature Factor</strong> applies the maintenance-industry rule of thumb that grease life roughly halves for every 15°C the operating temperature rises above 70°C — heat accelerates the chemical oxidation and physical breakdown of the base oil and thickener in the grease. Below 70°C, no penalty is applied because most standard greases perform reliably within their designed range. Above that threshold, the calculator steps the temperature into 15°C brackets and applies a compounding 0.5× factor per bracket, so a bearing running at 100°C sees its base interval quartered (two 15°C steps), and one running hotter still sees it fall further — reflecting how disproportionately damaging sustained high heat is to grease life.</p>
           <p>The <strong>Contamination Factor</strong> then layers in the operating environment: Light contamination (clean, well-sealed environments) applies no penalty; Moderate contamination (typical industrial dust, occasional washdown) halves the interval; Severe contamination (heavy dust, moisture ingress, or process chemical exposure) cuts it to roughly a tenth of the clean-environment interval, because contaminants act as an abrasive inside the bearing and also degrade the grease chemically far faster than heat alone.</p>
@@ -1000,7 +1017,7 @@
         <div class="text-sm text-gray-600 leading-relaxed mt-4 space-y-4">
           <p class="formula-chip">ROP = (Avg Daily Usage × Lead Time) + Safety Stock,&nbsp; Safety Stock = (Max Daily Usage − Avg Daily Usage) × Lead Time,&nbsp; EOQ = √(2 × Annual Demand × Order Cost ÷ Holding Cost)</p>
           <p>Spare parts inventory sits at an uncomfortable intersection of two opposing risks: stock too little and a critical asset sits idle waiting for a part while downtime cost accumulates by the hour; stock too much and working capital gets tied up in shelves of parts that slowly depreciate, take up storeroom space, and sometimes expire or become obsolete before they're ever used. This calculator answers two separate questions that together resolve that tension: <em>when</em> to reorder, and <em>how much</em> to order.</p>
-          <p><strong>Reorder Point (ROP)</strong> answers the "when" question. It's built from expected lead-time demand (Average Daily Usage × Lead Time) plus a Safety Stock buffer. The buffer exists because real-world usage isn't perfectly steady — some days you'll consume more than average — and because lead times themselves can slip. This calculator's safety stock formula, (Maximum Daily Usage − Average Daily Usage) × Lead Time, is a straightforward and widely used approach: it sizes the buffer around the gap between your worst realistic daily draw-down and your typical one, scaled by how long you'd have to survive on that buffer before a new order arrives. The result is the stock level that should trigger a purchase order — not the level at which you run out.</p>
+          <p><strong>Reorder Point (ROP)</strong> answers the "when" question. It's built from expected lead-time demand (Average Daily Usage × Lead Time) plus a Safety Stock buffer. The buffer exists because real-world usage isn't perfectly steady — some days you'll consume more than average — and because lead times themselves can slip. This calculator's safety stock formula, (Maximum Daily Usage − Average Daily Usage) × Lead Time, is a straightforward and widely used approach: it sizes the buffer around the gap between your worst realistic daily draw-down and your typical one, scaled by how long you'd have to survive on that buffer before a new order arrives. The result is the stock level that should trigger a purchase order — not the level at which you run out. This max-minus-average method is intentionally simple and doesn't require historical demand-variability data; more statistically rigorous approaches (e.g. a service-level/Z-score method using the standard deviation of demand) exist and may better suit high-value or highly variable parts, but need more usage history than most storerooms track day to day.</p>
           <p><strong>Economic Order Quantity (EOQ)</strong> answers the "how much" question, using the classic Wilson formula from inventory theory. It balances two costs that move in opposite directions as order size changes: Ordering Cost (the fixed cost of placing and processing each purchase order — administrative time, shipping, receiving) falls per unit as you order larger batches less frequently, while Holding Cost (storage, insurance, capital tied up, obsolescence risk) rises as you carry more inventory at once. EOQ finds the order quantity that minimizes the sum of these two costs, and the calculator also reports how many orders per year that implies (Annual Demand ÷ EOQ).</p>
           <p>It's worth being explicit about where this model applies and where it doesn't. EOQ assumes fairly steady, predictable demand and is well suited to consumable, moderate-cost items like filters, seals, belts, and common bearings. It is deliberately <strong>not</strong> the right model for a small number of extremely critical, expensive, long-lead-time spares — the single spare motor for your only production line, for example — where the correct stocking decision is driven by downtime-cost-avoidance and criticality analysis rather than by minimizing ordering and holding costs. For those items, the right question isn't "what minimizes cost" but "can we afford to be without this for weeks while a replacement is manufactured," and the answer is very often yes, stock one anyway, EOQ math notwithstanding. A well-run spares strategy typically applies this calculator's logic to the broad base of consumable parts, while handling critical, insurance-type spares through a separate criticality-based review.</p>
         <div class="mt-5 grid sm:grid-cols-2 gap-4">
@@ -1358,7 +1375,7 @@
         Can I use this calculator in a currency other than USD?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — use the currency selector above the calculator tabs to switch the displayed symbol between USD, INR, EUR, and GBP. This changes the symbol shown, not the value; enter your cost inputs directly in your chosen currency.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — use the currency selector above the calculator tabs to switch the displayed symbol between USD, EUR, GBP, CAD, AUD, NZD, SGD, AED, SAR, INR, and JPY. This changes the symbol shown, not the value; enter your cost inputs directly in your chosen currency. No exchange-rate conversion is performed.</p>
     </details>
   </div>
 </section>
@@ -1394,15 +1411,30 @@
   // ===== Currency switcher =====
   // Note: this only changes the displayed symbol, it does not convert values —
   // enter your cost inputs directly in whichever currency you select.
-  const currencySymbols = { USD: '$', INR: '₹', EUR: '€', GBP: '£' };
+  const currencySymbols = { USD: '$', EUR: '€', GBP: '£', CAD: 'CA$', AUD: 'A$', NZD: 'NZ$', SGD: 'S$', AED: 'AED ', SAR: 'SAR ', INR: '₹', JPY: '¥' };
+  let currencyCode = 'USD';
   let currencySymbol = '$';
   function changeCurrency(code){
-    currencySymbol = currencySymbols[code] || '$';
+    currencyCode = currencySymbols[code] ? code : 'USD';
+    currencySymbol = currencySymbols[currencyCode];
     document.querySelectorAll('.cur-sym').forEach(el => el.textContent = currencySymbol);
     const activeTab = document.querySelector('.tab-pill.active');
     const key = activeTab ? activeTab.dataset.cat : 'mtbf';
     if (calcFns[key]) calcFns[key]();
+    try { localStorage.setItem('emc-currency', currencyCode); } catch(e) {}
   }
+  (function initCurrency(){
+    try {
+      const saved = localStorage.getItem('emc-currency');
+      if (saved && currencySymbols[saved]) {
+        currencyCode = saved;
+        currencySymbol = currencySymbols[saved];
+        const select = document.getElementById('currencySelect');
+        if (select) select.value = saved;
+        document.querySelectorAll('.cur-sym').forEach(el => el.textContent = currencySymbol);
+      }
+    } catch(e) {}
+  })();
 
   // ===== Maintenance Pro Cal Logic =====
   const calcListMeta = [
@@ -1444,6 +1476,19 @@
     document.getElementById('rResult').textContent = value;
     document.getElementById('resultSub').textContent = sub;
     document.getElementById('rFormula').textContent = formula;
+    setWarning('');
+  }
+
+  function setWarning(msg){
+    const el = document.getElementById('rWarning');
+    if(!el) return;
+    if(msg){
+      el.textContent = '⚠ ' + msg;
+      el.style.display = '';
+    } else {
+      el.textContent = '';
+      el.style.display = 'none';
+    }
   }
 
   function setQuickTable(rows){
@@ -1519,6 +1564,9 @@
     const oee = availability * performance * quality * 100;
 
     setResult('OEE', formatNum(oee) + ' %', 'Overall Equipment Effectiveness', 'OEE = Availability × Performance × Quality');
+    if (total > 0 && good > total) {
+      setWarning('Good Count exceeds Total Count — Quality has been capped at 100%. Check your inputs.');
+    }
     setQuickTable([
       { v: formatNum(availability*100)+'%', l: 'Availability' },
       { v: formatNum(performance*100)+'%', l: 'Performance' },
@@ -1568,11 +1616,71 @@
   // 70°C and below -> factor 1 ; 70–85°C -> 0.5 ; 85–100°C -> 0.25 ; and so on,
   // matching how bearing manufacturers publish these tables (Math.ceil keeps
   // boundary values like exactly 85°C or 100°C in the correct bracket).
+  // The underlying formula (14×10⁶/(n√d), 70°C/15°C brackets) is always
+  // evaluated in mm and °C — the Metric/Imperial toggle only converts what
+  // the user types into and reads out of the two affected fields.
+  let lubeUnit = 'metric';
+  const mmFromIn = v => v * 25.4;
+  const inFromMm = v => v / 25.4;
+  const cFromF = v => (v - 32) * 5 / 9;
+  const fFromC = v => v * 9 / 5 + 32;
+
+  function setLubeUnit(unit){
+    if(unit === lubeUnit) return;
+    const dEl = document.getElementById('lube_d');
+    const tEl = document.getElementById('lube_temp');
+    const dVal = parseFloat(dEl.value);
+    const tVal = parseFloat(tEl.value);
+    if(unit === 'imperial'){
+      if(!isNaN(dVal)) dEl.value = parseFloat(inFromMm(dVal).toFixed(3));
+      if(!isNaN(tVal)) tEl.value = parseFloat(fFromC(tVal).toFixed(2));
+      document.getElementById('lube_d_label').textContent = 'Bearing Bore Diameter (in)';
+      document.getElementById('lube_temp_label').textContent = 'Operating Temperature (°F)';
+    } else {
+      if(!isNaN(dVal)) dEl.value = parseFloat(mmFromIn(dVal).toFixed(3));
+      if(!isNaN(tVal)) tEl.value = parseFloat(cFromF(tVal).toFixed(2));
+      document.getElementById('lube_d_label').textContent = 'Bearing Bore Diameter (mm)';
+      document.getElementById('lube_temp_label').textContent = 'Operating Temperature (°C)';
+    }
+    lubeUnit = unit;
+    document.getElementById('lubeUnitMetric').classList.toggle('active', unit === 'metric');
+    document.getElementById('lubeUnitMetric').setAttribute('aria-pressed', unit === 'metric');
+    document.getElementById('lubeUnitImperial').classList.toggle('active', unit === 'imperial');
+    document.getElementById('lubeUnitImperial').setAttribute('aria-pressed', unit === 'imperial');
+    try { localStorage.setItem('emc-lube-unit', unit); } catch(e) {}
+    calcLube();
+  }
+  (function initLubeUnit(){
+    try {
+      const saved = localStorage.getItem('emc-lube-unit');
+      if (saved === 'imperial') {
+        const dEl = document.getElementById('lube_d');
+        const tEl = document.getElementById('lube_temp');
+        const dVal = parseFloat(dEl.value);
+        const tVal = parseFloat(tEl.value);
+        if(!isNaN(dVal)) dEl.value = parseFloat(inFromMm(dVal).toFixed(3));
+        if(!isNaN(tVal)) tEl.value = parseFloat(fFromC(tVal).toFixed(2));
+        document.getElementById('lube_d_label').textContent = 'Bearing Bore Diameter (in)';
+        document.getElementById('lube_temp_label').textContent = 'Operating Temperature (°F)';
+        lubeUnit = 'imperial';
+        document.getElementById('lubeUnitMetric').classList.remove('active');
+        document.getElementById('lubeUnitMetric').setAttribute('aria-pressed', 'false');
+        document.getElementById('lubeUnitImperial').classList.add('active');
+        document.getElementById('lubeUnitImperial').setAttribute('aria-pressed', 'true');
+      }
+    } catch(e) {}
+  })();
+
   function calcLube(){
-    const d = parseFloat(document.getElementById('lube_d').value) || 0;
+    let d = parseFloat(document.getElementById('lube_d').value) || 0;
     const n = parseFloat(document.getElementById('lube_n').value) || 0;
-    const temp = parseFloat(document.getElementById('lube_temp').value) || 0;
+    let temp = parseFloat(document.getElementById('lube_temp').value) || 0;
     const contam = parseFloat(document.getElementById('lube_contam').value) || 1;
+
+    if(lubeUnit === 'imperial'){
+      d = mmFromIn(d);
+      temp = cFromF(temp);
+    }
 
     const base = (n > 0 && d > 0) ? 14000000 / (n * Math.sqrt(d)) : 0;
     let tempFactor = 1;
@@ -1642,6 +1750,9 @@
     const avail = total > 0 ? (uptime / total) * 100 : 0;
 
     setResult('Equipment Availability', formatNum(avail) + ' %', 'Share of scheduled time equipment is available', 'Availability = (Total Time − Downtime) ÷ Total Time');
+    if (total > 0 && down > total) {
+      setWarning('Downtime exceeds Total Scheduled Time — Uptime has been capped at 0. Check your inputs.');
+    }
     setQuickTable([
       { v: formatNum(uptime)+' hrs', l: 'Uptime' },
       { v: formatNum(down)+' hrs', l: 'Downtime' },
@@ -1729,8 +1840,26 @@
     var s = document.createElement('script');
     s.src = '/assets/share-modal.js';
     s.onload = function(){ __shareModalLoading = false; openShareModal(); };
-    s.onerror = function(){ __shareModalLoading = false; };
+    s.onerror = function(){ __shareModalLoading = false; shareResultFallback(); };
     document.head.appendChild(s);
+  }
+  function shareResultFallback(){
+    var panel = document.getElementById('resultPanel');
+    var text = panel ? panel.innerText.trim() : document.title;
+    var shareData = { title: document.title, text: text, url: location.href };
+    if (navigator.share) {
+      navigator.share(shareData).catch(function(){});
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text + '\n' + location.href).then(function(){
+        alert('Share link unavailable right now — result copied to clipboard instead.');
+      }).catch(function(){
+        alert('Sharing is unavailable right now. Please copy the URL manually: ' + location.href);
+      });
+      return;
+    }
+    alert('Sharing is unavailable right now. Please copy the URL manually: ' + location.href);
   }
 </script>
 </body>
