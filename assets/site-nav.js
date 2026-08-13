@@ -205,7 +205,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Load saved theme
-  const savedTheme = localStorage.getItem("emc-theme");
+  let savedTheme = localStorage.getItem("emc-theme");
+  if (savedTheme !== "dark-theme" && savedTheme !== "light-theme") {
+    savedTheme = null;
+  }
   const theme = savedTheme ??
     (window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark-theme"
