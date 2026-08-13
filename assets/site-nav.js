@@ -161,8 +161,8 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", updateHeroBottom);
 
   if (siteHeader || fabContainer) {
-    const HIDE_DELAY_MOBILE = 1000;   // ms of no scroll before floating buttons hide (mobile)
-    const HIDE_DELAY_DESKTOP = 2500;  // ms of no scroll before floating buttons hide (desktop)
+    const HIDE_DELAY_MOBILE = 5000;   // ms of no scroll before floating buttons hide (mobile)
+    const HIDE_DELAY_DESKTOP = 5000;  // ms of no scroll before floating buttons hide (desktop)
     const isDesktop = () => window.matchMedia("(min-width: 768px)").matches;
     const SCROLL_DELTA = 2;   // ignore only true jitter — low enough that slow/gentle scrolls still register
     let lastScrollY = window.scrollY;
