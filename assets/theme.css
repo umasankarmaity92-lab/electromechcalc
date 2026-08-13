@@ -636,22 +636,10 @@ body {
   transform: translateY(-100%);
 }
 
-/* Footer hide-on-scroll-up / show-on-scroll-down (class toggled by
-   site-nav.js). Footer stays in normal document flow — only its own
-   opacity/interactivity toggle, so no layout shift/gap is introduced
-   while hidden (it only becomes visually relevant once the user has
-   scrolled near the bottom of the page anyway). */
-.site-footer {
-  transition: opacity .25s ease;
-}
-.site-footer.site-footer-hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Floating scroll-arrow + feedback buttons (site-wide, injected by
-   site-nav.js). Direction-based: shown while actively scrolling
-   (up or down), hidden ~700ms after scrolling stops. */
+/* Floating scroll buttons + feedback (site-wide, injected by
+   site-nav.js). Direction-based: down-arrow shows while scrolling down,
+   up-arrow shows while scrolling up, feedback shows with either — all
+   fade out ~700ms after scrolling stops. */
 .scroll-fab-container {
   position: fixed;
   right: 18px;
@@ -681,11 +669,26 @@ body {
   border: none;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(0,0,0,.25);
-  transition: transform .15s ease, box-shadow .15s ease;
+  transition: transform .15s ease, box-shadow .15s ease, opacity .2s ease;
 }
 .scroll-fab:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.3); }
-.scroll-fab-top { background: var(--accent-contrast, #0ea5e9); }
 .scroll-fab-message { background: #16a34a; }
+/* var(--accent-contrast) is #0369a1 (AA-safe darker blue) in light
+   theme and #0ea5e9 in dark theme — both give a solid, visible fill
+   behind the white icon in either mode. Previously this rule targeted
+   a ".scroll-fab-top" class the buttons no longer use, so both arrows
+   had no background at all (white-on-white in light mode = invisible). */
+.scroll-fab-up,
+.scroll-fab-down {
+  background: var(--accent-contrast, #0369a1);
+  opacity: 0;
+  pointer-events: none;
+}
+.scroll-fab-container.dir-up .scroll-fab-up,
+.scroll-fab-container.dir-down .scroll-fab-down {
+  opacity: 1;
+  pointer-events: auto;
+}
 
 /* Recent Posts — blog pages only. Horizontal side-scroll strip of
    post cards, snap-scrolling on touch devices. */

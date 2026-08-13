@@ -96,17 +96,25 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---------------------------------------------------------------------
-  // Header / Footer / Scroll-Arrow / Feedback — direction-based show/hide
+  // Header hide-on-scroll-down / show-on-scroll-up / show-near-top
   //
-  // Scroll up   -> header + up-arrow + feedback show, footer hides
-  // Scroll down -> footer + down-arrow + feedback show, header hides
-  // No scroll / idle for HIDE_DELAY -> everything hides
-  // Content itself always stays visible; only these chrome elements toggle.
-  // .site-header stays position:sticky (theme.css) — only its transform
-  // moves via .site-header-hidden, so "stuck to top" is untouched.
+  // - At the top (hero section in view) -> always shown
+  // - Scrolling up                      -> shown
+  // - Scrolling down past the top       -> hidden
+  // .site-header stays position:sticky (theme.css) — this only toggles a
+  // transform via the .site-header-hidden class, so the "stuck to top"
+  // behavior itself is untouched.
   // ---------------------------------------------------------------------
-  const siteFooter = document.querySelector(".site-footer");
 
+  // ---------------------------------------------------------------------
+  // Floating buttons — separate up-arrow, down-arrow, and feedback icon.
+  // Independent of the header:
+  //   - Scrolling down -> down-arrow + feedback show
+  //   - Scrolling up    -> up-arrow + feedback show
+  //   - Idle ~700ms after scrolling stops -> all hide
+  // Both header and floating-button logic run off one shared scroll
+  // listener (rAF-throttled) to avoid adding extra scroll handlers.
+  // ---------------------------------------------------------------------
   const fabContainer = document.createElement("div");
   fabContainer.className = "scroll-fab-container";
   fabContainer.innerHTML = `
@@ -115,60 +123,37 @@ document.addEventListener("DOMContentLoaded", () => {
         <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </a>
-    <button type="button" class="scroll-fab scroll-fab-arrow" aria-label="Scroll to top">
-      <svg class="scroll-fab-arrow-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <button type="button" class="scroll-fab scroll-fab-down" aria-label="Scroll down">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 5v14M5 12l7 7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button type="button" class="scroll-fab scroll-fab-up" aria-label="Scroll to top">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M12 19V5M5 12l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
   `;
   document.body.appendChild(fabContainer);
 
-  const arrowBtn = fabContainer.querySelector(".scroll-fab-arrow");
-  const arrowIcon = fabContainer.querySelector(".scroll-fab-arrow-icon");
-  let arrowDirection = "up";
-
-  const ARROW_PATHS = {
-    up: '<path d="M12 19V5M5 12l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"/>',
-    down: '<path d="M12 5v14M5 12l7 7 7-7" stroke-linecap="round" stroke-linejoin="round"/>'
-  };
-
-  function setArrowDirection(direction) {
-    if (direction === arrowDirection) return;
-    arrowDirection = direction;
-    arrowBtn.setAttribute("aria-label", direction === "up" ? "Scroll to top" : "Scroll to bottom");
-    arrowIcon.innerHTML = ARROW_PATHS[direction];
-  }
-
-  arrowBtn.addEventListener("click", () => {
-    if (arrowDirection === "up") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
-    }
+  fabContainer.querySelector(".scroll-fab-up").addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+  fabContainer.querySelector(".scroll-fab-down").addEventListener("click", () => {
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
   });
 
-  if (siteHeader || siteFooter || fabContainer) {
-    const HIDE_DELAY = 700;   // ms of no scroll before everything hides
+  if (siteHeader || fabContainer) {
+    const HIDE_DELAY = 700;   // ms of no scroll before floating buttons hide
     const SCROLL_DELTA = 8;   // ignore tiny jitters
     let lastScrollY = window.scrollY;
     let scrollTicking = false;
     let idleTimer = null;
 
-    function showForDirection(direction) {
-      setArrowDirection(direction);
-      if (siteHeader) siteHeader.classList.toggle("site-header-hidden", direction !== "up");
-      if (siteFooter) siteFooter.classList.toggle("site-footer-hidden", direction !== "down");
-      fabContainer.classList.add("is-visible");
-    }
-
-    function hideScrollChrome() {
-      if (siteHeader) siteHeader.classList.add("site-header-hidden");
-      if (siteFooter) siteFooter.classList.add("site-footer-hidden");
-      fabContainer.classList.remove("is-visible");
-    }
-
-    // Initial page load: header, footer, arrow, feedback all hidden.
-    hideScrollChrome();
+    const hideFabs = () => {
+      fabContainer.classList.remove("is-visible", "dir-up", "dir-down");
+    };
+    hideFabs();
 
     const onScrollFrame = () => {
       const currentScrollY = window.scrollY;
@@ -176,13 +161,32 @@ document.addEventListener("DOMContentLoaded", () => {
       const mobileMenuOpen = mobileNav && !mobileNav.classList.contains("hidden");
 
       if (!mobileMenuOpen) {
-        if (delta > SCROLL_DELTA) {
-          showForDirection("down");
-        } else if (delta < -SCROLL_DELTA) {
-          showForDirection("up");
+        // Header: cached headerHeight (kept fresh by the ResizeObserver
+        // above) instead of a live offsetHeight read, so this never
+        // forces a reflow on a high-frequency scroll handler.
+        if (siteHeader) {
+          const revealAt = headerHeight;
+          if (currentScrollY <= revealAt) {
+            siteHeader.classList.remove("site-header-hidden");
+          } else if (delta > SCROLL_DELTA) {
+            siteHeader.classList.add("site-header-hidden");
+          } else if (delta < -SCROLL_DELTA) {
+            siteHeader.classList.remove("site-header-hidden");
+          }
         }
-        clearTimeout(idleTimer);
-        idleTimer = setTimeout(hideScrollChrome, HIDE_DELAY);
+
+        // Floating down/up/feedback buttons.
+        if (delta > SCROLL_DELTA) {
+          fabContainer.classList.add("is-visible", "dir-down");
+          fabContainer.classList.remove("dir-up");
+          clearTimeout(idleTimer);
+          idleTimer = setTimeout(hideFabs, HIDE_DELAY);
+        } else if (delta < -SCROLL_DELTA) {
+          fabContainer.classList.add("is-visible", "dir-up");
+          fabContainer.classList.remove("dir-down");
+          clearTimeout(idleTimer);
+          idleTimer = setTimeout(hideFabs, HIDE_DELAY);
+        }
       }
 
       lastScrollY = currentScrollY;
