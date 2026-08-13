@@ -161,7 +161,9 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", updateHeroBottom);
 
   if (siteHeader || fabContainer) {
-    const HIDE_DELAY = 1000;  // ms of no scroll before floating buttons hide
+    const HIDE_DELAY_MOBILE = 1000;   // ms of no scroll before floating buttons hide (mobile)
+    const HIDE_DELAY_DESKTOP = 2500;  // ms of no scroll before floating buttons hide (desktop)
+    const isDesktop = () => window.matchMedia("(min-width: 768px)").matches;
     const SCROLL_DELTA = 2;   // ignore only true jitter — low enough that slow/gentle scrolls still register
     let lastScrollY = window.scrollY;
     let scrollTicking = false;
@@ -197,12 +199,12 @@ document.addEventListener("DOMContentLoaded", () => {
           fabContainer.classList.add("is-visible", "dir-down");
           fabContainer.classList.remove("dir-up");
           clearTimeout(idleTimer);
-          idleTimer = setTimeout(hideFabs, HIDE_DELAY);
+          idleTimer = setTimeout(hideFabs, isDesktop() ? HIDE_DELAY_DESKTOP : HIDE_DELAY_MOBILE);
         } else if (delta < -SCROLL_DELTA) {
           fabContainer.classList.add("is-visible", "dir-up");
           fabContainer.classList.remove("dir-down");
           clearTimeout(idleTimer);
-          idleTimer = setTimeout(hideFabs, HIDE_DELAY);
+          idleTimer = setTimeout(hideFabs, isDesktop() ? HIDE_DELAY_DESKTOP : HIDE_DELAY_MOBILE);
         }
       }
 
