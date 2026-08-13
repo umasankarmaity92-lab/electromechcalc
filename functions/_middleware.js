@@ -36,6 +36,29 @@ class InjectHTML {
   }
 }
 
+// Replaces the placeholder element ITSELF (tag + all) with the given
+// html, instead of injecting content INSIDE it. Required for
+// #site-header: header.html's root <header class="site-header"
+// id="siteHeader"> uses position:sticky, but sticky only has room to
+// "stick" if its containing block (the nearest block ancestor) is
+// taller than the sticky element. setInnerContent() left the sticky
+// <header> nested inside <div id="site-header">, whose height
+// shrink-wraps to exactly the header's own height (no overflow/height
+// of its own) — so the sticky element had zero extra room to move
+// within its parent and behaved as if position:static, scrolling away
+// immediately. Replacing the placeholder div outright removes that
+// shrink-wrapped wrapper, so <header id="siteHeader"> sits directly
+// under its real ancestor (with the full page height below it) and
+// position:sticky has room to work.
+class ReplaceWithHTML {
+  constructor(html) {
+    this.html = html;
+  }
+  element(element) {
+    element.replace(this.html, { html: true });
+  }
+}
+
 // Inserts HTML immediately BEFORE the matched element (used to place
 // the Related Calculators section right above the footer, without
 // needing a dedicated placeholder div on every page).
@@ -450,7 +473,7 @@ export async function onRequest(context) {
     .on('div[class*="lg:col-span-2"][class*="flex-col"][class*="gap-4"]', new AddResultPanelId())
     .on('button[onclick^="calculate"]', new AddScrollToResultOnClick())
     .on('button.share-result-btn[onclick*="openShareModal"]', new RewriteShareButtonOnClick())
-    .on("#site-header", new InjectHTML(headerHTML))
+    .on("#site-header", new ReplaceWithHTML(headerHTML))
     .on("#site-header", new InsertAfter('<main id="main-content">'))
     .on("#breadcrumb", new InjectHTML(breadcrumbHTML))
     .on("#site-footer", new InsertBefore(relatedHTML))

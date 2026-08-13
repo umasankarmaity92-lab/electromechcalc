@@ -636,8 +636,22 @@ body {
   transform: translateY(-100%);
 }
 
-/* Floating scroll-to-top + feedback buttons (site-wide, injected by
-   site-nav.js, shown after scrolling ~400px). */
+/* Footer hide-on-scroll-up / show-on-scroll-down (class toggled by
+   site-nav.js). Footer stays in normal document flow — only its own
+   opacity/interactivity toggle, so no layout shift/gap is introduced
+   while hidden (it only becomes visually relevant once the user has
+   scrolled near the bottom of the page anyway). */
+.site-footer {
+  transition: opacity .25s ease;
+}
+.site-footer.site-footer-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Floating scroll-arrow + feedback buttons (site-wide, injected by
+   site-nav.js). Direction-based: shown while actively scrolling
+   (up or down), hidden ~700ms after scrolling stops. */
 .scroll-fab-container {
   position: fixed;
   right: 18px;
@@ -646,8 +660,16 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
 }
-.scroll-fab-container.hidden { display: none; }
+.scroll-fab-container.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
 .scroll-fab {
   width: 44px;
   height: 44px;
