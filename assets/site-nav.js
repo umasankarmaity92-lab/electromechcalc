@@ -118,6 +118,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const fabContainer = document.createElement("div");
   fabContainer.className = "scroll-fab-container";
   fabContainer.innerHTML = `
+    <button type="button" class="scroll-fab scroll-fab-up" aria-label="Scroll to top">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 19V5M5 12l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
     <a href="mailto:support@electromechcalc.com" class="scroll-fab scroll-fab-message" aria-label="Send feedback">
       <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke-linecap="round" stroke-linejoin="round"/>
@@ -126,11 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
     <button type="button" class="scroll-fab scroll-fab-down" aria-label="Scroll down">
       <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M12 5v14M5 12l7 7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <button type="button" class="scroll-fab scroll-fab-up" aria-label="Scroll to top">
-      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 19V5M5 12l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
   `;
@@ -142,6 +142,23 @@ document.addEventListener("DOMContentLoaded", () => {
   fabContainer.querySelector(".scroll-fab-down").addEventListener("click", () => {
     window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
   });
+
+  // Header reveal threshold: the real bottom of the hero section (not
+  // just headerHeight) — pages with a tall hero (e.g. homepage) were
+  // scrolling past headerHeight (~80px) almost immediately while still
+  // visually inside the hero, so an idle stop in that zone left the
+  // header hidden even though the page was still "in the hero". Falls
+  // back to headerHeight on pages without a hero (most calculator
+  // pages), keeping their existing near-top-reveal behavior.
+  let heroBottom = headerHeight;
+  const heroSection = heroLottieEl ? heroLottieEl.closest("section") : null;
+  const updateHeroBottom = () => {
+    heroBottom = heroSection
+      ? heroSection.getBoundingClientRect().bottom + window.scrollY
+      : headerHeight;
+  };
+  updateHeroBottom();
+  window.addEventListener("resize", updateHeroBottom);
 
   if (siteHeader || fabContainer) {
     const HIDE_DELAY = 700;   // ms of no scroll before floating buttons hide
@@ -161,12 +178,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const mobileMenuOpen = mobileNav && !mobileNav.classList.contains("hidden");
 
       if (!mobileMenuOpen) {
-        // Header: cached headerHeight (kept fresh by the ResizeObserver
-        // above) instead of a live offsetHeight read, so this never
+        // Header: cached headerHeight/heroBottom (kept fresh by the
+        // ResizeObserver/resize listener above) instead of a live
+        // offsetHeight/getBoundingClientRect read here, so this never
         // forces a reflow on a high-frequency scroll handler.
         if (siteHeader) {
-          const revealAt = headerHeight;
-          if (currentScrollY <= revealAt) {
+          if (currentScrollY <= heroBottom) {
             siteHeader.classList.remove("site-header-hidden");
           } else if (delta > SCROLL_DELTA) {
             siteHeader.classList.add("site-header-hidden");
