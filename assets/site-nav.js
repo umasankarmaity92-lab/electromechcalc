@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", updateHeroBottom);
 
   if (siteHeader || fabContainer) {
-    const HIDE_DELAY = 700;   // ms of no scroll before floating buttons hide
+    const HIDE_DELAY = 1500;  // ms of no scroll before floating buttons hide
     const SCROLL_DELTA = 8;   // ignore tiny jitters
     let lastScrollY = window.scrollY;
     let scrollTicking = false;
