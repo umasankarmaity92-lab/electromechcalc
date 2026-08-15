@@ -379,6 +379,27 @@ href="https://www.electromechcalc.com/power-factor">
     background:#0B1220;
     color:#e2e8f0;
   }
+
+  .hero-typing{
+    display:inline-flex;
+    align-items:center;
+    min-height:1.2em;
+    white-space:nowrap;
+  }
+  .hero-cursor{
+    display:inline-block;
+    width:2px;
+    height:1em;
+    margin-left:4px;
+    background:currentColor;
+    animation:heroCursorBlink 0.8s steps(1) infinite;
+  }
+  @keyframes heroCursorBlink{
+    50%{ opacity:0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero-cursor{ animation:none; }
+  }
 </style>
 </head>
 
@@ -416,6 +437,10 @@ href="https://www.electromechcalc.com/power-factor">
     <h1 class="text-3xl md:text-5xl font-display font-bold text-white leading-tight mb-5">
       Power Factor, kW, kVAR &amp; kVA Explained
     </h1>
+    <p class="hero-typing text-sky-400 text-sm font-mono mb-2 justify-center" aria-label="WWW.ElectroMechCalc.com Engineering Calculators">
+      <span id="heroTypingText">WWW.ElectroMechCalc.com</span><span class="hero-cursor" aria-hidden="true"></span>
+    </p>
+
 
     <p class="text-gray-400 max-w-2xl mx-auto">
       Real power, reactive power, and apparent power answer three different questions. Here's how they relate, why low power factor costs money, and how to size a capacitor bank to fix it.
@@ -989,6 +1014,62 @@ kVA = 105.26 kVA</div>
     document.addEventListener('DOMContentLoaded', positionShareBar);
     positionShareBar();
   })();
+</script>
+
+<script>
+(() => {
+  const el = document.getElementById("heroTypingText");
+  if (!el) return;
+  const words = [
+    "WWW.ElectroMechCalc.com",
+    "Engineering Calculators"
+  ];
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+  if (reduceMotion) {
+    el.textContent = words[0];
+    return;
+  }
+  let wordIndex = 0;
+  let charIndex = words[0].length;
+  let deleting = true;
+  const typeSpeed = 90;
+  const deleteSpeed = 55;
+  const pauseAfterTyping = 1800;
+  const pauseAfterDeleting = 500;
+  function animate() {
+    const word = words[wordIndex];
+    if (deleting) {
+      if (charIndex > 0) {
+        charIndex--;
+        el.textContent = word.substring(0, charIndex);
+        setTimeout(animate, deleteSpeed);
+      } else {
+        deleting = false;
+        wordIndex = (wordIndex + 1) % words.length;
+        charIndex = 0;
+        setTimeout(animate, pauseAfterDeleting);
+      }
+    } else {
+      const nextWord = words[wordIndex];
+      if (charIndex < nextWord.length) {
+        charIndex++;
+        el.textContent = nextWord.substring(0, charIndex);
+        setTimeout(animate, typeSpeed);
+      } else {
+        deleting = true;
+        setTimeout(animate, pauseAfterTyping);
+      }
+    }
+  }
+  setTimeout(() => {
+    wordIndex = 0;
+    charIndex = words[0].length;
+    deleting = true;
+    animate();
+  }, 1500);
+})();
 </script>
 </body>
 </html>

@@ -91,6 +91,10 @@
   <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
   <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
     <h1 class="font-display font-bold text-3xl md:text-4xl text-white">Maintenance Guides &amp; Blog</h1>
+    <p class="hero-typing text-sky-400 text-sm font-mono mb-2 justify-center" aria-label="WWW.ElectroMechCalc.com Engineering Calculators">
+      <span id="heroTypingText">WWW.ElectroMechCalc.com</span><span class="hero-cursor" aria-hidden="true"></span>
+    </p>
+
     <p class="text-gray-300 mt-3 max-w-2xl">Practical electrical and mechanical maintenance guides for Indian technicians, students, and engineers — checklists, schedules, and real-world procedures.</p>
   </div>
 </section>
@@ -344,5 +348,61 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <script src="/assets/site-nav.js"></script>
+
+<script>
+(() => {
+  const el = document.getElementById("heroTypingText");
+  if (!el) return;
+  const words = [
+    "WWW.ElectroMechCalc.com",
+    "Engineering Calculators"
+  ];
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+  if (reduceMotion) {
+    el.textContent = words[0];
+    return;
+  }
+  let wordIndex = 0;
+  let charIndex = words[0].length;
+  let deleting = true;
+  const typeSpeed = 90;
+  const deleteSpeed = 55;
+  const pauseAfterTyping = 1800;
+  const pauseAfterDeleting = 500;
+  function animate() {
+    const word = words[wordIndex];
+    if (deleting) {
+      if (charIndex > 0) {
+        charIndex--;
+        el.textContent = word.substring(0, charIndex);
+        setTimeout(animate, deleteSpeed);
+      } else {
+        deleting = false;
+        wordIndex = (wordIndex + 1) % words.length;
+        charIndex = 0;
+        setTimeout(animate, pauseAfterDeleting);
+      }
+    } else {
+      const nextWord = words[wordIndex];
+      if (charIndex < nextWord.length) {
+        charIndex++;
+        el.textContent = nextWord.substring(0, charIndex);
+        setTimeout(animate, typeSpeed);
+      } else {
+        deleting = true;
+        setTimeout(animate, pauseAfterTyping);
+      }
+    }
+  }
+  setTimeout(() => {
+    wordIndex = 0;
+    charIndex = words[0].length;
+    deleting = true;
+    animate();
+  }, 1500);
+})();
+</script>
 </body>
 </html>

@@ -386,6 +386,35 @@
   body.dark-theme table th{
     border-color:#1f2f47;
   }
+  /* Unit toggle: only the inactive button carries bg-white (the active
+     one carries bg-brandBlue), so scoping to .bg-white leaves the
+     active button's highlight untouched. */
+  body.dark-theme #unitToggle button.bg-white{
+    background:#111c2e;
+    color:#cbd5e1;
+    border-color:#1f2f47;
+  }
+
+  .hero-typing{
+    display:inline-flex;
+    align-items:center;
+    min-height:1.2em;
+    white-space:nowrap;
+  }
+  .hero-cursor{
+    display:inline-block;
+    width:2px;
+    height:1em;
+    margin-left:4px;
+    background:currentColor;
+    animation:heroCursorBlink 0.8s steps(1) infinite;
+  }
+  @keyframes heroCursorBlink{
+    50%{ opacity:0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero-cursor{ animation:none; }
+  }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -421,6 +450,9 @@
         <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
           Cooling Tower Efficiency Calculator
         </h1>
+        <p class="hero-typing text-sky-400 text-sm font-mono mb-2" aria-label="WWW.ElectroMechCalc.com Engineering Calculators">
+          <span id="heroTypingText">WWW.ElectroMechCalc.com</span><span class="hero-cursor" aria-hidden="true"></span>
+        </p>
         <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
           Free cooling tower efficiency calculator — enter hot water, cold water, and wet bulb temperature to instantly get range, approach, and efficiency %.
         </p>
@@ -446,21 +478,27 @@
     <!-- INPUT PANEL -->
     <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
 
-      <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Cooling Tower Readings</h2>
+      <div class="flex items-start justify-between gap-3 mb-1">
+        <h2 class="font-display font-semibold text-lg text-brandDark">Cooling Tower Readings</h2>
+        <div id="unitToggle" class="inline-flex rounded-lg border border-gray-200 overflow-hidden shrink-0" role="group" aria-label="Temperature units">
+          <button type="button" id="unitBtnC" onclick="setUnit('C')" aria-pressed="true" class="px-3 py-1.5 text-xs font-semibold bg-brandBlue text-white">°C</button>
+          <button type="button" id="unitBtnF" onclick="setUnit('F')" aria-pressed="false" class="px-3 py-1.5 text-xs font-semibold bg-white text-gray-600">°F</button>
+        </div>
+      </div>
       <p class="text-xs text-gray-500 mb-6">Enter the hot water inlet, cold water outlet, and ambient wet bulb temperatures.</p>
 
       <div class="mb-5">
-        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="hotWater">Hot Water Inlet Temp (°C)</label>
+        <label id="lblHot" class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="hotWater">Hot Water Inlet Temp (°C)</label>
         <input id="hotWater" type="number" value="38" step="0.1" placeholder="Water temp entering tower" class="input-field mt-2">
       </div>
 
       <div class="mb-5">
-        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="coldWater">Cold Water Outlet Temp (°C)</label>
+        <label id="lblCold" class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="coldWater">Cold Water Outlet Temp (°C)</label>
         <input id="coldWater" type="number" value="30" step="0.1" placeholder="Water temp leaving tower" class="input-field mt-2">
       </div>
 
       <div class="mb-5">
-        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="wetBulb">Wet Bulb Temp (°C)</label>
+        <label id="lblWetBulb" class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="wetBulb">Wet Bulb Temp (°C)</label>
         <input id="wetBulb" type="number" value="27" step="0.1" placeholder="Ambient wet bulb temperature" class="input-field mt-2">
         <p class="text-[11px] text-gray-400 mt-1.5">Use the wet-bulb temperature at the tower's air intake, not a distant weather-station reading.</p>
       </div>
@@ -483,7 +521,7 @@
 
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full tower-badge opacity-20"></div>
-        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Cooling Tower Efficiency</span>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Cooling Tower Efficiency / Effectiveness</span>
         <div id="rResult" class="font-display font-bold text-3xl mt-1">— %</div>
         <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter temperatures and hit calculate</p>
 
@@ -564,7 +602,7 @@
 <section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
   <div class="max-w-3xl mx-auto px-4">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
-    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding Cooling Tower Efficiency</h2>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding Cooling Tower Thermal Effectiveness</h2>
 
 
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
@@ -573,11 +611,11 @@
       <p>Last reviewed: August 2026 &nbsp;|&nbsp; References: CTI ATC-105 test code and ASHRAE cooling tower performance guidelines.</p>
     </div>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-      <p><strong>Cooling tower efficiency formula:</strong> Efficiency % = (Range ÷ (Range + Approach)) × 100, where Range = hot water − cold water temperature, and Approach = cold water − wet bulb temperature. <strong>A quick clarification up front:</strong> "efficiency" here means thermal effectiveness based on range and approach — how close the tower gets to its theoretical thermal limit — not electrical or energy efficiency (kW per ton), which additionally depends on fan and pump power. A cooling tower works by rejecting heat from a process, typically a chiller condenser, an industrial process, or a power plant condenser, into the atmosphere by evaporating a portion of the circulating water. The performance of a cooling tower is judged not by how cold it makes the water in absolute terms, but by how close it gets the outgoing cold water temperature to the theoretical best possible limit, which is the ambient wet bulb temperature. This is why cooling tower efficiency is always expressed relative to wet bulb temperature rather than dry bulb (ordinary air) temperature — the wet bulb reading already accounts for the cooling effect of evaporation, which is exactly the mechanism a cooling tower relies on. Getting this one input right is the single biggest factor in getting a trustworthy efficiency number: a wet bulb reading taken from a distant airport weather station instead of near the tower's actual air intake can easily be off by several degrees, especially on a site with nearby heat sources, paving, or other equipment discharging warm air.</p>
+      <p><strong>Cooling tower efficiency formula:</strong> Efficiency % = (Range ÷ (Range + Approach)) × 100, where Range = hot water − cold water temperature, and Approach = cold water − wet bulb temperature. <strong>A quick clarification up front:</strong> "efficiency" here means thermal effectiveness based on range and approach — how close the tower gets to its theoretical thermal limit — not electrical or energy efficiency (kW per ton), which additionally depends on fan and pump power. A cooling tower works by rejecting heat from a process, typically a chiller condenser, an industrial process, or a power plant condenser, into the atmosphere by evaporating a portion of the circulating water. The performance of a cooling tower is judged not by how cold it makes the water in absolute terms, but by how close it gets the outgoing cold water temperature to the theoretical evaporative cooling limit used for tower performance evaluation, which is the ambient wet bulb temperature — the actual outlet temperature approaches but cannot normally reach it. This is why cooling tower efficiency is always expressed relative to wet bulb temperature rather than dry bulb (ordinary air) temperature — the wet bulb reading already accounts for the cooling effect of evaporation, which is exactly the mechanism a cooling tower relies on. Getting this one input right is the single biggest factor in getting a trustworthy efficiency number: a wet bulb reading taken from a distant airport weather station instead of near the tower's actual air intake can easily be off by several degrees, especially on a site with nearby heat sources, paving, or other equipment discharging warm air.</p>
 
       <p>It's worth being precise about what "efficiency" means here, because the term gets used loosely in the field. This calculator's efficiency is a <em>thermal effectiveness</em> figure — how close the tower gets to the theoretical best outcome for the current weather — not an energy-efficiency figure like kW per ton, which would additionally depend on fan and pump power consumption. A tower can have excellent thermal effectiveness (a small approach) while still being an energy hog if its fans are oversized or poorly controlled, so this calculator answers "is the tower doing its thermal job well" rather than "is the tower saving me money on power," which is a related but separate question.</p>
 
-      <p>Two terms describe how a cooling tower is performing. The <strong>range</strong> is simply the temperature drop the tower achieves: the difference between the hot water entering the tower and the cold water leaving it. A larger range generally means the tower is rejecting more heat. The <strong>approach</strong> is the difference between the cold water leaving the tower and the wet bulb temperature of the surrounding air, and this is the figure that really tells you how close the tower is running to its theoretical limit. A smaller approach means a more efficient tower, since it means the outgoing water temperature is very close to the lowest temperature physically achievable given the current weather conditions; a larger approach signals fouled fill media, poor air distribution, undersized fans, or a tower that is simply oversized or undersized for the current heat load.</p>
+      <p>Two terms describe how a cooling tower is performing. The <strong>range</strong> is simply the temperature drop the tower achieves: the difference between the hot water entering the tower and the cold water leaving it. For a given circulating-water flow, a larger range represents greater heat removal from the water — heat rejected also depends on the water flow rate, so range alone doesn't tell you total heat rejection unless flow is held constant. The <strong>approach</strong> is the difference between the cold water leaving the tower and the wet bulb temperature of the surrounding air, and this is the figure that really tells you how close the tower is running to its theoretical limit. A smaller approach means better thermal effectiveness, since it means the outgoing water temperature is very close to the lowest temperature physically achievable given the current weather conditions; a larger approach signals fouled fill media, poor air distribution, undersized fans, or a tower that is simply oversized or undersized for the current heat load.</p>
 
       <p>Cooling tower efficiency combines the range and the approach into a single percentage: it expresses the actual temperature drop achieved as a fraction of the maximum theoretically possible temperature drop, which would occur if the cold water left the tower at exactly the wet bulb temperature.</p>
 
@@ -619,7 +657,7 @@
     </table>
   </div>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-    <p>Most cooling towers are designed for a specific approach at a specific design wet bulb temperature — commonly a 5°C (9°F) approach at the local 0.4% or 1% design wet bulb condition. A well-maintained tower running near its design approach at the current wet bulb is doing its job; a tower whose approach has crept up well past its design figure, with no change in load or weather, is telling you something in the airflow or water-distribution path needs attention.</p>
+    <p>Most cooling towers are designed for a specific approach at a specific design wet bulb temperature. For many HVAC applications, design approaches around 4–6°C are common, but the actual design value depends on tower selection, climate, load, and manufacturer data. A well-maintained tower running near its own design approach at the current wet bulb is doing its job; a tower whose approach has crept up well past its design figure, with no change in load or weather, is telling you something in the airflow or water-distribution path needs attention.</p>
 
     <h3>Tower types and how they affect achievable approach</h3>
     <p><strong>Counterflow towers</strong> move air vertically upward against the downward flow of water; for a given duty and design constraints, this arrangement can provide strong thermal contact and may achieve a lower approach for a given footprint than a comparable crossflow design, but it requires more fan power. <strong>Crossflow towers</strong> move air horizontally across the falling water and are generally easier to maintain (fill and nozzles are more accessible), typically at a somewhat higher approach for the same size. <strong>Induced-draft towers</strong> pull air through with a fan mounted at the top, discharging warm moist air upward away from the tower — the dominant design in HVAC and industrial applications today. <strong>Forced-draft towers</strong> push air in from the bottom with a fan at the base, which is mechanically simpler but more prone to recirculation of the warm, humid discharge air back into the intake, silently raising the effective entering wet bulb and hurting real-world performance even though the tower's rated approach hasn't changed.</p>
@@ -638,6 +676,7 @@
       <li><strong>Quarterly:</strong> Inspect fill media for scale, algae, or debris; check water treatment dosing and blowdown rate against target COC.</li>
       <li><strong>Annually:</strong> Full fill clean or replacement if fouled beyond cleaning, fan/gearbox service, and nozzle inspection for clogging or wear.</li>
     </ul>
+    <p style="font-size:13px;color:#6b7280;">These are general maintenance intervals; always follow the tower manufacturer's maintenance manual and the site's water-treatment program, and inspect more frequently in hard-water, dusty, or algae-prone environments.</p>
 
     <h3>Sizing basics: matching tower capacity to heat load</h3>
     <p>Cooling towers are rated in "tons" of refrigeration equivalent. A commonly used cooling-tower rating convention associates one cooling-tower ton with rejecting about 15,000 BTU/hr, based on a 3 GPM flow and 10°F range (roughly a 5.5°C range) at a standard 78°F (25.6°C) design wet bulb — this is a design/rating convention rather than a universal physical definition, and actual tonnage rating context varies by manufacturer and test standard. A tower undersized for its actual heat load will never hit its design approach regardless of how well it's maintained — the calculator and the maintenance checklist above only help once the tower is correctly sized for the job.</p>
@@ -657,6 +696,7 @@
         </tbody>
       </table>
     </div>
+    <p style="font-size:13px;color:#6b7280;">Illustrative ranges only; actual design values vary by manufacturer, climate, process duty, water flow, and design wet-bulb condition.</p>
     <p>Notice that a tighter approach (a "harder" duty) generally requires a physically larger tower — more fill volume and/or more airflow — for the same heat load, which is why process and power-plant towers, which demand a tighter approach, tend to be proportionally larger than comfort-cooling towers rejecting a similar amount of heat with a more relaxed approach target.</p>
     <p>This trade-off also explains why a tower selected purely on a nameplate ton rating, without checking the design wet bulb and design approach it was rated at, can under-perform even when correctly installed: a tower rated for a 4°C approach at a 26°C design wet bulb won't automatically deliver the same approach at a site with a 29°C design wet bulb, since the entire capacity curve shifts with the design condition it was engineered against. Confirming the design wet bulb used for the original selection — not just the nameplate tonnage — is a step worth checking whenever a tower's real-world approach doesn't match expectations despite apparently good mechanical condition.</p>
 
@@ -823,7 +863,46 @@
   }
 
   // ===== Cooling Tower Efficiency Calculator Logic =====
+  let currentUnit = 'C';
+  const CtoF = c => c * 9 / 5 + 32;
+  const FtoC = f => (f - 32) * 5 / 9;
+
+  function setUnit(unit){
+    if (unit === currentUnit) return;
+    ['hotWater','coldWater','wetBulb'].forEach(id => {
+      const el = document.getElementById(id);
+      const v = parseFloat(el.value);
+      if (!isNaN(v)){
+        const converted = unit === 'F' ? CtoF(v) : FtoC(v);
+        el.value = Number(converted.toFixed(2));
+      }
+    });
+    currentUnit = unit;
+    try { localStorage.setItem('emc-ct-unit', unit); } catch(e){}
+
+    document.getElementById('lblHot').textContent = `Hot Water Inlet Temp (°${unit})`;
+    document.getElementById('lblCold').textContent = `Cold Water Outlet Temp (°${unit})`;
+    document.getElementById('lblWetBulb').textContent = `Wet Bulb Temp (°${unit})`;
+
+    const activeCls   = 'px-3 py-1.5 text-xs font-semibold bg-brandBlue text-white';
+    const inactiveCls = 'px-3 py-1.5 text-xs font-semibold bg-white text-gray-600';
+    document.getElementById('unitBtnC').className = unit === 'C' ? activeCls : inactiveCls;
+    document.getElementById('unitBtnF').className = unit === 'F' ? activeCls : inactiveCls;
+    document.getElementById('unitBtnC').setAttribute('aria-pressed', unit === 'C' ? 'true' : 'false');
+    document.getElementById('unitBtnF').setAttribute('aria-pressed', unit === 'F' ? 'true' : 'false');
+
+    calculate();
+  }
+
+  // Restore a previously saved unit preference (if any) before the first calc
+  (function restoreUnitPreference(){
+    var saved = null;
+    try { saved = localStorage.getItem('emc-ct-unit'); } catch(e){}
+    if (saved === 'F') { setUnit('F'); }
+  })();
+
   function calculate(){
+    const u = currentUnit;
     const hotWater = parseFloat(document.getElementById('hotWater').value);
     const coldWater = parseFloat(document.getElementById('coldWater').value);
     const wetBulb = parseFloat(document.getElementById('wetBulb').value);
@@ -850,23 +929,29 @@
       validationBox.innerHTML = '';
     }
 
+    // Note: Range/Approach are temperature *differences*, and °F is a
+    // linear rescaling of °C (×9/5), so that scale factor cancels out
+    // in the Range ÷ (Range + Approach) ratio — the efficiency % comes
+    // out identical regardless of which unit the readings are in. No
+    // internal Celsius conversion is needed for the math itself, only
+    // for the displayed unit label.
     const range = hotWater - coldWater;
     const approach = coldWater - wetBulb;
     const efficiency = (range / (range + approach)) * 100;
 
     document.getElementById('rResult').textContent = efficiency.toFixed(2) + ' %';
-    document.getElementById('resultSub').textContent = `Based on ${hotWater}°C → ${coldWater}°C, wet bulb ${wetBulb}°C`;
-    document.getElementById('rRange').textContent = range.toFixed(2) + ' °C';
-    document.getElementById('rApproach').textContent = approach.toFixed(2) + ' °C';
+    document.getElementById('resultSub').textContent = `Based on ${hotWater}°${u} → ${coldWater}°${u}, wet bulb ${wetBulb}°${u}`;
+    document.getElementById('rRange').textContent = range.toFixed(2) + ' °' + u;
+    document.getElementById('rApproach').textContent = approach.toFixed(2) + ' °' + u;
 
     const formulaText =
 `Range = Hot Water Temp − Cold Water Temp
 Range = ${hotWater} − ${coldWater}
-Range = ${range.toFixed(2)} °C
+Range = ${range.toFixed(2)} °${u}
 
 Approach = Cold Water Temp − Wet Bulb Temp
 Approach = ${coldWater} − ${wetBulb}
-Approach = ${approach.toFixed(2)} °C
+Approach = ${approach.toFixed(2)} °${u}
 
 Efficiency (%) = Range ÷ (Range + Approach) × 100
 Efficiency (%) = ${range.toFixed(2)} ÷ (${range.toFixed(2)} + ${approach.toFixed(2)}) × 100
@@ -874,6 +959,11 @@ Efficiency (%) = ${efficiency.toFixed(2)} %`;
 
     document.getElementById('formulaBox').textContent = formulaText;
   }
+
+  // Auto-recalculate as the user types, in addition to the Calculate button
+  ['hotWater','coldWater','wetBulb'].forEach(id => {
+    document.getElementById(id).addEventListener('input', calculate);
+  });
 
   // run once on load with default values
   calculate();
@@ -885,7 +975,16 @@ Efficiency (%) = ${efficiency.toFixed(2)} %`;
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    // Temporarily hide anything marked data-copy-exclude (e.g. Related
+    // Calculators) so it isn't pulled into the copied text, then
+    // restore it — synchronous, so there's no visible flicker.
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
+
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -964,6 +1063,61 @@ Efficiency (%) = ${efficiency.toFixed(2)} %`;
     document.addEventListener('DOMContentLoaded', positionShareBar);
     positionShareBar();
   })();
+</script>
+<script>
+(() => {
+  const el = document.getElementById("heroTypingText");
+  if (!el) return;
+  const words = [
+    "WWW.ElectroMechCalc.com",
+    "Engineering Calculators"
+  ];
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+  if (reduceMotion) {
+    el.textContent = words[0];
+    return;
+  }
+  let wordIndex = 0;
+  let charIndex = words[0].length;
+  let deleting = true;
+  const typeSpeed = 90;
+  const deleteSpeed = 55;
+  const pauseAfterTyping = 1800;
+  const pauseAfterDeleting = 500;
+  function animate() {
+    const word = words[wordIndex];
+    if (deleting) {
+      if (charIndex > 0) {
+        charIndex--;
+        el.textContent = word.substring(0, charIndex);
+        setTimeout(animate, deleteSpeed);
+      } else {
+        deleting = false;
+        wordIndex = (wordIndex + 1) % words.length;
+        charIndex = 0;
+        setTimeout(animate, pauseAfterDeleting);
+      }
+    } else {
+      const nextWord = words[wordIndex];
+      if (charIndex < nextWord.length) {
+        charIndex++;
+        el.textContent = nextWord.substring(0, charIndex);
+        setTimeout(animate, typeSpeed);
+      } else {
+        deleting = true;
+        setTimeout(animate, pauseAfterTyping);
+      }
+    }
+  }
+  setTimeout(() => {
+    wordIndex = 0;
+    charIndex = words[0].length;
+    deleting = true;
+    animate();
+  }, 1500);
+})();
 </script>
 </body>
 </html>

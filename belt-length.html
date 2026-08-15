@@ -329,6 +329,35 @@
   body.dark-theme table th{
     border-color:#1f2f47;
   }
+  /* Unit toggle: only the inactive button carries bg-white (the active
+     one carries bg-brandBlue), so scoping to .bg-white leaves the
+     active button's highlight untouched. */
+  body.dark-theme #unitToggle button.bg-white{
+    background:#111c2e;
+    color:#cbd5e1;
+    border-color:#1f2f47;
+  }
+
+  .hero-typing{
+    display:inline-flex;
+    align-items:center;
+    min-height:1.2em;
+    white-space:nowrap;
+  }
+  .hero-cursor{
+    display:inline-block;
+    width:2px;
+    height:1em;
+    margin-left:4px;
+    background:currentColor;
+    animation:heroCursorBlink 0.8s steps(1) infinite;
+  }
+  @keyframes heroCursorBlink{
+    50%{ opacity:0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero-cursor{ animation:none; }
+  }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -364,6 +393,9 @@
         <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
           Belt Length <span class="text-sky-400">Calculator</span>
         </h1>
+        <p class="hero-typing text-sky-400 text-sm font-mono mb-2" aria-label="WWW.ElectroMechCalc.com Engineering Calculators">
+          <span id="heroTypingText">WWW.ElectroMechCalc.com</span><span class="hero-cursor" aria-hidden="true"></span>
+        </p>
         <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
           Free belt length calculator — enter your two pulley diameters and center distance to instantly calculate the estimated open-belt length and a rounded standard-length estimate.
         </p>
@@ -831,7 +863,16 @@ D2 = Driven pulley diameter</div>
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    // Temporarily hide anything marked data-copy-exclude (e.g. Related
+    // Calculators) so it isn't pulled into the copied text, then
+    // restore it — synchronous, so there's no visible flicker.
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
+
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
 
@@ -945,6 +986,61 @@ D2 = Driven pulley diameter</div>
     document.addEventListener('DOMContentLoaded', positionShareBar);
     positionShareBar();
   })();
+</script>
+<script>
+(() => {
+  const el = document.getElementById("heroTypingText");
+  if (!el) return;
+  const words = [
+    "WWW.ElectroMechCalc.com",
+    "Engineering Calculators"
+  ];
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+  if (reduceMotion) {
+    el.textContent = words[0];
+    return;
+  }
+  let wordIndex = 0;
+  let charIndex = words[0].length;
+  let deleting = true;
+  const typeSpeed = 90;
+  const deleteSpeed = 55;
+  const pauseAfterTyping = 1800;
+  const pauseAfterDeleting = 500;
+  function animate() {
+    const word = words[wordIndex];
+    if (deleting) {
+      if (charIndex > 0) {
+        charIndex--;
+        el.textContent = word.substring(0, charIndex);
+        setTimeout(animate, deleteSpeed);
+      } else {
+        deleting = false;
+        wordIndex = (wordIndex + 1) % words.length;
+        charIndex = 0;
+        setTimeout(animate, pauseAfterDeleting);
+      }
+    } else {
+      const nextWord = words[wordIndex];
+      if (charIndex < nextWord.length) {
+        charIndex++;
+        el.textContent = nextWord.substring(0, charIndex);
+        setTimeout(animate, typeSpeed);
+      } else {
+        deleting = true;
+        setTimeout(animate, pauseAfterTyping);
+      }
+    }
+  }
+  setTimeout(() => {
+    wordIndex = 0;
+    charIndex = words[0].length;
+    deleting = true;
+    animate();
+  }, 1500);
+})();
 </script>
 </body>
 </html>
