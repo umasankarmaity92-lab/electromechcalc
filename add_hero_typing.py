@@ -38,23 +38,40 @@ import re
 import glob
 
 TYPING_HTML = '''
-    <p class="hero-typing text-sky-400 text-sm font-mono mb-2 justify-center" aria-label="WWW.ElectroMechCalc.com Engineering Calculators">
-      <span id="heroTypingText">WWW.ElectroMechCalc.com</span><span class="hero-cursor" aria-hidden="true"></span>
-    </p>
+    <div class="hero-typing-box">
+      <p class="hero-typing text-sky-400 text-sm font-mono font-bold justify-center" aria-label="Calculate Smarter. Work Faster. Practical Calculators & Maintenance Guides.">
+        <span id="heroTypingText"></span><span class="hero-cursor" aria-hidden="true"></span>
+      </p>
+    </div>
 '''
 
 TYPING_CSS = '''
+  .hero-typing-box{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:2.75em;
+    max-width:640px;
+    margin:0 auto 0.5rem;
+    padding:0.4rem 1rem;
+    box-sizing:border-box;
+  }
   .hero-typing{
     display:inline-flex;
     align-items:center;
-    min-height:1.2em;
-    white-space:nowrap;
+    justify-content:center;
+    text-align:center;
+    white-space:normal;
+    word-break:break-word;
+    line-height:1.3;
+    margin:0;
   }
   .hero-cursor{
     display:inline-block;
     width:2px;
     height:1em;
     margin-left:4px;
+    flex-shrink:0;
     background:currentColor;
     animation:heroCursorBlink 0.8s steps(1) infinite;
   }
@@ -72,8 +89,8 @@ TYPING_JS = '''
   const el = document.getElementById("heroTypingText");
   if (!el) return;
   const words = [
-    "WWW.ElectroMechCalc.com",
-    "Engineering Calculators"
+    "Calculate Smarter. Work Faster.",
+    "Practical Calculators & Maintenance Guides."
   ];
   const reduceMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
