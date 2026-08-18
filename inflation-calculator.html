@@ -12,7 +12,11 @@
      after the body tag opens to cover body.dark-theme / body.light-theme
      selectors too. site-nav.js still re-applies both classes on
      DOMContentLoaded as a no-op safety net and handles the toggle
-     button switching themes. -->
+     button switching themes. Also syncs the theme-color meta tag so
+     mobile browser chrome matches (was previously hard-coded white even
+     in dark mode) — DIVERGED IN THIS FILE ONLY from the identical
+     shared boilerplate copy on other pages; needs propagating in a
+     coordinated site-wide pass. -->
 <script>
 (function(){
   try {
@@ -20,6 +24,8 @@
       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
     document.documentElement.classList.add(t);
     document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+    var tc = document.querySelector('meta[name="theme-color"]');
+    if (tc) { tc.setAttribute('content', t === 'dark-theme' ? '#0B1220' : '#ffffff'); }
   } catch(e) {}
 })();
 </script>
@@ -96,7 +102,7 @@
       "name": "What's the difference between Future Value and Past Value mode?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Future Value tells you what an amount today will be equivalent to N years from now, given an inflation rate — useful for retirement or goal planning. Past Value works backward: it tells you what an amount today was equivalent to N years ago, useful for understanding how much prices have already risen."
+        "text": "Future Value tells you what an amount today will be equivalent to N years from now, given an inflation rate — useful for retirement or goal planning. Past Value works backward: it tells you what an amount today was equivalent to N years ago, useful for understanding how much prices have already risen. Both directions apply a single constant assumed rate, so results are planning estimates rather than actual historical prices."
       }
     },
     {
@@ -104,7 +110,7 @@
       "name": "What inflation rate should I use?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "India's long-term average retail inflation (CPI) has typically been in the 5–7% range, though it varies year to year. For general planning, 6% is a commonly used assumption, but you should adjust this based on the specific category you're planning for — education and healthcare inflation, for instance, often run higher than general CPI."
+        "text": "A 5-7% rate is often used as a general planning range for India based on recent CPI trends, but actual inflation varies significantly year to year and by exact time period measured. Use official CPI data (published by MoSPI) when you need a precise historical or current figure, and adjust upward for categories like education and healthcare that often run higher than general CPI."
       }
     },
     {
@@ -126,12 +132,12 @@
     {
       "@type": "Question",
       "name": "Why does education or healthcare cost more to plan for than general inflation suggests?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Education and healthcare costs in India have historically risen faster than general CPI, often in the 8-12% range versus the 5-6% headline figure. If you're planning specifically for a child's education or future medical expenses, use a higher category-specific rate rather than the general inflation figure to avoid underestimating the target." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Education and healthcare expenses can rise faster than headline CPI in some periods. For goal planning, you may want to use a higher assumption than general CPI for these categories, but the appropriate rate depends on the specific expense, provider, and time period — treat any category-level figure as a planning assumption, not an official forecast." }
     },
     {
       "@type": "Question",
       "name": "How does inflation relate to my investment returns?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Your \"real\" return is your nominal investment return minus inflation. A 7% fixed deposit return with 6% inflation leaves only about 1% of real purchasing-power growth — always evaluate an investment's return against inflation, not in isolation, especially for long-term goals." }
+      "acceptedAnswer": { "@type": "Answer", "text": "As a quick approximation, your \"real\" return is roughly your nominal investment return minus inflation. A 7% fixed deposit return with 6% inflation leaves only a small amount of real purchasing-power growth. The exact formula is Real Return = (1 + Nominal Return) / (1 + Inflation) − 1, which for this example gives 1.07 / 1.06 − 1 ≈ 0.94% real growth — always evaluate an investment's return against inflation, not in isolation, especially for long-term goals." }
     },
     {
       "@type": "Question",
@@ -264,6 +270,9 @@
     cursor:pointer;
     color:#64748b;
     transition:.15s ease;
+    border:none;
+    background:transparent;
+    font-family:inherit;
   }
   .toggle-btn.active{
     background:#0ea5e9;
@@ -473,7 +482,7 @@
     </div>
 
         <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
-          Find out what your money will really be worth in the future, or how much you'd have needed in the past to match today's purchasing power.
+          Find out how much money you'll need in the future to match today's purchasing power, or what today's amount was worth in the past.
         </p>
       </div>
 
@@ -503,10 +512,10 @@
       <div class="mb-5">
         <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_inflation_calculator">Calculation Mode</span>
         <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_inflation_calculator">
-          <div id="typeFuture" class="toggle-btn active" onclick="setCalcMode('future')">Future Value</div>
-          <div id="typePast" class="toggle-btn" onclick="setCalcMode('past')">Past Value</div>
+          <button type="button" id="typeFuture" class="toggle-btn active" aria-pressed="true" onclick="setCalcMode('future')">Future Value</button>
+          <button type="button" id="typePast" class="toggle-btn" aria-pressed="false" onclick="setCalcMode('past')">Past Value</button>
         </div>
-        <p class="text-[11px] text-gray-400 mt-2" id="modeHint">Future Value: what today's amount will feel like it's worth, N years from now.</p>
+        <p class="text-[11px] text-gray-400 mt-2" id="modeHint">Future Value: how much you'd need N years from now to match today's purchasing power.</p>
       </div>
 
       <div class="mb-5">
@@ -518,6 +527,15 @@
           <option value="EUR">€ Euro (EUR)</option>
           <option value="AUD">A$ Australian Dollar (AUD)</option>
           <option value="CAD">C$ Canadian Dollar (CAD)</option>
+          <option value="JPY">¥ Japanese Yen (JPY)</option>
+          <option value="CNY">CN¥ Chinese Yuan (CNY)</option>
+          <option value="CHF">CHF Swiss Franc (CHF)</option>
+          <option value="SGD">SGD Singapore Dollar (SGD)</option>
+          <option value="HKD">HK$ Hong Kong Dollar (HKD)</option>
+          <option value="AED">AED UAE Dirham (AED)</option>
+          <option value="SAR">SAR Saudi Riyal (SAR)</option>
+          <option value="NZD">NZ$ New Zealand Dollar (NZD)</option>
+          <option value="ZAR">ZAR South African Rand (ZAR)</option>
         </select>
       </div>
 
@@ -529,15 +547,16 @@
       <div class="grid sm:grid-cols-2 gap-4 mb-5">
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="inflationRate">Inflation Rate (% p.a.)</label>
-          <input id="inflationRate" type="number" value="6" step="0.1" placeholder="e.g. 6" class="input-field mt-2">
+          <input id="inflationRate" type="number" value="6" step="0.1" max="1000" placeholder="e.g. 6" class="input-field mt-2">
+          <p class="text-[11px] text-gray-400 mt-1">Negative rates can be entered to model deflation.</p>
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="numYears">Number of Years</label>
-          <input id="numYears" type="number" value="10" step="1" min="1" placeholder="e.g. 10" class="input-field mt-2">
+          <input id="numYears" type="number" value="10" step="1" min="1" max="100" placeholder="e.g. 10" class="input-field mt-2">
         </div>
       </div>
 
-      <p class="text-[11px] text-gray-400 mb-5" id="explainHint">This shows how much purchasing power <span class="cur-sym-label">₹</span>100000 will lose over 10 years at 6% average inflation.</p>
+      <p class="text-[11px] text-gray-400 mb-5" id="explainHint">This shows the amount you'd need in 10 years to maintain the purchasing power of <span class="cur-sym-label">₹</span>100000 today, based on 6% average inflation.</p>
 
       <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
@@ -552,17 +571,17 @@
     </div>
 
     <!-- RESULT PANEL -->
-    <div class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
 
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Equivalent Value</span>
         <div id="rResult" class="font-display font-bold text-3xl mt-1"><span class="cur-sym-label">₹</span>—</div>
-        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter your details and hit calculate</p>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">What you'd need in 10 years to match today's ₹1,00,000</p>
 
         <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rLossLabel">Value Lost</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rLossLabel">Additional Amount Needed</span>
             <span id="rLoss" class="font-display font-semibold text-lg"><span class="cur-sym-label">₹</span>—</span>
           </div>
           <div>
@@ -643,18 +662,18 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: EPFO / Income Tax Act / RBI compounding conventions</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Method: Constant-rate compound inflation model</p>
     </div>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-      <p>Inflation is the rate at which prices rise over time, which means the same rupee amount buys progressively less each year. This calculator lets you look at that effect from either direction: <strong>Future Value</strong> tells you what a sum of money today will "feel like" in the future — how much you'd need then to buy what it buys now. <strong>Past Value</strong> works backward — it tells you what a rupee amount today was equivalent to some years ago, or what you'd have needed years ago to have the same purchasing power as an amount today.</p>
+      <p>Inflation is the rate at which prices rise over time, which means the same rupee amount buys progressively less each year. This calculator lets you look at that effect from either direction: <strong>Future Value</strong> tells you how much you'd need in the future to buy what a sum of money buys today. <strong>Past Value</strong> works backward — it tells you what a rupee amount today was equivalent to some years ago, or what you'd have needed years ago to have the same purchasing power as an amount today. Both directions apply a single constant assumed rate rather than actual historical year-by-year prices, so treat the result as a planning estimate, not a historical record.</p>
 
       <p>The math is straightforward compounding, just like interest, except it works in the opposite direction for your money's real value. For Future Value, the calculator multiplies your amount by (1 + inflation rate)^years. For Past Value, it divides your amount by that same factor. A higher inflation rate or a longer time period both magnify the effect, since compounding means small yearly increases add up to a large cumulative difference.</p>
 
-      <p><strong>Worked example (Future Value):</strong> Suppose you have 100,000 (in your local currency) today and expect average inflation of 6% per year. In 10 years, you'd need 100,000 × (1.06)^10 ≈ 179,085 to have the same purchasing power your 100,000 has today. In other words, your 100,000 today will feel like only about 55,839 in today's terms after 10 years of 6% inflation. The same math applies in ₹, $, £, €, or any other currency — pick your currency and enter your own amount in the calculator above for a localised result.</p>
+      <p><strong>Worked example (Future Value):</strong> Suppose you have 100,000 (in your local currency) today and expect average inflation of 6% per year. At 6% annual inflation, 100,000 today would require approximately 100,000 × (1.06)^10 ≈ 179,085 after 10 years to maintain the same purchasing power. Equivalently, 100,000 received 10 years from now would only have the purchasing power of about 55,839 in today's money. The same math applies in ₹, $, £, €, or any other currency — pick your currency and enter your own amount in the calculator above for a localised result.</p>
 
       <p><strong>Worked example (Past Value):</strong> Suppose something costs 100,000 (in your local currency) today, and inflation has averaged 6% per year over the last 10 years. Working backward, 100,000 ÷ (1.06)^10 ≈ 55,839 — meaning the same item would have cost roughly 55,839 ten years ago, in that same currency.</p>
 
-      <p>Keep in mind that inflation isn't perfectly uniform — the rate varies year to year and differs across categories like food, fuel, healthcare, and education. This calculator uses a single assumed average rate applied consistently across the whole period, which is a reasonable planning approximation but won't exactly match any specific real-world price history. For long-term financial planning — retirement corpus targets, education costs, or comparing salary growth to inflation — this kind of average-rate projection is the standard approach used by most financial planners in India.</p>
+      <p>Keep in mind that inflation isn't perfectly uniform — the rate varies year to year and differs across categories like food, fuel, healthcare, and education. This calculator uses a single assumed average rate applied consistently across the whole period, which is a reasonable planning approximation but won't exactly match any specific real-world price history. For long-term financial planning — retirement corpus targets, education costs, or comparing salary growth to inflation — this kind of average-rate projection is a commonly used simple planning model, although actual inflation can vary significantly over time.</p>
     </div>
 
     <p class="text-xs text-gray-400 mt-6">This calculator is for educational and planning purposes only and does not represent official inflation data. For official inflation figures in India, refer to the Consumer Price Index (CPI) published by the Ministry of Statistics and Programme Implementation (MoSPI); for other countries, check your national statistics office — e.g. the Bureau of Labor Statistics (US), Office for National Statistics (UK), or Australian Bureau of Statistics.</p>
@@ -666,14 +685,14 @@
   <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">By Category</span>
   <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Why "6%" Isn't the Right Rate for Everything</h2>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-    <p>General CPI inflation is a weighted average across many categories, but the categories that matter most for long-term goals — education and healthcare — have historically run well above the headline number in most economies, India included:</p>
+    <p>General CPI inflation is a weighted average across many categories. Education and healthcare expenses can rise faster than headline CPI in some periods and locations — the appropriate rate depends on the specific expense, provider, and time period, so treat the ranges below as a planning starting point rather than a forecast:</p>
   </div>
   <div class="not-prose overflow-x-auto my-4">
     <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
       <thead class="bg-gray-50 text-gray-600">
         <tr>
           <th class="text-left px-4 py-2 font-semibold">Category</th>
-          <th class="text-left px-4 py-2 font-semibold">Typical Long-Term Rate (India)</th>
+          <th class="text-left px-4 py-2 font-semibold">Illustrative Planning Assumption — Not an Official Forecast</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100">
@@ -685,6 +704,7 @@
       </tbody>
     </table>
   </div>
+  <p class="text-xs text-gray-400 mt-2">Rates shown are illustrative planning assumptions based on general historical patterns, not official category-specific forecasts. For official figures, consult your country's statistics office (e.g. MoSPI/CPI data for India).</p>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
     <p>The table above uses India's typical long-term rates as an illustrative reference — if you're outside India, substitute your own country's category-level inflation figures (available from your national statistics office) for a more precise result, since the general pattern of "education and healthcare outpace headline CPI" holds broadly across most economies even where the exact percentages differ. Using the general 6% CPI figure for a child's future education cost, or for post-retirement medical expenses, tends to significantly understate the real future amount needed — planning for a specific goal should use that goal's own category inflation rate rather than the general headline figure. Run this calculator once with a general rate for everyday expenses and again with a higher rate for education or healthcare-specific goals to get a more realistic picture of each target separately.</p>
 
@@ -701,7 +721,7 @@
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
       <p><strong>1. Using one flat rate for every goal.</strong> As covered above, education and healthcare inflation typically outpace general CPI significantly — using 6% across the board understates those specific targets.</p>
       <p><strong>2. Planning retirement around today's expenses.</strong> The single most common retirement-planning error — always inflate your current monthly expenses forward to your retirement date before sizing your corpus.</p>
-      <p><strong>3. Forgetting inflation eats into investment returns too.</strong> A 7% FD return sounds fine until you subtract 6% inflation, leaving only about 1% real growth — always think in terms of real (inflation-adjusted) returns, not just nominal ones, when comparing investment options.</p>
+      <p><strong>3. Forgetting inflation eats into investment returns too.</strong> A 7% FD return sounds fine until you subtract 6% inflation, leaving only around 0.94% real growth (exactly: (1.07/1.06) − 1) — always think in terms of real (inflation-adjusted) returns, not just nominal ones, when comparing investment options.</p>
       <p><strong>4. Assuming inflation will stay exactly at its historical average.</strong> Actual year-to-year inflation is volatile — treat any long projection as a planning estimate with a margin of safety, not a precise forecast, and revisit your numbers periodically as actual inflation data comes in.</p>
       <p><strong>5. Ignoring inflation when comparing salary growth.</strong> A 5% annual raise barely keeps pace with 5-6% inflation — meaning your real purchasing power may be flat or even shrinking despite a nominal pay increase; compare your raise percentage against inflation, not just against zero.</p>
     </div>
@@ -713,8 +733,8 @@
   <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">For Engineers</span>
   <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Why Engineers Need Inflation-Adjusted Salary Planning</h2>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-    <p>Engineering pay structures — particularly at PSUs, manufacturing plants, and mid-sized private firms — often move on a fixed annual increment cycle (a set percentage or a periodic wage-revision cycle rather than a market-linked annual review). A steady 5–6% yearly increment can feel like healthy growth on paper, but once measured against 5–6% general CPI inflation, it may represent close to zero real (inflation-adjusted) growth in purchasing power over a career — a pattern easy to miss when only looking at the nominal number on a payslip.</p>
-    <p>This matters more for engineers than it might for some other professions, because two cost categories that engineers disproportionately spend on tend to run above general CPI: <strong>continuing technical education</strong> (certifications, specialised courses, professional memberships needed to stay current in a fast-moving technical field) and, for site/plant-based engineers, <strong>relocation-linked housing costs</strong> when transferred between cities. Using the general 6% inflation figure to judge whether your raises are keeping pace can understate how much ground you're actually losing on these specific, engineering-relevant expenses.</p>
+    <p>In some PSU, manufacturing, and mid-sized private-firm engineering roles, pay often moves on a fixed annual increment cycle (a set percentage or a periodic wage-revision cycle rather than a market-linked annual review). A steady 5–6% yearly increment can feel like healthy growth on paper, but once measured against 5–6% general CPI inflation, it may represent close to zero real (inflation-adjusted) growth in purchasing power over a career — a pattern easy to miss when only looking at the nominal number on a payslip.</p>
+    <p>This matters more for engineers than it might for some other professions, because for some engineers, two important expenses — <strong>continuing technical education</strong> (certifications, specialised courses, professional memberships needed to stay current in a fast-moving technical field) and, for site/plant-based engineers, <strong>relocation-linked housing costs</strong> when transferred between cities — can sometimes rise faster than, or differ from, general CPI. Using the general 6% inflation figure to judge whether your raises are keeping pace can understate how much ground you're actually losing on these specific, engineering-relevant expenses.</p>
     <p><strong>A practical use of this calculator at appraisal time:</strong> before an annual review, project your current monthly expenses forward by one year at a realistic inflation rate (Future Value mode above), and compare that inflated figure against your actual post-increment take-home pay. If the raise doesn't clear the inflated expense line, your real standard of living is effectively shrinking even though the offer letter shows a positive percentage — a useful, concrete number to bring into a salary negotiation or a PSU wage-revision discussion, rather than arguing from the increment percentage alone.</p>
   </div>
 </section>
@@ -732,7 +752,7 @@
         What's the difference between Future Value and Past Value mode?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Future Value tells you what an amount today will be equivalent to N years from now, given an inflation rate — useful for retirement or goal planning. Past Value works backward: it tells you what an amount today was equivalent to N years ago, useful for understanding how much prices have already risen.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Future Value tells you what an amount today will be equivalent to N years from now, given an inflation rate — useful for retirement or goal planning. Past Value works backward: it tells you what an amount today was equivalent to N years ago, useful for understanding how much prices have already risen. Both directions apply a single constant assumed rate, so results are planning estimates rather than actual historical prices.</p>
     </details>
 
     <details class="py-5">
@@ -740,7 +760,7 @@
         What inflation rate should I use?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">India's long-term average retail inflation (CPI) has typically been in the 5–7% range, though it varies year to year. For general planning, 6% is a commonly used assumption, but you should adjust this based on the specific category you're planning for — education and healthcare inflation, for instance, often run higher than general CPI.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A 5-7% rate is often used as a general planning range for India based on recent CPI trends, but actual inflation varies significantly year to year and by exact time period measured. Use official CPI data (published by MoSPI) when you need a precise historical or current figure, and adjust upward for categories like education and healthcare that often run higher than general CPI.</p>
     </details>
 
     <details class="py-5">
@@ -764,7 +784,7 @@
         Why does education or healthcare cost more to plan for than general inflation suggests?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Education and healthcare costs in India have historically risen faster than general CPI, often in the 8-12% range versus the 5-6% headline figure. If you're planning specifically for a child's education or future medical expenses, use a higher category-specific rate rather than the general inflation figure to avoid underestimating the target.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Education and healthcare expenses can rise faster than headline CPI in some periods. For goal planning, you may want to use a higher assumption than general CPI for these categories, but the appropriate rate depends on the specific expense, provider, and time period — treat any category-level figure as a planning assumption, not an official forecast.</p>
     </details>
 
     <details class="py-5">
@@ -772,7 +792,15 @@
         How does inflation relate to my investment returns?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Your "real" return is your nominal investment return minus inflation. A 7% fixed deposit return with 6% inflation leaves only about 1% of real purchasing-power growth — always evaluate an investment's return against inflation, not in isolation, especially for long-term goals.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">As a quick approximation, your "real" return is roughly your nominal investment return minus inflation. A 7% fixed deposit return with 6% inflation leaves only a small amount of real purchasing-power growth. The exact formula is Real Return = (1 + Nominal Return) / (1 + Inflation) − 1, which for this example gives 1.07 / 1.06 − 1 ≈ 0.94% real growth — always evaluate an investment's return against inflation, not in isolation, especially for long-term goals.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is a 5-6% annual salary increment enough for an engineer to keep up with inflation?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Often only barely. A 5-6% increment roughly matches general CPI inflation of 5-6%, which means real purchasing power stays flat rather than growing. Since continuing technical education and, for site-posted engineers, relocation-linked housing costs can run above general CPI, a flat increment can mean losing ground on the specific expenses that matter most for an engineering career — worth checking with this calculator before an appraisal or wage-revision discussion.</p>
     </details>
 
     <details class="py-5">
@@ -840,7 +868,11 @@
   // ===== Inflation Calculator Logic =====
   let calcMode = 'future';
   let currentCurrency = 'INR';
-  const CUR_SYMS = { INR: '₹', USD: '$', GBP: '£', EUR: '€', AUD: 'A$', CAD: 'C$' };
+  const CUR_SYMS = { INR: '₹', USD: '$', GBP: '£', EUR: '€', AUD: 'A$', CAD: 'C$', JPY: '¥', CNY: 'CN¥', CHF: 'CHF', SGD: 'SGD', HKD: 'HK$', AED: 'AED', SAR: 'SAR', NZD: 'NZ$', ZAR: 'ZAR' };
+  // Currencies whose symbol is a text code (not a glyph) need a space before
+  // the amount ("CHF 150,000") — kept separate from CUR_SYMS so the
+  // parenthesized-label spots ("(CHF)") don't pick up an unwanted space.
+  const CUR_CODE_STYLE = { CHF: 1, SGD: 1, AED: 1, SAR: 1, ZAR: 1 };
 
   function setCurrency(cur){
     currentCurrency = cur;
@@ -853,14 +885,17 @@
 
   function fmtCurrency(n){
     const sym = CUR_SYMS[currentCurrency] || '₹';
+    const sep = CUR_CODE_STYLE[currentCurrency] ? ' ' : '';
     const locale = currentCurrency === 'INR' ? 'en-IN' : 'en-US';
-    return sym + n.toLocaleString(locale, {maximumFractionDigits:0});
+    return sym + sep + n.toLocaleString(locale, {maximumFractionDigits:0});
   }
 
   function setCalcMode(mode){
     calcMode = mode;
     document.getElementById('typeFuture').classList.toggle('active', mode === 'future');
     document.getElementById('typePast').classList.toggle('active', mode === 'past');
+    document.getElementById('typeFuture').setAttribute('aria-pressed', mode === 'future');
+    document.getElementById('typePast').setAttribute('aria-pressed', mode === 'past');
 
     const amountLabel = document.getElementById('amountLabel');
     const modeHint = document.getElementById('modeHint');
@@ -870,14 +905,14 @@
 
     if(mode === 'future'){
       amountLabel.innerHTML = 'Current Amount (<span class="cur-sym-label">' + (CUR_SYMS[currentCurrency] || '₹') + '</span>)';
-      modeHint.textContent = "Future Value: what today's amount will feel like it's worth, N years from now.";
+      modeHint.textContent = "Future Value: how much you'd need N years from now to match today's purchasing power.";
       resultLabel.textContent = 'Future Equivalent Value';
-      rLossLabel.textContent = 'Value Lost (Today\'s Terms)';
+      rLossLabel.textContent = 'Additional Amount Needed';
     } else {
       amountLabel.innerHTML = "Today's Amount (<span class=\"cur-sym-label\">" + (CUR_SYMS[currentCurrency] || '₹') + "</span>)";
       modeHint.textContent = "Past Value: what amount, N years ago, had the same purchasing power as today's amount.";
       resultLabel.textContent = 'Past Equivalent Value';
-      rLossLabel.textContent = 'Value Gained Over Time';
+      rLossLabel.textContent = 'Difference from Today';
     }
     calculateInflation();
   }
@@ -892,13 +927,17 @@
 
     if(isNaN(amount) || amount <= 0){ errors.push('Enter a valid amount greater than 0.'); }
     if(isNaN(rate)){ errors.push('Enter a valid inflation rate.'); }
+    else if(rate <= -100){ errors.push('Enter an inflation rate greater than -100%.'); }
+    else if(rate > 1000){ errors.push('Enter an inflation rate up to 1000%.'); }
     if(isNaN(yearsInput) || yearsInput <= 0){ errors.push('Enter a valid number of years greater than 0.'); }
+    else if(!Number.isInteger(yearsInput)){ errors.push('Enter a whole number of years (1, 2, 3, ...).'); }
+    else if(yearsInput > 100){ errors.push('Enter a number of years up to 100.'); }
 
     if(errors.length){
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
-      document.getElementById('rResult').textContent = (CUR_SYMS[currentCurrency] || '₹') + '—';
-      document.getElementById('rLoss').textContent = (CUR_SYMS[currentCurrency] || '₹') + '—';
+      document.getElementById('rResult').textContent = (CUR_SYMS[currentCurrency] || '₹') + (CUR_CODE_STYLE[currentCurrency] ? ' ' : '') + '—';
+      document.getElementById('rLoss').textContent = (CUR_SYMS[currentCurrency] || '₹') + (CUR_CODE_STYLE[currentCurrency] ? ' ' : '') + '—';
       document.getElementById('rPercent').textContent = '—';
       document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
       return;
@@ -907,11 +946,29 @@
       validationBox.innerHTML = '';
     }
 
-    const years = Math.round(yearsInput);
+    const years = yearsInput;
     const factor = Math.pow(1 + rate/100, years);
     const equivalentValue = calcMode === 'future' ? amount * factor : amount / factor;
+
+    if(!Number.isFinite(equivalentValue)){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = '• The result is too large to calculate. Please use a lower rate or number of years.';
+      document.getElementById('rResult').textContent = (CUR_SYMS[currentCurrency] || '₹') + (CUR_CODE_STYLE[currentCurrency] ? ' ' : '') + '—';
+      document.getElementById('rLoss').textContent = (CUR_SYMS[currentCurrency] || '₹') + (CUR_CODE_STYLE[currentCurrency] ? ' ' : '') + '—';
+      document.getElementById('rPercent').textContent = '—';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
+
     const diff = Math.abs(equivalentValue - amount);
     const percentChange = ((equivalentValue - amount) / amount) * 100;
+
+    const rLossLabel = document.getElementById('rLossLabel');
+    if(calcMode === 'future'){
+      rLossLabel.textContent = equivalentValue >= amount ? 'Additional Amount Needed' : 'Amount Difference';
+    } else {
+      rLossLabel.textContent = 'Difference from Today';
+    }
 
     document.getElementById('rResult').textContent = fmtCurrency(Math.round(equivalentValue));
     document.getElementById('resultSub').textContent = calcMode === 'future'
@@ -922,7 +979,7 @@
 
     const explainHint = document.getElementById('explainHint');
     explainHint.textContent = calcMode === 'future'
-      ? `This shows how much purchasing power ${fmtCurrency(amount)} will lose over ${years} years at ${rate}% average inflation.`
+      ? `This shows the amount you'd need in ${years} years to maintain the purchasing power of ${fmtCurrency(amount)} today, based on ${rate}% average inflation.`
       : `This shows what ${fmtCurrency(amount)} today was equivalent to, ${years} years ago, at ${rate}% average inflation.`;
 
     const yearRows = [];
@@ -959,12 +1016,25 @@
 </script>
 
 <script>
-  // ===== Generic Copy Result (added site-wide; does not touch page-specific calc logic) =====
+  // ===== Generic Copy Result (site-wide boilerplate, DIVERGED IN THIS FILE ONLY:
+  // temporarily hides [data-copy-exclude] elements in the live DOM before
+  // reading innerText, then restores them — so Related Calculators links
+  // don't get pulled into the copied text. relatedCalculatorsBox already
+  // carried the data-copy-exclude attribute but the shared function never
+  // implemented it. Needs propagating to other pages in a coordinated pass. =====
   function copyResultGeneric(){
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
-    var text = panel.innerText.trim();
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    var text;
+    try {
+      excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
+      text = panel.innerText.trim();
+    } finally {
+      excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
+    }
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {

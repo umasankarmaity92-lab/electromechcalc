@@ -480,6 +480,15 @@
           <option value="EUR">€ Euro (EUR)</option>
           <option value="AUD">A$ Australian Dollar (AUD)</option>
           <option value="CAD">C$ Canadian Dollar (CAD)</option>
+          <option value="JPY">¥ Japanese Yen (JPY)</option>
+          <option value="CNY">CN¥ Chinese Yuan (CNY)</option>
+          <option value="CHF">CHF Swiss Franc (CHF)</option>
+          <option value="SGD">SGD Singapore Dollar (SGD)</option>
+          <option value="HKD">HK$ Hong Kong Dollar (HKD)</option>
+          <option value="AED">AED UAE Dirham (AED)</option>
+          <option value="SAR">SAR Saudi Riyal (SAR)</option>
+          <option value="NZD">NZ$ New Zealand Dollar (NZD)</option>
+          <option value="ZAR">ZAR South African Rand (ZAR)</option>
         </select>
       </div>
 
@@ -817,7 +826,12 @@
   // ===== SIP / Lump Sum Calculator =====
   let currentType = 'sip';
   let currentCurrency = 'INR';
-  const CUR_SYMS = { INR: '₹', USD: '$', GBP: '£', EUR: '€', AUD: 'A$', CAD: 'C$' };
+  const CUR_SYMS = { INR: '₹', USD: '$', GBP: '£', EUR: '€', AUD: 'A$', CAD: 'C$', JPY: '¥', CNY: 'CN¥', CHF: 'CHF', SGD: 'SGD', HKD: 'HK$', AED: 'AED', SAR: 'SAR', NZD: 'NZ$', ZAR: 'ZAR' };
+  // Currencies whose symbol is a text code (not a glyph) need a space before
+  // the amount in fmtCurrency's output ("CHF 150,000"), but NOT in the
+  // parenthesized-label or placeholder spots that already add their own
+  // spacing — so this stays separate from CUR_SYMS rather than baked into it.
+  const CUR_CODE_STYLE = { CHF: 1, SGD: 1, AED: 1, SAR: 1, ZAR: 1 };
 
   function setCurrency(cur){
     currentCurrency = cur;
@@ -838,8 +852,9 @@
 
   function fmtCurrency(n){
     const sym = CUR_SYMS[currentCurrency] || '₹';
+    const sep = CUR_CODE_STYLE[currentCurrency] ? ' ' : '';
     const locale = currentCurrency === 'INR' ? 'en-IN' : 'en-US';
-    return sym + n.toLocaleString(locale, {maximumFractionDigits:0});
+    return sym + sep + n.toLocaleString(locale, {maximumFractionDigits:0});
   }
 
   function calculateSIP(){
