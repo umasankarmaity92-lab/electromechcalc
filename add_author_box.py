@@ -85,6 +85,24 @@ OLD_BOX_RE = re.compile(
 NEW_BOX_MARKER = "author-box"
 ANY_BOX_MARKER = "Reviewed by"
 
+# Matches the long-form "Reviewed by ... team</a>, comprising a qualified
+# electrical engineer, a mechanical engineer, and a Chartered Accountant."
+# sentence regardless of the href used for the editorial-policy link, so it
+# can be shortened in place on pages that ALREADY have the current bordered
+# author-box (which the main box-detection logic below otherwise skips).
+OLD_REVIEWED_BY_TAIL_RE = re.compile(
+    r'(ElectroMechCalc editorial team</a>)'
+    r',\s*comprising a qualified electrical engineer,\s*a mechanical engineer,\s*and a Chartered Accountant\.',
+)
+
+
+def shorten_reviewed_by(html):
+    """Shorten an already-present 'Reviewed by ... team</a>, comprising...'
+    sentence to just 'Reviewed by ... team</a>.', leaving everything else
+    in the box (dates, standards, href) untouched. Returns (html, changed)."""
+    new_html, n = OLD_REVIEWED_BY_TAIL_RE.subn(r'\1.', html)
+    return new_html, n > 0
+
 CSS_MARKER = ".author-box{"
 CSS_RULE = """
   .author-box{
@@ -100,7 +118,7 @@ CSS_RULE = """
 BOX_TEMPLATE = """
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
-      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>, comprising a qualified electrical engineer, a mechanical engineer, and a Chartered Accountant.</p>
+      <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
       <p>Last reviewed: {review_date} &nbsp;|&nbsp; Standards referenced: {standards}</p>
     </div>
 """
@@ -134,10 +152,20 @@ def process_file(path: Path, review_date: str, dry_run: bool) -> str:
     standards = CATEGORY_STANDARDS[category_for(path.name)]
     box = BOX_TEMPLATE.format(review_date=review_date, standards=standards)
 
-    # Box detection/replacement runs FIRST, against the untouched file
-    # content, so the CSS rule inserted below (which itself contains the
-    # literal substring "author-box") can never be mistaken for an
-    # already-applied box.
+    # Shorten an existing long-form "Reviewed by ... comprising a qualified
+    # electrical engineer..." sentence FIRST, before the box-presence check
+    # below — this runs even on pages that already have the current
+    # bordered author-box (which the box-detection logic would otherwise
+    # skip entirely, leaving the old sentence untouched forever).
+    html, reviewed_by_shortened = shorten_reviewed_by(html)
+    if reviewed_by_shortened:
+        notes.append("reviewed-by sentence shortened")
+
+    # Box detection/replacement runs next. The shortening above only edits
+    # inline text and never changes tag structure, so it doesn't affect
+    # these patterns. This still runs before the CSS rule inserted below,
+    # which itself contains the literal substring "author-box" and must
+    # never be mistaken for an already-applied box.
     box_action = None
     if re.search(r'class="[^"]*\bauthor-box\b', html):
         pass  # already current, nothing to do for the box itself
@@ -194,14 +222,15 @@ def main():
         print(f"Not a folder: {folder}", file=sys.stderr)
         sys.exit(1)
 
-    html_files = sorted(folder.glob("*.html"))
+    html_files = sorted(folder.rglob("*.html"))
     if not html_files:
         print("No .html files found.", file=sys.stderr)
         sys.exit(1)
 
     for f in html_files:
         result = process_file(f, args.review_date, args.dry_run)
-        print(f"{f.name:45s} -> {result}")
+        rel = f.relative_to(folder)
+        print(f"{str(rel):45s} -> {result}")
 
 
 if __name__ == "__main__":
