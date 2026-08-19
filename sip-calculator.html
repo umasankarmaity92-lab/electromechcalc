@@ -66,7 +66,7 @@
 }
 </script>
 
-<!-- Structured data: FAQPage -->
+<!-- Structured data: BreadcrumbList -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -79,6 +79,7 @@
 }
 </script>
 
+<!-- Structured data: FAQPage -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -96,8 +97,8 @@
     },
     {
       "@type": "Question",
-      "name": "What is the \"Wealth Multiplier\" and \"Effective CAGR\" shown in the results?",
-      "acceptedAnswer": { "@type": "Answer", "text": "The Wealth Multiplier is Maturity Value ÷ Total Invested, shown as an \"×\" figure. Effective CAGR converts that same growth into an annualised percentage, which is the fairer number to compare between a SIP and a lump sum since the two involve differently-timed contributions." }
+      "name": "What is the \"Wealth Multiplier\" and \"Approx. Annualized Growth\" shown in the results?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The Wealth Multiplier is Maturity Value ÷ Total Invested, shown as an \"×\" figure. Approx. Annualized Growth converts that same growth into a yearly percentage for easier comparison across different tenures. For a SIP, this is a simplified annualized figure, not a true CAGR or XIRR — since contributions happen monthly rather than as a single lump sum, an accurate money-weighted annualized return would need an XIRR calculation based on each contribution's actual date." }
     },
     {
       "@type": "Question",
@@ -112,7 +113,7 @@
     {
       "@type": "Question",
       "name": "How much difference does a step-up really make over 20 years?",
-      "acceptedAnswer": { "@type": "Answer", "text": "A meaningful one — a ₹10,000/month SIP with a 10% annual step-up versus the same flat ₹10,000 SIP can differ in final corpus by 40-50% over 20 years, even though the step-up version's average monthly contribution isn't dramatically higher. The gain comes from directing more money in later years when the existing corpus is larger and compounding faster." }
+      "acceptedAnswer": { "@type": "Answer", "text": "A meaningful one — a 10% annual step-up can significantly increase the final corpus compared with a flat SIP of the same starting amount, especially over long investment periods, although the contribution requirement rises substantially over time. The gain comes from directing more money in later years when the existing corpus is larger and compounding faster." }
     },
     {
       "@type": "Question",
@@ -127,7 +128,7 @@
     {
       "@type": "Question",
       "name": "Should a salaried engineer choose EPF or SIP for retirement?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Not an either/or choice for most engineers — EPF is deducted automatically and provides a guaranteed, low-risk base, while a separate SIP in equity mutual funds adds market-linked growth potential on top. A common approach is to keep EPF contributions as-is and direct variable income, like overtime or project bonuses, into a SIP for extra long-term growth." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Not an either/or choice for most engineers — EPF is deducted automatically and provides a relatively low-risk base, while a separate SIP in equity mutual funds adds market-linked growth potential on top. A common approach is to keep EPF contributions as-is and direct variable income, like overtime or project bonuses, into a SIP for extra long-term growth." }
     }
   ]
 }
@@ -239,6 +240,9 @@
     cursor:pointer;
     color:#64748b;
     transition:.15s ease;
+    border:none;
+    background:transparent;
+    font-family:inherit;
   }
   .toggle-btn.active{
     background:#10b981;
@@ -466,8 +470,8 @@
       <div class="mb-5">
         <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_sip_calculator">Investment Type</span>
         <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_sip_calculator">
-          <div id="typeSip" class="toggle-btn active" onclick="setInvType('sip')">SIP (Monthly)</div>
-          <div id="typeLump" class="toggle-btn" onclick="setInvType('lumpsum')">Lump Sum (One-Time)</div>
+          <button type="button" id="typeSip" class="toggle-btn active" aria-pressed="true" onclick="setInvType('sip')">SIP (Monthly)</button>
+          <button type="button" id="typeLump" class="toggle-btn" aria-pressed="false" onclick="setInvType('lumpsum')">Lump Sum (One-Time)</button>
         </div>
       </div>
 
@@ -499,7 +503,7 @@
         </div>
         <div class="mb-5">
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="stepUp">Annual Step-Up (%)</label>
-          <input id="stepUp" type="number" value="10" placeholder="e.g. 10" class="input-field mt-2">
+          <input id="stepUp" type="number" value="10" min="0" max="100" placeholder="e.g. 10" class="input-field mt-2">
         </div>
       </div>
 
@@ -513,11 +517,11 @@
       <div class="grid grid-cols-2 gap-4 mb-5">
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="years">Investment Period (Years)</label>
-          <input id="years" type="number" placeholder="e.g. 15" class="input-field mt-2">
+          <input id="years" type="number" min="1" max="100" step="0.1" placeholder="e.g. 15" class="input-field mt-2">
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="returnRate">Expected Annual Return (%)</label>
-          <input id="returnRate" type="number" value="12" placeholder="e.g. 12" class="input-field mt-2">
+          <input id="returnRate" type="number" value="12" min="-99" max="100" step="0.1" placeholder="e.g. 12" class="input-field mt-2">
         </div>
       </div>
 
@@ -550,7 +554,7 @@
           <div id="rInvested" class="font-display font-bold text-xl text-brandDark mt-1"><span class="cur-sym-label">₹</span> —</div>
         </div>
         <div class="bg-white rounded-xl border border-gray-100 p-4">
-          <span class="font-mono text-[10px] uppercase tracking-wider text-emerald-600">Total Returns</span>
+          <span id="rGainLabel" class="font-mono text-[10px] uppercase tracking-wider text-emerald-600">Total Returns</span>
           <div id="rGain" class="font-display font-bold text-xl text-brandDark mt-1"><span class="cur-sym-label">₹</span> —</div>
         </div>
         <div class="bg-white rounded-xl border border-gray-100 p-4">
@@ -558,8 +562,9 @@
           <div id="rMultiplier" class="font-display font-bold text-xl text-brandDark mt-1">— ×</div>
         </div>
         <div class="bg-white rounded-xl border border-gray-100 p-4">
-          <span class="font-mono text-[10px] uppercase tracking-wider text-emerald-600">Effective CAGR</span>
+          <span class="font-mono text-[10px] uppercase tracking-wider text-emerald-600">Approx. Annualized Growth</span>
           <div id="rCAGR" class="font-display font-bold text-xl text-brandDark mt-1">— %</div>
+          <p class="text-[10px] text-gray-400 mt-0.5">Simplified figure; not CAGR/XIRR</p>
         </div>
       </div>
 
@@ -654,12 +659,12 @@
 
       <p>This calculator adds an <strong>annual step-up</strong> option to the SIP side, since most people's income — and therefore their savings capacity — rises every year. Instead of keeping the same monthly amount for the entire tenure, a step-up SIP increases the instalment by a fixed percentage each year: <strong>this year's SIP = last year's SIP × (1 + step-up%)</strong>. Even a modest 10% yearly step-up compounds into a meaningfully larger corpus over a long horizon.</p>
 
-      <p>Two extra numbers are shown alongside the maturity value. The <strong>Wealth Multiplier</strong> is Maturity Value ÷ Total Invested — a 3× multiplier means your money tripled. The <strong>Effective CAGR</strong> backs out the annualised growth rate your money actually experienced, a fairer number to compare across different tenures than the maturity value alone.</p>
+      <p>Two extra numbers are shown alongside the maturity value. The <strong>Wealth Multiplier</strong> is Maturity Value ÷ Total Invested — a 3× multiplier means your money tripled. <strong>Approx. Annualized Growth</strong> backs out a simplified yearly growth rate, useful for comparing across different tenures than the maturity value alone — but for a SIP it isn't a true CAGR or XIRR, since contributions are spread across many months rather than invested as a single lump sum at the start.</p>
 
       <p>Treat the maturity value here as an illustrative estimate rather than a guarantee. Actual mutual fund and market-linked returns fluctuate year to year and are never a flat, constant rate the way this calculator assumes; the figures shown are for planning purposes only and do not constitute investment advice.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Monthly SIP Return Table (No Step-Up)</h3>
-      <p>The table below illustrates how a flat monthly SIP (no annual step-up) grows over different tenures at a few common assumed annual return rates, compounded monthly. Figures are shown in Indian numbering (L = Lakh = 100,000; Cr = Crore = 10,000,000) since that's the site's default currency, but the multiplier and CAGR outcomes are identical proportionally in any currency — a $5,000/month SIP at the same rate and tenure grows by the same multiple as a ₹5,000/month one. Use the calculator above with your own currency and amount for a precise, localised projection.</p>
+      <p>The table below illustrates how a flat monthly SIP (no annual step-up) grows over different tenures at a few common assumed annual return rates, compounded monthly. Figures are shown in Indian numbering (L = Lakh = 100,000; Cr = Crore = 10,000,000) since that's the site's default currency, but the multiplier and annualized growth outcomes are identical proportionally in any currency — a $5,000/month SIP at the same rate and tenure grows by the same multiple as a ₹5,000/month one. Use the calculator above with your own currency and amount for a precise, localised projection.</p>
       <div class="overflow-x-auto my-3">
         <table class="breakdown-table" style="min-width:520px;">
           <thead>
@@ -683,7 +688,7 @@
       <p>Putting the same total money to work as a lump sum versus spreading it as a SIP produces different outcomes depending on market direction during the investment period. In a steadily rising market, a lump sum generally ends up ahead because the full principal has been compounding since day one, while SIP instalments arrive gradually and each compounds for less time than the first. In a volatile or choppy market, a SIP often does relatively better because it practices rupee-cost averaging — buying more units when the price is low and fewer when it's high — which smooths out the effect of short-term dips. Neither approach is universally superior; the right choice generally depends on whether you have the full amount available today, your comfort with short-term volatility, and your investment horizon. Many investors choose a blended approach: deploying a portion as a lump sum and continuing the rest as a monthly SIP.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Step-Up SIP: Why It Matters More Than It Looks</h3>
-      <p>A step-up (or "top-up") SIP increases your monthly contribution by a fixed percentage every year, typically timed to your annual salary increment. Because each year's higher instalment still benefits from all the remaining compounding years ahead of it, even a modest step-up compounds into a substantially larger corpus than a flat SIP of the same starting amount. For instance, a ₹10,000 SIP with no step-up versus the same ₹10,000 SIP with a 10% annual step-up over 20 years can differ in final corpus by 40–50%, even though the step-up version's average monthly contribution across the whole period isn't dramatically higher — the difference comes from directing more money in later years when the base corpus is already larger and compounding faster. A step-up SIP is generally a better fit for anyone expecting their income to grow over time, since it avoids the common problem of a fixed SIP amount losing relative significance as salary rises.</p>
+      <p>A step-up (or "top-up") SIP increases your monthly contribution by a fixed percentage every year, typically timed to your annual salary increment. Because each year's higher instalment still benefits from all the remaining compounding years ahead of it, even a modest step-up compounds into a substantially larger corpus than a flat SIP of the same starting amount. For instance, a ₹10,000 SIP with no step-up versus the same ₹10,000 SIP with a 10% annual step-up over 20 years can differ significantly in final corpus, although the contribution requirement rises substantially over time — the difference comes from directing more money in later years when the base corpus is already larger and compounding faster. A step-up SIP is generally a better fit for anyone expecting their income to grow over time, since it avoids the common problem of a fixed SIP amount losing relative significance as salary rises.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Tax Notes: Check Your Local Capital Gains Rules</h3>
       <p>How SIP and lump-sum gains are taxed differs significantly by country — this calculator projects pre-tax growth only, and doesn't apply any tax rule automatically. A general pattern across most jurisdictions (India, the US, UK, and others) is that <strong>holding period matters</strong>: gains on investments held longer than a threshold are usually taxed at a lower, "long-term" rate than gains realised sooner. Whether SIP instalments are treated as one continuous investment or as separate purchases for tax purposes (affecting each instalment's own holding period) also varies by country and fund structure. Always confirm the current rules with a local tax advisor before assuming a tax outcome — the details below are India-specific as an illustrative example.</p>
@@ -698,9 +703,9 @@
     <span class="block font-mono text-xs uppercase tracking-wider text-emerald-600 mb-1">For Engineers</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">EPF + SIP Retirement Planning for Salaried Engineers</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-      <p>Salaried engineers in India already have one long-term investment running by default: EPF, deducted automatically from every payslip. Because it's mandatory and low-risk, it's tempting to treat it as the whole retirement plan. In practice, EPF's fixed annual return is usually the "safety" sleeve of a plan, not the growth engine — equity-oriented SIPs, held over a long horizon, have historically compounded faster, though with market-linked ups and downs EPF doesn't have.</p>
-      <p>A practical split many engineers use: keep EPF contributions untouched as the guaranteed base (verify the projection with the <a href="/financial/epf-calculator" class="text-sky-600 underline">EPF Calculator</a>), and route a separate, voluntary SIP toward equity mutual funds for growth. Field, site, and maintenance engineers whose income includes variable components — overtime, site allowance, project bonus — often direct that variable portion into the SIP specifically, since it can be topped up or paused more flexibly than EPF.</p>
-      <p><strong>Why this matters for an engineering career specifically:</strong> engineering salaries frequently see a sharper early-career ramp (first 5–10 years) followed by flatter growth unless a role shifts into management or a specialised/niche technical track. A step-up SIP started early, timed to those early raises, captures more compounding years than the same contribution started later — which is why many financial planners suggest engineers start a modest SIP alongside EPF from the first job, rather than waiting until EPF alone starts to look insufficient closer to retirement.</p>
+      <p>Salaried engineers in India already have one long-term investment running by default: EPF, deducted automatically from every payslip. Because it's mandatory and low-risk, it's tempting to treat it as the whole retirement plan. In practice, EPF provides a relatively low-risk retirement component — with the applicable interest rate determined under the prevailing EPF framework rather than fixed indefinitely — and is usually the "safety" sleeve of a plan, not the growth engine; equity-oriented SIPs, held over a long horizon, have historically compounded faster, though with market-linked ups and downs EPF doesn't have.</p>
+      <p>A practical split many engineers use: keep EPF contributions untouched as the relatively low-risk base (verify the projection with the <a href="/financial/epf-calculator" class="text-sky-600 underline">EPF Calculator</a>), and route a separate, voluntary SIP toward equity mutual funds for growth. Field, site, and maintenance engineers whose income includes variable components — overtime, site allowance, project bonus — often direct that variable portion into the SIP specifically, since it can be topped up or paused more flexibly than EPF.</p>
+      <p><strong>Why this matters for an engineering career specifically:</strong> engineering salaries frequently see a sharper early-career ramp (first 5–10 years) followed by flatter growth unless a role shifts into management or a specialised/niche technical track. A step-up SIP started early, timed to those early raises, captures more compounding years than the same contribution started later — which is why a common planning approach is to start a modest SIP alongside EPF from the first job, rather than waiting until EPF alone starts to look insufficient closer to retirement.</p>
     </div>
   </div>
 </section>
@@ -731,10 +736,10 @@
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        What is the "Wealth Multiplier" and "Effective CAGR" shown in the results?
+        What is the "Wealth Multiplier" and "Approx. Annualized Growth" shown in the results?
         <span class="plus text-emerald-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The Wealth Multiplier is Maturity Value ÷ Total Invested, shown as an "×" figure. Effective CAGR converts that same growth into an annualised percentage, which is the fairer number to compare between a SIP and a lump sum since the two involve differently-timed contributions.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The Wealth Multiplier is Maturity Value ÷ Total Invested, shown as an "×" figure. Approx. Annualized Growth converts that same growth into a yearly percentage for easier comparison across different tenures. For a SIP, this is a simplified annualized figure, not a true CAGR or XIRR — since contributions happen monthly rather than as a single lump sum, an accurate money-weighted annualized return would need an XIRR calculation based on each contribution's actual date.</p>
     </details>
 
     <details class="py-5">
@@ -758,7 +763,7 @@
         How much difference does a step-up really make over 20 years?
         <span class="plus text-emerald-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A meaningful one — a ₹10,000/month SIP with a 10% annual step-up versus the same flat ₹10,000 SIP can differ in final corpus by 40-50% over 20 years, even though the step-up version's average monthly contribution isn't dramatically higher. The gain comes from directing more money in later years when the existing corpus is larger and compounding faster.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A meaningful one — a 10% annual step-up can significantly increase the final corpus compared with a flat SIP of the same starting amount, especially over long investment periods, although the contribution requirement rises substantially over time. The gain comes from directing more money in later years when the existing corpus is larger and compounding faster.</p>
     </details>
 
     <details class="py-5">
@@ -775,6 +780,14 @@
         <span class="plus text-emerald-500 text-xl">+</span>
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">Indian equity mutual funds have historically delivered roughly 10-14% p.a. over long (10+ year) periods, though this varies by fund category and time period, and past performance never guarantees future returns. Debt-oriented funds typically run lower, closer to 6-8%. Use a rate consistent with the fund category you're actually planning to invest in, and treat it as an estimate.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should a salaried engineer choose EPF or SIP for retirement?
+        <span class="plus text-emerald-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Not an either/or choice for most engineers — EPF is deducted automatically and provides a relatively low-risk base, while a separate SIP in equity mutual funds adds market-linked growth potential on top. A common approach is to keep EPF contributions as-is and direct variable income, like overtime or project bonuses, into a SIP for extra long-term growth.</p>
     </details>
   </div>
 </section>
@@ -846,6 +859,8 @@
     currentType = type;
     document.getElementById('typeSip').classList.toggle('active', type === 'sip');
     document.getElementById('typeLump').classList.toggle('active', type === 'lumpsum');
+    document.getElementById('typeSip').setAttribute('aria-pressed', type === 'sip');
+    document.getElementById('typeLump').setAttribute('aria-pressed', type === 'lumpsum');
     document.getElementById('sipFields').classList.toggle('hidden-field', type !== 'sip');
     document.getElementById('lumpsumFields').classList.toggle('hidden-field', type !== 'lumpsum');
   }
@@ -870,9 +885,29 @@
         validationBox.innerHTML = 'Please enter valid values in all required fields.';
         return;
     }
+    if(years > 100){
+        validationBox.classList.remove('hidden');
+        validationBox.innerHTML = 'Enter a number of years up to 100.';
+        return;
+    }
+    if(returnRate <= -100){
+        validationBox.classList.remove('hidden');
+        validationBox.innerHTML = 'Enter an expected annual return greater than -100%.';
+        return;
+    }
+    if(returnRate > 100){
+        validationBox.classList.remove('hidden');
+        validationBox.innerHTML = 'Enter an expected annual return up to 100%.';
+        return;
+    }
 
     let monthlyRate = returnRate / 100 / 12;
     let totalMonths = Math.round(years * 12);
+    // Display the period actually compounded (derived from totalMonths),
+    // not the raw typed value — Math.round(years*12) can shift the real
+    // duration slightly (e.g. 10.1yr -> 121 months -> 10.0833yr), and the
+    // label should always match what was actually calculated.
+    let effectiveYears = Math.round((totalMonths / 12) * 100) / 100;
 
     if(type === "lumpsum"){
 
@@ -887,10 +922,17 @@
 
         let rows = [];
         let balance = principal;
+        let wholeYears = Math.floor(years);
+        let remMonths = totalMonths - (wholeYears * 12);
 
-        for(let y = 1; y <= Math.round(years); y++){
+        for(let y = 1; y <= wholeYears + (remMonths > 0 ? 1 : 0); y++){
+            let monthsThisYear = (y <= wholeYears) ? 12 : remMonths;
+            if(monthsThisYear <= 0) break;
             let openingBalance = balance;
-            balance = balance * Math.pow(1 + returnRate/100, 1);
+
+            for(let m = 1; m <= monthsThisYear; m++){
+                balance = balance * (1 + monthlyRate);
+            }
             let gain = balance - openingBalance;
 
             rows.push({
@@ -904,7 +946,7 @@
         let totalInvested = principal;
         let totalGain = balance - principal;
 
-        renderResults(balance, totalInvested, totalGain, years);
+        renderResults(balance, totalInvested, totalGain, effectiveYears);
 
         let tableRows = rows.map(r => `
             <tr>
@@ -931,11 +973,17 @@
 
     // SIP mode with step-up
     let sipAmount = parseFloat(document.getElementById("sipAmount").value);
-    let stepUp = parseFloat(document.getElementById("stepUp").value) || 0;
+    let stepUp = parseFloat(document.getElementById("stepUp").value);
+    if(isNaN(stepUp)){ stepUp = 0; }
 
     if(isNaN(sipAmount) || sipAmount <= 0){
         validationBox.classList.remove('hidden');
         validationBox.innerHTML = 'Please enter a valid SIP amount.';
+        return;
+    }
+    if(stepUp < 0 || stepUp > 100){
+        validationBox.classList.remove('hidden');
+        validationBox.innerHTML = 'Enter an annual step-up between 0% and 100%.';
         return;
     }
     validationBox.classList.add('hidden');
@@ -974,7 +1022,7 @@
 
     let totalGain = balance - totalInvested;
 
-    renderResults(balance, totalInvested, totalGain, years);
+    renderResults(balance, totalInvested, totalGain, effectiveYears);
 
     let tableRows = rows.map(r => `
         <tr>
@@ -998,17 +1046,18 @@
     `;
   }
 
-  // shared result rendering (own addition: multiplier + effective CAGR, invested/gain bar)
+  // shared result rendering (own addition: multiplier + annualized wealth growth, invested/gain bar)
   function renderResults(balance, totalInvested, totalGain, years){
     document.getElementById("result").textContent = fmtCurrency(balance);
     document.getElementById("resultSub").textContent = `Maturity value after ${years} years`;
     document.getElementById("rInvested").textContent = fmtCurrency(totalInvested);
-    document.getElementById("rGain").textContent = fmtCurrency(totalGain);
+    document.getElementById("rGainLabel").textContent = totalGain < 0 ? "Total Loss" : "Total Returns";
+    document.getElementById("rGain").textContent = fmtCurrency(Math.abs(totalGain));
 
     const multiplier = balance / totalInvested;
-    const effectiveCAGR = (Math.pow(balance / totalInvested, 1 / years) - 1) * 100;
+    const annualizedWealthGrowth = (Math.pow(balance / totalInvested, 1 / years) - 1) * 100;
     document.getElementById("rMultiplier").textContent = multiplier.toFixed(2) + " ×";
-    document.getElementById("rCAGR").textContent = effectiveCAGR.toFixed(2) + " %";
+    document.getElementById("rCAGR").textContent = annualizedWealthGrowth.toFixed(2) + " %";
 
     const investedPct = Math.max(2, Math.min(98, (totalInvested / balance) * 100));
     document.getElementById("barInvested").style.width = investedPct + "%";
