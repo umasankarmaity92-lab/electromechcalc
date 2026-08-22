@@ -453,9 +453,21 @@ document.addEventListener("DOMContentLoaded", () => {
       return searchIndexPromise;
     }
 
-    // Warm the cache as soon as the page loads, so the first
-    // keystroke doesn't have to wait on the network.
-    getSearchIndex();
+    // Warm the cache once the browser is idle (falls back to window
+    // "load" on browsers without requestIdleCallback, e.g. Safari)
+    // instead of firing synchronously on every page load. The eager
+    // version sat on the critical rendering path — PageSpeed's network
+    // dependency tree showed this single fetch (search-index.json,
+    // ~12 KiB) accounting for the page's entire "maximum critical path
+    // latency," directly hurting FCP/LCP on every page, even for
+    // visitors who never touch the search box. Deferring to idle keeps
+    // the original goal (index warm before the first keystroke, for
+    // most users) without blocking first paint.
+    if (window.requestIdleCallback) {
+      requestIdleCallback(getSearchIndex, { timeout: 3000 });
+    } else {
+      window.addEventListener("load", getSearchIndex);
+    }
 
     function escapeHTML(str) {
       return String(str)
