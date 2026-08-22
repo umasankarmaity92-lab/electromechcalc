@@ -65,9 +65,14 @@
      Electrical currently ends at "13. Solar Panel Size", a new
      electrical calculator becomes "14. <name>", inserted above the
      Pro Max divider; the Pro Max/featured link always stays last).
-  7. Deploy, then in GSC: Sitemaps -> resubmit sitemap.xml, and
+  7. Before publishing, check for any leftover {{PLACEHOLDER}} text —
+     run: grep -o '{{[A-Z0-9_]*}}' <category>/<slug>.html
+     Any match means a placeholder was missed; a live page showing
+     literal "{{META_DESCRIPTION}}" text is a real published bug that
+     has happened before. Fix every match before deploying.
+  8. Deploy, then in GSC: Sitemaps -> resubmit sitemap.xml, and
      URL Inspection -> Request Indexing on the new page's clean URL.
-  8. Input panel border (black light / white dark) and auto-scroll-
+  9. Input panel border (black light / white dark) and auto-scroll-
      to-result on Calculate are now SITE-WIDE via _middleware.js +
      theme.css — no per-page edit needed, AS LONG AS you keep:
        - the INPUT PANEL div's classes as-is (middleware matches on
@@ -115,6 +120,8 @@
       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
     document.documentElement.classList.add(t);
     document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+    var tc = document.querySelector('meta[name="theme-color"]');
+    if (tc) tc.setAttribute('content', t === 'dark-theme' ? '#0B1220' : '#ffffff');
   } catch(e) {}
 })();
 </script>
@@ -145,7 +152,15 @@
 <meta property="og:description" content="{{OG_DESCRIPTION}}">
 <meta property="og:url" content="https://www.electromechcalc.com/{{PAGE_CATEGORY}}/{{PAGE_SLUG}}">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
-<meta property="og:locale" content="en_IN">
+<!-- Site-wide default is the globalized locale set (en_US + alternates),
+     not en_IN — matches every converged/globalized calculator page.
+     Only India-only pages (structurally tied to Indian law/schemes,
+     e.g. EPF/gratuity/HRA/income-tax) should override this back to
+     a single en_IN with no alternates. -->
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="en_AU">
+<meta property="og:locale:alternate" content="en_CA">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -158,7 +173,15 @@
      across all published calculators. Add more (Q9, Q10...) as needed;
      never ship fewer than 8, and keep this JSON-LD block in sync with
      the visible {{FAQ_ITEMS}} accordion below (same questions, same
-     order) so structured data never diverges from on-page content. -->
+     order) so structured data never diverges from on-page content.
+     ESCAPING: when filling FAQ_Q*/FAQ_A* (and META_DESCRIPTION,
+     OG_TITLE, OG_DESCRIPTION above), a literal " inside the answer
+     text breaks the JSON-LD block — write it as \" inside these
+     JSON-LD string values. In the visible {{FAQ_ITEMS}} HTML and in
+     the meta attribute values above, use &quot; instead. Before
+     publishing, verify the page still parses by pasting the JSON-LD
+     blocks into a JSON validator (or open the page and check the
+     browser console for a JSON parse error). -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -167,7 +190,7 @@
   "url": "https://www.electromechcalc.com/{{PAGE_CATEGORY}}/{{PAGE_SLUG}}",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "{{TOOL_DESCRIPTION}}",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -243,6 +266,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<!-- This IS used — site-nav.js lazy-loads lottie-web on browser idle and
+     plays this JSON over the #hero-lottie div's static SVG poster below.
+     Do not remove this preload as "unused" just because no code in THIS
+     file references the JSON directly. Known standing inefficiency (not
+     yet fixed): this preload is eager/high-priority, while site-nav.js's
+     own intent is to defer the lottie load until idle — the two are
+     currently working against each other. Fixing it site-wide (e.g.
+     dropping this preload and letting site-nav.js's own idle-fetch be
+     the only load path) is a separate, deliberate change to make across
+     every #hero-lottie page at once, not a per-template edit. -->
 <link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
 
 <!-- Tailwind, Google Fonts, and theme.css all use the same
