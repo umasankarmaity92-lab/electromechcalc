@@ -485,7 +485,7 @@ href="https://www.electromechcalc.com/ups-calculator">
         <p class="text-[11px] text-gray-400 mt-1">Typical: 0.8 — batteries reach end-of-life around 80% of nameplate capacity.</p>
       </div>
 
-      <div id="rtValidationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+      <div id="rtValidationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculateRuntime()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate
@@ -576,7 +576,7 @@ href="https://www.electromechcalc.com/ups-calculator">
 </nav>
 
 <!-- ===================== ARTICLE BODY ===================== -->
-<article id="how-it-works" class="max-w-3xl mx-auto px-6 py-12 bg-white blog-prose">
+<article class="max-w-3xl mx-auto px-6 py-12 bg-white blog-prose">
 
 
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
@@ -588,7 +588,7 @@ href="https://www.electromechcalc.com/ups-calculator">
     It's a common assumption: buy a bigger UPS, get longer backup time. In reality, a 5 kVA UPS with a small internal battery pack can run out of power faster than a 1.5 kVA unit with a larger external battery bank. The reason comes down to a distinction that's easy to overlook — kVA tells you how much load the UPS's inverter can <strong>support</strong>, while runtime is governed almost entirely by a completely different number: the battery's amp-hour (Ah) capacity. Mixing these two up is one of the most common — and most expensive — UPS sizing mistakes.
   </p>
 
-  <h2>kVA vs. Watts: Two Different Limits</h2>
+  <h2 id="how-it-works">kVA vs. Watts: Two Different Limits</h2>
   <p>
     Every UPS carries two ratings: VA (or kVA) and Watts. The VA rating defines the maximum apparent power the inverter can physically deliver, while the Watts rating reflects the real, usable power after accounting for the UPS output power factor — typically 0.7 to 0.9 for many consumer and line-interactive units. A 1500VA UPS at a 0.6 output power factor only delivers 900W of real capacity, not 1500W. Connecting a load that draws more than the Watt rating will overload the UPS even though the VA headroom looks fine on paper, so the Watt figure — not the VA figure — is what actually limits how much equipment you can safely connect.
   </p>
@@ -888,14 +888,44 @@ at roughly 80% of nameplate capacity)</div>
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    // Temporarily hide anything marked data-copy-exclude (e.g. Related
+    // Calculators) so it isn't pulled into the copied text, then
+    // restore it — synchronous, so there's no visible flicker.
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
+
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+
+    // Fallback for older browsers, or when the async Clipboard API is
+    // present but blocked (permissions, insecure context, etc.).
+    function legacyCopy(){
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, text.length);
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch(e){ ok = false; }
+      document.body.removeChild(ta);
+      btn.textContent = ok ? '✅ Copied' : '⚠️ Copy failed';
+      setTimeout(restore, 1800);
+    }
+
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function(){
         btn.textContent = '✅ Copied';
         setTimeout(restore, 1800);
-      }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+      }).catch(legacyCopy);
+    } else if (document.queryCommandSupported && document.queryCommandSupported('copy')) {
+      legacyCopy();
     } else {
       btn.textContent = '⚠️ Not supported';
       setTimeout(restore, 1800);
@@ -927,6 +957,22 @@ at roughly 80% of nameplate capacity)</div>
     }
     document.querySelectorAll('input[type="number"]').forEach(function(el){
       el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+
+  // ===== Enter-key support on calculator inputs (accessibility: lets
+  // keyboard users trigger the calculation without tabbing to the
+  // button). Purely additive — clicks the existing Calculate button
+  // rather than duplicating its onclick logic, so it stays in sync
+  // with whatever that button already does. =====
+  (function(){
+    var panel = document.querySelector('#calculator .calc-input-panel');
+    var btn = panel && panel.querySelector('button[onclick^="calculate"]');
+    if (!panel || !btn) return;
+    panel.querySelectorAll('input').forEach(function(el){
+      el.addEventListener('keydown', function(e){
+        if (e.key === 'Enter') { e.preventDefault(); btn.click(); }
+      });
     });
   })();
 </script>

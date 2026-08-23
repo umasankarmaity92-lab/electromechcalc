@@ -79,9 +79,9 @@
     {"@type": "Question", "name": "How is car loan EMI calculated?", "acceptedAnswer": {"@type": "Answer", "text": "Car loan EMI is calculated on the loan amount (on-road price minus down payment) using the reducing-balance formula EMI = P × r × (1+r)^n / ((1+r)^n − 1), where P is the loan amount, r is the monthly interest rate, and n is the tenure in months."}},
     {"@type": "Question", "name": "How much down payment should I make for a car loan?", "acceptedAnswer": {"@type": "Answer", "text": "Most lenders finance 80-90% of the on-road price, requiring a 10-20% down payment. A larger down payment reduces your loan amount, EMI, and total interest paid over the loan tenure."}},
     {"@type": "Question", "name": "What is the typical tenure for a car loan in India?", "acceptedAnswer": {"@type": "Answer", "text": "Car loan tenures in India typically range from 1 to 7 years, with most borrowers choosing 3-5 years to balance a manageable EMI against total interest cost."}},
-    {"@type": "Question", "name": "Does a new car loan have a lower interest rate than a used car loan?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, new car loans generally carry lower interest rates (around 8-10% p.a.) than used car loans (around 11-16% p.a.), since new vehicles hold collateral value better and carry lower default risk for the lender."}},
+    {"@type": "Question", "name": "Does a new car loan have a lower interest rate than a used car loan?", "acceptedAnswer": {"@type": "Answer", "text": "New-car loans are generally priced lower than used-car loans, since new vehicles hold collateral value better and carry lower default risk for the lender — but the exact rate depends on the lender, borrower profile, vehicle age, tenure, and market conditions. Compare current offers from banks and NBFCs before choosing."}},
     {"@type": "Question", "name": "Can I claim tax benefits on a car loan?", "acceptedAnswer": {"@type": "Answer", "text": "For personal use vehicles, car loan interest is generally not tax-deductible. However, if the vehicle is used for business purposes, the interest and depreciation may be claimed as a business expense — consult a tax professional for your specific situation."}},
-    {"@type": "Question", "name": "Is comprehensive insurance mandatory for a financed car?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. As long as the lender holds hypothecation on the vehicle, a comprehensive insurance policy with the lender endorsed on it is mandatory. Check whether the premium is financed into your loan or paid separately, since a financed premium raises your EMI."}},
+    {"@type": "Question", "name": "Is comprehensive insurance mandatory for a financed car?", "acceptedAnswer": {"@type": "Answer", "text": "Third-party motor insurance is legally required in India, financed or not. Separately, as long as the lender holds hypothecation on the vehicle, the lender typically also requires a comprehensive policy with the lender endorsed on it — a lender/loan-agreement condition rather than a blanket legal mandate, and it can vary by lender. Check whether the premium is financed into your loan or paid separately, since a financed premium raises your EMI."}},
     {"@type": "Question", "name": "Can I sell my car before the loan is fully repaid?", "acceptedAnswer": {"@type": "Answer", "text": "Only with the lender's consent, since the RC carries a hypothecation entry until the loan closes. The buyer's payment is typically used to foreclose the loan first, the lender issues a hypothecation cancellation, and only then is the RC transferred."}},
     {"@type": "Question", "name": "Does foreclosing a car loan early always save money?", "acceptedAnswer": {"@type": "Answer", "text": "Usually, but most lenders charge a foreclosure fee of roughly 2-6% of the outstanding principal, especially within the first year or two — compare the interest saved against this fee before assuming foreclosure is the cheaper option."}},
     {
@@ -301,7 +301,7 @@
       <div class="grid sm:grid-cols-2 gap-4 mb-5">
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="clPrice">On-Road Price (₹)</label>
-          <input id="clPrice" type="number" value="1000000" step="10000" min="1" placeholder="e.g. 1000000" class="input-field mt-2">
+          <input id="clPrice" type="number" value="1000000" step="10000" min="1" max="100000000" placeholder="e.g. 1000000" class="input-field mt-2">
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="clDown">Down Payment (₹)</label>
@@ -312,15 +312,15 @@
       <div class="grid sm:grid-cols-2 gap-4 mb-5">
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="clRate">Interest Rate (% p.a.)</label>
-          <input id="clRate" type="number" value="9" step="0.05" min="0" placeholder="e.g. 9" class="input-field mt-2">
+          <input id="clRate" type="number" value="9" step="0.05" min="0" max="50" placeholder="e.g. 9" class="input-field mt-2">
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="clTenure">Tenure (Years)</label>
-          <input id="clTenure" type="number" value="5" step="0.5" min="0.25" placeholder="e.g. 5" class="input-field mt-2">
+          <input id="clTenure" type="number" value="5" step="0.5" min="0.25" max="7" placeholder="e.g. 5" class="input-field mt-2">
         </div>
       </div>
 
-      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+      <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculateCarLoanEMI(); scrollToResult();" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate
@@ -332,7 +332,7 @@
       </div>
     </div>
 
-    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4" aria-live="polite">
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Monthly EMI</span>
@@ -423,19 +423,19 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: July 2026 &nbsp;|&nbsp; Standards referenced: RBI lending conventions / standard amortization formula</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Calculation method: Standard reducing-balance EMI formula. Regulatory and lender terms may vary — verify with your lender.</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding Car Loan EMI</h2>
 
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-      <p>A car loan finances the purchase of a vehicle, with the loan amount typically being the on-road price minus your down payment. Lenders in India usually finance 80-90% of the on-road price, and repayment happens through fixed monthly EMIs over a tenure of 1 to 7 years.</p>
+      <p>A car loan finances the purchase of a vehicle, with the loan amount typically being the on-road price minus your down payment. Lenders in India commonly finance 80-90% of the on-road price, though this varies by lender, vehicle, and borrower profile, and repayment happens through fixed monthly EMIs over a tenure of 1 to 7 years.</p>
 
       <p><strong>Formula used:</strong> Loan Amount = On-Road Price − Down Payment. EMI = P × r × (1+r)ⁿ ÷ ((1+r)ⁿ − 1), where P is the loan amount, r is the monthly interest rate (annual rate ÷ 12 ÷ 100), and n is the tenure in months.</p>
 
-      <p><strong>Worked example:</strong> a car with an on-road price of ₹10,00,000 and a down payment of ₹2,00,000 gives a loan amount of ₹8,00,000. At 9% p.a. for 5 years (60 months), the monthly rate is 0.75%, giving an EMI of roughly ₹16,606. Over 60 months that's a total payment of about ₹9,96,360, of which around ₹1,96,360 is interest.</p>
+      <p><strong>Worked example:</strong> a car with an on-road price of ₹10,00,000 and a down payment of ₹2,00,000 gives a loan amount of ₹8,00,000. At 9% p.a. for 5 years (60 months), the monthly rate is 0.75%, giving an EMI of roughly ₹16,607. Over 60 months that's a total payment of about ₹9,96,401, of which around ₹1,96,401 is interest.</p>
 
-      <p><strong>Secured loan advantage:</strong> since the car itself serves as collateral (the lender holds the hypothecation until the loan is repaid), car loan interest rates are lower than personal loans, typically 8-13% p.a. depending on whether the vehicle is new or used.</p>
+      <p><strong>Secured loan advantage:</strong> since the car itself serves as collateral (the lender holds the hypothecation until the loan is repaid), car loan interest rates are lower than personal loans, typically in the 8-13% p.a. range depending on whether the vehicle is new or used — check current rates with lenders directly, since they move with market conditions.</p>
     </div>
 
     <p class="text-xs text-gray-400 mt-6">This calculator is for educational planning purposes only. Actual EMI may vary slightly depending on your lender's exact rounding and processing conventions; confirm the precise figure with your bank or NBFC.</p>
@@ -456,9 +456,9 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100">
-        <tr><td class="px-4 py-2">10% (₹1,00,000)</td><td class="px-4 py-2">₹9,00,000</td><td class="px-4 py-2">₹18,682</td></tr>
-        <tr><td class="px-4 py-2">20% (₹2,00,000)</td><td class="px-4 py-2">₹8,00,000</td><td class="px-4 py-2">₹16,606</td></tr>
-        <tr><td class="px-4 py-2">30% (₹3,00,000)</td><td class="px-4 py-2">₹7,00,000</td><td class="px-4 py-2">₹14,530</td></tr>
+        <tr><td class="px-4 py-2">10% (₹1,00,000)</td><td class="px-4 py-2">₹9,00,000</td><td class="px-4 py-2">₹18,683</td></tr>
+        <tr><td class="px-4 py-2">20% (₹2,00,000)</td><td class="px-4 py-2">₹8,00,000</td><td class="px-4 py-2">₹16,607</td></tr>
+        <tr><td class="px-4 py-2">30% (₹3,00,000)</td><td class="px-4 py-2">₹7,00,000</td><td class="px-4 py-2">₹14,531</td></tr>
         <tr><td class="px-4 py-2">40% (₹4,00,000)</td><td class="px-4 py-2">₹6,00,000</td><td class="px-4 py-2">₹12,455</td></tr>
       </tbody>
     </table>
@@ -473,7 +473,7 @@
   <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Insurance &amp; Paperwork</span>
   <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Insurance, Hypothecation, and Foreclosure</h2>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-    <p><strong>Comprehensive insurance is mandatory, not optional, on a financed car.</strong> As long as the lender holds a hypothecation on the vehicle, they require a comprehensive (not just third-party) insurance policy with the lender's name endorsed on it, since the car is the collateral securing your loan. Some lenders bundle a multi-year policy into the loan itself, which quietly raises the financed amount and the EMI — check whether insurance is being financed or paid separately before signing.</p>
+    <p><strong>Insurance requirements for a financed car.</strong> Third-party motor insurance is legally required to drive any car in India, financed or not. Separately, as long as the lender holds a hypothecation on the vehicle, the lender typically also requires a comprehensive (not just third-party) insurance policy with the lender's name endorsed on it, since the car is the collateral securing your loan — but this is a lender/loan-agreement condition, not a blanket legal mandate, and the exact requirement can vary by lender. Some lenders bundle a multi-year policy into the loan itself, which quietly raises the financed amount and the EMI — check whether insurance is being financed or paid separately, and check your loan agreement for the exact coverage required, before signing.</p>
     <p><strong>Hypothecation and the RC (Registration Certificate).</strong> Until the loan is closed, the vehicle's RC carries a hypothecation entry in the lender's favour, which restricts you from selling the car freely. On full repayment, you must obtain a Form 35 (hypothecation cancellation) from the lender and get the RC updated with the RTO — skipping this step is a common reason resale gets complicated years later.</p>
     <p><strong>Foreclosure and prepayment charges.</strong> Unlike home loans, car loan prepayment charges are not uniformly waived by RBI for individual borrowers — many lenders levy 2-6% of the outstanding principal as a foreclosure charge, especially within the first 12-24 months. Always check this clause before assuming a planned prepayment will be cost-free.</p>
     <p><strong>Loan against an existing car / balance transfer.</strong> If your current car loan carries a high rate, a balance transfer to another lender at a lower rate can reduce your EMI, but factor in the transfer processing fee and any foreclosure charge on the existing loan before deciding whether the switch is genuinely worthwhile over the remaining tenure.</p>
@@ -533,7 +533,7 @@
         Does a new car loan have a lower interest rate than a used car loan?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, new car loans generally carry lower interest rates (around 8-10% p.a.) than used car loans (around 11-16% p.a.), since new vehicles hold collateral value better and carry lower default risk for the lender.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">New-car loans are generally priced lower than used-car loans, since new vehicles hold collateral value better and carry lower default risk for the lender — but the exact rate depends on the lender, borrower profile, vehicle age, tenure, and market conditions. Compare current offers from banks and NBFCs before choosing.</p>
     </details>
 
     <details class="py-5">
@@ -549,7 +549,7 @@
         Is comprehensive insurance mandatory for a financed car?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes. As long as the lender holds hypothecation on the vehicle, a comprehensive insurance policy with the lender endorsed on it is mandatory, not optional — this protects the lender's collateral, not just you. Check whether the premium is financed into your loan or paid separately, since a financed premium raises your EMI.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Third-party motor insurance is legally required in India, financed or not. Separately, as long as the lender holds hypothecation on the vehicle, the lender typically also requires a comprehensive policy with the lender endorsed on it — a lender/loan-agreement condition rather than a blanket legal mandate, and it can vary by lender. Check whether the premium is financed into your loan or paid separately, since a financed premium raises your EMI.</p>
     </details>
 
     <details class="py-5">
@@ -602,10 +602,13 @@
     const validationBox = document.getElementById('validationBox');
     const errors = [];
     if(isNaN(price) || price <= 0){ errors.push('Enter a valid on-road price greater than 0.'); }
+    if(!isNaN(price) && price > 100000000){ errors.push('On-road price seems unrealistically high — enter a value up to ₹10,00,00,000.'); }
     if(isNaN(down) || down < 0){ errors.push('Enter a valid down payment (0 or more).'); }
     if(!isNaN(price) && !isNaN(down) && down >= price){ errors.push('Down payment must be less than the on-road price.'); }
     if(isNaN(annualRate) || annualRate <= 0){ errors.push('Enter a valid interest rate greater than 0.'); }
+    if(!isNaN(annualRate) && annualRate > 50){ errors.push('Interest rate seems unrealistically high — enter a value up to 50%.'); }
     if(isNaN(years) || years <= 0){ errors.push('Enter a valid tenure greater than 0.'); }
+    if(!isNaN(years) && years > 7){ errors.push('Car loan tenure cannot exceed 7 years in this calculator.'); }
 
     if(errors.length){
       validationBox.classList.remove('hidden');
@@ -677,14 +680,44 @@
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    // Temporarily hide anything marked data-copy-exclude (e.g. Related
+    // Calculators) so it isn't pulled into the copied text, then
+    // restore it — synchronous, so there's no visible flicker.
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
+
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+
+    // Fallback for older browsers, or when the async Clipboard API is
+    // present but blocked (permissions, insecure context, etc.).
+    function legacyCopy(){
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, text.length);
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch(e){ ok = false; }
+      document.body.removeChild(ta);
+      btn.textContent = ok ? '✅ Copied' : '⚠️ Copy failed';
+      setTimeout(restore, 1800);
+    }
+
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function(){
         btn.textContent = '✅ Copied';
         setTimeout(restore, 1800);
-      }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+      }).catch(legacyCopy);
+    } else if (document.queryCommandSupported && document.queryCommandSupported('copy')) {
+      legacyCopy();
     } else {
       btn.textContent = '⚠️ Not supported';
       setTimeout(restore, 1800);
@@ -716,6 +749,22 @@
     }
     document.querySelectorAll('input[type="number"]').forEach(function(el){
       el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+
+  // ===== Enter-key support on calculator inputs (accessibility: lets
+  // keyboard users trigger the calculation without tabbing to the
+  // button). Purely additive — clicks the existing Calculate button
+  // rather than duplicating its onclick logic, so it stays in sync
+  // with whatever that button already does. =====
+  (function(){
+    var panel = document.querySelector('#calculator .calc-input-panel');
+    var btn = panel && panel.querySelector('button[onclick^="calculate"]');
+    if (!panel || !btn) return;
+    panel.querySelectorAll('input').forEach(function(el){
+      el.addEventListener('keydown', function(e){
+        if (e.key === 'Enter') { e.preventDefault(); btn.click(); }
+      });
     });
   })();
 </script>
