@@ -552,7 +552,7 @@
         <span class="text-xs font-semibold text-gray-600">Add 20% Safety Margin for future load growth</span>
       </label>
 
-      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+      <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculateCable()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate Cable Size
@@ -673,7 +673,7 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IEC / IEEE / BIS / NEC</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Reference standards: IS 7098 / IEC 60364</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding Cable Sizing</h2>
@@ -1124,6 +1124,22 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
     }
     document.querySelectorAll('input[type="number"]').forEach(function(el){
       el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+
+  // ===== Enter-key support on calculator inputs (accessibility: lets
+  // keyboard users trigger the calculation without tabbing to the
+  // button). Purely additive — clicks the existing Calculate button
+  // rather than duplicating its onclick logic, so it stays in sync
+  // with whatever that button already does. =====
+  (function(){
+    var panel = document.querySelector('#calculator .calc-input-panel');
+    var btn = panel && panel.querySelector('button[onclick^="calculate"]');
+    if (!panel || !btn) return;
+    panel.querySelectorAll('input').forEach(function(el){
+      el.addEventListener('keydown', function(e){
+        if (e.key === 'Enter') { e.preventDefault(); btn.click(); }
+      });
     });
   })();
 </script>

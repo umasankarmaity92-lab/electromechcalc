@@ -23,7 +23,7 @@
   } catch(e) {}
 })();
 </script>
-<title>CAGR Calculator | ElectroMechCalc</title>
+<title>CAGR Calculator — Compound Annual Growth Rate | ElectroMechCalc</title>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
      crossorigin="anonymous"></script>
 <meta name="description" content="Free CAGR (Compound Annual Growth Rate) calculator. Calculate the annualized growth rate of any investment between an initial value and a final value over a given number of years, with a year-wise growth table, formula, and worked examples.">
@@ -1024,6 +1024,22 @@ Where: n = Number of Years</div>
     }
     document.querySelectorAll('input[type="number"]').forEach(function(el){
       el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+
+  // ===== Enter-key support on calculator inputs (accessibility: lets
+  // keyboard users trigger the calculation without tabbing to the
+  // button). Purely additive — clicks the existing Calculate button
+  // rather than duplicating its onclick logic, so it stays in sync
+  // with whatever that button already does. =====
+  (function(){
+    var panel = document.querySelector('#calculator .calc-input-panel');
+    var btn = panel && panel.querySelector('button[onclick^="calculate"]');
+    if (!panel || !btn) return;
+    panel.querySelectorAll('input').forEach(function(el){
+      el.addEventListener('keydown', function(e){
+        if (e.key === 'Enter') { e.preventDefault(); btn.click(); }
+      });
     });
   })();
 </script>
