@@ -14,6 +14,18 @@
 // a calculator in search-index.json and every page's related-widget
 // updates automatically.
 //
+// ALSO injects an "Explore More Categories" section (4 category-hub
+// cards: Electrical / Mechanical / Financial / Blog & Guides) right
+// after the Related Calculators widget, before <div id="site-footer">
+// — same gating as Related Calculators (indexed pages only, never on
+// the homepage or General/company pages). This replaces what used to
+// be a hand-duplicated block inside every calculator/blog HTML file,
+// which is exactly how it drifted (some pages had 3 cards, missing
+// "Blog & Guides"). Any page with old leftover
+// <section id="explore-more"> / id="exploreCategoriesSection"> markup
+// of its own must have that block deleted, or the section renders
+// twice.
+//
 // ALSO injects a breadcrumb (Home / Category / Page Title) into
 // <div id="breadcrumb"></div>, sourced from the same
 // /search-index.json entry — zero per-page edits here either.
@@ -257,6 +269,86 @@ function buildRelatedCalculatorsHTML(pathname, index) {
 </section>`;
 }
 
+// ---------------------------------------------------------------------
+// "Explore More Categories" — 4 category-hub cards (Electrical /
+// Mechanical / Financial / Blog & Guides). Previously hand-duplicated
+// into every individual calculator/blog HTML file (as
+// <section id="explore-more">...</section> or, on some blog pages,
+// id="exploreCategoriesSection") — which is exactly how it drifted
+// out of sync (some pages had 3 cards, missing "Blog & Guides").
+// Centralizing it here means every page updates from one place.
+//
+// Gated the same way as buildRelatedCalculatorsHTML above (only
+// renders for a URL that's actually in search-index.json, and never
+// on the homepage) PLUS skips "General" pages (About/Contact/Privacy/
+// Terms/Disclaimer) since this section was never shown there even
+// before it became middleware-driven.
+//
+// id="explore-more" is kept identical to the existing calculator-page
+// markup on purpose: any page whose own <style> block still has
+// "body.dark-theme #explore-more a.calc-card { ... }" keeps working
+// with zero changes there. (The dark-theme rule for this section also
+// now lives in theme.css directly — see the .result-tile note there
+// for the same reasoning — so that per-page rule is now redundant but
+// harmless if left in place.)
+//
+// IMPORTANT — avoiding a double-render bug: any page that still has
+// its OLD hardcoded <section id="explore-more"> (or
+// id="exploreCategoriesSection") markup in its own HTML will now show
+// the section TWICE — once from that leftover markup, once injected
+// here. That old per-page block must be deleted from every file that
+// has one before/when this middleware change goes live.
+// ---------------------------------------------------------------------
+function buildExploreMoreHTML(pathname, index) {
+  if (!Array.isArray(index) || !index.length) return "";
+
+  const currentPath = normalizePath(pathname);
+  if (currentPath === "/") return ""; // homepage — never had this section
+
+  const current = index.find((entry) => normalizePath(entry.url) === currentPath);
+  if (!current) return ""; // not an indexed page (e.g. a 404) — nothing to inject
+  if (current.category === "General") return ""; // About/Contact/Privacy/etc. never had this section
+
+  return `
+<section id="explore-more" class="max-w-6xl mx-auto px-4 pb-16">
+  <h2 class="font-display font-semibold text-brandDark text-xl mb-5">Explore More Categories</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <a href="/electrical-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#e0f2fe">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Electrical Calculators</h3>
+      <p class="text-sm text-gray-500">Cable size, transformer size, motor current, DG size, solar sizing &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all &rarr;</span>
+    </a>
+    <a href="/mechanical-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#fef3c7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Mechanical Calculators</h3>
+      <p class="text-sm text-gray-500">Belt length, bearing life, cooling tower efficiency &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all &rarr;</span>
+    </a>
+    <a href="/financial-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#dcfce7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Financial Calculators</h3>
+      <p class="text-sm text-gray-500">EPF, PPF, SIP, gratuity, income tax, CAGR &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all &rarr;</span>
+    </a>
+    <a href="/blog-guides" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:rgba(167,139,250,0.15)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Blog &amp; Guides</h3>
+      <p class="text-sm text-gray-500">Maintenance guides &amp; engineering articles.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all &rarr;</span>
+    </a>
+  </div>
+</section>`;
+}
+
 // Builds the breadcrumb HTML block for the current page from the
 // same /search-index.json used by search and Related Calculators.
 // Returns "" (nothing gets injected, div stays empty) for:
@@ -464,6 +556,7 @@ export async function onRequest(context) {
   }
 
   const relatedHTML = buildRelatedCalculatorsHTML(url.pathname, searchIndex);
+  const exploreMoreHTML = buildExploreMoreHTML(url.pathname, searchIndex);
   const breadcrumbHTML = buildBreadcrumbHTML(url.pathname, searchIndex);
 
   return new HTMLRewriter()
@@ -477,6 +570,7 @@ export async function onRequest(context) {
     .on("#site-header", new InsertAfter('<main id="main-content">'))
     .on("#breadcrumb", new InjectHTML(breadcrumbHTML))
     .on("#site-footer", new InsertBefore(relatedHTML))
+    .on("#site-footer", new InsertBefore(exploreMoreHTML))
     .on("#site-footer", new InsertBefore("</main>"))
     .on("#site-footer", new InjectHTML(footerHTML))
     .transform(response);
