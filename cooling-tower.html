@@ -39,7 +39,10 @@
 <meta property="og:description" content="Calculate cooling tower range, approach, and efficiency from hot water, cold water, and wet bulb temperatures.">
 <meta property="og:url" content="https://www.electromechcalc.com/cooling-tower">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
-<meta property="og:locale" content="en">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="en_AU">
+<meta property="og:locale:alternate" content="en_CA">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -89,7 +92,7 @@
     {
       "@type": "Question",
       "name": "What's a good approach value for a well-performing tower?",
-      "acceptedAnswer": { "@type": "Answer", "text": "A lower approach is generally better, but there is no single 'good' value for every tower — approach varies with tower type, design condition, climate, load, tower size, and manufacturer. The correct benchmark is the tower's own design approach at its specified design wet-bulb condition; a rising approach over time relative to that benchmark, without any change in weather, usually points to fouled fill media, reduced airflow, or a fan or pump issue." }
+      "acceptedAnswer": { "@type": "Answer", "text": "A lower approach is generally better, but there is no single \"good\" value for every tower — approach varies with tower type, design condition, climate, load, tower size, and manufacturer. The correct benchmark is the tower's own design approach at its specified design wet-bulb condition; a rising approach over time relative to that benchmark, without any change in weather, usually points to fouled fill media, reduced airflow, or a fan or pump issue." }
     },
     {
       "@type": "Question",
@@ -104,7 +107,7 @@
     {
       "@type": "Question",
       "name": "Are these results accurate enough for professional use?",
-      "acceptedAnswer": { "@type": "Answer", "text": "This calculator uses the standard range, approach, and efficiency formulas taught in HVAC and mechanical engineering coursework. For commissioning reports, warranty claims, or performance guarantees, always cross-check readings against calibrated instruments and, where required, have results reviewed by a qualified engineer." }
+      "acceptedAnswer": { "@type": "Answer", "text": "This calculator uses the standard range/approach/efficiency formulas taught in HVAC and mechanical engineering coursework. For commissioning reports, warranty claims, or performance guarantees, always cross-check readings against calibrated instruments and, where required, have results reviewed by a qualified engineer per CTI ATC-105." }
     },
     {
       "@type": "Question",
@@ -673,7 +676,7 @@
     </table>
   </div>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-    <p>Most cooling towers are designed for a specific approach at a specific design wet bulb temperature. For many HVAC applications, design approaches around 4–6°C are common, but the actual design value depends on tower selection, climate, load, and manufacturer data. A well-maintained tower running near its own design approach at the current wet bulb is doing its job; a tower whose approach has crept up well past its design figure, with no change in load or weather, is telling you something in the airflow or water-distribution path needs attention.</p>
+    <p>Most cooling towers are designed for a specific approach at a specific design wet bulb temperature. Typical design approach values may fall around 4–6°C in some HVAC applications, but the applicable design value is manufacturer- and project-specific. A well-maintained tower running near its own design approach at the current wet bulb is doing its job; a tower whose approach has crept up well past its design figure, with no change in load or weather, is telling you something in the airflow or water-distribution path needs attention.</p>
 
     <h3>Tower types and how they affect achievable approach</h3>
     <p><strong>Counterflow towers</strong> move air vertically upward against the downward flow of water; for a given duty and design constraints, this arrangement can provide strong thermal contact and may achieve a lower approach for a given footprint than a comparable crossflow design, but it requires more fan power. <strong>Crossflow towers</strong> move air horizontally across the falling water and are generally easier to maintain (fill and nozzles are more accessible), typically at a somewhat higher approach for the same size. <strong>Induced-draft towers</strong> pull air through with a fan mounted at the top, discharging warm moist air upward away from the tower — the dominant design in HVAC and industrial applications today. <strong>Forced-draft towers</strong> push air in from the bottom with a fan at the base, which is mechanically simpler but more prone to recirculation of the warm, humid discharge air back into the intake, silently raising the effective entering wet bulb and hurting real-world performance even though the tower's rated approach hasn't changed.</p>
@@ -695,7 +698,7 @@
     <p style="font-size:13px;color:#6b7280;">These are general maintenance intervals; always follow the tower manufacturer's maintenance manual and the site's water-treatment program, and inspect more frequently in hard-water, dusty, or algae-prone environments.</p>
 
     <h3>Sizing basics: matching tower capacity to heat load</h3>
-    <p>Cooling towers are rated in "tons" of refrigeration equivalent. A commonly used cooling-tower rating convention associates one cooling-tower ton with rejecting about 15,000 BTU/hr, based on a 3 GPM flow and 10°F range (roughly a 5.5°C range) at a standard 78°F (25.6°C) design wet bulb — this is a design/rating convention rather than a universal physical definition, and actual tonnage rating context varies by manufacturer and test standard. A tower undersized for its actual heat load will never hit its design approach regardless of how well it's maintained — the calculator and the maintenance checklist above only help once the tower is correctly sized for the job.</p>
+    <p>Cooling towers are rated in "tons" of refrigeration equivalent. A commonly used nominal cooling-tower rating convention associates one cooling-tower ton with rejecting about 15,000 BTU/hr, based on a 3 GPM flow and 10°F range (roughly a 5.5°C range) at a standard 78°F (25.6°C) design wet bulb — this is a design/rating convention rather than a universal physical definition, and actual tonnage rating context varies by manufacturer and test standard. A tower undersized for its actual heat load will never hit its design approach regardless of how well it's maintained — the calculator and the maintenance checklist above only help once the tower is correctly sized for the job.</p>
     <div class="not-prose overflow-x-auto my-4">
       <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
         <thead class="bg-gray-50 text-gray-600">
@@ -904,6 +907,15 @@
     } else {
       if (hotWater <= coldWater){ errors.push('Hot water inlet temp must be greater than cold water outlet temp.'); }
       if (coldWater <= wetBulb){ errors.push('Cold water outlet temp must be greater than wet bulb temp.'); }
+      // Physical plausibility check (water stays liquid in an open tower;
+      // wet bulb bounded generously to cover extreme climates). Bounds are
+      // in the currently displayed unit, using the °F equivalents of the
+      // °C bounds so the check works regardless of the active unit toggle.
+      const waterMin = u === 'F' ? 32 : 0, waterMax = u === 'F' ? 212 : 100;
+      const wetBulbMin = u === 'F' ? -22 : -30, wetBulbMax = u === 'F' ? 122 : 50;
+      if (hotWater < waterMin || hotWater > waterMax){ errors.push(`Hot water temp looks out of range for an open cooling tower (expected roughly ${waterMin}–${waterMax}°${u}).`); }
+      if (coldWater < waterMin || coldWater > waterMax){ errors.push(`Cold water temp looks out of range for an open cooling tower (expected roughly ${waterMin}–${waterMax}°${u}).`); }
+      if (wetBulb < wetBulbMin || wetBulb > wetBulbMax){ errors.push(`Wet bulb temp looks out of a plausible ambient range (expected roughly ${wetBulbMin}–${wetBulbMax}°${u}).`); }
     }
 
     if (errors.length){

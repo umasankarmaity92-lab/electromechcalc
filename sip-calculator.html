@@ -817,6 +817,15 @@
   // parenthesized-label or placeholder spots that already add their own
   // spacing — so this stays separate from CUR_SYMS rather than baked into it.
   const CUR_CODE_STYLE = { CHF: 1, SGD: 1, AED: 1, SAR: 1, ZAR: 1 };
+  // Locale used only for the digit-grouping/decimal style of each currency's
+  // number portion (the symbol itself still comes from CUR_SYMS above) —
+  // e.g. EUR groups with periods (250.000), INR groups lakh-style
+  // (2,50,000), regardless of the visitor's browser language.
+  const CUR_LOCALES = {
+    USD: 'en-US', INR: 'en-IN', GBP: 'en-GB', EUR: 'de-DE', AUD: 'en-AU',
+    CAD: 'en-CA', JPY: 'ja-JP', CNY: 'zh-CN', CHF: 'de-CH', SGD: 'en-SG',
+    HKD: 'en-HK', AED: 'en-AE', SAR: 'en-SA', NZD: 'en-NZ', ZAR: 'en-ZA'
+  };
 
   function setCurrency(cur){
     currentCurrency = cur;
@@ -840,7 +849,7 @@
   function fmtCurrency(n){
     const sym = CUR_SYMS[currentCurrency] || '₹';
     const sep = CUR_CODE_STYLE[currentCurrency] ? ' ' : '';
-    const locale = currentCurrency === 'INR' ? 'en-IN' : 'en-US';
+    const locale = CUR_LOCALES[currentCurrency] || 'en-US';
     return sym + sep + n.toLocaleString(locale, {maximumFractionDigits:0});
   }
 

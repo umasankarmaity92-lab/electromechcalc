@@ -838,12 +838,17 @@ Where: n = Number of Years</div>
   }
 
   // ===== Currency formatting (globalization) =====
-  // Uses Intl.NumberFormat's currency style so each code gets its correct
-  // native symbol/placement, with a single consistent number-grouping
-  // convention (en-US, comma-grouped) across all currencies — avoids
-  // locale-specific quirks like EUR rendering as "€250.000" (German
-  // grouping) when the audience isn't necessarily German.
+  // Uses Intl.NumberFormat with a locale mapped to the selected currency
+  // itself (not the browser's language), so each currency gets its own
+  // conventional grouping/decimal style — e.g. INR shows lakh-style
+  // grouping (₹2,50,000), EUR shows period-grouping (250.000 €) —
+  // regardless of what language the visitor's browser is set to.
   const supportedCurrencies = ['USD', 'INR', 'GBP', 'EUR', 'AUD', 'CAD', 'JPY', 'CNY', 'CHF', 'SGD', 'HKD', 'AED', 'SAR', 'NZD', 'ZAR'];
+  const currencyLocales = {
+    USD: 'en-US', INR: 'en-IN', GBP: 'en-GB', EUR: 'de-DE', AUD: 'en-AU',
+    CAD: 'en-CA', JPY: 'ja-JP', CNY: 'zh-CN', CHF: 'de-CH', SGD: 'en-SG',
+    HKD: 'en-HK', AED: 'en-AE', SAR: 'en-SA', NZD: 'en-NZ', ZAR: 'en-ZA'
+  };
   function currentCurrencyCode(){
     const el = document.getElementById('currencySelect');
     return (el && supportedCurrencies.indexOf(el.value) !== -1) ? el.value : 'USD';
@@ -851,8 +856,9 @@ Where: n = Number of Years</div>
   function fmtCurrency(value, maximumFractionDigits){
     const frac = maximumFractionDigits === undefined ? 0 : maximumFractionDigits;
     const code = currentCurrencyCode();
+    const locale = currencyLocales[code] || 'en-US';
     try {
-      return new Intl.NumberFormat('en-US', {
+      return new Intl.NumberFormat(locale, {
         style: 'currency',
         currency: code,
         maximumFractionDigits: frac,

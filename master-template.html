@@ -18,10 +18,14 @@
      and {{PAGE_SLUG}}. This now includes the structural placeholders
      added for content-depth consistency: {{TOC_HOW_IT_WORKS_LABEL}},
      {{TOC_SECOND_LABEL}}, {{LAST_REVIEWED_MONTH_YEAR}},
-     {{STANDARDS_REFERENCED}}, {{SECOND_SECTION_EYEBROW}},
+     {{LAST_REVIEWED_ISO}} (same review date as
+     {{LAST_REVIEWED_MONTH_YEAR}}, but machine-readable for the schema
+     dateModified field — "YYYY-MM" is fine, e.g. "2026-08"; only use
+     a full "YYYY-MM-DD" if you actually know the specific day, don't
+     invent one), {{STANDARDS_REFERENCED}}, {{SECOND_SECTION_EYEBROW}},
      {{SECOND_SECTION_HEADING}}, {{SECOND_SECTION_CONTENT}},
      {{MISTAKES_HEADING}}, {{MISTAKES_CONTENT}}, and FAQ_Q6/A6
-     through FAQ_Q8/A8 (8 FAQ entries minimum, not 5). Also fill
+     through FAQ_Q9/A9 (9 FAQ entries minimum, not 5). Also fill
      {{PAGE_CATEGORY_TITLE}} (Title Case version of {{PAGE_CATEGORY}},
      e.g. "Mechanical") for the BreadcrumbList JSON-LD block — keep
      it in sync with the visible #breadcrumb middleware output, which
@@ -93,6 +97,38 @@
      <script src="/assets/common.js"> tag manually in
      {{PAGE_EXTRA_STYLES}} or {{CALCULATOR_JS}}, it would just be a
      harmless but redundant duplicate.
+  10. Inside {{CALCULATOR_INPUTS}}, give the validation-message box
+      role="alert" aria-live="polite" (e.g.
+      <div id="validationBox" class="hidden ..." role="alert"
+      aria-live="polite">) and give the RESULT PANEL's headline
+      result-tile aria-live="polite" too — screen-reader users get no
+      announcement of a freshly calculated/updated result without
+      these. In {{CALCULATOR_JS}}, every numeric validation check
+      should also enforce the SAME upper bound as that input's HTML
+      max="" attribute (e.g. `if (principal > 100000000) errors.push(...)`)
+      — don't rely on the blur-time clamp safety net alone to catch an
+      out-of-range value; it corrects the input but the calculation
+      logic should still validate independently. And when a field's
+      HTML min="0" allows zero, make sure the matching JS check uses
+      `< 0`, not `<= 0` — that off-by-one has shipped more than once
+      and silently blocks a legitimately valid 0% or 0-count input.
+  11. Financial-category calculators ({{PAGE_CATEGORY}} = financial)
+      that let the user choose a currency must map each currency code
+      to its OWN locale for number grouping/decimals — not a single
+      flat 'en-US' for every currency. Reuse this exact pattern in
+      {{CALCULATOR_JS}}:
+        const currencyLocales = {
+          USD: 'en-US', INR: 'en-IN', GBP: 'en-GB', EUR: 'de-DE', AUD: 'en-AU',
+          CAD: 'en-CA', JPY: 'ja-JP', CNY: 'zh-CN', CHF: 'de-CH', SGD: 'en-SG',
+          HKD: 'en-HK', AED: 'en-AE', SAR: 'en-SA', NZD: 'en-NZ', ZAR: 'en-ZA'
+        };
+      Look up the locale from this map (falling back to 'en-US') before
+      calling Intl.NumberFormat/toLocaleString — this gives INR its
+      lakh-style grouping (₹10,00,000) and EUR its period-grouping
+      (10.00.000 €) etc. regardless of the visitor's browser language,
+      instead of every currency rendering with US-style comma grouping.
+      Also add a short note near the currency selector clarifying it
+      changes display only and performs no exchange-rate conversion.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -134,7 +170,6 @@
 
 <!-- ===================== [PER-PAGE] SEO META ===================== -->
 <meta name="description" content="{{META_DESCRIPTION}}">
-<meta name="keywords" content="{{META_KEYWORDS}}">
 <meta name="robots" content="index, follow">
 <!-- {{PAGE_CATEGORY}} = electrical | mechanical | financial (no slashes).
      {{PAGE_SLUG}} = extensionless slug only, e.g. "cable-derating" — NOT
@@ -152,6 +187,9 @@
 <meta property="og:description" content="{{OG_DESCRIPTION}}">
 <meta property="og:url" content="https://www.electromechcalc.com/{{PAGE_CATEGORY}}/{{PAGE_SLUG}}">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{OG_TITLE}}">
 <!-- Site-wide default is the globalized locale set (en_US + alternates),
      not en_IN — matches every converged/globalized calculator page.
      Only India-only pages (structurally tied to Indian law/schemes,
@@ -169,7 +207,7 @@
 <meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
 
 <!-- ===================== [PER-PAGE] STRUCTURED DATA =====================
-     Minimum 8 FAQ entries (Q1-Q8) — matches the site-wide standard set
+     Minimum 9 FAQ entries (Q1-Q9) — matches the site-wide standard set
      across all published calculators. Add more (Q9, Q10...) as needed;
      never ship fewer than 8, and keep this JSON-LD block in sync with
      the visible {{FAQ_ITEMS}} accordion below (same questions, same
@@ -185,13 +223,14 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
+  "@type": "SoftwareApplication",
   "name": "{{TOOL_NAME}}",
   "url": "https://www.electromechcalc.com/{{PAGE_CATEGORY}}/{{PAGE_SLUG}}",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "{{TOOL_DESCRIPTION}}",
+  "dateModified": "{{LAST_REVIEWED_ISO}}",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
 </script>
@@ -257,6 +296,11 @@
       "@type": "Question",
       "name": "{{FAQ_Q8}}",
       "acceptedAnswer": { "@type": "Answer", "text": "{{FAQ_A8}}" }
+    },
+    {
+      "@type": "Question",
+      "name": "{{FAQ_Q9}}",
+      "acceptedAnswer": { "@type": "Answer", "text": "{{FAQ_A9}}" }
     }
   ]
 }
@@ -586,8 +630,17 @@
 
       <!-- Animation column -->
       <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <!-- This SVG is purely a decorative static poster for the lottie
+             animation site-nav.js lazy-loads over it — aria-hidden so
+             screen readers don't announce "ElectroMechCalc" a second
+             time (the real site name is already in the page title/nav).
+             Existing live pages built from an earlier template revision
+             may still carry role="img" aria-label="ElectroMechCalc" here
+             — that's a known pending site-wide migration to this same
+             aria-hidden pattern, not something to fix by editing one
+             page at a time. -->
         <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
-          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" aria-hidden="true" style="opacity:.9">
             <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
             <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
           </svg>
@@ -643,16 +696,16 @@
 <section id="shareFeedbackBar" class="max-w-6xl mx-auto px-4 mb-14">
   <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
     <div class="flex items-center gap-2 flex-wrap">
-      <button class="share-result-btn" onclick="loadShareModal()">🔗 Share Result</button>
-      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
+      <button type="button" class="share-result-btn" onclick="loadShareModal()"><span aria-hidden="true">🔗</span> Share Result</button>
+      <button type="button" class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()"><span aria-hidden="true">📋</span> Copy Result</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
       <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
-      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
-      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+      <button type="button" id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')"><span aria-hidden="true">👍</span> Yes</button>
+      <button type="button" id="fbNo" class="action-icon-btn" onclick="setFeedback('no')"><span aria-hidden="true">👎</span> No</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
-      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20{{TOOL_NAME}}">✉️ Feedback</a>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20{{TOOL_NAME}}"><span aria-hidden="true">✉️</span> Feedback</a>
     </div>
   </div>
 </section>
@@ -732,7 +785,7 @@
 </section>
 
 <!-- ===================== [PER-PAGE] FAQ =====================
-     Minimum 8 <details> items, matching the 8 JSON-LD entries above
+     Minimum 9 <details> items, matching the 9 JSON-LD entries above
      1-for-1 (same question text, same order) — schema and visible
      content must never diverge. First item gets the `open` attribute. -->
 <section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
