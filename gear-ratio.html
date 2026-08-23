@@ -435,7 +435,7 @@
         </div>
       </div>
 
-      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+      <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculate()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate
@@ -535,7 +535,7 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: ISO / DIN / manufacturer bearing & belt data</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Reference basis: Standard mechanical power-transmission relationships and manufacturer gearbox data where applicable.</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding Gear Ratio</h2>
@@ -551,7 +551,7 @@
 Output RPM = Input RPM ÷ Gear Ratio
 Output Torque = Input Torque × Gear Ratio</div>
 
-      <p><span class="font-semibold text-amber-600">Example:</span> A small motor drives a 20-tooth driver gear, which meshes with a 60-tooth driven gear connected to a conveyor roller. The motor spins at 1500 RPM and delivers 5 Nm of torque at its shaft. Gear Ratio = 60 ÷ 20 = 3, written as 3:1, meaning the driven gear turns once for every three turns of the driver gear. Output RPM = 1500 ÷ 3 = 500 RPM, and Output Torque = 5 × 3 = 15 Nm, three times stronger than the motor's own torque, since the gear trades the extra speed for extra rotational force. This combination of slower, more powerful rotation is exactly why reduction gearboxes are used wherever a motor needs to move a heavy load.</p>
+      <p><span class="font-semibold text-amber-600">Example:</span> A small motor drives a 20-tooth driver gear, which meshes with a 60-tooth driven gear connected to a conveyor roller. The motor spins at 1500 RPM and delivers 5 Nm of torque at its shaft. Gear Ratio = 60 ÷ 20 = 3, written as 3:1, meaning the driven gear turns once for every three turns of the driver gear. Output RPM = 1500 ÷ 3 = 500 RPM, and ideal Output Torque = 5 × 3 = 15 Nm — three times the motor's own torque before mechanical losses, since the gear trades the extra speed for extra rotational force. This combination of slower, more powerful rotation is exactly why reduction gearboxes are used wherever a motor needs to move a heavy load.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Common Mistakes When Calculating Gear Ratio</h3>
       <ul class="list-disc pl-5 space-y-1">
@@ -823,6 +823,22 @@ Output Torque = Input Torque × Gear Ratio</div>
     }
     document.querySelectorAll('input[type="number"]').forEach(function(el){
       el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+
+  // ===== Enter-key support on calculator inputs (accessibility: lets
+  // keyboard users trigger the calculation without tabbing to the
+  // button). Purely additive — clicks the existing Calculate button
+  // rather than duplicating its onclick logic, so it stays in sync
+  // with whatever that button already does. =====
+  (function(){
+    var panel = document.querySelector('#calculator .calc-input-panel');
+    var btn = panel && panel.querySelector('button[onclick^="calculate"]');
+    if (!panel || !btn) return;
+    panel.querySelectorAll('input').forEach(function(el){
+      el.addEventListener('keydown', function(e){
+        if (e.key === 'Enter') { e.preventDefault(); btn.click(); }
+      });
     });
   })();
 </script>
