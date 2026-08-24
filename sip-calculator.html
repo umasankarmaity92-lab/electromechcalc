@@ -478,8 +478,8 @@
       <div class="mb-5">
         <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="currencySelect">Currency</label>
         <select id="currencySelect" class="input-field mt-2" onchange="setCurrency(this.value)">
+          <option value="USD" selected>$ US Dollar (USD)</option>
           <option value="INR">₹ Indian Rupee (INR)</option>
-          <option value="USD">$ US Dollar (USD)</option>
           <option value="GBP">£ British Pound (GBP)</option>
           <option value="EUR">€ Euro (EUR)</option>
           <option value="AUD">A$ Australian Dollar (AUD)</option>
@@ -662,7 +662,7 @@
       <p>Treat the maturity value here as an illustrative estimate rather than a guarantee. Actual mutual fund and market-linked returns fluctuate year to year and are never a flat, constant rate the way this calculator assumes; the figures shown are for planning purposes only and do not constitute investment advice.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Monthly SIP Return Table (No Step-Up)</h3>
-      <p>The table below illustrates how a flat monthly SIP (no annual step-up) grows over different tenures at a few common assumed annual return rates, compounded monthly. Figures are shown in Indian numbering (L = Lakh = 100,000; Cr = Crore = 10,000,000) since that's the site's default currency, but the multiplier and annualized growth outcomes are identical proportionally in any currency — a $5,000/month SIP at the same rate and tenure grows by the same multiple as a ₹5,000/month one. Use the calculator above with your own currency and amount for a precise, localised projection.</p>
+      <p>The table below illustrates how a flat monthly SIP (no annual step-up) grows over different tenures at a few common assumed annual return rates, compounded monthly. Figures are shown in Indian numbering (L = Lakh = 100,000; Cr = Crore = 10,000,000) as an illustrative example, but the multiplier and annualized growth outcomes are identical proportionally in any currency — a $5,000/month SIP at the same rate and tenure grows by the same multiple as a ₹5,000/month one. Use the calculator above with your own currency and amount for a precise, localised projection.</p>
       <div class="overflow-x-auto my-3">
         <table class="breakdown-table" style="min-width:520px;">
           <thead>
@@ -810,7 +810,7 @@
 
   // ===== SIP / Lump Sum Calculator =====
   let currentType = 'sip';
-  let currentCurrency = 'INR';
+  let currentCurrency = 'USD';
   const CUR_SYMS = { INR: '₹', USD: '$', GBP: '£', EUR: '€', AUD: 'A$', CAD: 'C$', JPY: '¥', CNY: 'CN¥', CHF: 'CHF', SGD: 'SGD', HKD: 'HK$', AED: 'AED', SAR: 'SAR', NZD: 'NZ$', ZAR: 'ZAR' };
   // Currencies whose symbol is a text code (not a glyph) need a space before
   // the amount in fmtCurrency's output ("CHF 150,000"), but NOT in the
@@ -835,6 +835,12 @@
       calculateSIP();
     }
   }
+
+  // Sync the visible currency symbol labels to match the dropdown's
+  // actual default (USD) on page load — without this, the static "₹"
+  // baked into the HTML markup stays on screen even though USD is
+  // selected, until the user manually touches the currency dropdown.
+  setCurrency(document.getElementById('currencySelect').value);
 
   function setInvType(type){
     currentType = type;
