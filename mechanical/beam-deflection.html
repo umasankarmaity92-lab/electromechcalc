@@ -50,7 +50,7 @@
 <meta property="og:description" content="Free Beam Deflection Calculator for a simply supported beam — point load or UDL — enter load, length, E and I for instant maximum deflection.">
 <meta property="og:url" content="https://www.electromechcalc.com/mechanical/beam-deflection">
 <meta property="og:image" content="https://www.electromechcalc.com/logo.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -67,7 +67,7 @@
   "url": "https://www.electromechcalc.com/mechanical/beam-deflection",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free Beam Deflection Calculator for a simply supported beam under a central point load or uniformly distributed load (UDL). Enter load, length, E and I to get maximum deflection instantly.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -305,6 +305,26 @@
 
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
   
+
+  /* .action-icon-btn was missing from this page's styles entirely,
+     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
 
   .author-box{
     border:2px solid #000000;
@@ -830,7 +850,7 @@
 
     const ratio = length / deflection;
 
-    document.getElementById('rResult').textContent = deflection.toLocaleString('en-IN', {maximumFractionDigits:4}) + ' mm';
+    document.getElementById('rResult').textContent = deflection.toLocaleString('en-US', {maximumFractionDigits:4}) + ' mm';
     document.getElementById('resultSub').textContent = (beamLoadType === 'point' ? 'Central point load' : 'Uniform load (UDL)') + ' \u2014 L = ' + length + ' mm';
     document.getElementById('rRatio').textContent = 'L/' + Math.round(ratio);
     document.getElementById('rDeflMm').textContent = deflection.toFixed(4);
@@ -840,10 +860,10 @@
             <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
             <tbody>
                 <tr><td>Load Type</td><td>${beamLoadType === 'point' ? 'Central point load' : 'Uniformly distributed'}</td></tr>
-                <tr><td>Load</td><td>${load.toLocaleString('en-IN')} N</td></tr>
-                <tr><td>Span (L)</td><td>${length.toLocaleString('en-IN')} mm</td></tr>
-                <tr><td>Modulus of Elasticity (E)</td><td>${E.toLocaleString('en-IN')} MPa</td></tr>
-                <tr><td>Moment of Inertia (I)</td><td>${I.toLocaleString('en-IN')} mm\u2074</td></tr>
+                <tr><td>Load</td><td>${load.toLocaleString('en-US')} N</td></tr>
+                <tr><td>Span (L)</td><td>${length.toLocaleString('en-US')} mm</td></tr>
+                <tr><td>Modulus of Elasticity (E)</td><td>${E.toLocaleString('en-US')} MPa</td></tr>
+                <tr><td>Moment of Inertia (I)</td><td>${I.toLocaleString('en-US')} mm\u2074</td></tr>
                 <tr><td><strong>Max. Deflection</strong></td><td><strong>${deflection.toFixed(4)} mm</strong></td></tr>
                 <tr><td>Span-to-Deflection Ratio</td><td>L/${Math.round(ratio)}</td></tr>
             </tbody>
@@ -860,7 +880,12 @@
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {

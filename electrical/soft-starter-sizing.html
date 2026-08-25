@@ -42,7 +42,7 @@
 <meta property="og:description" content="Free Soft Starter Sizing Calculator — enter motor FLC, starts per hour, and ambient temperature to get the required rating instantly.">
 <meta property="og:url" content="https://www.electromechcalc.com/electrical/soft-starter-sizing">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -59,7 +59,7 @@
   "url": "https://www.electromechcalc.com/electrical/soft-starter-sizing",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free Soft Starter Sizing Calculator. Enter motor full load current, starts per hour, and ambient temperature to get the required soft starter current rating instantly, with formula and worked example.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -314,6 +314,26 @@
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
   
 
+  /* .action-icon-btn was missing from this page's styles entirely,
+     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
   .author-box{
     border:2px solid #000000;
   }
@@ -541,7 +561,7 @@
       <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
-      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Soft Starter Sizing Calculator">✉️ Feedback</a>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Soft%20Starter%20Sizing%20Calculator">✉️ Feedback</a>
     </div>
   </div>
 </section>
@@ -769,6 +789,16 @@
 
 <!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
 <script>
+    // ===== Share / Feedback / Like-Dislike bar =====
+    // Was missing on this page — the Yes/No buttons call setFeedback()
+    // via onclick, but nothing defined it, so clicking threw
+    // "setFeedback is not defined" and did nothing. Matches the
+    // implementation used on every other calculator page.
+    function setFeedback(val){
+      document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+      document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+    }
+
     function calculateSoftStarterSizing(){
     const flc = parseFloat(document.getElementById('flc').value);
     const startsPerHour = parseFloat(document.getElementById('startsPerHour').value);
@@ -805,7 +835,7 @@
 
     const requiredRating = (flc * dutyFactor) / tempDeratingFactor;
 
-    document.getElementById('rResult').textContent = requiredRating.toLocaleString('en-IN', {maximumFractionDigits:1}) + ' A';
+    document.getElementById('rResult').textContent = requiredRating.toLocaleString('en-US', {maximumFractionDigits:1}) + ' A';
     document.getElementById('resultSub').textContent = startsPerHour + ' starts/hr, ' + ambientTemp + '\u00b0C';
     document.getElementById('rDutyFactor').textContent = dutyFactor.toFixed(2) + '×';
     document.getElementById('rTempFactor').textContent = tempDeratingFactor.toFixed(2) + '×';
@@ -834,7 +864,12 @@
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {

@@ -50,7 +50,7 @@
 <meta property="og:description" content="Free Beam Bending Stress Calculator for a rectangular section — enter moment, width and depth for instant maximum bending stress.">
 <meta property="og:url" content="https://www.electromechcalc.com/mechanical/beam-stress">
 <meta property="og:image" content="https://www.electromechcalc.com/logo.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -67,7 +67,7 @@
   "url": "https://www.electromechcalc.com/mechanical/beam-stress",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free Beam Bending Stress Calculator for a rectangular cross-section. Enter bending moment, width and depth to get maximum bending stress instantly, with formula and worked example.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -305,6 +305,26 @@
 
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
   
+
+  /* .action-icon-btn was missing from this page's styles entirely,
+     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
 
   .author-box{
     border:2px solid #000000;
@@ -819,20 +839,20 @@
       status = stress <= allow ? 'OK \u2713' : 'Over limit';
     }
 
-    document.getElementById('rResult').textContent = stress.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' MPa';
+    document.getElementById('rResult').textContent = stress.toLocaleString('en-US', {maximumFractionDigits:2}) + ' MPa';
     document.getElementById('resultSub').textContent = 'M = ' + moment + ' Nm on ' + b + '\u00d7' + d + ' mm section';
-    document.getElementById('rZ').textContent = Z.toLocaleString('en-IN', {maximumFractionDigits:0}) + ' mm\u00b3';
+    document.getElementById('rZ').textContent = Z.toLocaleString('en-US', {maximumFractionDigits:0}) + ' mm\u00b3';
     document.getElementById('rStatus').textContent = status;
 
     document.getElementById('breakdownBox').innerHTML = `
         <table class="breakdown-table">
             <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
             <tbody>
-                <tr><td>Bending Moment</td><td>${moment.toLocaleString('en-IN')} Nm (${momentNmm.toLocaleString('en-IN')} Nmm)</td></tr>
+                <tr><td>Bending Moment</td><td>${moment.toLocaleString('en-US')} Nm (${momentNmm.toLocaleString('en-US')} Nmm)</td></tr>
                 <tr><td>Width (b)</td><td>${b} mm</td></tr>
                 <tr><td>Depth (d)</td><td>${d} mm</td></tr>
-                <tr><td>Moment of Inertia (I)</td><td>${I.toLocaleString('en-IN', {maximumFractionDigits:0})} mm\u2074</td></tr>
-                <tr><td>Section Modulus (Z)</td><td>${Z.toLocaleString('en-IN', {maximumFractionDigits:0})} mm\u00b3</td></tr>
+                <tr><td>Moment of Inertia (I)</td><td>${I.toLocaleString('en-US', {maximumFractionDigits:0})} mm\u2074</td></tr>
+                <tr><td>Section Modulus (Z)</td><td>${Z.toLocaleString('en-US', {maximumFractionDigits:0})} mm\u00b3</td></tr>
                 <tr><td><strong>Max. Bending Stress</strong></td><td><strong>${stress.toFixed(2)} MPa</strong></td></tr>
                 ${(!isNaN(allow) && allow > 0) ? `<tr><td>Allowable Stress</td><td>${allow} MPa \u2014 ${status}</td></tr>` : ''}
             </tbody>
@@ -849,7 +869,12 @@
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {

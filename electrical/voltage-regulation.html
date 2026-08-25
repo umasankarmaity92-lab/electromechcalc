@@ -42,7 +42,7 @@
 <meta property="og:description" content="Free Voltage Regulation Calculator — enter %R, %X, and power factor to get transformer voltage regulation instantly.">
 <meta property="og:url" content="https://www.electromechcalc.com/electrical/voltage-regulation">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -59,7 +59,7 @@
   "url": "https://www.electromechcalc.com/electrical/voltage-regulation",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free Voltage Regulation Calculator for transformers. Enter percentage resistance, percentage reactance, power factor, and load type to get percentage voltage regulation instantly, with formula and worked example.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -314,6 +314,26 @@
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
   
 
+  /* .action-icon-btn was missing from this page's styles entirely,
+     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
   .author-box{
     border:2px solid #000000;
   }
@@ -550,7 +570,7 @@
       <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
-      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Voltage Regulation Calculator">✉️ Feedback</a>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Voltage%20Regulation%20Calculator">✉️ Feedback</a>
     </div>
   </div>
 </section>
@@ -774,6 +794,16 @@
     document.getElementById('formulaChip').textContent = type === 'lagging' ? 'VR% = %R×cosφ + %X×sinφ' : 'VR% = %R×cosφ − %X×sinφ';
   }
 
+  // ===== Share / Feedback / Like-Dislike bar =====
+  // Was missing on this page — the Yes/No buttons call setFeedback()
+  // via onclick, but nothing defined it, so clicking threw
+  // "setFeedback is not defined" and did nothing. Matches the
+  // implementation used on every other calculator page.
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+
   function calculateVoltageRegulation(){
     const R = parseFloat(document.getElementById('percentR').value);
     const X = parseFloat(document.getElementById('percentX').value);
@@ -801,7 +831,7 @@
     const vr = vrLoadType === 'lagging' ? (R * pf + X * sinPhi) : (R * pf - X * sinPhi);
     const Z = Math.sqrt(R*R + X*X);
 
-    document.getElementById('rResult').textContent = vr.toLocaleString('en-IN', {maximumFractionDigits:2}) + '%';
+    document.getElementById('rResult').textContent = vr.toLocaleString('en-US', {maximumFractionDigits:2}) + '%';
     document.getElementById('resultSub').textContent = 'PF=' + pf + ' ' + vrLoadType;
     document.getElementById('rZ').textContent = Z.toFixed(2) + '%';
     document.getElementById('rSinPhi').textContent = sinPhi.toFixed(3);
@@ -830,7 +860,12 @@
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {

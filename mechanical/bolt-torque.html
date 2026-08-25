@@ -48,7 +48,7 @@
 <meta property="og:description" content="Free Bolt Torque Calculator — enter bolt diameter, clamp force and friction factor K to get the required tightening torque instantly.">
 <meta property="og:url" content="https://www.electromechcalc.com/mechanical/bolt-torque">
 <meta property="og:image" content="https://www.electromechcalc.com/logo.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -65,7 +65,7 @@
   "url": "https://www.electromechcalc.com/mechanical/bolt-torque",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free Bolt Torque Calculator. Enter bolt diameter, desired clamp force (preload), and the nut/friction factor K to get the required tightening torque instantly, with formula and reference K-factor table.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -303,6 +303,26 @@
 
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
   
+
+  /* .action-icon-btn was missing from this page's styles entirely,
+     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
 
   .author-box{
     border:2px solid #000000;
@@ -820,17 +840,17 @@
     const torqueKgfcm = torqueNm * 10.19716;
     const torqueLbft = torqueNm * 0.737562;
 
-    document.getElementById('rResult').textContent = torqueNm.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' Nm';
-    document.getElementById('resultSub').textContent = 'M' + D + ' bolt, K = ' + K + ', F = ' + F.toLocaleString('en-IN') + ' N';
-    document.getElementById('rKgfcm').textContent = torqueKgfcm.toLocaleString('en-IN', {maximumFractionDigits:1});
-    document.getElementById('rLbft').textContent = torqueLbft.toLocaleString('en-IN', {maximumFractionDigits:2});
+    document.getElementById('rResult').textContent = torqueNm.toLocaleString('en-US', {maximumFractionDigits:2}) + ' Nm';
+    document.getElementById('resultSub').textContent = 'M' + D + ' bolt, K = ' + K + ', F = ' + F.toLocaleString('en-US') + ' N';
+    document.getElementById('rKgfcm').textContent = torqueKgfcm.toLocaleString('en-US', {maximumFractionDigits:1});
+    document.getElementById('rLbft').textContent = torqueLbft.toLocaleString('en-US', {maximumFractionDigits:2});
 
     document.getElementById('breakdownBox').innerHTML = `
         <table class="breakdown-table">
             <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
             <tbody>
                 <tr><td>Bolt Diameter (D)</td><td>${D} mm</td></tr>
-                <tr><td>Target Clamp Force (F)</td><td>${F.toLocaleString('en-IN')} N</td></tr>
+                <tr><td>Target Clamp Force (F)</td><td>${F.toLocaleString('en-US')} N</td></tr>
                 <tr><td>Nut Factor (K)</td><td>${K}</td></tr>
                 <tr><td><strong>Required Torque</strong></td><td><strong>${torqueNm.toFixed(2)} Nm</strong></td></tr>
                 <tr><td>Torque (kgf\u00b7cm)</td><td>${torqueKgfcm.toFixed(1)} kgf\u00b7cm</td></tr>
@@ -849,7 +869,12 @@
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {

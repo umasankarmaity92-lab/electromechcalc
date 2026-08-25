@@ -56,7 +56,7 @@
 <meta property="og:description" content="Heat duty of a heat exchanger from mass flow rate, specific heat and temperature change — plus optional required heat transfer area from overall U and LMTD.">
 <meta property="og:url" content="https://www.electromechcalc.com/mechanical/heat-exchanger-duty">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -78,7 +78,7 @@
   "url": "https://www.electromechcalc.com/mechanical/heat-exchanger-duty",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free online calculator for heat exchanger thermal duty using the sensible heat equation Q = mCpΔT, with an optional second step to estimate required heat transfer area from the overall heat transfer coefficient and log mean temperature difference (LMTD).",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -327,6 +327,26 @@
 
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
   
+
+  /* .action-icon-btn was missing from this page's styles entirely,
+     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
 
   .author-box{
     border:2px solid #000000;
@@ -591,7 +611,7 @@
       <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
-      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Heat Exchanger Duty Calculator">✉️ Feedback</a>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Heat%20Exchanger%20Duty%20Calculator">✉️ Feedback</a>
     </div>
   </div>
 </section>
@@ -807,8 +827,8 @@
     const flowKgS = flowKgHr / 3600;
     const Qkw = flowKgS * cp * deltaT; // kg/s * kJ/kgK * K = kW
 
-    document.getElementById('rResult').textContent = Qkw.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' kW';
-    document.getElementById('resultSub').textContent = flowKgHr.toLocaleString('en-IN') + ' kg/hr, ΔT = ' + deltaT.toFixed(1) + '\u00b0C';
+    document.getElementById('rResult').textContent = Qkw.toLocaleString('en-US', {maximumFractionDigits:2}) + ' kW';
+    document.getElementById('resultSub').textContent = flowKgHr.toLocaleString('en-US') + ' kg/hr, ΔT = ' + deltaT.toFixed(1) + '\u00b0C';
 
     let lmtdHtml = '';
     let areaHtml = '';
@@ -843,11 +863,11 @@
         <table class="breakdown-table">
             <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
             <tbody>
-                <tr><td>Mass Flow Rate</td><td>${flowKgHr.toLocaleString('en-IN')} kg/hr (${flowKgS.toFixed(4)} kg/s)</td></tr>
+                <tr><td>Mass Flow Rate</td><td>${flowKgHr.toLocaleString('en-US')} kg/hr (${flowKgS.toFixed(4)} kg/s)</td></tr>
                 <tr><td>Specific Heat (Cp)</td><td>${cp} kJ/kg·K</td></tr>
                 <tr><td>Temperature Change (ΔT)</td><td>${deltaT.toFixed(1)} °C (${tIn}°C → ${tOut}°C)</td></tr>
                 <tr><td><strong>Heat Duty (Q)</strong></td><td><strong>${Qkw.toFixed(2)} kW</strong></td></tr>
-                <tr><td>Heat Duty (kcal/hr)</td><td>${(Qkw*860.42).toLocaleString('en-IN',{maximumFractionDigits:0})} kcal/hr</td></tr>
+                <tr><td>Heat Duty (kcal/hr)</td><td>${(Qkw*860.42).toLocaleString('en-US',{maximumFractionDigits:0})} kcal/hr</td></tr>
                 ${lmtdHtml}
                 ${areaHtml}
             </tbody>
@@ -865,7 +885,12 @@
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {

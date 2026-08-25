@@ -50,7 +50,7 @@
 <meta property="og:description" content="Free Flywheel Energy Calculator — enter mass, radius and RPM for a solid-disc flywheel to get stored kinetic energy instantly.">
 <meta property="og:url" content="https://www.electromechcalc.com/mechanical/flywheel-energy">
 <meta property="og:image" content="https://www.electromechcalc.com/logo.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -67,7 +67,7 @@
   "url": "https://www.electromechcalc.com/mechanical/flywheel-energy",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free Flywheel Energy Calculator. Enter mass, radius and rotational speed for a solid disc flywheel to get stored kinetic energy and moment of inertia instantly, with formula and worked example.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -305,6 +305,26 @@
 
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
   
+
+  /* .action-icon-btn was missing from this page's styles entirely,
+     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
 
   .author-box{
     border:2px solid #000000;
@@ -807,8 +827,8 @@
     const KE = 0.5 * I * Math.pow(omega,2);
     const KEkJ = KE / 1000;
 
-    document.getElementById('rResult').textContent = (KEkJ >= 1 ? KEkJ.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' kJ' : KE.toFixed(1) + ' J');
-    document.getElementById('resultSub').textContent = mass + ' kg disc, r=' + radius + 'm at ' + rpm.toLocaleString('en-IN') + ' RPM';
+    document.getElementById('rResult').textContent = (KEkJ >= 1 ? KEkJ.toLocaleString('en-US', {maximumFractionDigits:2}) + ' kJ' : KE.toFixed(1) + ' J');
+    document.getElementById('resultSub').textContent = mass + ' kg disc, r=' + radius + 'm at ' + rpm.toLocaleString('en-US') + ' RPM';
     document.getElementById('rInertia').textContent = I.toFixed(3) + ' kg\u00b7m\u00b2';
     document.getElementById('rOmega').textContent = omega.toFixed(2) + ' rad/s';
 
@@ -818,10 +838,10 @@
             <tbody>
                 <tr><td>Mass (m)</td><td>${mass} kg</td></tr>
                 <tr><td>Outer Radius (r)</td><td>${radius} m</td></tr>
-                <tr><td>Speed (N)</td><td>${rpm.toLocaleString('en-IN')} RPM</td></tr>
+                <tr><td>Speed (N)</td><td>${rpm.toLocaleString('en-US')} RPM</td></tr>
                 <tr><td>Angular Velocity (\u03c9)</td><td>${omega.toFixed(3)} rad/s</td></tr>
                 <tr><td>Moment of Inertia (I = \u00bdmr\u00b2)</td><td>${I.toFixed(4)} kg\u00b7m\u00b2</td></tr>
-                <tr><td><strong>Kinetic Energy</strong></td><td><strong>${KE.toLocaleString('en-IN', {maximumFractionDigits:1})} J (${KEkJ.toFixed(3)} kJ)</strong></td></tr>
+                <tr><td><strong>Kinetic Energy</strong></td><td><strong>${KE.toLocaleString('en-US', {maximumFractionDigits:1})} J (${KEkJ.toFixed(3)} kJ)</strong></td></tr>
             </tbody>
         </table>
     `;
@@ -836,7 +856,12 @@
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {

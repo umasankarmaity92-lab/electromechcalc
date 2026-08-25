@@ -50,7 +50,7 @@
 <meta property="og:description" content="Free Pulley Ratio Calculator — enter driver/driven pulley diameters and driver RPM to get speed ratio and driven RPM instantly.">
 <meta property="og:url" content="https://www.electromechcalc.com/mechanical/pulley-ratio">
 <meta property="og:image" content="https://www.electromechcalc.com/logo.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -67,7 +67,7 @@
   "url": "https://www.electromechcalc.com/mechanical/pulley-ratio",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free Pulley Ratio Calculator. Enter driver and driven pulley diameters plus driver RPM to get the speed ratio and driven pulley RPM instantly, with formula and worked example.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -305,6 +305,26 @@
 
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
   
+
+  /* .action-icon-btn was missing from this page's styles entirely,
+     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
 
   .author-box{
     border:2px solid #000000;
@@ -809,7 +829,7 @@
     if(ratio > 1.02) driveType = 'Step-Down';
     else if(ratio < 0.98) driveType = 'Step-Up';
 
-    document.getElementById('rResult').textContent = n2.toLocaleString('en-IN', {maximumFractionDigits:1}) + ' RPM';
+    document.getElementById('rResult').textContent = n2.toLocaleString('en-US', {maximumFractionDigits:1}) + ' RPM';
     document.getElementById('resultSub').textContent = 'Driven \u00d8' + d2 + 'mm from Driver \u00d8' + d1 + 'mm @ ' + n1 + ' RPM';
     document.getElementById('rRatio').textContent = ratio.toFixed(2) + ' : 1';
     document.getElementById('rDriveType').textContent = driveType;
@@ -820,7 +840,7 @@
             <tbody>
                 <tr><td>Driver Pulley \u00d8 (D1)</td><td>${d1} mm</td></tr>
                 <tr><td>Driven Pulley \u00d8 (D2)</td><td>${d2} mm</td></tr>
-                <tr><td>Driver Speed (N1)</td><td>${n1.toLocaleString('en-IN')} RPM</td></tr>
+                <tr><td>Driver Speed (N1)</td><td>${n1.toLocaleString('en-US')} RPM</td></tr>
                 <tr><td>Speed Ratio (D2:D1)</td><td>${ratio.toFixed(3)} : 1</td></tr>
                 <tr><td><strong>Driven Speed (N2)</strong></td><td><strong>${n2.toFixed(2)} RPM</strong></td></tr>
                 <tr><td>Drive Type</td><td>${driveType}</td></tr>
@@ -838,7 +858,12 @@
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {

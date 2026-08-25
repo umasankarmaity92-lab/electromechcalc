@@ -42,7 +42,7 @@
 <meta property="og:description" content="Free Earthing Conductor Size Calculator — enter fault current, duration, and material to get the minimum earthing conductor size instantly.">
 <meta property="og:url" content="https://www.electromechcalc.com/electrical/earthing-conductor-size">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -59,7 +59,7 @@
   "url": "https://www.electromechcalc.com/electrical/earthing-conductor-size",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free Earthing Conductor Size Calculator using the adiabatic short-circuit formula (IS 3043 / IEC 60364). Enter fault current, fault duration, and conductor material to get the minimum required earthing conductor size instantly.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -307,6 +307,26 @@
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
   
 
+  /* .action-icon-btn was missing from this page's styles entirely,
+     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
   .author-box{
     border:2px solid #000000;
   }
@@ -535,7 +555,7 @@
       <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
-      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Earthing Conductor Size Calculator">✉️ Feedback</a>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Earthing%20Conductor%20Size%20Calculator">✉️ Feedback</a>
     </div>
   </div>
 </section>
@@ -766,6 +786,16 @@
 
 <!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
 <script>
+    // ===== Share / Feedback / Like-Dislike bar =====
+    // Was missing on this page — the Yes/No buttons call setFeedback()
+    // via onclick, but nothing defined it, so clicking threw
+    // "setFeedback is not defined" and did nothing. Matches the
+    // implementation used on every other calculator page.
+    function setFeedback(val){
+      document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+      document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+    }
+
     function calculateEarthingConductor(){
     const faultCurrentKA = parseFloat(document.getElementById('faultCurrent').value);
     const clearingTime = parseFloat(document.getElementById('clearingTime').value);
@@ -797,7 +827,7 @@
     let stdSize = standardSizes.find(s => s >= area);
     if(!stdSize) stdSize = Math.ceil(area / 50) * 50;
 
-    document.getElementById('rResult').textContent = area.toLocaleString('en-IN', {maximumFractionDigits:1}) + ' mm\u00b2';
+    document.getElementById('rResult').textContent = area.toLocaleString('en-US', {maximumFractionDigits:1}) + ' mm\u00b2';
     document.getElementById('resultSub').textContent = faultCurrentKA + ' kA for ' + clearingTime + 's';
     document.getElementById('rStdSize').textContent = stdSize + ' mm\u00b2';
     document.getElementById('rI2t').textContent = (i2t/1e6).toFixed(2) + ' MA\u00b2s';
@@ -806,7 +836,7 @@
         <table class="breakdown-table">
             <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
             <tbody>
-                <tr><td>Fault Current</td><td>${faultCurrentKA} kA (${faultCurrentA.toLocaleString('en-IN')} A)</td></tr>
+                <tr><td>Fault Current</td><td>${faultCurrentKA} kA (${faultCurrentA.toLocaleString('en-US')} A)</td></tr>
                 <tr><td>Clearing Time</td><td>${clearingTime} s</td></tr>
                 <tr><td>Material Constant (k)</td><td>${kValue}</td></tr>
                 <tr><td><strong>Minimum Conductor Size</strong></td><td><strong>${area.toFixed(1)} mm\u00b2</strong></td></tr>
@@ -826,7 +856,12 @@
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {

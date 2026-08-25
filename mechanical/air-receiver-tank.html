@@ -56,7 +56,7 @@
 <meta property="og:description" content="Minimum air receiver tank volume from compressor FAD, cut-in/cut-out pressure and minimum cycle time — to avoid excessive compressor short-cycling.">
 <meta property="og:url" content="https://www.electromechcalc.com/mechanical/air-receiver-tank">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -78,7 +78,7 @@
   "url": "https://www.electromechcalc.com/mechanical/air-receiver-tank",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free online calculator for minimum compressed air receiver tank volume, based on compressor free air delivery, cut-in and cut-out pressure settings, and the minimum acceptable time between compressor starts.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -328,6 +328,26 @@
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
   
 
+  /* .action-icon-btn was missing from this page's styles entirely,
+     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
   .author-box{
     border:2px solid #000000;
   }
@@ -571,7 +591,7 @@
       <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
-      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Air Receiver Tank Calculator">✉️ Feedback</a>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Air%20Receiver%20Tank%20Calculator">✉️ Feedback</a>
     </div>
   </div>
 </section>
@@ -786,10 +806,10 @@
     const volumeWithMarginL = volumeL * (1 + marginPct/100);
     const suggested = standardTankSizesL.find(s => s >= volumeWithMarginL);
 
-    document.getElementById('rResult').textContent = volumeM3.toLocaleString('en-IN', {maximumFractionDigits:3}) + ' m³';
+    document.getElementById('rResult').textContent = volumeM3.toLocaleString('en-US', {maximumFractionDigits:3}) + ' m³';
     document.getElementById('resultSub').textContent = 'FAD=' + C + ' m³/min, ΔP=' + deltaP.toFixed(1) + ' bar, t=' + t + ' min';
-    document.getElementById('rLitres').textContent = Math.round(volumeL).toLocaleString('en-IN') + ' L';
-    document.getElementById('rStdSize').textContent = suggested ? suggested.toLocaleString('en-IN') + ' L' : 'Above ' + standardTankSizesL[standardTankSizesL.length-1] + ' L — custom/multiple tanks';
+    document.getElementById('rLitres').textContent = Math.round(volumeL).toLocaleString('en-US') + ' L';
+    document.getElementById('rStdSize').textContent = suggested ? suggested.toLocaleString('en-US') + ' L' : 'Above ' + standardTankSizesL[standardTankSizesL.length-1] + ' L — custom/multiple tanks';
 
     document.getElementById('breakdownBox').innerHTML = `
         <table class="breakdown-table">
@@ -801,10 +821,10 @@
                 <tr><td>Pressure Swing (ΔP = P₁−P₂)</td><td>${deltaP.toFixed(2)} bar</td></tr>
                 <tr><td>Atmospheric Pressure (Pa)</td><td>${Pa} bar (abs)</td></tr>
                 <tr><td>Minimum Time Between Starts (t)</td><td>${t} min</td></tr>
-                <tr><td><strong>Minimum Receiver Volume (bare)</strong></td><td><strong>${volumeM3.toFixed(3)} m³ (${Math.round(volumeL).toLocaleString('en-IN')} L)</strong></td></tr>
+                <tr><td><strong>Minimum Receiver Volume (bare)</strong></td><td><strong>${volumeM3.toFixed(3)} m³ (${Math.round(volumeL).toLocaleString('en-US')} L)</strong></td></tr>
                 <tr><td>Safety Margin</td><td>${marginPct}%</td></tr>
-                <tr><td><strong>Volume with Margin</strong></td><td><strong>${(volumeWithMarginL/1000).toFixed(3)} m³ (${Math.round(volumeWithMarginL).toLocaleString('en-IN')} L)</strong></td></tr>
-                <tr><td>Nearest Standard Tank Size</td><td>${suggested ? suggested.toLocaleString('en-IN') + ' L' : 'Above largest standard size'}</td></tr>
+                <tr><td><strong>Volume with Margin</strong></td><td><strong>${(volumeWithMarginL/1000).toFixed(3)} m³ (${Math.round(volumeWithMarginL).toLocaleString('en-US')} L)</strong></td></tr>
+                <tr><td>Nearest Standard Tank Size</td><td>${suggested ? suggested.toLocaleString('en-US') + ' L' : 'Above largest standard size'}</td></tr>
             </tbody>
         </table>
     `;
@@ -820,7 +840,12 @@
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {

@@ -56,7 +56,7 @@
 <meta property="og:description" content="Push (extend) and pull (retract) force of a hydraulic cylinder from bore diameter, rod diameter and system pressure — with optional cylinder speed from flow rate.">
 <meta property="og:url" content="https://www.electromechcalc.com/mechanical/hydraulic-cylinder-force">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -78,7 +78,7 @@
   "url": "https://www.electromechcalc.com/mechanical/hydraulic-cylinder-force",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free online calculator for hydraulic cylinder extend (push) and retract (pull) force from bore diameter, rod diameter and system pressure, with an optional cylinder speed result from hydraulic flow rate.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -328,6 +328,26 @@
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
   
 
+  /* .action-icon-btn was missing from this page's styles entirely,
+     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
   .author-box{
     border:2px solid #000000;
   }
@@ -568,7 +588,7 @@
       <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
-      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Hydraulic Cylinder Force Calculator">✉️ Feedback</a>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Hydraulic%20Cylinder%20Force%20Calculator">✉️ Feedback</a>
     </div>
   </div>
 </section>
@@ -790,9 +810,9 @@
     const forceKgf = forceN / 9.80665;
     const forceKN = forceN / 1000;
 
-    document.getElementById('rResult').textContent = forceKN.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' kN';
+    document.getElementById('rResult').textContent = forceKN.toLocaleString('en-US', {maximumFractionDigits:2}) + ' kN';
     document.getElementById('resultSub').textContent = (strokeMode === 'extend' ? 'Extend' : 'Retract') + ': D=' + D + 'mm, d=' + d + 'mm at ' + pressure + ' bar';
-    document.getElementById('rKgf').textContent = Math.round(forceKgf).toLocaleString('en-IN');
+    document.getElementById('rKgf').textContent = Math.round(forceKgf).toLocaleString('en-US');
 
     let speedHtml = '';
     if(!isNaN(flow) && flow > 0){
@@ -815,8 +835,8 @@
                 <tr><td>Rod Diameter (d)</td><td>${d} mm</td></tr>
                 <tr><td>Effective Area (${strokeMode === 'extend' ? 'full bore' : 'annulus'})</td><td>${areaMm2.toFixed(1)} mm² (${areaCm2.toFixed(2)} cm²)</td></tr>
                 <tr><td>System Pressure</td><td>${pressure} bar (${pressureMPa.toFixed(2)} MPa)</td></tr>
-                <tr><td><strong>${strokeMode === 'extend' ? 'Extend' : 'Retract'} Force</strong></td><td><strong>${forceN.toLocaleString('en-IN', {maximumFractionDigits:0})} N (${forceKN.toFixed(2)} kN)</strong></td></tr>
-                <tr><td>Force (kgf)</td><td>${Math.round(forceKgf).toLocaleString('en-IN')} kgf</td></tr>
+                <tr><td><strong>${strokeMode === 'extend' ? 'Extend' : 'Retract'} Force</strong></td><td><strong>${forceN.toLocaleString('en-US', {maximumFractionDigits:0})} N (${forceKN.toFixed(2)} kN)</strong></td></tr>
+                <tr><td>Force (kgf)</td><td>${Math.round(forceKgf).toLocaleString('en-US')} kgf</td></tr>
                 ${speedHtml}
             </tbody>
         </table>
@@ -833,7 +853,12 @@
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {

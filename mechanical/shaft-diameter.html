@@ -48,7 +48,7 @@
 <meta property="og:description" content="Free Shaft Diameter Calculator based on pure torsion — enter torque and allowable shear stress to get minimum shaft diameter instantly.">
 <meta property="og:url" content="https://www.electromechcalc.com/mechanical/shaft-diameter">
 <meta property="og:image" content="https://www.electromechcalc.com/logo.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -65,7 +65,7 @@
   "url": "https://www.electromechcalc.com/mechanical/shaft-diameter",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free Shaft Diameter Calculator based on pure torsion. Enter torque (or power + RPM) and allowable shear stress to get the minimum required solid shaft diameter, with formula and worked example.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -303,6 +303,26 @@
 
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
   
+
+  /* .action-icon-btn was missing from this page's styles entirely,
+     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
 
   .author-box{
     border:2px solid #000000;
@@ -807,7 +827,7 @@
     }
     const stdSize = roundUpStd(dMm);
 
-    document.getElementById('rResult').textContent = dMm.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' mm';
+    document.getElementById('rResult').textContent = dMm.toLocaleString('en-US', {maximumFractionDigits:2}) + ' mm';
     document.getElementById('resultSub').textContent = 'Minimum diameter for ' + designTorqueNm.toFixed(1) + ' Nm at ' + tau + ' MPa';
     document.getElementById('rDesignTorque').textContent = designTorqueNm.toFixed(1) + ' Nm';
     document.getElementById('rStdSize').textContent = stdSize + ' mm';
@@ -836,7 +856,12 @@
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {

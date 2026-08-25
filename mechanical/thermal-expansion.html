@@ -56,7 +56,7 @@
 <meta property="og:description" content="Find linear thermal expansion (or contraction) of a metal part from length, material, and temperature change — instant result with the formula shown.">
 <meta property="og:url" content="https://www.electromechcalc.com/mechanical/thermal-expansion">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
-<meta property="og:locale" content="en_IN">
+<meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -78,7 +78,7 @@
   "url": "https://www.electromechcalc.com/mechanical/thermal-expansion",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free online calculator for linear thermal expansion of rods, pipes, rails and structural members, using length, coefficient of thermal expansion, and temperature change, with an optional constrained thermal stress result.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -327,6 +327,26 @@
 
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
   
+
+  /* .action-icon-btn was missing from this page's styles entirely,
+     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
 
   .author-box{
     border:2px solid #000000;
@@ -588,7 +608,7 @@
       <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
-      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Thermal Expansion Calculator">✉️ Feedback</a>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Thermal%20Expansion%20Calculator">✉️ Feedback</a>
     </div>
   </div>
 </section>
@@ -814,9 +834,9 @@
     const strain = alpha * deltaT;
     const mode = deltaT >= 0 ? 'Expansion' : 'Contraction';
 
-    document.getElementById('rResult').textContent = (deltaL >= 0 ? '+' : '') + deltaL.toLocaleString('en-IN', {maximumFractionDigits:3}) + ' mm';
-    document.getElementById('resultSub').textContent = mode + ' over ΔT = ' + deltaT.toFixed(1) + '\u00b0C on ' + L0.toLocaleString('en-IN') + ' mm length';
-    document.getElementById('rFinalLength').textContent = finalLength.toLocaleString('en-IN', {maximumFractionDigits:3}) + ' mm';
+    document.getElementById('rResult').textContent = (deltaL >= 0 ? '+' : '') + deltaL.toLocaleString('en-US', {maximumFractionDigits:3}) + ' mm';
+    document.getElementById('resultSub').textContent = mode + ' over ΔT = ' + deltaT.toFixed(1) + '\u00b0C on ' + L0.toLocaleString('en-US') + ' mm length';
+    document.getElementById('rFinalLength').textContent = finalLength.toLocaleString('en-US', {maximumFractionDigits:3}) + ' mm';
     document.getElementById('rStrain').textContent = strain.toExponential(3);
 
     let stressHtml = '';
@@ -834,7 +854,7 @@
         <table class="breakdown-table">
             <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
             <tbody>
-                <tr><td>Original Length (L₀)</td><td>${L0.toLocaleString('en-IN')} mm</td></tr>
+                <tr><td>Original Length (L₀)</td><td>${L0.toLocaleString('en-US')} mm</td></tr>
                 <tr><td>Coefficient of Expansion (α)</td><td>${(alpha*1000000).toFixed(2)} × 10⁻⁶ /°C</td></tr>
                 <tr><td>Temperature Change (ΔT)</td><td>${deltaT.toFixed(1)} °C (${T1}°C → ${T2}°C)</td></tr>
                 <tr><td><strong>Change in Length (ΔL)</strong></td><td><strong>${deltaL.toFixed(3)} mm</strong></td></tr>
@@ -856,7 +876,12 @@
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
