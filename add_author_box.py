@@ -103,6 +103,27 @@ def shorten_reviewed_by(html):
     new_html, n = OLD_REVIEWED_BY_TAIL_RE.subn(r'\1.', html)
     return new_html, n > 0
 
+
+# Matches the "Created by ... — B.Tech in Electrical Engineering, with 11+
+# years of industrial experience." sentence (old wording, missing
+# "maintenance") regardless of the href used for the about-page link, so
+# it can be updated in place on pages that ALREADY have the current
+# bordered author-box — which the main box-detection logic below skips
+# entirely once the "author-box" class marker is present. Mirrors the
+# shorten_reviewed_by() approach above for the same reason.
+OLD_CREATED_BY_RE = re.compile(
+    r'(Umasankar Maity</a> — B\.Tech in Electrical Engineering, with 11\+ years of industrial )'
+    r'experience\.',
+)
+
+
+def update_created_by(html):
+    """Update an already-present 'industrial experience.' to 'industrial
+    maintenance experience.' in the Created-by sentence, leaving the rest
+    of the box untouched. Returns (html, changed)."""
+    new_html, n = OLD_CREATED_BY_RE.subn(r'\1maintenance experience.', html)
+    return new_html, n > 0
+
 CSS_MARKER = ".author-box{"
 CSS_RULE = """
   .author-box{
@@ -117,7 +138,7 @@ CSS_RULE = """
 
 BOX_TEMPLATE = """
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
-      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
+      <p>Created by <a href="about.html" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="editorial-policy.html" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
       <p>Last reviewed: {review_date} &nbsp;|&nbsp; Standards referenced: {standards}</p>
     </div>
@@ -160,6 +181,13 @@ def process_file(path: Path, review_date: str, dry_run: bool) -> str:
     html, reviewed_by_shortened = shorten_reviewed_by(html)
     if reviewed_by_shortened:
         notes.append("reviewed-by sentence shortened")
+
+    # Same reasoning: update an old "industrial experience." Created-by
+    # sentence to "industrial maintenance experience." even on pages that
+    # already have the current bordered box.
+    html, created_by_updated = update_created_by(html)
+    if created_by_updated:
+        notes.append("created-by sentence updated (+maintenance)")
 
     # Box detection/replacement runs next. The shortening above only edits
     # inline text and never changes tag structure, so it doesn't affect
