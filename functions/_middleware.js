@@ -395,9 +395,24 @@ function buildBreadcrumbHTML(pathname, index) {
 
 const PRO_STAR_SVG = `<svg class="pro-star-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:-1px;margin-right:2px"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.2 21 12 17.4 5.8 21 7 14.14l-5-4.87 7.1-1.01L12 2z"/></svg>`;
 
+// Each category's own hub/landing page (e.g. "/mechanical-calculators")
+// is itself indexed in search-index.json under that same category, so
+// without this exclusion it would show up as just another numbered
+// entry in its own dropdown (e.g. "34. Mechanical Calculators", sorted
+// in alphabetically among "extraUrls" since it's never been added to
+// nav-order.json's curated order) — duplicating the dedicated hub link
+// already placed at the top of the dropdown in header.html. Excluded
+// here the same way the featured entry already is.
+const CATEGORY_HUB_URLS = {
+  Electrical: "/electrical-calculators",
+  Mechanical: "/mechanical-calculators",
+  Financial: "/financial-calculators",
+};
+
 function orderedEntriesForCategory(categoryName, index, navOrder) {
   const cfg = (navOrder && navOrder[categoryName]) || { order: [], featured: null };
-  const entries = index.filter((e) => e.category === categoryName && e.url !== cfg.featured);
+  const hubUrl = CATEGORY_HUB_URLS[categoryName];
+  const entries = index.filter((e) => e.category === categoryName && e.url !== cfg.featured && e.url !== hubUrl);
   const byUrl = new Map(entries.map((e) => [e.url, e]));
 
   const orderedUrls = cfg.order.filter((u) => byUrl.has(u));
