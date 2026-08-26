@@ -69,6 +69,25 @@ href="https://www.electromechcalc.com/power-factor">
 }
 </script>
 
+<!-- This page is primarily an educational article with an embedded
+     calculator, so an Article entity is added alongside the
+     SoftwareApplication entry above (kept for consistency with the
+     rest of the site's calculator pages) rather than replacing it —
+     covers the article-specific identity, authorship, and
+     publication-date fields a pure application schema doesn't. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Power Factor, kW, kVAR & kVA Explained",
+  "description": "Understand power factor, kW, kVAR, and kVA — what they mean, how they relate, and why power factor correction matters in electrical systems.",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://www.electromechcalc.com/power-factor" },
+  "author": { "@type": "Person", "name": "Umasankar Maity", "url": "https://www.electromechcalc.com/about" },
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" },
+  "dateModified": "2026-08-26"
+}
+</script>
+
 
 <script type="application/ld+json">
 {
@@ -90,7 +109,7 @@ href="https://www.electromechcalc.com/power-factor">
     {
       "@type": "Question",
       "name": "What is a \"good\" power factor?",
-      "acceptedAnswer": { "@type": "Answer", "text": "A power factor of 0.95 or above is generally considered very good in industrial and commercial practice, with 1.0 being the theoretical ideal. Most utilities begin applying penalties or surcharges once PF drops below 0.85-0.90, which is why 0.95+ is a common target for facilities doing power factor correction." }
+      "acceptedAnswer": { "@type": "Answer", "text": "A power factor of 0.95 or above is generally considered very good in industrial and commercial practice, with 1.0 being the theoretical ideal. Some utilities apply penalties or additional charges when power factor falls below a specified threshold, though the exact threshold and tariff structure vary by utility, country, and contract — which is why 0.95+ is a commonly used target for facilities doing power factor correction." }
     },
     {
       "@type": "Question",
@@ -100,7 +119,7 @@ href="https://www.electromechcalc.com/power-factor">
     {
       "@type": "Question",
       "name": "What's the difference between lagging and leading power factor?",
-      "acceptedAnswer": { "@type": "Answer", "text": "A lagging power factor occurs with inductive loads (motors, transformers) where current lags behind voltage — the most common case in industrial settings. A leading power factor occurs with capacitive loads where current leads voltage, which can happen if capacitor banks over-correct a system beyond unity PF, itself a condition worth avoiding since it also causes inefficiency and can raise system voltage." }
+      "acceptedAnswer": { "@type": "Answer", "text": "A lagging power factor occurs with inductive loads (motors, transformers) where current lags behind voltage — the most common case in industrial settings. A leading power factor occurs with capacitive loads where current leads voltage, which can happen if capacitor banks over-correct a system beyond unity PF — a condition worth avoiding since excessive capacitive correction can produce unwanted voltage effects, resonance concerns, or tariff penalties depending on the system and utility requirements." }
     },
     {
       "@type": "Question",
@@ -125,7 +144,7 @@ href="https://www.electromechcalc.com/power-factor">
     {
       "@type": "Question",
       "name": "What happens if I over-correct power factor above 1.0 target?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Over-correction (adding too much capacitive kVAR) pushes the system into a leading power factor, which can cause overvoltage conditions and is itself a form of inefficiency and potential penalty under some tariffs. Automatic Power Factor Correction (APFC) panels with multiple switching steps are designed specifically to track the actual reactive demand and avoid both under- and over-correction." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Over-correction (adding too much capacitive kVAR) pushes the system into a leading power factor. Excessive capacitive correction can produce unwanted voltage effects, resonance concerns, or tariff penalties depending on the system and utility requirements. Automatic Power Factor Correction (APFC) panels with multiple switching steps are designed specifically to track the actual reactive demand and avoid both under- and over-correction." }
     }
   ]
 }
@@ -289,6 +308,9 @@ href="https://www.electromechcalc.com/power-factor">
     padding:10px 8px;
     font-size:13px;
     font-weight:600;
+    font-family:inherit;
+    border:none;
+    background:transparent;
     border-radius:8px;
     cursor:pointer;
     color:#64748b;
@@ -474,14 +496,15 @@ href="https://www.electromechcalc.com/power-factor">
     <!-- INPUT PANEL -->
     <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
       <h2 class="font-display font-bold text-xl text-brandDark mb-1">Power Factor Calculator (Power Triangle)</h2>
-      <p class="text-xs text-gray-500 mb-6">Find power factor and the missing power-triangle value from whichever two of kW, kVAR, and kVA you already know.</p>
+      <p class="text-xs text-gray-500 mb-6">Find the missing power-triangle values from whichever two of kW, kVAR, kVA, and power factor you already know.</p>
 
       <div class="mb-5">
         <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_power_factor">I know...</span>
         <div class="flex flex-wrap gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_power_factor">
-          <div id="modeKwKvar" class="toggle-btn active" onclick="setCalcMode('kwkvar')">kW &amp; kVAR</div>
-          <div id="modeKwKva" class="toggle-btn" onclick="setCalcMode('kwkva')">kW &amp; kVA</div>
-          <div id="modeKvaKvar" class="toggle-btn" onclick="setCalcMode('kvakvar')">kVA &amp; kVAR</div>
+          <button type="button" id="modeKwKvar" class="toggle-btn active" onclick="setCalcMode('kwkvar')" aria-pressed="true">kW &amp; kVAR</button>
+          <button type="button" id="modeKwKva" class="toggle-btn" onclick="setCalcMode('kwkva')" aria-pressed="false">kW &amp; kVA</button>
+          <button type="button" id="modeKvaKvar" class="toggle-btn" onclick="setCalcMode('kvakvar')" aria-pressed="false">kVA &amp; kVAR</button>
+          <button type="button" id="modeKwPf" class="toggle-btn" onclick="setCalcMode('kwpf')" aria-pressed="false">kW &amp; PF</button>
         </div>
       </div>
 
@@ -498,9 +521,13 @@ href="https://www.electromechcalc.com/power-factor">
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pfKva">Apparent Power (kVA)</label>
           <input id="pfKva" type="number" value="125" step="1" min="0" class="input-field mt-2">
         </div>
+        <div id="pfFieldWrap" class="hidden">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pfInput">Power Factor</label>
+          <input id="pfInput" type="number" value="0.80" step="0.01" min="0.01" max="1" class="input-field mt-2">
+        </div>
       </div>
 
-      <div id="pfValidationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+      <div id="pfValidationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculatePF()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate
@@ -513,12 +540,12 @@ href="https://www.electromechcalc.com/power-factor">
     </div>
 
     <!-- RESULT PANEL -->
-    <div class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
 
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full sun-badge opacity-20"></div>
         <span id="pfResultLabel" class="font-mono text-[10px] uppercase tracking-wider text-amber-400">Power Factor</span>
-        <div id="pfResultMain" class="font-display font-bold text-3xl mt-1">— </div>
+        <div id="pfResultMain" class="font-display font-bold text-3xl mt-1" aria-live="polite" aria-atomic="true">— </div>
         <p id="pfResultSub" class="text-xs text-gray-400 mt-1">Enter values and click Calculate</p>
       </div>
 
@@ -591,15 +618,15 @@ href="https://www.electromechcalc.com/power-factor">
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IEC / IEEE / BIS / NEC</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Technical review: Electrical engineering fundamentals</p>
     </div>
   <p>
-    <strong>Power factor formula:</strong> PF = kW ÷ kVA, always between 0 and 1 — a PF of 0.8 means only 80% of the apparent power is doing useful work. Power Factor (PF) is one of the most important concepts in electrical engineering — it indicates how efficiently electrical power is actually being used in a system. Industrial plants, factories, commercial buildings, and large electrical loads often run inductive equipment such as motors, transformers, welding machines, and compressors, and these loads consume both useful power and reactive power at the same time. Understanding how <strong>kW</strong>, <strong>kVAR</strong>, and <strong>kVA</strong> relate to each other is what lets engineers improve system efficiency, reduce electricity bills, and avoid utility penalties.
+    <strong>Power factor formula:</strong> PF = kW ÷ kVA. For this calculator, PF is expressed as a magnitude from 0 to 1 — a power factor of 0.8 means that real power is 80% of the apparent-power magnitude for the given AC load condition; it does not mean that 20% of the electrical energy is simply wasted. Power Factor (PF) is one of the most important concepts in electrical engineering — it is the ratio of real power to apparent power, and is not the same as equipment efficiency. Industrial plants, factories, commercial buildings, and large electrical loads often run inductive equipment such as motors, transformers, welding machines, and compressors, and these loads consume both useful power and reactive power at the same time. Understanding how <strong>kW</strong>, <strong>kVAR</strong>, and <strong>kVA</strong> relate to each other is what lets engineers reduce current and losses, and manage electricity costs where tariffs include demand, power-factor, or reactive-energy charges.
   </p>
 
   <h2>1. What is kW (Real Power)?</h2>
   <p>
-    kW (kilowatt) is the actual useful power that performs work — it runs motors, lights lamps, heats heaters, and powers equipment. This is the power that produces useful output, and it's the power you're normally billed for.
+    kW (kilowatt) is the actual useful power that performs work — it runs motors, lights lamps, heats heaters, and powers equipment. This is the power that produces useful output. Electricity tariffs commonly charge for energy consumption in kWh, and some commercial or industrial tariffs also include demand, power factor, or reactive-energy charges.
   </p>
   <div class="formula-block">Real Power = kW
 
@@ -646,16 +673,23 @@ Examples:
 
   <h2>5. What is Power Factor?</h2>
   <p>
-    Power Factor is the ratio of real power to apparent power, and it indicates how effectively electrical power is being converted into useful work. The value always falls between 0 and 1.
+    Power Factor is the ratio of real power (kW) to apparent power (kVA). A lower power factor means the electrical system requires more current to deliver the same real power. For this calculator, power factor is represented as a magnitude from 0 to 1 — in AC systems, power factor may also be described as leading or lagging depending on the reactive behavior of the load.
   </p>
   <div class="formula-block">Power Factor = kW ÷ kVA</div>
 
+  <p class="text-sm font-semibold text-brandDark mt-4 mb-1">Typical Practical Interpretation</p>
+  <p class="text-xs text-gray-500 mb-2">These ranges are general engineering guidance, not universal utility limits — actual thresholds vary by utility, tariff, and contract.</p>
+
   <table>
-    <tr><th>PF</th><th>Condition</th></tr>
-    <tr><td>1.0</td><td>Excellent</td></tr>
-    <tr><td>0.95</td><td>Very Good</td></tr>
-    <tr><td>0.85</td><td>Acceptable</td></tr>
-    <tr><td>Below 0.80</td><td>Poor</td></tr>
+    <thead>
+      <tr><th scope="col">PF</th><th scope="col">Condition</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1.0</td><td>Excellent</td></tr>
+      <tr><td>0.95</td><td>Very Good</td></tr>
+      <tr><td>0.85</td><td>Acceptable</td></tr>
+      <tr><td>Below 0.80</td><td>Poor</td></tr>
+    </tbody>
   </table>
 
   <h2>6. Why Low Power Factor Is Bad</h2>
@@ -663,8 +697,7 @@ Examples:
     A low power factor means more current is required to deliver the same amount of useful power. This causes:
   </p>
   <ul>
-    <li>Higher electricity bills</li>
-    <li>Utility penalties</li>
+    <li>Potentially higher electricity costs where tariffs include power-factor, kVA demand, maximum-demand, or reactive-energy charges</li>
     <li>Transformer overloading</li>
     <li>Cable overheating</li>
     <li>Higher power losses</li>
@@ -696,7 +729,7 @@ PF = 0.95+</div>
     <li>Capacitor Banks (most common)</li>
     <li>Automatic Power Factor Correction Panels (APFC)</li>
     <li>Synchronous Condensers</li>
-    <li>VFDs with PF Correction</li>
+    <li>VFDs with suitable power-quality and harmonic mitigation</li>
     <li>Proper Motor Sizing</li>
     <li>Avoiding Idle Running Motors</li>
   </ul>
@@ -721,7 +754,7 @@ kVA = 105.26 kVA</div>
 
   <h2>Conclusion</h2>
   <p>
-    kW represents useful power, kVAR represents reactive power, and kVA represents total apparent power — power factor tells you how efficiently that apparent power is being converted into useful work. A higher power factor reduces losses, decreases current, improves voltage regulation, and lowers electricity costs. Installing capacitor banks and APFC systems is the most effective way to improve power factor in industrial and commercial electrical systems, and maintaining a power factor above 0.95 is generally considered good engineering practice.
+    kW represents useful power, kVAR represents reactive power, and kVA represents total apparent power — power factor indicates how effectively the electrical system's apparent power is being utilized in terms of real power; it is not the same as equipment efficiency. A higher power factor reduces losses, decreases current, improves voltage regulation, and lowers electricity costs where demand, kVA, reactive-energy, or power-factor charges apply. Capacitor banks and APFC systems are among the most common methods used for industrial and commercial power-factor correction, and maintaining a power factor above 0.95 is generally considered good engineering practice.
   </p>
 
 </article>
@@ -739,7 +772,7 @@ kVA = 105.26 kVA</div>
         What is a "good" power factor?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A power factor of 0.95 or above is generally considered very good in industrial and commercial practice, with 1.0 being the theoretical ideal. Most utilities begin applying penalties or surcharges once PF drops below 0.85-0.90, which is why 0.95+ is a common target for facilities doing power factor correction.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A power factor of 0.95 or above is generally considered very good in industrial and commercial practice, with 1.0 being the theoretical ideal. Some utilities apply penalties or additional charges when power factor falls below a specified threshold, though the exact threshold and tariff structure vary by utility, country, and contract — which is why 0.95+ is a commonly used target for facilities doing power factor correction.</p>
     </details>
 
     <details class="py-5">
@@ -755,7 +788,7 @@ kVA = 105.26 kVA</div>
         What's the difference between lagging and leading power factor?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A lagging power factor occurs with inductive loads (motors, transformers) where current lags behind voltage — the most common case in industrial settings. A leading power factor occurs with capacitive loads where current leads voltage, which can happen if capacitor banks over-correct a system beyond unity PF, itself a condition worth avoiding since it also causes inefficiency and can raise system voltage.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A lagging power factor occurs with inductive loads (motors, transformers) where current lags behind voltage — the most common case in industrial settings. A leading power factor occurs with capacitive loads where current leads voltage, which can happen if capacitor banks over-correct a system beyond unity PF — a condition worth avoiding since excessive capacitive correction can produce unwanted voltage effects, resonance concerns, or tariff penalties depending on the system and utility requirements.</p>
     </details>
 
     <details class="py-5">
@@ -795,7 +828,7 @@ kVA = 105.26 kVA</div>
         What happens if I over-correct power factor above 1.0 target?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Over-correction (adding too much capacitive kVAR) pushes the system into a leading power factor, which can cause overvoltage conditions and is itself a form of inefficiency and potential penalty under some tariffs. Automatic Power Factor Correction (APFC) panels with multiple switching steps are designed specifically to track the actual reactive demand and avoid both under- and over-correction.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Over-correction (adding too much capacitive kVAR) pushes the system into a leading power factor. Excessive capacitive correction can produce unwanted voltage effects, resonance concerns, or tariff penalties depending on the system and utility requirements. Automatic Power Factor Correction (APFC) panels with multiple switching steps are designed specifically to track the actual reactive demand and avoid both under- and over-correction.</p>
     </details>
   </div>
 </section>
@@ -876,12 +909,18 @@ kVA = 105.26 kVA</div>
     document.getElementById('modeKwKvar').classList.toggle('active', mode === 'kwkvar');
     document.getElementById('modeKwKva').classList.toggle('active', mode === 'kwkva');
     document.getElementById('modeKvaKvar').classList.toggle('active', mode === 'kvakvar');
+    document.getElementById('modeKwPf').classList.toggle('active', mode === 'kwpf');
+    document.getElementById('modeKwKvar').setAttribute('aria-pressed', mode === 'kwkvar' ? 'true' : 'false');
+    document.getElementById('modeKwKva').setAttribute('aria-pressed', mode === 'kwkva' ? 'true' : 'false');
+    document.getElementById('modeKvaKvar').setAttribute('aria-pressed', mode === 'kvakvar' ? 'true' : 'false');
+    document.getElementById('modeKwPf').setAttribute('aria-pressed', mode === 'kwpf' ? 'true' : 'false');
 
     document.getElementById('kwFieldWrap').classList.toggle('hidden', mode === 'kvakvar');
-    document.getElementById('kvarFieldWrap').classList.toggle('hidden', mode === 'kwkva');
-    document.getElementById('kvaFieldWrap').classList.toggle('hidden', mode === 'kwkvar');
+    document.getElementById('kvarFieldWrap').classList.toggle('hidden', mode === 'kwkva' || mode === 'kwpf');
+    document.getElementById('kvaFieldWrap').classList.toggle('hidden', mode === 'kwkvar' || mode === 'kwpf');
+    document.getElementById('pfFieldWrap').classList.toggle('hidden', mode !== 'kwpf');
 
-    const labels = { kwkvar: 'Power Factor', kwkva: 'Power Factor', kvakvar: 'Power Factor' };
+    const labels = { kwkvar: 'Power Factor', kwkva: 'Power Factor', kvakvar: 'Power Factor', kwpf: 'Apparent Power' };
     document.getElementById('pfResultLabel').textContent = labels[mode];
     document.getElementById('pfResultMain').textContent = '—';
     document.getElementById('pfResultSub').textContent = 'Enter values and click Calculate';
@@ -889,7 +928,8 @@ kVA = 105.26 kVA</div>
     const chips = {
       kwkvar: 'kVA² = kW² + kVAR²',
       kwkva: 'kVAR² = kVA² − kW²',
-      kvakvar: 'kW² = kVA² − kVAR²'
+      kvakvar: 'kW² = kVA² − kVAR²',
+      kwpf: 'kVA = kW ÷ PF'
     };
     document.getElementById('formulaChipPF').textContent = chips[mode];
 
@@ -923,7 +963,7 @@ kVA = 105.26 kVA</div>
       document.getElementById('pfResultMain').textContent = pf.toFixed(3);
       document.getElementById('pfResultSub').textContent = 'kVA \u2248 ' + kva.toFixed(2) + ' kVA';
       document.getElementById('pfNotes').textContent =
-        `At ${kw} kW real power and ${kvar} kVAR reactive power, apparent power works out to about ${kva.toFixed(2)} kVA, giving a power factor of ${pf.toFixed(3)}. ${pf >= 0.95 ? 'This is a good power factor.' : pf >= 0.85 ? 'This is acceptable but could be improved.' : 'This is a poor power factor and likely attracts utility penalties.'}`;
+        `At ${kw} kW real power and ${kvar} kVAR reactive power, apparent power works out to about ${kva.toFixed(2)} kVA, giving a power factor of ${pf.toFixed(3)}. ${pf >= 0.95 ? 'This is a good power factor.' : pf >= 0.85 ? 'This is acceptable but could be improved.' : 'This is a low power factor and may increase current, losses, or tariff-related charges depending on the utility tariff.'}`;
 
     } else if (pfCalcMode === 'kwkva'){
       kw = parseFloat(document.getElementById('pfKw').value);
@@ -939,9 +979,9 @@ kVA = 105.26 kVA</div>
       document.getElementById('pfResultMain').textContent = pf.toFixed(3);
       document.getElementById('pfResultSub').textContent = 'kVAR \u2248 ' + kvar.toFixed(2) + ' kVAR';
       document.getElementById('pfNotes').textContent =
-        `At ${kw} kW real power and ${kva} kVA apparent power, reactive power works out to about ${kvar.toFixed(2)} kVAR, giving a power factor of ${pf.toFixed(3)}. ${pf >= 0.95 ? 'This is a good power factor.' : pf >= 0.85 ? 'This is acceptable but could be improved.' : 'This is a poor power factor and likely attracts utility penalties.'}`;
+        `At ${kw} kW real power and ${kva} kVA apparent power, reactive power works out to about ${kvar.toFixed(2)} kVAR, giving a power factor of ${pf.toFixed(3)}. ${pf >= 0.95 ? 'This is a good power factor.' : pf >= 0.85 ? 'This is acceptable but could be improved.' : 'This is a low power factor and may increase current, losses, or tariff-related charges depending on the utility tariff.'}`;
 
-    } else {
+    } else if (pfCalcMode === 'kvakvar'){
       kva = parseFloat(document.getElementById('pfKva').value);
       kvar = parseFloat(document.getElementById('pfKvar').value);
       if (!Number.isFinite(kva) || kva <= 0){ errors.push('Apparent Power (kVA) must be greater than 0.'); }
@@ -955,7 +995,22 @@ kVA = 105.26 kVA</div>
       document.getElementById('pfResultMain').textContent = pf.toFixed(3);
       document.getElementById('pfResultSub').textContent = 'kW \u2248 ' + kw.toFixed(2) + ' kW';
       document.getElementById('pfNotes').textContent =
-        `At ${kva} kVA apparent power and ${kvar} kVAR reactive power, real power works out to about ${kw.toFixed(2)} kW, giving a power factor of ${pf.toFixed(3)}. ${pf >= 0.95 ? 'This is a good power factor.' : pf >= 0.85 ? 'This is acceptable but could be improved.' : 'This is a poor power factor and likely attracts utility penalties.'}`;
+        `At ${kva} kVA apparent power and ${kvar} kVAR reactive power, real power works out to about ${kw.toFixed(2)} kW, giving a power factor of ${pf.toFixed(3)}. ${pf >= 0.95 ? 'This is a good power factor.' : pf >= 0.85 ? 'This is acceptable but could be improved.' : 'This is a low power factor and may increase current, losses, or tariff-related charges depending on the utility tariff.'}`;
+
+    } else {
+      kw = parseFloat(document.getElementById('pfKw').value);
+      pf = parseFloat(document.getElementById('pfInput').value);
+      if (!Number.isFinite(kw) || kw <= 0){ errors.push('Real Power (kW) must be greater than 0.'); }
+      if (!Number.isFinite(pf) || pf <= 0 || pf > 1){ errors.push('Power Factor must be greater than 0 and no more than 1.'); }
+      if (errors.length){ showErrors(); return; }
+
+      kva = kw / pf;
+      kvar = Math.sqrt(Math.max(0, kva*kva - kw*kw));
+
+      document.getElementById('pfResultMain').textContent = kva.toFixed(2) + ' kVA';
+      document.getElementById('pfResultSub').textContent = 'kVAR \u2248 ' + kvar.toFixed(2) + ' kVAR';
+      document.getElementById('pfNotes').textContent =
+        `At ${kw} kW real power and a power factor of ${pf}, apparent power works out to about ${kva.toFixed(2)} kVA, with reactive power of about ${kvar.toFixed(2)} kVAR. ${pf >= 0.95 ? 'This is a good power factor.' : pf >= 0.85 ? 'This is acceptable but could be improved.' : 'This is a low power factor and may increase current, losses, or tariff-related charges depending on the utility tariff.'}`;
     }
 
     validationBox.classList.add('hidden');
@@ -973,7 +1028,13 @@ kVA = 105.26 kVA</div>
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
     var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
+
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
