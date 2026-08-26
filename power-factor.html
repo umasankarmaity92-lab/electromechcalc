@@ -32,7 +32,7 @@
 content="Understand power factor, kW, kVAR, and kVA — what they mean, how they relate, and why power factor correction matters in electrical systems.">
 
 <meta name="keywords"
-content="power factor, kW kVAR kVA, power triangle, power factor correction, capacitor bank sizing, APFC">
+content="power factor, kW kVAR kVA, power triangle, power factor correction, APFC">
 <meta name="robots" content="index, follow">
 
 <link rel="canonical"
@@ -461,7 +461,7 @@ href="https://www.electromechcalc.com/power-factor">
 
 
     <p class="text-gray-400 max-w-2xl mx-auto">
-      Real power, reactive power, and apparent power answer three different questions. Here's how they relate, why low power factor costs money, and how to size a capacitor bank to fix it.
+      Real power, reactive power, and apparent power answer three different questions. Here's how they relate, and why low power factor costs money.
     </p>
 
   </div>
@@ -473,36 +473,31 @@ href="https://www.electromechcalc.com/power-factor">
 
     <!-- INPUT PANEL -->
     <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-      <h2 class="font-display font-bold text-xl text-brandDark mb-1">Power Factor &amp; Capacitor Sizing Calculator</h2>
-      <p class="text-xs text-gray-500 mb-6">Find kVA and power factor from kW and kVAR, or size the capacitor bank needed to hit a target power factor.</p>
+      <h2 class="font-display font-bold text-xl text-brandDark mb-1">Power Factor Calculator (Power Triangle)</h2>
+      <p class="text-xs text-gray-500 mb-6">Find power factor and the missing power-triangle value from whichever two of kW, kVAR, and kVA you already know.</p>
 
       <div class="mb-5">
-        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_power_factor">Calculation Mode</span>
-        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_power_factor">
-          <div id="modePF" class="toggle-btn active" onclick="setCalcMode('pf')">Find PF &amp; kVA</div>
-          <div id="modeCap" class="toggle-btn" onclick="setCalcMode('cap')">Capacitor Sizing</div>
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_power_factor">I know...</span>
+        <div class="flex flex-wrap gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_power_factor">
+          <div id="modeKwKvar" class="toggle-btn active" onclick="setCalcMode('kwkvar')">kW &amp; kVAR</div>
+          <div id="modeKwKva" class="toggle-btn" onclick="setCalcMode('kwkva')">kW &amp; kVA</div>
+          <div id="modeKvaKvar" class="toggle-btn" onclick="setCalcMode('kvakvar')">kVA &amp; kVAR</div>
         </div>
       </div>
 
       <div class="grid grid-cols-2 gap-4 mb-5">
-        <div>
+        <div id="kwFieldWrap">
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pfKw">Real Power (kW)</label>
-          <input id="pfKw" type="number" value="100" step="1" class="input-field mt-2">
+          <input id="pfKw" type="number" value="100" step="1" min="0" class="input-field mt-2">
         </div>
         <div id="kvarFieldWrap">
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pfKvar">Reactive Power (kVAR)</label>
-          <input id="pfKvar" type="number" value="75" step="1" class="input-field mt-2">
+          <input id="pfKvar" type="number" value="75" step="1" min="0" class="input-field mt-2">
         </div>
-        <div id="existingPfFieldWrap" class="hidden">
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pfExisting">Existing Power Factor</label>
-          <input id="pfExisting" type="number" value="0.80" step="0.01" min="0.1" max="1" class="input-field mt-2">
+        <div id="kvaFieldWrap" class="hidden">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pfKva">Apparent Power (kVA)</label>
+          <input id="pfKva" type="number" value="125" step="1" min="0" class="input-field mt-2">
         </div>
-      </div>
-
-      <div class="mb-5" id="targetPfFieldWrap" style="display:none;">
-        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pfTarget">Target Power Factor</label>
-        <input id="pfTarget" type="number" value="0.95" step="0.01" min="0.1" max="1" class="input-field mt-2">
-        <p class="text-[11px] text-gray-400 mt-1">Typical utility target: 0.95 or above.</p>
       </div>
 
       <div id="pfValidationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
@@ -512,9 +507,8 @@ href="https://www.electromechcalc.com/power-factor">
       </button>
 
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
-        <span class="formula-chip">kVA² = kW² + kVAR²</span>
+        <span class="formula-chip" id="formulaChipPF">kVA² = kW² + kVAR²</span>
         <span class="formula-chip">PF = kW ÷ kVA</span>
-        <span class="formula-chip">Qc = kW × (tanφ1 − tanφ2)</span>
       </div>
     </div>
 
@@ -529,7 +523,7 @@ href="https://www.electromechcalc.com/power-factor">
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
-        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500">Sizing Notes</span>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500">Notes</span>
         <p id="pfNotes" class="text-sm text-gray-600 mt-1.5 leading-relaxed">Improving power factor lowers kVA demand for the same kW, which reduces current, cable losses, and utility penalties.</p>
       </div>
 
@@ -867,88 +861,109 @@ kVA = 105.26 kVA</div>
     document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
   }
 
-  // ===== Power Factor / Capacitor Sizing Calculator Logic =====
-  let pfCalcMode = 'pf';
+  // ===== Power Factor / Power Triangle Calculator Logic =====
+  // Previously included a "Capacitor Sizing" mode (existing PF + target
+  // PF -> required capacitor kVAR) that duplicated the dedicated APFC
+  // Calculator (/apfc) almost exactly. Removed here in favor of three
+  // power-triangle modes covering every "I know these two values, find
+  // the other two" case — genuinely complementary to /apfc rather than
+  // overlapping with it. For capacitor bank sizing itself, this page
+  // now points to the APFC Calculator instead of calculating it here.
+  let pfCalcMode = 'kwkvar';
 
   function setCalcMode(mode){
     pfCalcMode = mode;
-    document.getElementById('modePF').classList.toggle('active', mode === 'pf');
-    document.getElementById('modeCap').classList.toggle('active', mode === 'cap');
+    document.getElementById('modeKwKvar').classList.toggle('active', mode === 'kwkvar');
+    document.getElementById('modeKwKva').classList.toggle('active', mode === 'kwkva');
+    document.getElementById('modeKvaKvar').classList.toggle('active', mode === 'kvakvar');
 
-    document.getElementById('kvarFieldWrap').classList.toggle('hidden', mode !== 'pf');
-    document.getElementById('existingPfFieldWrap').classList.toggle('hidden', mode !== 'cap');
-    document.getElementById('targetPfFieldWrap').style.display = (mode === 'cap') ? 'block' : 'none';
+    document.getElementById('kwFieldWrap').classList.toggle('hidden', mode === 'kvakvar');
+    document.getElementById('kvarFieldWrap').classList.toggle('hidden', mode === 'kwkva');
+    document.getElementById('kvaFieldWrap').classList.toggle('hidden', mode === 'kwkvar');
 
-    document.getElementById('pfResultLabel').textContent = (mode === 'pf') ? 'Power Factor' : 'Required Capacitor kVAR';
+    const labels = { kwkvar: 'Power Factor', kwkva: 'Power Factor', kvakvar: 'Power Factor' };
+    document.getElementById('pfResultLabel').textContent = labels[mode];
     document.getElementById('pfResultMain').textContent = '—';
     document.getElementById('pfResultSub').textContent = 'Enter values and click Calculate';
+
+    const chips = {
+      kwkvar: 'kVA² = kW² + kVAR²',
+      kwkva: 'kVAR² = kVA² − kW²',
+      kvakvar: 'kW² = kVA² − kVAR²'
+    };
+    document.getElementById('formulaChipPF').textContent = chips[mode];
 
     document.getElementById('pfValidationBox').classList.add('hidden');
     document.getElementById('pfValidationBox').innerHTML = '';
   }
 
   function calculatePF(){
-    const kw = parseFloat(document.getElementById('pfKw').value);
-    const errors = [];
-    if (isNaN(kw) || kw <= 0){ errors.push('Real Power (kW) must be greater than 0.'); }
-
     const validationBox = document.getElementById('pfValidationBox');
+    const errors = [];
 
-    if (pfCalcMode === 'pf'){
-      const kvar = parseFloat(document.getElementById('pfKvar').value);
-      if (isNaN(kvar) || kvar < 0){ errors.push('Reactive Power (kVAR) must be 0 or greater.'); }
+    function showErrors(){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      document.getElementById('pfResultMain').textContent = '\u2014';
+      document.getElementById('pfResultSub').textContent = 'Fix the input errors above to see a valid result.';
+    }
 
-      if (errors.length){
-        validationBox.classList.remove('hidden');
-        validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
-        document.getElementById('pfResultMain').textContent = '—';
-        document.getElementById('pfResultSub').textContent = 'Fix the input errors above to see a valid result.';
-        return;
-      }
-      validationBox.classList.add('hidden');
-      validationBox.innerHTML = '';
+    let pf, kva, kvar, kw;
 
-      const kva = Math.sqrt(kw*kw + kvar*kvar);
-      const pf = kw / kva;
+    if (pfCalcMode === 'kwkvar'){
+      kw = parseFloat(document.getElementById('pfKw').value);
+      kvar = parseFloat(document.getElementById('pfKvar').value);
+      if (!Number.isFinite(kw) || kw <= 0){ errors.push('Real Power (kW) must be greater than 0.'); }
+      if (!Number.isFinite(kvar) || kvar < 0){ errors.push('Reactive Power (kVAR) must be 0 or greater.'); }
+      if (errors.length){ showErrors(); return; }
+
+      kva = Math.sqrt(kw*kw + kvar*kvar);
+      pf = kw / kva;
 
       document.getElementById('pfResultMain').textContent = pf.toFixed(3);
-      document.getElementById('pfResultSub').textContent = 'kVA ≈ ' + kva.toFixed(2) + ' kVA';
+      document.getElementById('pfResultSub').textContent = 'kVA \u2248 ' + kva.toFixed(2) + ' kVA';
       document.getElementById('pfNotes').textContent =
         `At ${kw} kW real power and ${kvar} kVAR reactive power, apparent power works out to about ${kva.toFixed(2)} kVA, giving a power factor of ${pf.toFixed(3)}. ${pf >= 0.95 ? 'This is a good power factor.' : pf >= 0.85 ? 'This is acceptable but could be improved.' : 'This is a poor power factor and likely attracts utility penalties.'}`;
 
-    } else {
-      const existingPf = parseFloat(document.getElementById('pfExisting').value);
-      const targetPf = parseFloat(document.getElementById('pfTarget').value);
+    } else if (pfCalcMode === 'kwkva'){
+      kw = parseFloat(document.getElementById('pfKw').value);
+      kva = parseFloat(document.getElementById('pfKva').value);
+      if (!Number.isFinite(kw) || kw <= 0){ errors.push('Real Power (kW) must be greater than 0.'); }
+      if (!Number.isFinite(kva) || kva <= 0){ errors.push('Apparent Power (kVA) must be greater than 0.'); }
+      if (!errors.length && kva < kw){ errors.push('Apparent Power (kVA) cannot be less than Real Power (kW) \u2014 check your figures.'); }
+      if (errors.length){ showErrors(); return; }
 
-      if (isNaN(existingPf) || existingPf <= 0 || existingPf > 1){ errors.push('Existing Power Factor must be between 0.1 and 1.'); }
-      if (isNaN(targetPf) || targetPf <= 0 || targetPf > 1){ errors.push('Target Power Factor must be between 0.1 and 1.'); }
-      if (!errors.length && targetPf <= existingPf){ errors.push('Target Power Factor must be greater than the existing power factor.'); }
+      kvar = Math.sqrt(Math.max(0, kva*kva - kw*kw));
+      pf = kw / kva;
 
-      if (errors.length){
-        validationBox.classList.remove('hidden');
-        validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
-        document.getElementById('pfResultMain').textContent = '—';
-        document.getElementById('pfResultSub').textContent = 'Fix the input errors above to see a valid result.';
-        return;
-      }
-      validationBox.classList.add('hidden');
-      validationBox.innerHTML = '';
-
-      const phi1 = Math.acos(existingPf);
-      const phi2 = Math.acos(targetPf);
-      const capKvar = kw * (Math.tan(phi1) - Math.tan(phi2));
-      const oldKva = kw / existingPf;
-      const newKva = kw / targetPf;
-
-      document.getElementById('pfResultMain').textContent = capKvar.toFixed(2) + ' kVAR';
-      document.getElementById('pfResultSub').textContent = `kVA drops from ${oldKva.toFixed(2)} to ${newKva.toFixed(2)}`;
+      document.getElementById('pfResultMain').textContent = pf.toFixed(3);
+      document.getElementById('pfResultSub').textContent = 'kVAR \u2248 ' + kvar.toFixed(2) + ' kVAR';
       document.getElementById('pfNotes').textContent =
-        `To raise the power factor from ${existingPf} to ${targetPf} for a ${kw} kW load, install a capacitor bank rated at about ${capKvar.toFixed(2)} kVAR. This reduces apparent power demand from ${oldKva.toFixed(2)} kVA to ${newKva.toFixed(2)} kVA, cutting current and losses accordingly.`;
+        `At ${kw} kW real power and ${kva} kVA apparent power, reactive power works out to about ${kvar.toFixed(2)} kVAR, giving a power factor of ${pf.toFixed(3)}. ${pf >= 0.95 ? 'This is a good power factor.' : pf >= 0.85 ? 'This is acceptable but could be improved.' : 'This is a poor power factor and likely attracts utility penalties.'}`;
+
+    } else {
+      kva = parseFloat(document.getElementById('pfKva').value);
+      kvar = parseFloat(document.getElementById('pfKvar').value);
+      if (!Number.isFinite(kva) || kva <= 0){ errors.push('Apparent Power (kVA) must be greater than 0.'); }
+      if (!Number.isFinite(kvar) || kvar < 0){ errors.push('Reactive Power (kVAR) must be 0 or greater.'); }
+      if (!errors.length && kvar > kva){ errors.push('Reactive Power (kVAR) cannot be greater than Apparent Power (kVA) \u2014 check your figures.'); }
+      if (errors.length){ showErrors(); return; }
+
+      kw = Math.sqrt(Math.max(0, kva*kva - kvar*kvar));
+      pf = kw / kva;
+
+      document.getElementById('pfResultMain').textContent = pf.toFixed(3);
+      document.getElementById('pfResultSub').textContent = 'kW \u2248 ' + kw.toFixed(2) + ' kW';
+      document.getElementById('pfNotes').textContent =
+        `At ${kva} kVA apparent power and ${kvar} kVAR reactive power, real power works out to about ${kw.toFixed(2)} kW, giving a power factor of ${pf.toFixed(3)}. ${pf >= 0.95 ? 'This is a good power factor.' : pf >= 0.85 ? 'This is acceptable but could be improved.' : 'This is a poor power factor and likely attracts utility penalties.'}`;
     }
+
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
   }
 
   // run once on load with default values
-  setCalcMode('pf');
+  setCalcMode('kwkvar');
   calculatePF();
 </script>
 
