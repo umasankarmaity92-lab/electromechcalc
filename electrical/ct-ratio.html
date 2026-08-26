@@ -58,10 +58,18 @@
   "name": "CT Ratio Calculator",
   "url": "https://www.electromechcalc.com/electrical/ct-ratio",
   "applicationCategory": "UtilitiesApplication",
+  "applicationSubCategory": "Electrical Engineering Calculator",
+  "featureList": [
+    "CT primary rating selection from standard series",
+    "Utilization percentage calculation",
+    "Metering accuracy range guidance"
+  ],
   "operatingSystem": "Any",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free CT Ratio Calculator. Enter maximum load current and secondary current standard to get the recommended CT ratio and utilization percentage instantly, with formula, standard CT sizes, and worked example.",
-  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" },
+  "author": { "@type": "Person", "name": "Umasankar Maity", "url": "https://www.electromechcalc.com/about" },
+  "dateModified": "2026-08-26"
 }
 </script>
 
@@ -90,12 +98,12 @@
     {
       "@type": "Question",
       "name": "How do I choose the right CT primary rating for my application?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Select a standard CT primary rating close to, but not far above, your actual maximum expected load current — a common target is sizing so normal load current utilizes roughly 60-100% of the CT's rated primary current, since CT accuracy is generally best in this range and degrades noticeably at low utilization (well below rated current), which is common when a CT is significantly oversized relative to actual load." }
+      "acceptedAnswer": { "@type": "Answer", "text": "For basic metering-oriented selection, a common target is keeping normal load current reasonably close to the CT's rated primary current — roughly 60-100% utilization is often cited as a starting guideline, since CT accuracy generally improves in this range and degrades at low utilization. However, the actual acceptable operating range depends on the CT's accuracy class, manufacturer specifications, burden, application, and applicable standard — this is a general guideline, not a universal engineering rule." }
     },
     {
       "@type": "Question",
       "name": "Why is CT accuracy worse when it's oversized relative to actual load?",
-      "acceptedAnswer": { "@type": "Answer", "text": "A CT's accuracy specification applies primarily around and above roughly 20-25% of its rated primary current — well below that threshold, measurement error increases significantly and can become unacceptable for accurate metering or sensitive protection. An oversized CT (rated far above actual normal load current) often operates well below this accuracy-friendly range during normal conditions, degrading measurement quality even though the CT itself is undamaged and functioning." }
+      "acceptedAnswer": { "@type": "Answer", "text": "A CT's accuracy specification applies over a defined operating range relative to its rated primary current, commonly cited as starting around 20-25% and extending through 100% (and often somewhat beyond) — but the exact threshold varies by accuracy class, manufacturer, and applicable standard, so confirm the specific CT's published accuracy curve rather than treating any single percentage as universal. An oversized CT (rated far above actual normal load current) often operates well below its accuracy-friendly range during normal conditions, degrading measurement quality even though the CT itself is undamaged and functioning." }
     },
     {
       "@type": "Question",
@@ -480,7 +488,7 @@
         </div>
       </div>
 
-      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+      <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculateCTRatio()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate
@@ -492,7 +500,7 @@
     </div>
 
     <!-- RESULT PANEL -->
-    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4" role="status" aria-live="polite">
             <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Recommended CT Ratio</span>
@@ -501,7 +509,7 @@
 
         <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Utilization at Full Load</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">CT Utilization at Maximum Load</span>
             <span id="rUtilization" class="font-display font-semibold text-lg">—</span>
           </div>
           <div>
@@ -509,6 +517,7 @@
             <span id="rStatus" class="font-display font-semibold text-lg">—</span>
           </div>
         </div>
+        <p class="text-[11px] text-gray-500 mt-3">This calculator is intended for basic metering-oriented CT primary selection. Protection CT selection requires separate fault-current, accuracy-class (e.g. 5P10, 5P20), and burden calculations \u2014 not covered here.</p>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
@@ -591,7 +600,7 @@
 
       <p><strong>Why utilization percentage matters as much as the ratio number itself:</strong> a CT's accuracy specification is tested and guaranteed within a specific operating range relative to its rated primary current &mdash; typically from around 20-25% of rated current up through 100% (and often somewhat beyond, for a defined accuracy limit factor). Operating well below this range, common when a CT is selected with excessive margin above actual load "to be safe," produces measurement error that grows disproportionately as actual current falls further below the CT's rated primary &mdash; a CT rated for 1000A serving an actual 200A load (20% utilization, right at the edge of typical accuracy range) will generally measure less accurately than a 250A-rated CT serving that same 200A load (80% utilization, comfortably within range).</p>
 
-      <p><strong>The trade-off against future load growth:</strong> selecting a CT ratio tightly matched to today's exact load current creates a real tension with anticipated future load growth &mdash; a CT sized precisely for current load may need replacement (a more disruptive task than most other electrical upgrades, since it typically requires opening the CT's primary circuit) if load grows meaningfully beyond its rated primary current. Many designers deliberately select a CT primary rating that comfortably covers a reasonable projected future load, accepting a somewhat lower utilization percentage today as a worthwhile trade-off against avoiding a CT replacement in a few years &mdash; this is a legitimate design judgment call, not a mistake, as long as the resulting utilization percentage doesn't drop so low that current accuracy becomes genuinely inadequate for the application's actual metering or protection needs.</p>
+      <p><strong>The trade-off against future load growth:</strong> selecting a CT ratio tightly matched to today's exact load current creates a real tension with anticipated future load growth &mdash; a CT sized precisely for current load may need replacement if load grows meaningfully beyond its rated primary current, and replacement can require significant electrical isolation, access, and rewiring work depending on the CT's construction (window/bar-type, wound-type, etc.) and installation arrangement. Many designers deliberately select a CT primary rating that comfortably covers a reasonable projected future load, accepting a somewhat lower utilization percentage today as a worthwhile trade-off against avoiding a CT replacement in a few years &mdash; this is a legitimate design judgment call, not a mistake, as long as the resulting utilization percentage doesn't drop so low that current accuracy becomes genuinely inadequate for the application's actual metering or protection needs.</p>
 
       <p><strong>Understanding CT accuracy classes:</strong> a metering CT's accuracy class (commonly 0.2, 0.5, 1.0, or similar) states the maximum percentage error permitted within its rated operating range at rated burden &mdash; a Class 0.5 CT guarantees no more than 0.5% ratio error under specified conditions, tighter (better) than a Class 1.0 CT's 1% guarantee. Higher-accuracy classes (like 0.2, sometimes 0.2S for extended accurate range down to lower currents) are typically specified for revenue/billing metering where financial accuracy matters most, while looser classes suffice for general indication or less critical monitoring purposes. The "S" designation on some accuracy classes specifically indicates extended accuracy performance down to lower current levels (often 1% of rated current), useful for applications needing accurate measurement across a wide load range rather than just near full load.</p>
 
@@ -682,7 +691,7 @@
         How do I choose the right CT primary rating for my application?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Select a standard CT primary rating close to, but not far above, your actual maximum expected load current — a common target is sizing so normal load current utilizes roughly 60-100% of the CT's rated primary current, since CT accuracy is generally best in this range and degrades noticeably at low utilization (well below rated current), which is common when a CT is significantly oversized relative to actual load.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For basic metering-oriented selection, a common target is keeping normal load current reasonably close to the CT's rated primary current — roughly 60-100% utilization is often cited as a starting guideline, since CT accuracy generally improves in this range and degrades at low utilization. However, the actual acceptable operating range depends on the CT's accuracy class, manufacturer specifications, burden, application, and applicable standard — this is a general guideline, not a universal engineering rule.</p>
     </details>
 
     <details class="py-5">
@@ -690,7 +699,7 @@
         Why is CT accuracy worse when it's oversized relative to actual load?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A CT's accuracy specification applies primarily around and above roughly 20-25% of its rated primary current — well below that threshold, measurement error increases significantly and can become unacceptable for accurate metering or sensitive protection. An oversized CT (rated far above actual normal load current) often operates well below this accuracy-friendly range during normal conditions, degrading measurement quality even though the CT itself is undamaged and functioning.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A CT's accuracy specification applies over a defined operating range relative to its rated primary current, commonly cited as starting around 20-25% and extending through 100% (and often somewhat beyond) — but the exact threshold varies by accuracy class, manufacturer, and applicable standard, so confirm the specific CT's published accuracy curve rather than treating any single percentage as universal. An oversized CT (rated far above actual normal load current) often operates well below its accuracy-friendly range during normal conditions, degrading measurement quality even though the CT itself is undamaged and functioning.</p>
     </details>
 
     <details class="py-5">
@@ -767,7 +776,7 @@
 
     const validationBox = document.getElementById('validationBox');
     const errors = [];
-    if(isNaN(maxLoad) || maxLoad <= 0){ errors.push('Enter a valid maximum load current greater than 0.'); }
+    if(!Number.isFinite(maxLoad) || maxLoad <= 0){ errors.push('Enter a valid maximum load current greater than 0.'); }
 
     if(errors.length){
       validationBox.classList.remove('hidden');
@@ -787,15 +796,36 @@
     if(!selected){
       selected = standardRatings.find(r => r >= maxLoad);
     }
-    if(!selected) selected = Math.ceil(maxLoad / 1000) * 1000;
+    // Beyond the largest listed standard rating (5000A), do not
+    // fabricate a rounded "rating" (e.g. rounding 12,500A up to a
+    // made-up 13,000A) — that number isn't actually a standard CT
+    // primary rating and presenting it as one would be misleading.
+    // Extra-high-current CTs above this range exist but follow
+    // manufacturer/application-specific ratings rather than this
+    // page's reference list, so flag it honestly instead.
+    if(!selected){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = '\u2022 This load current (' + maxLoad + ' A) exceeds the standard CT primary rating range covered by this calculator (up to 5000 A). Extra-high-current CTs use manufacturer- and application-specific ratings \u2014 consult the CT manufacturer or a qualified electrical engineer for this load.';
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rUtilization').textContent = '\u2014';
+      document.getElementById('rStatus').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
 
     const utilization = (maxLoad / selected) * 100;
+    // Thresholds matched to this page's own written guidance (see
+    // Summary: "roughly 60-100% utilization for good metering
+    // accuracy") — previously this only flagged <25% as low and
+    // treated the entire 25-100% range as "Good," silently including
+    // the 25-60% band the page's own text says to avoid.
     let status = 'Good accuracy range';
     if(utilization < 25) status = 'Low utilization — check accuracy';
+    else if(utilization < 60) status = 'Below target range — acceptable but not ideal';
     else if(utilization > 100) status = 'Overloaded — increase CT rating';
 
     document.getElementById('rResult').textContent = selected + ':' + secondary;
-    document.getElementById('resultSub').textContent = 'For max load ' + maxLoad + 'A';
+    document.getElementById('resultSub').textContent = 'For max load ' + maxLoad + 'A \u2014 equivalent ratio ' + (selected / secondary).toFixed(secondary === 1 ? 0 : 1) + ':1';
     document.getElementById('rUtilization').textContent = utilization.toFixed(1) + '%';
     document.getElementById('rStatus').textContent = status;
 
@@ -807,7 +837,7 @@
                 <tr><td>Selected CT Primary Rating</td><td>${selected} A</td></tr>
                 <tr><td>Secondary Current</td><td>${secondary} A</td></tr>
                 <tr><td><strong>CT Ratio</strong></td><td><strong>${selected}:${secondary}</strong></td></tr>
-                <tr><td>Utilization at Full Load</td><td>${utilization.toFixed(1)}%</td></tr>
+                <tr><td>CT Utilization at Maximum Load</td><td>${utilization.toFixed(1)}%</td></tr>
                 <tr><td>Status</td><td>${status}</td></tr>
             </tbody>
         </table>
@@ -815,6 +845,14 @@
   }
 
   calculateCTRatio();
+
+  // Live recalculation as the user changes inputs — without this, a
+  // changed input followed by Copy/Share (without clicking Calculate
+  // again) would copy/share the stale previous result.
+  ['maxLoad', 'secondary'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) { el.addEventListener('input', calculateCTRatio); el.addEventListener('change', calculateCTRatio); }
+  });
 </script>
 
 <script>
