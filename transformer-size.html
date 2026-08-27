@@ -315,20 +315,21 @@
   body:not(.dark-theme) #calculator input,
   body:not(.dark-theme) #calculator select{ color:#111827 !important; }
 
-  /* headings + section labels: calculator.net blue (excluding the Reference
-     Transformer Rating card, which keeps its original theme-driven navy/amber look) */
+  /* headings + section labels: calculator.net blue */
   body:not(.dark-theme) #calculator h2,
-  body:not(.dark-theme) #calculator [class*="text-amber-"]:not(.result-tile *),
+  body:not(.dark-theme) #calculator [class*="text-amber-"],
   body:not(.dark-theme) #calculator [class*="text-sky-"],
   body:not(.dark-theme) #calculator .text-brandDark{ color:#1a5fa0 !important; }
 
   /* Reference Transformer Rating card: left exactly as original — dark navy
      gradient, amber label, white value, spark badge — not part of the flat
-     white/blue restyle above */
+     white/blue restyle above. Higher specificity (.result-tile prefix) than
+     the blanket amber rule above, so it correctly wins back to amber here. */
   body:not(.dark-theme) #calculator .result-tile{
     background:linear-gradient(160deg,#0B1220,#15233a) !important;
     border:none !important;
   }
+  body:not(.dark-theme) #calculator .result-tile [class*="text-amber-"]{ color:#fbbf24 !important; }
 
   /* Phase-type tabs: mimic the blue tab bar (inactive=blue bg/white text, active=white bg/blue text) */
   body:not(.dark-theme) #calculator .bg-gray-100:has(.toggle-btn){ background:#1a5fa0 !important; border:none !important; padding:3px !important; }
@@ -359,6 +360,30 @@
   body:not(.dark-theme) #calculator .calc-card{ background:#1a5fa0 !important; border-color:#1a5fa0 !important; color:#fff !important; }
   body:not(.dark-theme) #calculator .calc-card span{ color:#fff !important; }
   body:not(.dark-theme) #calculator .calc-card:hover{ background:#164e87 !important; }
+  /* extra href-based selector so the "All Electrical Calculators" row is covered
+     even if a class-based rule elsewhere wins on specificity/order */
+  body:not(.dark-theme) #calculator a[href="/electrical-calculators"]{ background:#1a5fa0 !important; border-color:#1a5fa0 !important; color:#fff !important; }
+  body:not(.dark-theme) #calculator a[href="/electrical-calculators"] span{ color:#fff !important; }
+
+  /* Electrical Pro Max card was rendering blue-on-blue (its amber-* classes were
+     losing to .calc-card on specificity) — force it white-on-blue explicitly,
+     with higher specificity than the blanket amber-color rule above */
+  body:not(.dark-theme) #calculator a.calc-card[href="/electrical-pro-max"]{
+    background:#1a5fa0 !important;
+    border-color:#1a5fa0 !important;
+    color:#fff !important;
+  }
+  body:not(.dark-theme) #calculator a.calc-card[href="/electrical-pro-max"] span{ color:#fff !important; }
+  body:not(.dark-theme) #calculator a.calc-card[href="/electrical-pro-max"]:hover{ background:#164e87 !important; }
+
+  /* dark mode: bold text inside body paragraphs/list items (the article/guide
+     content) wasn't turning white with the theme — force it explicitly */
+  body.dark-theme #calculator ~ * p strong,
+  body.dark-theme #calculator ~ * p b,
+  body.dark-theme #calculator ~ * li strong,
+  body.dark-theme p strong,
+  body.dark-theme p b,
+  body.dark-theme li strong{ color:#ffffff !important; }
 
   /* Load & Supply Details heading bar: solid blue, bled to the card's edges,
      like calculator.net's "Modify the values" bar */
