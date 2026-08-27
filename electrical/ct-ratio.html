@@ -18,6 +18,8 @@
       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
     document.documentElement.classList.add(t);
     document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+    var metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) { metaTheme.setAttribute('content', t === 'dark-theme' ? '#0B1220' : '#ffffff'); }
   } catch(e) {}
 })();
 </script>
@@ -58,18 +60,20 @@
   "name": "CT Ratio Calculator",
   "url": "https://www.electromechcalc.com/electrical/ct-ratio",
   "applicationCategory": "UtilitiesApplication",
+  "inLanguage": "en",
   "applicationSubCategory": "Electrical Engineering Calculator",
   "featureList": [
-    "CT primary rating selection from standard series",
-    "Utilization percentage calculation",
-    "Metering accuracy range guidance"
+    "CT primary rating selection from a standard series",
+    "CT utilization percentage calculation",
+    "Preliminary metering-oriented sizing guidance",
+    "Protection ALF screening"
   ],
   "operatingSystem": "Any",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free CT Ratio Calculator. Enter maximum load current and secondary current standard to get the recommended CT ratio and utilization percentage instantly, with formula, standard CT sizes, and worked example.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" },
   "author": { "@type": "Person", "name": "Umasankar Maity", "url": "https://www.electromechcalc.com/about" },
-  "dateModified": "2026-08-26"
+  "dateModified": "2026-08-27"
 }
 </script>
 
@@ -103,7 +107,7 @@
     {
       "@type": "Question",
       "name": "Why is CT accuracy worse when it's oversized relative to actual load?",
-      "acceptedAnswer": { "@type": "Answer", "text": "A CT's accuracy specification applies over a defined operating range relative to its rated primary current, commonly cited as starting around 20-25% and extending through 100% (and often somewhat beyond) — but the exact threshold varies by accuracy class, manufacturer, and applicable standard, so confirm the specific CT's published accuracy curve rather than treating any single percentage as universal. An oversized CT (rated far above actual normal load current) often operates well below its accuracy-friendly range during normal conditions, degrading measurement quality even though the CT itself is undamaged and functioning." }
+      "acceptedAnswer": { "@type": "Answer", "text": "The applicable accuracy range depends on the CT's accuracy class and the governing standard, not a single universal threshold — metering CT accuracy standards commonly specify error limits at several defined current points (for example, 5%, 20%, 100%, and 120% of rated primary current for common classes, with extended-range classes specifying additional lower-current points), rather than a single percentage below which accuracy simply stops applying. Confirm the specific CT's published accuracy class and curve rather than treating any single percentage as universal. An oversized CT (rated far above actual normal load current) often operates at low utilization during normal conditions, which is generally where measurement quality degrades most for a given accuracy class." }
     },
     {
       "@type": "Question",
@@ -435,7 +439,7 @@
       <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
         <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
           <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
-          Electrical · Metering & Protection
+          Electrical · Metering-Focused CT Selection
         </span>
         <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
           CT Ratio <span class="text-sky-400">Calculator</span>
@@ -447,14 +451,14 @@
     </div>
 
         <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
-          Free CT ratio calculator — enter your maximum load current to instantly get the correct current transformer (CT) ratio for accurate metering and protection.
+          Free CT ratio calculator — enter your maximum load current to get a recommended CT ratio for preliminary metering-oriented selection.
         </p>
       </div>
 
       <!-- Animation column -->
       <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
         <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
-          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" aria-hidden="true" style="opacity:.9">
             <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
             <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
           </svg>
@@ -474,10 +478,19 @@
             <h2 class="font-display font-semibold text-lg text-brandDark mb-1">CT Ratio Details</h2>
       <p class="text-xs text-gray-500 mb-6">Enter maximum load current and secondary current standard.</p>
 
+      <div class="mb-5">
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_ct_ratio">Application</span>
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_ct_ratio">
+          <button type="button" id="appMetering" class="toggle-btn active" onclick="setApplication('metering')" aria-pressed="true">Metering</button>
+          <button type="button" id="appProtection" class="toggle-btn" onclick="setApplication('protection')" aria-pressed="false">Protection</button>
+        </div>
+        <p class="text-[11px] text-gray-400 mt-2">Protection mode checks the CT's accuracy-limit factor (ALF) against your fault current &mdash; it does not verify knee-point voltage (for differential/REF schemes) or DC-offset/X-R behavior for fast-acting protection. Consult the manufacturer or a protection engineer for those.</p>
+      </div>
+
       <div class="space-y-4 mb-5">
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="maxLoad">Maximum Load Current (A)</label>
-          <input id="maxLoad" type="number" value="320" step="1" min="0" placeholder="e.g. 320" class="input-field mt-2">
+          <input id="maxLoad" type="number" value="320" step="1" min="0" placeholder="e.g. 320" class="input-field mt-2" aria-describedby="validationBox">
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="secondary">Secondary Current Standard</label>
@@ -486,11 +499,38 @@
             <option value="1">1 A</option>
           </select>
         </div>
+        <div id="protectionFieldsWrap" class="hidden space-y-4 pt-4 border-t border-gray-100">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="faultCurrent">Maximum Fault Current (A)</label>
+            <input id="faultCurrent" type="number" value="8000" step="1" min="0" placeholder="e.g. 8000" class="input-field mt-2">
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="protClass">Accuracy Class — informational only</label>
+              <select id="protClass" class="input-field mt-2">
+                <option value="5P" selected>5P</option>
+                <option value="10P">10P</option>
+              </select>
+              <p class="text-[10px] text-gray-400 mt-1">The composite-error requirement this class represents is not independently verified — only the numeric ALF below is checked.</p>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="ratedALF">CT's Rated ALF</label>
+              <select id="ratedALF" class="input-field mt-2">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+              </select>
+            </div>
+          </div>
+          <p class="text-[11px] text-gray-400">Actual operational ALF also depends on the CT's secondary winding resistance, actual external burden, and temperature — none of which this calculator collects, so burden-based correction is not calculated here. Verify against the manufacturer's published ALF derating data for a final check.</p>
+        </div>
       </div>
 
       <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
-      <button onclick="calculateCTRatio()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+      <button type="button" onclick="calculateCTRatio()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate
       </button>
 
@@ -500,24 +540,26 @@
     </div>
 
     <!-- RESULT PANEL -->
-    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4" role="status" aria-live="polite">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
             <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
-        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Recommended CT Ratio</span>
-        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Suggested CT Ratio</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1" role="status" aria-live="polite">—</div>
         <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
 
         <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">CT Utilization at Maximum Load</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rUtilizationLabel">CT Utilization at Maximum Load</span>
             <span id="rUtilization" class="font-display font-semibold text-lg">—</span>
           </div>
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Accuracy Status</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rStatusLabel">Sizing Status</span>
             <span id="rStatus" class="font-display font-semibold text-lg">—</span>
           </div>
         </div>
-        <p class="text-[11px] text-gray-500 mt-3">This calculator is intended for basic metering-oriented CT primary selection. Protection CT selection requires separate fault-current, accuracy-class (e.g. 5P10, 5P20), and burden calculations \u2014 not covered here.</p>
+        <p class="text-[11px] text-gray-500 mt-3">Metering mode provides a preliminary metering-oriented CT ratio. Protection mode checks the CT's accuracy-limit factor (ALF) against your fault current, with an optional burden correction &mdash; it does not verify knee-point voltage (differential/REF schemes) or DC-offset/X-R behavior (fast-acting protection), which require CT internal resistance and scheme-specific data not collected here.</p>
+        <p id="protectionScopeNote" class="text-[11px] text-amber-700 bg-amber-100 rounded px-2 py-1.5 mt-2 hidden"><strong>Protection screening only:</strong> this calculator checks required ALF against the selected rated ALF. It does not perform complete CT protection verification, including knee-point voltage, excitation characteristics, transient/DC-offset performance, or the manufacturer's full burden/internal-resistance calculation.</p>
+        <p id="protectionSafetyNote" class="text-[11px] text-red-700 bg-red-50 border border-red-200 rounded px-2 py-1.5 mt-2 hidden">⚠️ <strong>Safety:</strong> Never open-circuit an energized CT secondary. Follow the manufacturer's procedure and your site's electrical safety requirements before disconnecting any secondary-side device.</p>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
@@ -550,7 +592,7 @@
 
 <!-- ===================== SHARE / FEEDBACK BAR ===================== -->
 <span id="shareFeedbackAnchor"></span>
-<section id="shareFeedbackBar" class="max-w-6xl mx-auto px-4 mb-14">
+<section id="shareFeedbackBar" class="max-w-6xl mx-auto px-4 mb-14" data-copy-exclude>
   <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
     <div class="flex items-center gap-2 flex-wrap">
       <button class="share-result-btn" onclick="loadShareModal()">🔗 Share Result</button>
@@ -587,18 +629,18 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard CT selection practice (IEC 61869-2 / IS 2705 style primary ratings)</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards context: IEC 61869-2 and applicable Indian Standards/BIS requirements for current transformers &mdash; verify the current edition and project-specific requirements before final selection.</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How CT Ratio Is Selected for Metering and Protection</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
             <p><strong>CT ratio example:</strong> a 400 A maximum load current with a standard 5 A secondary gives a CT ratio of 400:5, or 80:1. A current transformer (CT) scales down a large primary current to a small, standardized secondary current (almost always 5A or 1A) that meters and protection relays are built to accept. Choosing the right CT ratio means picking a standard primary rating that gives good measurement accuracy at your actual operating current, not simply "big enough to be safe" &mdash; oversizing a CT relative to actual load is one of the most common and easily avoided sources of poor metering accuracy in the field.</p>
 
-      <p><strong>Formula used:</strong> CT Ratio = Selected Standard Primary Rating &divide; Secondary Current (5A or 1A). The primary rating is selected by finding the standard CT size that puts normal maximum load current at roughly 60-100% of that rating, giving good accuracy under typical operating conditions.</p>
+      <p><strong>Formula used:</strong> CT Ratio = Selected Standard Primary Rating &divide; Secondary Current (5A or 1A). For a basic metering-oriented preliminary selection, this calculator targets approximately 60-100% utilization as a practical sizing heuristic &mdash; not an IEC accuracy requirement. Final CT selection should verify the CT's accuracy class, specified accuracy range, burden, application requirements, and manufacturer data.</p>
 
-      <p><strong>Worked example:</strong> a feeder has a maximum load current of 320 A. Looking at standard CT primary ratings (250, 300, 400, 500...), a 400A primary rating puts 320A at 80% utilization (320&divide;400 &times; 100 = 80%) &mdash; comfortably within the accuracy-friendly 60-100% range. With a 5A secondary standard, CT Ratio = 400:5.</p>
+      <p><strong>Worked example:</strong> a feeder has a maximum load current of 320 A. Looking at standard CT primary ratings (250, 300, 400, 500...), a 400A primary rating puts 320A at 80% utilization (320&divide;400 &times; 100 = 80%) &mdash; within the calculator's 60-100% preliminary utilization target. With a 5A secondary standard, CT Ratio = 400:5.</p>
 
-      <p><strong>Why utilization percentage matters as much as the ratio number itself:</strong> a CT's accuracy specification is tested and guaranteed within a specific operating range relative to its rated primary current &mdash; typically from around 20-25% of rated current up through 100% (and often somewhat beyond, for a defined accuracy limit factor). Operating well below this range, common when a CT is selected with excessive margin above actual load "to be safe," produces measurement error that grows disproportionately as actual current falls further below the CT's rated primary &mdash; a CT rated for 1000A serving an actual 200A load (20% utilization, right at the edge of typical accuracy range) will generally measure less accurately than a 250A-rated CT serving that same 200A load (80% utilization, comfortably within range).</p>
+      <p><strong>Why utilization percentage matters as much as the ratio number itself:</strong> a CT's accuracy performance is specified over a defined operating range relative to its rated primary current, with the exact range depending on the CT's accuracy class and applicable standard &mdash; conventional metering classes commonly specify accuracy points beginning around 5% or 20% of rated current and extending through 100% (and often somewhat beyond, for a defined accuracy limit factor), while extended-range classes specify performance at lower currents. Operating well below the CT's specified accuracy range, common when a CT is selected with excessive margin above actual load "to be safe," tends to produce larger measurement error &mdash; a CT rated for 1000A serving an actual 200A load (20% utilization) will generally measure less accurately than a 250A-rated CT serving that same 200A load (80% utilization), though the precise accuracy at each utilization level depends on the specific CT's accuracy class.</p>
 
       <p><strong>The trade-off against future load growth:</strong> selecting a CT ratio tightly matched to today's exact load current creates a real tension with anticipated future load growth &mdash; a CT sized precisely for current load may need replacement if load grows meaningfully beyond its rated primary current, and replacement can require significant electrical isolation, access, and rewiring work depending on the CT's construction (window/bar-type, wound-type, etc.) and installation arrangement. Many designers deliberately select a CT primary rating that comfortably covers a reasonable projected future load, accepting a somewhat lower utilization percentage today as a worthwhile trade-off against avoiding a CT replacement in a few years &mdash; this is a legitimate design judgment call, not a mistake, as long as the resulting utilization percentage doesn't drop so low that current accuracy becomes genuinely inadequate for the application's actual metering or protection needs.</p>
 
@@ -620,7 +662,7 @@
     <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
     <div id="cs-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
             <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
-      <p class="text-sm text-gray-600 leading-relaxed">Max load 320A: nearest standard CT primary rating with 60-100% utilization is <strong>400A</strong> (320&divide;400 = 80% utilization). With 5A secondary: <strong>CT Ratio = 400:5</strong>.</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Max load 320A: the smallest listed CT primary rating that places the load within the calculator's 60-100% preliminary utilization target is <strong>400A</strong> (320&divide;400 = 80% utilization). With 5A secondary: <strong>CT Ratio = 400:5</strong>.</p>
     </div>
 
     <p class="text-xs text-gray-400 mt-6">This calculator recommends a CT primary rating based on load current and a target utilization range for good metering accuracy — actual CT selection for protection purposes (as opposed to metering) may prioritize different criteria (like accuracy at high fault current, or a specific accuracy class such as 5P or 10P) rather than accuracy at normal load current alone. Always confirm CT class, burden, and accuracy limit factor requirements against the specific application (metering, protection, or both) and the applicable standard. For revenue metering specifically, confirm accuracy class requirements with the relevant utility or regulatory body, since these often have specific, mandated requirements beyond general good practice.</p>
@@ -630,7 +672,7 @@
 <!-- ===================== SECOND SECTION ===================== -->
 <section id="second" class="max-w-3xl mx-auto px-4 py-16">
   <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference Table</span>
-  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Standard CT Primary Current Ratings</h2>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common CT Primary Rating Examples</h2>
     <div class="not-prose overflow-x-auto my-4">
     <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
       <thead class="bg-gray-50 text-gray-600">
@@ -646,7 +688,7 @@
     </table>
   </div>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-    <p>These follow the widely referenced standard CT primary rating series used across IEC and many national standards, including Indian practice (IS 2705). Not every step is stocked by every manufacturer for every CT type, so always confirm actual availability for your specific CT construction (window/bar-type, wound-type, or a specific voltage class) before finalizing a selection &mdash.</p>
+    <p>These are common CT primary rating examples used in industrial and utility applications, including patterns seen in IEC-based and Indian (BIS) CT practice. Actual available ratios depend on the applicable standard, manufacturer, and CT construction (window/bar-type, wound-type, or a specific voltage class) &mdash; always confirm actual availability for your specific CT before finalizing a selection.</p>
       <p>Multi-ratio CTs are particularly useful during initial installation when actual final load current isn't yet precisely known, or in facilities anticipating load changes &mdash; having several selectable tap points lets a technician adjust the effective ratio in the field to better match actual measured load once it's known, without the cost and disruption of a full CT replacement.</p>
   </div>
 </section>
@@ -657,12 +699,12 @@
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Selecting a CT Ratio</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-            <p><strong>1. Oversizing CT primary rating far beyond actual load "to be safe."</strong> This is the most common CT selection mistake &mdash; a CT operating well below roughly 20-25% of its rated primary current suffers meaningfully degraded accuracy, which defeats the purpose of accurate metering or sensitive protection.</p>
+            <p><strong>1. Oversizing CT primary rating far beyond actual load "to be safe."</strong> This is the most common CT selection mistake &mdash; a CT operating well below the calculator's 60-100% preliminary utilization target can suffer degraded accuracy at low current, with the specific onset point depending on the CT's accuracy class and specified accuracy range, which defeats the purpose of accurate metering or sensitive protection.</p>
       <p><strong>2. Confusing CT ratio selection criteria for metering versus protection applications.</strong> Metering-optimized and protection-optimized CTs have different design priorities (accuracy at normal load vs accuracy at fault current) &mdash; a ratio and class chosen well for one purpose may not suit the other; confirm which application (or both, via separate cores) your specific installation needs.</p>
       <p><strong>3. Ignoring CT burden compatibility when connecting multiple meters or relays.</strong> Connecting more devices, or devices with higher input impedance than the CT's rated burden accounts for, can push total burden above the CT's rating and degrade accuracy &mdash; verify total connected burden against the CT's rated burden, not just the ratio selection alone.</p>
       <p><strong>4. Leaving a CT secondary circuit open while the primary remains energized.</strong> This is a genuine safety hazard specific to current transformers, capable of producing dangerously high open-circuit voltage &mdash; always short the secondary circuit via a shorting terminal block before disconnecting any load from an energized CT.</p>
       <p><strong>5. Not revisiting CT ratio selection after significant load growth.</strong> A CT well-matched to load at installation can become poorly utilized (if load dropped) or risk saturation (if load grew significantly) over time &mdash; periodically checking CT utilization against actual current operating data catches this drift before it degrades measurement quality.</p>
-      <p><strong>6. Assuming a CT selected for good metering accuracy is automatically adequate for protection relay accuracy at fault current.</strong> A metering-class CT is often specifically designed to saturate (limit output) at high fault current, precisely to protect connected metering equipment \u2014 this same saturation behavior can make it unsuitable for accurately relaying true fault current magnitude to a protection relay, which instead needs a protection-class CT designed to remain accurate well beyond normal rated current.</p>
+      <p><strong>6. Assuming a CT selected for good metering accuracy is automatically adequate for protection relay accuracy at fault current.</strong> A metering-class CT is often specifically designed to saturate (limit output) at high fault current, precisely to protect connected metering equipment — this same saturation behavior can make it unsuitable for accurately relaying true fault current magnitude to a protection relay, which instead needs a protection-class CT designed to remain accurate well beyond normal rated current.</p>
       <p><strong>7. Selecting accuracy class without matching the actual application requirement.</strong> A tighter (lower-number) accuracy class than genuinely needed adds cost without practical benefit for non-revenue-critical applications, while too loose a class can be genuinely inadequate for revenue metering — match accuracy class to the actual criticality of the specific measurement.</p>
       <p><strong>8. Not accounting for multiple loads or devices when calculating total CT burden.</strong> Each connected meter, relay, or instrument adds to total burden on the CT secondary circuit — tallying total connected burden across every device sharing that CT, not just the single most obvious load, is necessary for an accurate burden compatibility check.</p>
     </div>
@@ -699,7 +741,7 @@
         Why is CT accuracy worse when it's oversized relative to actual load?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A CT's accuracy specification applies over a defined operating range relative to its rated primary current, commonly cited as starting around 20-25% and extending through 100% (and often somewhat beyond) — but the exact threshold varies by accuracy class, manufacturer, and applicable standard, so confirm the specific CT's published accuracy curve rather than treating any single percentage as universal. An oversized CT (rated far above actual normal load current) often operates well below its accuracy-friendly range during normal conditions, degrading measurement quality even though the CT itself is undamaged and functioning.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The applicable accuracy range depends on the CT's accuracy class and the governing standard, not a single universal threshold — metering CT accuracy standards commonly specify error limits at several defined current points (for example, 5%, 20%, 100%, and 120% of rated primary current for common classes, with extended-range classes specifying additional lower-current points), rather than a single percentage below which accuracy simply stops applying. Confirm the specific CT's published accuracy class and curve rather than treating any single percentage as universal. An oversized CT (rated far above actual normal load current) often operates at low utilization during normal conditions, which is generally where measurement quality degrades most for a given accuracy class.</p>
     </details>
 
     <details class="py-5">
@@ -770,15 +812,165 @@
       document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
     }
 
+    let currentApplication = 'metering';
+    function setApplication(app){
+      currentApplication = app;
+      document.getElementById('appMetering').classList.toggle('active', app === 'metering');
+      document.getElementById('appProtection').classList.toggle('active', app === 'protection');
+      document.getElementById('appMetering').setAttribute('aria-pressed', app === 'metering' ? 'true' : 'false');
+      document.getElementById('appProtection').setAttribute('aria-pressed', app === 'protection' ? 'true' : 'false');
+      document.getElementById('protectionFieldsWrap').classList.toggle('hidden', app !== 'protection');
+      document.getElementById('protectionScopeNote').classList.toggle('hidden', app !== 'protection');
+      document.getElementById('protectionSafetyNote').classList.toggle('hidden', app !== 'protection');
+      calculateCTRatio();
+    }
+
     function calculateCTRatio(){
     const maxLoad = parseFloat(document.getElementById('maxLoad').value);
     const secondary = parseFloat(document.getElementById('secondary').value);
-
     const validationBox = document.getElementById('validationBox');
+    const standardRatings = [5,10,15,20,25,30,40,50,60,75,100,150,200,250,300,400,500,600,800,1000,1200,1500,2000,2500,3000,4000,5000];
+
+    // Protection CT check — deliberately scoped to what can be
+    // verified reliably: the CT's accuracy-limit factor (ALF) against
+    // the required ALF implied by the fault current and selected
+    // primary rating, with an optional burden correction using the
+    // standard simplified approximation (rated ALF × rated burden ÷
+    // actual burden). This does NOT verify knee-point voltage for
+    // differential/REF schemes, nor DC-offset/X-R behavior for
+    // fast-acting protection — both require CT internal resistance and
+    // scheme-specific data this calculator doesn't have, so those are
+    // explicitly disclosed as out of scope rather than approximated.
+    if (currentApplication === 'protection') {
+      const faultCurrent = parseFloat(document.getElementById('faultCurrent').value);
+      const protClass = document.getElementById('protClass').value;
+      const ratedALF = parseFloat(document.getElementById('ratedALF').value);
+
+      const errors = [];
+      if(!Number.isFinite(maxLoad) || maxLoad <= 0){ errors.push('Enter a valid maximum load current greater than 0.'); }
+      if(!Number.isFinite(faultCurrent) || faultCurrent <= 0){ errors.push('Enter a valid maximum fault current greater than 0.'); }
+
+      // Non-blocking sanity-check warning (not a hard error) — fault
+      // current below load current is unusual in practice and often
+      // indicates a data-entry mistake, but isn't strictly impossible
+      // in every system, so this doesn't stop calculation.
+      const warnings = [];
+      if(Number.isFinite(faultCurrent) && Number.isFinite(maxLoad) && faultCurrent < maxLoad){
+        warnings.push('Maximum fault current is normally expected to be greater than or equal to maximum load current \u2014 double-check these figures.');
+      }
+
+      if(errors.length){
+        validationBox.classList.remove('bg-amber-50', 'border-amber-200', 'text-amber-700');
+        validationBox.classList.add('bg-red-50', 'border-red-200', 'text-red-600');
+        validationBox.setAttribute('role', 'alert');
+        validationBox.classList.remove('hidden');
+        validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+        document.getElementById('rResult').textContent = '\u2014';
+        document.getElementById('rUtilization').textContent = '\u2014';
+        document.getElementById('rStatus').textContent = '\u2014';
+        document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+        return;
+      }
+      validationBox.classList.add('hidden');
+      validationBox.innerHTML = '';
+      if (warnings.length) {
+        validationBox.classList.remove('hidden');
+        validationBox.classList.remove('bg-red-50', 'border-red-200', 'text-red-600');
+        validationBox.classList.add('bg-amber-50', 'border-amber-200', 'text-amber-700');
+        validationBox.setAttribute('role', 'status');
+        validationBox.innerHTML = warnings.map(w => '\u26a0\ufe0f ' + w).join('<br>');
+      } else {
+        validationBox.classList.remove('bg-amber-50', 'border-amber-200', 'text-amber-700');
+        validationBox.classList.add('bg-red-50', 'border-red-200', 'text-red-600');
+        validationBox.setAttribute('role', 'alert');
+      }
+
+      let selected = standardRatings.find(r => maxLoad / r >= 0.6 && maxLoad / r <= 1.0);
+      if(!selected){ selected = standardRatings.find(r => r >= maxLoad); }
+      if(!selected){
+        validationBox.classList.remove('bg-amber-50', 'border-amber-200', 'text-amber-700');
+        validationBox.classList.add('bg-red-50', 'border-red-200', 'text-red-600');
+        validationBox.setAttribute('role', 'alert');
+        validationBox.classList.remove('hidden');
+        validationBox.innerHTML = '\u2022 This load current (' + maxLoad + ' A) exceeds the standard CT primary rating range covered by this calculator (up to 5000 A). Extra-high-current CTs use manufacturer- and application-specific ratings \u2014 consult the CT manufacturer or a qualified electrical engineer for this load.';
+        document.getElementById('rResult').textContent = '\u2014';
+        document.getElementById('rUtilization').textContent = '\u2014';
+        document.getElementById('rStatus').textContent = '\u2014';
+        document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+        return;
+      }
+
+      const requiredALF = faultCurrent / selected;
+      const alfSufficient = ratedALF >= requiredALF;
+
+      // When ALF screening fails at the load-based rating, search the
+      // same standard-ratings list (starting from the load-based
+      // selection upward) for the smallest rating that would bring
+      // the required ALF within the given rated/effective ALF —
+      // otherwise the calculator would leave the user to manually
+      // check each larger size by hand.
+      let nextSuitableRating = null;
+      if (!alfSufficient) {
+        const found = standardRatings.find(r => r >= selected && faultCurrent / r <= ratedALF);
+        nextSuitableRating = found !== undefined ? found : null;
+      }
+
+      // Presented as two clearly separate results, per the point that
+      // showing one merged number (e.g. "20.0 ALF required") risked
+      // reading as a single "recommended protection CT" verdict. The
+      // headline is the load-based CT selection alone (same style as
+      // metering mode); the ALF screening is a distinctly separate
+      // secondary result, so a CT that fits the load but fails ALF
+      // screening can't be misread as fully suitable.
+      document.getElementById('resultLabel').textContent = 'Load-Based CT Selection';
+      document.getElementById('rResult').textContent = selected + ':' + secondary;
+      document.getElementById('resultSub').textContent = alfSufficient
+        ? 'Selected by load current alone \u2014 see ALF screening below before treating this as suitable for protection'
+        : (nextSuitableRating !== null
+            ? 'Fails ALF screening at this rating \u2014 ' + nextSuitableRating + ':' + secondary + ' would meet the required ALF (see below)'
+            : 'Fails ALF screening \u2014 no standard rating up to 5000 A meets the required ALF with this class/burden');
+
+      document.getElementById('rUtilizationLabel').textContent = 'Required ALF (fault \u00f7 selected primary)';
+      document.getElementById('rUtilization').textContent = requiredALF.toFixed(1);
+
+      document.getElementById('rStatusLabel').textContent = 'ALF Screening (' + protClass + Math.round(ratedALF) + ')';
+      document.getElementById('rStatus').textContent = alfSufficient
+        ? 'Pass \u2014 rated ALF ' + ratedALF + ' \u2265 required'
+        : 'Review \u2014 rated ALF ' + ratedALF + ' < required';
+
+      const operationalAlfNote = `<tr><td colspan="2" style="text-align:left; white-space:normal;">Actual operational ALF also depends on the CT's secondary winding resistance, actual external burden, and temperature \u2014 not calculated here. Verify against the manufacturer's published ALF derating data.</td></tr>`;
+
+      const nextRatingRow = !alfSufficient
+        ? (nextSuitableRating !== null
+            ? `<tr><td><strong>Next Standard Rating Meeting This ALF</strong></td><td><strong>${nextSuitableRating} A</strong> (required ALF would be ${(faultCurrent / nextSuitableRating).toFixed(1)})</td></tr>`
+            : `<tr><td colspan="2" style="text-align:left; white-space:normal;">No standard rating up to 5000 A brings the required ALF within ${protClass}${Math.round(ratedALF)} at this fault current \u2014 a higher-ALF CT or manufacturer-specific rating is needed.</td></tr>`)
+        : '';
+
+      document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Suggested CT Primary Rating</td><td>${selected} A</td></tr>
+                <tr><td>Maximum Fault Current</td><td>${faultCurrent} A</td></tr>
+                <tr><td><strong>Required ALF</strong> (fault current \u00f7 primary rating)</td><td><strong>${requiredALF.toFixed(1)}</strong></td></tr>
+                <tr><td>CT's Rated Class / ALF</td><td>${protClass}${Math.round(ratedALF)}</td></tr>
+                <tr><td>ALF Screening</td><td>${alfSufficient ? 'Pass' : 'Review'}</td></tr>
+                ${nextRatingRow}
+                ${operationalAlfNote}
+                <tr><td colspan="2" style="text-align:left; white-space:normal;"><strong>Not verified by this calculator:</strong> the accuracy class (5P/10P) itself \u2014 only the numeric ALF requirement is checked against your selected rated ALF, not the composite-error specification the class represents. Also not verified: knee-point voltage (needed for differential/REF protection schemes), DC-offset/X-R behavior (needed for fast-acting protection), and burden/secondary-resistance-based ALF derating \u2014 for final verification, use the manufacturer's full formula or consult a protection engineer.</td></tr>
+            </tbody>
+        </table>
+    `;
+      return;
+    }
+
     const errors = [];
     if(!Number.isFinite(maxLoad) || maxLoad <= 0){ errors.push('Enter a valid maximum load current greater than 0.'); }
 
     if(errors.length){
+      validationBox.classList.remove('bg-amber-50', 'border-amber-200', 'text-amber-700');
+      validationBox.classList.add('bg-red-50', 'border-red-200', 'text-red-600');
+      validationBox.setAttribute('role', 'alert');
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
       document.getElementById('rResult').textContent = '\u2014';
@@ -790,7 +982,6 @@
     validationBox.classList.add('hidden');
     validationBox.innerHTML = '';
 
-    const standardRatings = [5,10,15,20,25,30,40,50,60,75,100,150,200,250,300,400,500,600,800,1000,1200,1500,2000,2500,3000,4000,5000];
     // Find smallest standard rating that gives utilization <= 100% (i.e., rating >= maxLoad), preferring utilization in 60-100% band
     let selected = standardRatings.find(r => maxLoad / r >= 0.6 && maxLoad / r <= 1.0);
     if(!selected){
@@ -804,6 +995,9 @@
     // manufacturer/application-specific ratings rather than this
     // page's reference list, so flag it honestly instead.
     if(!selected){
+      validationBox.classList.remove('bg-amber-50', 'border-amber-200', 'text-amber-700');
+      validationBox.classList.add('bg-red-50', 'border-red-200', 'text-red-600');
+      validationBox.setAttribute('role', 'alert');
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = '\u2022 This load current (' + maxLoad + ' A) exceeds the standard CT primary rating range covered by this calculator (up to 5000 A). Extra-high-current CTs use manufacturer- and application-specific ratings \u2014 consult the CT manufacturer or a qualified electrical engineer for this load.';
       document.getElementById('rResult').textContent = '\u2014';
@@ -814,16 +1008,24 @@
     }
 
     const utilization = (maxLoad / selected) * 100;
-    // Thresholds matched to this page's own written guidance (see
-    // Summary: "roughly 60-100% utilization for good metering
-    // accuracy") — previously this only flagged <25% as low and
-    // treated the entire 25-100% range as "Good," silently including
-    // the 25-60% band the page's own text says to avoid.
-    let status = 'Good accuracy range';
-    if(utilization < 25) status = 'Low utilization — check accuracy';
-    else if(utilization < 60) status = 'Below target range — acceptable but not ideal';
-    else if(utilization > 100) status = 'Overloaded — increase CT rating';
+    // This label deliberately avoids claiming to know the CT's actual
+    // measurement accuracy — the calculator only computes a current
+    // ratio (load ÷ selected primary rating). Real CT accuracy is
+    // determined by the accuracy class, specified current points,
+    // burden, and manufacturer data, none of which this calculator
+    // has. So this reports where utilization falls relative to a
+    // preliminary sizing heuristic, not an accuracy verdict.
+    // Simplified to two meaningful tiers (below/within the 60-100%
+    // target) rather than the previous extra <25% sub-tier, which
+    // created an implicit second threshold alongside the calculator's
+    // actual 60% methodology and risked reading as its own rule.
+    let status = 'Within preliminary sizing target';
+    if(utilization < 60) status = 'Below preliminary sizing target \u2014 review CT accuracy requirements';
+    else if(utilization > 100) status = 'Above rated primary current \u2014 increase CT rating';
 
+    document.getElementById('resultLabel').textContent = 'Suggested CT Ratio';
+    document.getElementById('rUtilizationLabel').textContent = 'CT Utilization at Maximum Load';
+    document.getElementById('rStatusLabel').textContent = 'Sizing Status';
     document.getElementById('rResult').textContent = selected + ':' + secondary;
     document.getElementById('resultSub').textContent = 'For max load ' + maxLoad + 'A \u2014 equivalent ratio ' + (selected / secondary).toFixed(secondary === 1 ? 0 : 1) + ':1';
     document.getElementById('rUtilization').textContent = utilization.toFixed(1) + '%';
@@ -838,7 +1040,7 @@
                 <tr><td>Secondary Current</td><td>${secondary} A</td></tr>
                 <tr><td><strong>CT Ratio</strong></td><td><strong>${selected}:${secondary}</strong></td></tr>
                 <tr><td>CT Utilization at Maximum Load</td><td>${utilization.toFixed(1)}%</td></tr>
-                <tr><td>Status</td><td>${status}</td></tr>
+                <tr><td>Sizing Status</td><td>${status}</td></tr>
             </tbody>
         </table>
     `;
@@ -849,7 +1051,7 @@
   // Live recalculation as the user changes inputs — without this, a
   // changed input followed by Copy/Share (without clicking Calculate
   // again) would copy/share the stale previous result.
-  ['maxLoad', 'secondary'].forEach(function(id){
+  ['maxLoad', 'secondary', 'faultCurrent', 'protClass', 'ratedALF'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) { el.addEventListener('input', calculateCTRatio); el.addEventListener('change', calculateCTRatio); }
   });
