@@ -358,6 +358,29 @@
     display:block;
   }
 
+  /* Calculator/Verify heading bar: solid navy, bled to the card's edges,
+     matching the pattern used on transformer-size.html — LIGHT MODE ONLY;
+     dark mode keeps the card's own existing look, no override needed. */
+  body:not(.dark-theme) #calculator #calcHeaderBar,
+  body:not(.dark-theme) #verify #verifyHeaderBar{
+    background:#0B1220 !important;
+    margin:-1.5rem -1.5rem 1rem -1.5rem !important;
+    padding:0.85rem 1.5rem !important;
+    border-radius:16px 16px 0 0 !important;
+  }
+  body:not(.dark-theme) #calculator #calcHeaderBar h2,
+  body:not(.dark-theme) #verify #verifyHeaderBar h2{ color:#fff !important; margin-bottom:0.25rem !important; }
+  body:not(.dark-theme) #calculator #calcHeaderBar p,
+  body:not(.dark-theme) #verify #verifyHeaderBar p,
+  body:not(.dark-theme) #verify #verifyHeaderBar span{ color:#94a3b8 !important; }
+  @media (min-width: 768px){
+    body:not(.dark-theme) #calculator #calcHeaderBar,
+    body:not(.dark-theme) #verify #verifyHeaderBar{
+      margin:-2rem -2rem 1rem -2rem !important;
+      padding:0.85rem 2rem !important;
+    }
+  }
+
   /* .action-icon-btn was missing from this page's styles entirely,
      leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
   .action-icon-btn{
@@ -603,66 +626,67 @@
 
 <!-- ===================== [PER-PAGE] VERIFY: CHECK A SELECTED CONDUCTOR ===================== -->
 <section id="verify" class="max-w-6xl mx-auto px-4 pb-14">
-  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Screening</span>
-    <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Verify a Selected Conductor Size</h2>
-    <p class="text-xs text-gray-500 mb-6">Already have a conductor size in mind (e.g. from stock, or the suggestion above)? Enter its actual cross-sectional area along with the real fault current and clearing time to check its thermal withstand — this shows the maximum fault-clearing time that size can survive at the entered fault current, not just the forward current+time&rarr;minimum-size direction.</p>
+  <div class="grid lg:grid-cols-2 gap-6">
 
-    <div class="grid lg:grid-cols-2 gap-8">
-      <div>
-        <div class="grid sm:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="vArea">Selected Conductor Area (mm&sup2;)</label>
-            <input id="vArea" name="vArea" inputmode="decimal" type="number" value="150" step="1" min="0.5" max="2000" placeholder="e.g. 150" class="input-field mt-2">
-          </div>
-          <div>
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="vMaterial">
-              Conductor Material &amp; Condition
-              <span class="info-icon" tabindex="0" role="button" aria-label="Why material and condition both matter">
-                i
-                <span class="info-tooltip">k depends on material, installation condition (bare vs. insulated/insulation-adjacent), and assumed temperature limits — not material alone. Select the option matching your actual installation, and confirm the exact k-factor against your governing standard.</span>
-              </span>
-            </label>
-            <select id="vMaterial" name="vMaterial" class="input-field mt-2">
-              <option value="159" selected>Copper &mdash; bare, free air (k=159)</option>
-              <option value="143">Copper &mdash; insulated/adjacent, reference condition (k=143)</option>
-              <option value="105">Aluminum &mdash; thermal reference only, verify permitted use (k=105)</option>
-              <option value="58">Galvanized Steel (k=58)</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="vFaultCurrent">Fault Current (kA)</label>
-            <input id="vFaultCurrent" name="vFaultCurrent" inputmode="decimal" type="number" value="20" step="0.1" min="0.01" max="500" placeholder="e.g. 20" class="input-field mt-2">
-          </div>
-          <div>
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="vClearingTime">Actual Protective-Device Clearing Time (s)</label>
-            <input id="vClearingTime" name="vClearingTime" inputmode="decimal" type="number" value="1" step="0.05" min="0.01" max="5" placeholder="e.g. 1" class="input-field mt-2">
-          </div>
-        </div>
-        <div class="mb-3">
-          <span class="formula-chip">Max Withstand Time = (S &times; k &divide; I)&sup2;</span>
-        </div>
-        <p class="text-[11px] text-gray-400 mb-5">Compares the selected conductor's thermal (adiabatic) withstand capability against the actual protective-device clearing time you enter — it does not check code-mandated minimum sizes, phase-conductor ratio requirements, or connection quality; see the disclaimer below.</p>
-
-        <div id="vValidationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
-
-        <button type="button" onclick="verifyConductor()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
-          Run Screening Check
-        </button>
+    <!-- INPUT PANEL -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+      <div id="verifyHeaderBar">
+        <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Screening</span>
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Verify a Selected Conductor Size</h2>
+        <p class="text-xs text-gray-500 mb-0">Already have a conductor size in mind (e.g. from stock, or the suggestion above)? Enter its actual cross-sectional area along with the real fault current and clearing time to check its thermal withstand — this shows the maximum fault-clearing time that size can survive at the entered fault current, not just the forward current+time&rarr;minimum-size direction.</p>
       </div>
 
-      <div id="verifyResultPanel">
-        <div class="bg-gray-50 rounded-xl border border-gray-100 p-5 h-full flex flex-col">
-          <p class="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">Screening Result</p>
-          <div id="verifyResultBox" class="space-y-3 text-sm text-gray-600" aria-live="polite" aria-atomic="true">
-            <p class="text-xs text-gray-400">Enter values above and click Run Screening Check.</p>
-          </div>
+      <div class="grid sm:grid-cols-2 gap-4 mb-4 mt-6">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="vArea">Selected Conductor Area (mm&sup2;)</label>
+          <input id="vArea" name="vArea" inputmode="decimal" type="number" value="150" step="1" min="0.5" max="2000" placeholder="e.g. 150" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="vMaterial">
+            Conductor Material &amp; Condition
+            <span class="info-icon" tabindex="0" role="button" aria-label="Why material and condition both matter">
+              i
+              <span class="info-tooltip">k depends on material, installation condition (bare vs. insulated/insulation-adjacent), and assumed temperature limits — not material alone. Select the option matching your actual installation, and confirm the exact k-factor against your governing standard.</span>
+            </span>
+          </label>
+          <select id="vMaterial" name="vMaterial" class="input-field mt-2">
+            <option value="159" selected>Copper &mdash; bare, free air (k=159)</option>
+            <option value="143">Copper &mdash; insulated/adjacent, reference condition (k=143)</option>
+            <option value="105">Aluminum &mdash; thermal reference only, verify permitted use (k=105)</option>
+            <option value="58">Galvanized Steel (k=58)</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="vFaultCurrent">Fault Current (kA)</label>
+          <input id="vFaultCurrent" name="vFaultCurrent" inputmode="decimal" type="number" value="20" step="0.1" min="0.01" max="500" placeholder="e.g. 20" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="vClearingTime">Actual Protective-Device Clearing Time (s)</label>
+          <input id="vClearingTime" name="vClearingTime" inputmode="decimal" type="number" value="1" step="0.05" min="0.01" max="5" placeholder="e.g. 1" class="input-field mt-2">
         </div>
       </div>
+      <div class="mb-3">
+        <span class="formula-chip">Max Withstand Time = (S &times; k &divide; I)&sup2;</span>
+      </div>
+      <p class="text-[11px] text-gray-400 mb-5">Compares the selected conductor's thermal (adiabatic) withstand capability against the actual protective-device clearing time you enter — it does not check code-mandated minimum sizes, phase-conductor ratio requirements, or connection quality; see the disclaimer below.</p>
+
+      <div id="vValidationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button type="button" onclick="verifyConductor()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Run Screening Check
+      </button>
     </div>
 
-    <p class="text-xs text-gray-400 mt-6">This screening check covers only the adiabatic thermal withstand calculation for the exact fault current and clearing time entered &mdash; it is <strong>not</strong> a full protective-conductor design verification. It does not account for code-mandated absolute minimum conductor sizes, phase-conductor ratio requirements, connection/termination quality, mechanical robustness, or corrosion allowance. A conductor that passes this thermal check can still be inadequate if it falls below an applicable code minimum or ratio requirement &mdash; always compare against those separately and use whichever requirement is larger. For a final design, confirm against the applicable standard and have the design reviewed by a qualified electrical engineer.</p>
+    <!-- RESULT PANEL -->
+    <div id="verifyResultPanel" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 flex flex-col">
+      <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Screening Result</span>
+      <div id="verifyResultBox" class="space-y-3 text-sm text-gray-600" aria-live="polite" aria-atomic="true">
+        <p class="text-xs text-gray-400">Enter values above and click Run Screening Check.</p>
+      </div>
+    </div>
   </div>
+
+  <p class="text-xs text-gray-400 mt-6">This screening check covers only the adiabatic thermal withstand calculation for the exact fault current and clearing time entered &mdash; it is <strong>not</strong> a full protective-conductor design verification. It does not account for code-mandated absolute minimum conductor sizes, phase-conductor ratio requirements, connection/termination quality, mechanical robustness, or corrosion allowance. A conductor that passes this thermal check can still be inadequate if it falls below an applicable code minimum or ratio requirement &mdash; always compare against those separately and use whichever requirement is larger. For a final design, confirm against the applicable standard and have the design reviewed by a qualified electrical engineer.</p>
 </section>
 
 <!-- ===================== SHARE / FEEDBACK BAR ===================== -->
@@ -1115,6 +1139,12 @@
         </tbody>
       </table>
     `;
+
+    // Scroll the result into view — most useful on mobile/tablet where the
+    // result panel sits below the input panel after the stacked layout
+    // kicks in; 'nearest' avoids unnecessary scrolling when it's already
+    // visible (e.g. side-by-side desktop layout).
+    document.getElementById('verifyResultPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 </script>
 
