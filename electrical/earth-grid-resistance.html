@@ -311,7 +311,29 @@
   body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
 
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
-  
+  /* Calculator/Verify heading bar: solid navy, bled to the card's edges,
+     matching the pattern used on transformer-size.html / earthing-conductor-size.html —
+     LIGHT MODE ONLY; dark mode keeps the card's own existing look. */
+  body:not(.dark-theme) #calculator #calcHeaderBar,
+  body:not(.dark-theme) #verify #verifyHeaderBar{
+    background:#0B1220 !important;
+    margin:-1.5rem -1.5rem 1rem -1.5rem !important;
+    padding:0.85rem 1.5rem !important;
+    border-radius:16px 16px 0 0 !important;
+  }
+  body:not(.dark-theme) #calculator #calcHeaderBar h2,
+  body:not(.dark-theme) #verify #verifyHeaderBar h2{ color:#fff !important; margin-bottom:0.25rem !important; }
+  body:not(.dark-theme) #calculator #calcHeaderBar p,
+  body:not(.dark-theme) #verify #verifyHeaderBar p,
+  body:not(.dark-theme) #verify #verifyHeaderBar span{ color:#94a3b8 !important; }
+  @media (min-width: 768px){
+    body:not(.dark-theme) #calculator #calcHeaderBar,
+    body:not(.dark-theme) #verify #verifyHeaderBar{
+      margin:-2rem -2rem 1rem -2rem !important;
+      padding:0.85rem 2rem !important;
+    }
+  }
+
 
   /* .action-icon-btn was missing from this page's styles entirely,
      leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
@@ -472,9 +494,11 @@
   <div class="grid lg:grid-cols-5 gap-6">
 
     <!-- INPUT PANEL -->
-    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
-            <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Earth Grid Resistance Details</h2>
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel overflow-hidden p-6 md:p-8">
+      <div id="calcHeaderBar">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Earth Grid Resistance Details</h2>
       <p class="text-xs text-gray-500 mb-6">Enter soil resistivity and grid dimensions.</p>
+      </div>
 
       <div class="space-y-4 mb-5">
         <div>
@@ -536,22 +560,6 @@
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
         <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
       </div>
-
-      <!-- related calculators -->
-      <div id="relatedCalculatorsBox" class="bg-white rounded-xl border border-gray-100 p-4" data-copy-exclude>
-        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
-        <div class="grid grid-cols-1 gap-1.5">
-          <a href="/electrical/earthing-conductor-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
-            Earthing Conductor Size Calculator <span class="text-sky-500">→</span>
-          </a>
-          <a href="/electrical/short-circuit-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
-            Short Circuit Current Calculator <span class="text-sky-500">→</span>
-          </a>
-          <a href="/electrical/busbar-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
-            Busbar Size Calculator <span class="text-sky-500">→</span>
-          </a>
-        </div>
-      </div>
     </div>
 
   </div>
@@ -559,12 +567,14 @@
 
 <!-- ===================== [PER-PAGE] VERIFY: ADD GROUND RODS + TARGET CHECK ===================== -->
 <section id="verify" class="max-w-6xl mx-auto px-4 pb-14">
-  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Screening</span>
-    <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Ground Rod Screening Estimate</h2>
-    <p class="text-xs text-gray-500 mb-6">Estimate the potential effect of additional ground rods using a simplified independent-parallel model, and compare the result against a screening target you enter. This is a preliminary screening estimate — not a final grid-and-rod design calculation, and it cannot confirm IEEE Std 80 compliance or final grounding performance.</p>
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden p-6 md:p-8">
+    <div id="verifyHeaderBar">
+      <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Screening</span>
+      <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Ground Rod Screening Estimate</h2>
+      <p class="text-xs text-gray-500 mb-0">Estimate the potential effect of additional ground rods using a simplified independent-parallel model, and compare the result against a screening target you enter. This is a preliminary screening estimate — not a final grid-and-rod design calculation, and it cannot confirm IEEE Std 80 compliance or final grounding performance.</p>
+    </div>
 
-    <div class="grid lg:grid-cols-2 gap-8">
+    <div class="grid lg:grid-cols-2 gap-8 mt-6">
       <div>
         <div class="grid sm:grid-cols-2 gap-4 mb-4">
           <div>
@@ -646,6 +656,27 @@
       <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Earth%20Grid%20Resistance%20Calculator">✉️ Feedback</a>
     </div>
   </div>
+</section>
+
+<!-- ===================== RELATED CALCULATORS (moved below Share/Feedback bar) ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-6">
+  <div id="relatedCalculatorsBox" class="bg-white rounded-xl border border-gray-100 p-4" data-copy-exclude>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid sm:grid-cols-2 gap-1.5">
+          <a href="/electrical/earthing-conductor-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Earthing Conductor Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="/electrical/short-circuit-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Short Circuit Current Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="/electrical/busbar-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Busbar Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="/electrical-calculators" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            All Electrical Calculators <span class="text-sky-500">→</span>
+          </a>
+        </div>
+      </div>
 </section>
 
 <!-- ===================== TABLE OF CONTENTS ===================== -->
@@ -1245,15 +1276,17 @@
         <p class="text-sm">${statusHtml}</p>
         <p class="text-[11px] text-gray-400 mt-1">Preliminary screening estimate only \u2014 this result cannot confirm IEEE Std 80 compliance or final grounding performance.</p>
       </div>
-      <table class="breakdown-table mt-3">
-        <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
-        <tbody>
-          <tr><td>Grid-Only Resistance (Sverak)</td><td>${gridR.toFixed(3)} \u03a9</td></tr>
-          ${rodRows}
-          <tr><td><strong>Simplified Combined Estimate</strong></td><td><strong>${combinedR.toFixed(3)} \u03a9</strong></td></tr>
-          <tr><td>Screening Target</td><td>${targetR} \u03a9</td></tr>
-        </tbody>
-      </table>
+      <div class="breakdown-wrap mt-3">
+        <table class="breakdown-table">
+          <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Grid-Only Resistance (Sverak)</td><td>${gridR.toFixed(3)} \u03a9</td></tr>
+            ${rodRows}
+            <tr><td><strong>Simplified Combined Estimate</strong></td><td><strong>${combinedR.toFixed(3)} \u03a9</strong></td></tr>
+            <tr><td>Screening Target</td><td>${targetR} \u03a9</td></tr>
+          </tbody>
+        </table>
+      </div>
     `;
   }
 </script>
