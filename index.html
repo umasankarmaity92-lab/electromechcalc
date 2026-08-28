@@ -37,25 +37,23 @@
 <meta name="twitter:description" content="Free electrical, mechanical & financial calculators built for real fieldwork. Formulas shown, results instant, no sign-up.">
 <link rel="canonical" href="https://www.electromechcalc.com/">
 <link rel="icon" href="/favicon.png" type="image/png">
-<!-- Tailwind is render-blocking on purpose here — the site's entire layout
-     (flex, spacing, sizing) is built from Tailwind utility classes, so
-     deferring it (the earlier preload+media=print trick) let the browser
-     paint fully unstyled HTML first, then snap the whole page into its
-     real layout once Tailwind finished loading — a massive, page-wide
-     CLS hit. Google Fonts below stays non-blocking since a font swap is
-     a much smaller, contained visual change, not a layout collapse. -->
-<link rel="stylesheet" href="/assets/tailwind.min.css">
+<!-- Tailwind + theme.css merged into one file (site.min.css) and kept
+     render-blocking on purpose — the site's entire layout (flex, spacing,
+     sizing) is built from Tailwind utility classes, and theme.css defines
+     structural rules too (.blueprint-grid, .nav-dropdown-panel, etc.), not
+     just colors. Deferring either one previously let the browser paint
+     unstyled HTML first, then snap the whole page into its real layout
+     once it finished loading late — a massive, page-wide CLS hit.
+     Merging the two into a single request cuts one HTTP round-trip
+     without touching that render-blocking behavior. Google Fonts below
+     stays non-blocking since a font swap is a much smaller, contained
+     visual change, not a layout collapse. -->
+<link rel="stylesheet" href="/assets/site.min.css?v=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional"></noscript>
-<!-- theme.css also render-blocking for the same layout-integrity reason
-     as Tailwind above — it defines structural rules (.blueprint-grid,
-     .nav-dropdown-panel, etc.), not just decorative color
-     rules, so deferring it caused the same kind of pre/post-load layout
-     jump. -->
-<link rel="stylesheet" href="/assets/theme.css?v=2">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786" crossorigin="anonymous"></script>
 <style>
   /* Hero-only override: reduce (not remove) .blueprint-grid's two
