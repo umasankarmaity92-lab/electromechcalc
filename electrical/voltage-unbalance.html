@@ -574,6 +574,41 @@
   </div>
 </section>
 
+<!-- ===================== SUMMARY & ACTION (dynamic, updated by calculateVoltageUnbalance) ===================== -->
+<section id="summaryActionSection" class="max-w-6xl mx-auto px-4 mb-14" aria-labelledby="summary-title">
+  <div class="bg-white rounded-xl border border-gray-100 p-6">
+    <h2 id="summary-title" class="text-xl font-display font-bold text-brandDark mb-3">Summary &amp; Action</h2>
+
+    <p id="summaryText" class="text-sm text-gray-600 leading-relaxed">Enter values and hit calculate to see a summary.</p>
+
+    <div id="summaryDetails" class="hidden mt-5">
+      <h3 class="font-semibold text-sm text-brandDark mb-2">Why This Matters</h3>
+      <ul class="list-disc pl-5 text-sm text-gray-600 space-y-1 mb-5">
+        <li><strong>Motor heating:</strong> voltage unbalance can cause disproportionately higher negative-sequence current and additional motor heating.</li>
+        <li><strong>Reduced efficiency:</strong> the additional losses can increase energy consumption and reduce motor efficiency.</li>
+        <li><strong>Insulation stress:</strong> excessive motor temperature can accelerate winding insulation aging.</li>
+        <li><strong>Reduced service life:</strong> sustained operation at elevated temperature can significantly shorten motor life.</li>
+      </ul>
+
+      <h3 class="font-semibold text-sm text-brandDark mb-2">Recommended Action</h3>
+      <p id="summaryAction" class="text-sm text-gray-600 leading-relaxed">—</p>
+
+      <h3 class="font-semibold text-sm text-brandDark mb-2 mt-5">Quick Troubleshooting Checklist</h3>
+      <ol class="list-decimal pl-5 text-sm text-gray-600 space-y-1 mb-2">
+        <li>Measure voltage unbalance at the incoming supply first, before facility wiring, to see if it's coming from upstream.</li>
+        <li>Check phase currents at the main panel for uneven single-phase load distribution.</li>
+        <li>Inspect terminals and connections for looseness or corrosion (thermal imaging helps here).</li>
+        <li>Re-measure after any fix to confirm it actually worked, not just assumed.</li>
+      </ol>
+
+      <p class="text-xs text-gray-400 mt-4">
+        See the <a href="#motor-derating" class="hover:underline">illustrative derating table</a> for the general shape of the NEMA MG-1 curve, and the
+        <a href="#how-it-works" class="hover:underline">full diagnosis and correction guidance</a> above for more detail.
+      </p>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== SHARE / FEEDBACK BAR ===================== -->
 <span id="shareFeedbackAnchor"></span>
 <section id="shareFeedbackBar" class="max-w-6xl mx-auto px-4 mb-14">
@@ -864,6 +899,8 @@
       document.getElementById('rAvg').textContent = '\u2014';
       document.getElementById('rStatus').textContent = '\u2014';
       document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      document.getElementById('summaryText').textContent = 'Fix the input errors above to see a summary.';
+      document.getElementById('summaryDetails').classList.add('hidden');
       if(moveFocus){ validationBox.focus(); }
       return;
     }
@@ -884,14 +921,16 @@
       document.getElementById('rAvg').textContent = '\u2014';
       document.getElementById('rStatus').textContent = '\u2014';
       document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      document.getElementById('summaryText').textContent = 'Fix the input errors above to see a summary.';
+      document.getElementById('summaryDetails').classList.add('hidden');
       return;
     }
 
     let status = 'Within 1% guideline';
-    if(unbalance >= 5) status = 'Above 5% \u2014 operation generally not recommended';
-    else if(unbalance >= 3) status = '3%+ \u2014 significant derating; investigate promptly';
-    else if(unbalance >= 2) status = '2%+ \u2014 derating may be needed; investigate cause';
-    else if(unbalance >= 1) status = 'Above 1% \u2014 derating may be needed';
+    if(unbalance >= 5) status = '5% or higher \u2014 operation generally not recommended';
+    else if(unbalance >= 3) status = '3% or higher \u2014 significant derating; investigate promptly';
+    else if(unbalance >= 2) status = '2% or higher \u2014 derating may be needed; investigate cause';
+    else if(unbalance >= 1) status = 'At or above 1% \u2014 derating may be needed';
 
     document.getElementById('rResult').textContent = unbalance.toLocaleString(undefined, {maximumFractionDigits:2}) + '%';
     document.getElementById('resultSub').textContent = 'Vab=' + v1 + 'V, Vbc=' + v2 + 'V, Vca=' + v3 + 'V';
@@ -915,6 +954,29 @@
             </tbody>
         </table>
     `;
+
+    const summaryText = document.getElementById('summaryText');
+    const summaryDetails = document.getElementById('summaryDetails');
+    const summaryAction = document.getElementById('summaryAction');
+    const pct = unbalance.toFixed(2);
+
+    if(unbalance >= 5){
+      summaryText.innerHTML = 'The measured three-phase supply has a <strong>' + pct + '% voltage unbalance</strong>. This is at or above the 5% level generally considered unsuitable for continuous motor operation. Prompt investigation and corrective action are required.';
+      summaryAction.innerHTML = 'At <strong>' + pct + '% voltage unbalance</strong>, avoid continuous motor operation unless specifically permitted by the motor manufacturer. Check the manufacturer\u2019s voltage-unbalance limits and derating guidance, verify phase voltages and currents, and investigate possible supply, connection, transformer, or load-distribution problems.';
+    } else if(unbalance >= 3){
+      summaryText.innerHTML = 'The measured three-phase supply has a <strong>' + pct + '% voltage unbalance</strong>. This is a significant level for three-phase motor systems and may cause substantial additional motor heating. Prompt investigation and appropriate derating should be considered.';
+      summaryAction.innerHTML = 'At <strong>' + pct + '% voltage unbalance</strong>, investigate the root cause promptly and check the applicable motor manufacturer\u2019s derating guidance. Verify phase currents, inspect electrical connections, and determine whether the unbalance originates within the facility or upstream in the utility supply.';
+    } else if(unbalance >= 2){
+      summaryText.innerHTML = 'The measured three-phase supply has a <strong>' + pct + '% voltage unbalance</strong>. This is above the commonly recommended 1% target for three-phase motor systems and may require motor derating.';
+      summaryAction.innerHTML = 'At <strong>' + pct + '% voltage unbalance</strong>, investigate the cause and check the motor manufacturer\u2019s derating guidance. Monitor motor temperature and phase currents, and inspect for uneven single-phase loading or high-resistance connections.';
+    } else if(unbalance >= 1){
+      summaryText.innerHTML = 'The measured three-phase supply has a <strong>' + pct + '% voltage unbalance</strong>. This is at or above the commonly recommended 1% threshold for three-phase motor systems. Investigation and appropriate motor derating may be required.';
+      summaryAction.innerHTML = 'At <strong>' + pct + '% voltage unbalance</strong>, check the applicable motor manufacturer\u2019s voltage-unbalance and derating guidance. Continue monitoring motor temperature and investigate the source of the unbalance rather than relying on derating alone.';
+    } else {
+      summaryText.innerHTML = 'The measured three-phase supply has a <strong>' + pct + '% voltage unbalance</strong>. This is within the commonly recommended 1% target for three-phase motor systems.';
+      summaryAction.innerHTML = 'No NEMA-based derating action is generally indicated at this level. Continue periodic monitoring under normal operating load conditions, and follow the motor manufacturer\u2019s requirements.';
+    }
+    summaryDetails.classList.remove('hidden');
   }
 
   calculateVoltageUnbalance();
