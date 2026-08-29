@@ -14,10 +14,14 @@
 <script>
 (function(){
   try {
-    var t = localStorage.getItem('emc-theme') ||
-      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    var saved = localStorage.getItem('emc-theme');
+    var t = (saved === 'dark-theme' || saved === 'light-theme')
+      ? saved
+      : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
     document.documentElement.classList.add(t);
     document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+    var metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) { metaTheme.setAttribute('content', t === 'dark-theme' ? '#0B1220' : '#ffffff'); }
   } catch(e) {}
 })();
 </script>
@@ -29,8 +33,7 @@
      crossorigin="anonymous"></script>
 
 <!-- ===================== [PER-PAGE] SEO META ===================== -->
-<meta name="description" content="Free Voltage Unbalance Calculator for 3-phase systems. Enter the three line voltages to get percentage voltage unbalance (NEMA method) instantly, with formula, motor derating guidance, and worked example.">
-<meta name="keywords" content="voltage unbalance calculator, voltage imbalance calculator, nema voltage unbalance formula, 3 phase voltage unbalance, motor derating voltage unbalance">
+<meta name="description" content="Free Voltage Unbalance Calculator for 3-phase systems. Get % voltage unbalance (NEMA method) from three line-to-line voltages, with motor derating guidance.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.electromechcalc.com/electrical/voltage-unbalance">
 <link rel="icon" href="/favicon.png" type="image/png">
@@ -39,29 +42,43 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ElectroMechCalc">
 <meta property="og:title" content="Voltage Unbalance Calculator">
-<meta property="og:description" content="Free Voltage Unbalance Calculator for 3-phase systems — enter three line voltages to get NEMA-method percentage unbalance instantly.">
+<meta property="og:description" content="Free Voltage Unbalance Calculator for 3-phase systems — enter three line-to-line voltages to get NEMA-method percentage unbalance instantly.">
 <meta property="og:url" content="https://www.electromechcalc.com/electrical/voltage-unbalance">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ElectroMechCalc — Voltage Unbalance Calculator">
 <meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Voltage Unbalance Calculator">
-<meta name="twitter:description" content="Free Voltage Unbalance Calculator for 3-phase systems — enter three line voltages to get NEMA-method percentage unbalance instantly.">
+<meta name="twitter:description" content="Free Voltage Unbalance Calculator for 3-phase systems — enter three line-to-line voltages to get NEMA-method percentage unbalance instantly.">
 <meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+<meta name="twitter:image:alt" content="ElectroMechCalc — Voltage Unbalance Calculator">
 
 <!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
+  "@type": "WebApplication",
   "name": "Voltage Unbalance Calculator",
   "url": "https://www.electromechcalc.com/electrical/voltage-unbalance",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://www.electromechcalc.com/electrical/voltage-unbalance" },
   "applicationCategory": "UtilitiesApplication",
+  "inLanguage": "en",
+  "featureList": [
+    "Percentage voltage unbalance calculation (NEMA maximum-deviation method)",
+    "Per-phase deviation breakdown",
+    "NEMA motor derating status and guidance"
+  ],
   "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "description": "Free Voltage Unbalance Calculator for 3-phase systems. Enter the three line voltages to get percentage voltage unbalance (NEMA method) instantly, with formula, motor derating guidance, and worked example.",
-  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+  "description": "Free Voltage Unbalance Calculator for 3-phase systems. Get % voltage unbalance (NEMA method) from three line-to-line voltages, with motor derating guidance.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" },
+  "author": { "@type": "Person", "name": "Umasankar Maity", "url": "https://www.electromechcalc.com/about" },
+  "dateModified": "2026-08-29"
 }
 </script>
 
@@ -85,17 +102,17 @@
     {
       "@type": "Question",
       "name": "What is the formula for voltage unbalance (NEMA method)?",
-      "acceptedAnswer": { "@type": "Answer", "text": "% Voltage Unbalance = (Maximum Deviation from Average Voltage ÷ Average Voltage) × 100. First calculate the average of the three line voltages, then find how far each individual voltage deviates from that average, and use the largest of those three deviations in the formula." }
+      "acceptedAnswer": { "@type": "Answer", "text": "% Voltage Unbalance = (Maximum Deviation from Average Voltage ÷ Average Voltage) × 100. First calculate the average of the three line-to-line voltages (Vab, Vbc, Vca), then find how far each individual voltage deviates from that average, and use the largest of those three deviations in the formula." }
     },
     {
       "@type": "Question",
       "name": "Why does voltage unbalance damage three-phase motors?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Voltage unbalance produces a much larger current unbalance in a motor's windings — as a rule of thumb, percentage current unbalance runs roughly 6 to 10 times the percentage voltage unbalance. This uneven current distribution causes localized overheating in the winding carrying the highest current, dramatically shortening motor insulation life even at voltage unbalance levels that seem individually small." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Voltage unbalance produces a much larger current unbalance in a motor's windings — as a rule of thumb sometimes cited in industry literature, percentage current unbalance can run roughly 6 to 10 times the percentage voltage unbalance, though the actual relationship depends strongly on the specific motor's design, impedance, loading, and operating conditions. This uneven current distribution causes localized overheating in the winding carrying the highest current, dramatically shortening motor insulation life even at voltage unbalance levels that seem individually small." }
     },
     {
       "@type": "Question",
       "name": "What is considered an acceptable level of voltage unbalance?",
-      "acceptedAnswer": { "@type": "Answer", "text": "NEMA recommends keeping voltage unbalance below 1% for motor applications, and states that operating a motor above 5% unbalance is not recommended at all. Between 1% and 5%, the motor's continuous output rating must be derated according to the NEMA derating curve, since running an undedirated motor in this range shortens its life significantly." }
+      "acceptedAnswer": { "@type": "Answer", "text": "For motor applications, NEMA MG-1 provides guidance for maintaining voltage unbalance at or below 1% for rated operation. Above 1%, motor derating may be required according to the applicable motor design and manufacturer's guidance, following an approximate curve like the one on this page; operation above 5% is generally not recommended. Always follow the specific motor manufacturer's limits and published derating curve, since running an underrated (not derated) motor in this range shortens its life significantly." }
     },
     {
       "@type": "Question",
@@ -105,7 +122,7 @@
     {
       "@type": "Question",
       "name": "How does voltage unbalance relate to current unbalance?",
-      "acceptedAnswer": { "@type": "Answer", "text": "The relationship is nonlinear and unbalance in current is amplified relative to voltage — for an induction motor, a given percentage voltage unbalance typically produces current unbalance roughly 6-10 times larger, because the motor's negative-sequence impedance (which drives the unbalanced current response) is much lower than its positive-sequence impedance. This is why even a seemingly modest 2-3% voltage unbalance can cause 15-25%+ current unbalance and serious localized heating." }
+      "acceptedAnswer": { "@type": "Answer", "text": "The relationship is nonlinear and unbalance in current is amplified relative to voltage — for an induction motor, a given percentage voltage unbalance typically produces current unbalance roughly 6-10 times larger, because the motor's negative-sequence impedance (which drives the unbalanced current response) is much lower than its positive-sequence impedance. This is why even a seemingly modest 2% voltage unbalance can produce approximately 12-20% current unbalance in a fully loaded induction motor and serious localized heating, though actual results depend on the specific motor and operating conditions." }
     },
     {
       "@type": "Question",
@@ -124,6 +141,11 @@
     },
     {
       "@type": "Question",
+      "name": "Should I use line-to-line or line-to-neutral voltages?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For the NEMA maximum-deviation-from-average method used by this calculator, use three consistent line-to-line voltage measurements — Vab, Vbc, and Vca. Do not mix line-to-line and line-to-neutral readings within the same calculation, since the numbers wouldn't be measuring comparable quantities. If your equipment or power-quality instrument specifies a symmetrical-component-based method instead, use that method's own required measurements, since it can produce a different percentage than the NEMA method for the same supply." }
+    },
+    {
+      "@type": "Question",
       "name": "How often should voltage unbalance be checked in an industrial facility?",
       "acceptedAnswer": { "@type": "Answer", "text": "For facilities with significant motor loads, checking voltage unbalance during routine electrical maintenance (commonly quarterly to annually) is good practice, along with an immediate check any time a motor shows unexplained overheating, nuisance tripping, or premature bearing/insulation failure, since voltage unbalance is a common and often-overlooked root cause of these symptoms." }
     }
@@ -131,13 +153,17 @@
 }
 </script>
 
-<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<!-- ===================== [SHARED] SITE CSS (COMPILED UTILITY CLASSES) + FONTS + GLOBAL STYLES ===================== -->
 <link rel="preload" as="style" href="/assets/site.min.css?v=1">
 <link rel="stylesheet" href="/assets/site.min.css?v=1" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="/assets/site.min.css?v=1"></noscript>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<!-- Used by /assets/site-nav.js: any page with a #hero-lottie div (see below) gets
+     this JSON lazy-loaded on browser idle to play a Lottie animation over the
+     static SVG poster shown here. Not visible in this file's own inline JS —
+     do not remove as "unused" based on this file alone. -->
 <link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet" media="print" onload="this.media='all'">
@@ -226,7 +252,7 @@
   }
   .hidden-field{ display:none !important; }
   .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
-  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+  .voltage-unbalance-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
 
   .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
   .breakdown-table th, .breakdown-table td{
@@ -303,8 +329,7 @@
 
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
 
-  /* .action-icon-btn was missing from this page's styles entirely,
-     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  /* Page-specific action buttons — Share/Copy/Yes/No/Feedback. */
   .action-icon-btn{
     display:inline-flex;
     align-items:center;
@@ -323,6 +348,8 @@
   .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
   body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
 
+  body.dark-theme .sky-callout{ background:rgba(14,165,233,0.08); border-color:#164e63; color:#7dd3fc; }
+
   .author-box{
     border:2px solid #000000;
   }
@@ -340,17 +367,36 @@
   .breakdown-wrap{ min-width:0; }
   /* Dark-mode fix: "Worked Example / Reference" box (bg-sky-50/60) had no
      body.dark-theme override, so it stayed near-invisible in dark mode. */
-  body.dark-theme #cs-example-box{
+  body.dark-theme #voltage-unbalance-example-box{
     background:rgba(14,165,233,0.07); border-color:#164e63;
   }
-  body.dark-theme #cs-example-box thead tr{ border-color:#164e63; }
-  body.dark-theme #cs-example-box th{ color:#7dd3fc; }
-  body.dark-theme #cs-example-box tbody{ color:#cbd5e1; }
-  body.dark-theme #cs-example-box tbody tr{ border-color:rgba(125,211,252,0.15); }
-  body.dark-theme #cs-example-box .text-gray-400{ color:#64748b; }
-  body.dark-theme #cs-example-box .text-gray-500{ color:#7dd3fc; }
-  body.dark-theme #cs-example-box .text-gray-600{ color:#cbd5e1; }
-  body.dark-theme #cs-example-box .text-gray-700{ color:#e2e8f0; }
+  body.dark-theme #voltage-unbalance-example-box thead tr{ border-color:#164e63; }
+  body.dark-theme #voltage-unbalance-example-box th{ color:#7dd3fc; }
+  body.dark-theme #voltage-unbalance-example-box tbody{ color:#cbd5e1; }
+  body.dark-theme #voltage-unbalance-example-box tbody tr{ border-color:rgba(125,211,252,0.15); }
+  body.dark-theme #voltage-unbalance-example-box .text-gray-400{ color:#64748b; }
+  body.dark-theme #voltage-unbalance-example-box .text-gray-500{ color:#7dd3fc; }
+  body.dark-theme #voltage-unbalance-example-box .text-gray-600{ color:#cbd5e1; }
+  body.dark-theme #voltage-unbalance-example-box .text-gray-700{ color:#e2e8f0; }
+
+  .skip-link{
+    position:absolute;
+    left:-9999px;
+    top:0;
+    z-index:100;
+    background:#fff;
+    color:#0B1220;
+    padding:10px 16px;
+    border-radius:8px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.25);
+    font-size:13px;
+    font-weight:600;
+  }
+  .skip-link:focus{
+    left:12px;
+    top:12px;
+  }
+  body.dark-theme .skip-link{ background:#0B1220; color:#e2e8f0; border:1px solid #1f2f47; }
 
   .hero-typing-box{
     display:flex;
@@ -391,11 +437,14 @@
 </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <script>
 (function(){
   try {
-    var t = localStorage.getItem('emc-theme') ||
-      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    var saved = localStorage.getItem('emc-theme');
+    var t = (saved === 'dark-theme' || saved === 'light-theme')
+      ? saved
+      : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
     document.body.classList.add(t);
   } catch(e) {}
 })();
@@ -413,6 +462,8 @@
      (home, about, etc.) since middleware injects nothing there. -->
 <div id="breadcrumb"></div>
 
+<main id="main-content">
+
 <!-- ===================== [PER-PAGE] HERO ===================== -->
 <section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
   <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
@@ -423,7 +474,7 @@
       <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
         <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
           <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
-          Electrical · Power Quality & Billing
+          Electrical · Power Quality & Motors
         </span>
         <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
           Voltage Unbalance <span class="text-sky-400">Calculator</span>
@@ -441,8 +492,11 @@
 
       <!-- Animation column -->
       <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <!-- id="hero-lottie" is a required hook for /assets/site-nav.js's lazy Lottie
+             loader (see the preload comment in <head>) — keep this exact id even
+             though the fallback content below is a plain static SVG, not Lottie. -->
         <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
-          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" aria-hidden="true" style="opacity:.9">
             <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
             <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
           </svg>
@@ -461,27 +515,27 @@
     <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
             <div id="calcHeaderBar">
         <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Voltage Unbalance Details</h2>
-      <p class="text-xs text-gray-500 mb-6">Enter the three measured line (or phase) voltages.</p>
+      <p class="text-xs text-gray-500 mb-6">Enter the three measured line-to-line voltages (Vab, Vbc, and Vca).</p>
       </div>
 
       <div class="space-y-4 mb-5">
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="v1">V1 (V)</label>
-          <input id="v1" type="number" value="415" step="0.1" min="0" placeholder="e.g. 415" class="input-field mt-2">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="v1">Vab (V)</label>
+          <input id="v1" type="number" value="415" step="0.1" min="0.1" max="1000000" placeholder="e.g. 415" class="input-field mt-2" aria-describedby="validationBox">
         </div>
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="v2">V2 (V)</label>
-          <input id="v2" type="number" value="408" step="0.1" min="0" placeholder="e.g. 408" class="input-field mt-2">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="v2">Vbc (V)</label>
+          <input id="v2" type="number" value="408" step="0.1" min="0.1" max="1000000" placeholder="e.g. 408" class="input-field mt-2" aria-describedby="validationBox">
         </div>
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="v3">V3 (V)</label>
-          <input id="v3" type="number" value="420" step="0.1" min="0" placeholder="e.g. 420" class="input-field mt-2">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="v3">Vca (V)</label>
+          <input id="v3" type="number" value="420" step="0.1" min="0.1" max="1000000" placeholder="e.g. 420" class="input-field mt-2" aria-describedby="validationBox">
         </div>
       </div>
 
-      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+      <div id="validationBox" role="alert" tabindex="-1" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
-      <button onclick="calculateVoltageUnbalance()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+      <button type="button" onclick="calculateVoltageUnbalance(true)" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate
       </button>
 
@@ -493,9 +547,9 @@
     <!-- RESULT PANEL -->
     <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
             <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
-        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full voltage-unbalance-badge opacity-20"></div>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Voltage Unbalance</span>
-        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1" role="status" aria-live="polite">—</div>
         <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
 
         <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
@@ -525,13 +579,13 @@
 <section id="shareFeedbackBar" class="max-w-6xl mx-auto px-4 mb-14">
   <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
     <div class="flex items-center gap-2 flex-wrap">
-      <button class="share-result-btn" onclick="loadShareModal()">🔗 Share Result</button>
-      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
+      <button type="button" class="share-result-btn" onclick="loadShareModal()">🔗 Share Result</button>
+      <button type="button" class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
       <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
-      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
-      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+      <button type="button" id="fbYes" class="action-icon-btn" aria-pressed="false" onclick="setFeedback('yes')">👍 Yes</button>
+      <button type="button" id="fbNo" class="action-icon-btn" aria-pressed="false" onclick="setFeedback('no')">👎 No</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
       <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Voltage%20Unbalance%20Calculator">✉️ Feedback</a>
@@ -557,6 +611,9 @@
           Harmonic Distortion Calculator <span class="text-sky-500">→</span>
         </a>
         </div>
+        <a href="/electrical-calculators" class="sky-callout mt-2 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-sky-100 bg-sky-50 text-sm font-semibold text-sky-700">
+          View All Electrical Calculators <span class="text-sky-500">→</span>
+        </a>
       </div>
 </section>
 
@@ -567,7 +624,7 @@
     <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
       <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
       <li><a href="#how-it-works" class="hover:underline">2. Understanding voltage unbalance</a></li>
-      <li><a href="#second" class="hover:underline">3. NEMA motor derating for voltage unbalance</a></li>
+      <li><a href="#motor-derating" class="hover:underline">3. Motor derating guidance for voltage unbalance</a></li>
       <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
       <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
     </ul>
@@ -585,13 +642,13 @@
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Voltage Unbalance Is Calculated and Why It Damages Motors</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-            <p>A healthy three-phase supply has all three line voltages equal (or very close to it). In practice, they never match perfectly — some small deviation is normal and harmless. Voltage unbalance quantifies exactly how much that deviation is, as a single percentage, so you can judge whether it's within a safe range or approaching a level that risks damaging connected equipment, especially three-phase motors.</p>
+            <p>A healthy three-phase supply has all three line-to-line voltages equal (or very close to it). In practice, they never match perfectly — some small deviation is normal and harmless. Voltage unbalance quantifies exactly how much that deviation is, as a single percentage, so you can judge whether it's within a safe range or approaching a level that risks damaging connected equipment, especially three-phase motors.</p>
 
-      <p><strong>Formula used (NEMA method):</strong> % Voltage Unbalance = (Maximum Deviation from Average Voltage &divide; Average Voltage) &times; 100. First compute the average of the three line voltages: Average = (V1 + V2 + V3) &divide; 3. Then find each voltage's deviation from that average, take the largest (maximum) of the three deviations, and divide by the average voltage.</p>
+      <p><strong>Formula used (NEMA method):</strong> % Voltage Unbalance = (Maximum Deviation from Average Voltage &divide; Average Voltage) &times; 100. First compute the average of the three line-to-line voltages: Average = (Vab + Vbc + Vca) &divide; 3. Then find each voltage's deviation from that average, take the largest (maximum) of the three deviations, and divide by the average voltage.</p>
 
-      <p><strong>Worked example:</strong> three measured line voltages are 415 V, 408 V, and 420 V. Average = (415 + 408 + 420) &divide; 3 = 414.33 V. Deviations from average: |415 - 414.33| = 0.67 V, |408 - 414.33| = 6.33 V, |420 - 414.33| = 5.67 V. The maximum deviation is 6.33 V (from V2). % Voltage Unbalance = 6.33 &divide; 414.33 &times; 100 &asymp; 1.53%. This is above NEMA's recommended 1% threshold and would call for a modest motor derating if this supply feeds a three-phase motor.</p>
+      <p><strong>Worked example:</strong> three measured line-to-line voltages are Vab = 415 V, Vbc = 408 V, and Vca = 420 V. Average = (415 + 408 + 420) &divide; 3 = 414.33 V. Deviations from average: |415 - 414.33| = 0.67 V, |408 - 414.33| = 6.33 V, |420 - 414.33| = 5.67 V. The maximum deviation is 6.33 V (from Vbc). % Voltage Unbalance = 6.33 &divide; 414.33 &times; 100 &asymp; 1.53%. This is above NEMA's recommended 1% threshold and would call for a modest motor derating if this supply feeds a three-phase motor.</p>
 
-      <p><strong>Why the NEMA method uses maximum deviation, not the full spread:</strong> a simpler, alternative method sometimes seen is (Vmax &minus; Vmin) &divide; Vaverage &times; 100 &mdash; using the full spread between the highest and lowest voltage rather than the maximum single deviation from average. The NEMA method is generally preferred for motor protection purposes because it more directly reflects how a motor's winding currents actually respond to unbalance, and is the definition referenced in NEMA MG-1 (the standard most US and many international motor manufacturers design and rate their products against).</p>
+      <p><strong>Why the NEMA method uses maximum deviation, not the full spread:</strong> a simpler, alternative method sometimes seen is (Vmax &minus; Vmin) &divide; Vaverage &times; 100 &mdash; using the full spread between the highest and lowest voltage rather than the maximum single deviation from average. The NEMA maximum-deviation method and symmetrical-component-based methods quantify voltage unbalance differently and are not directly interchangeable; NEMA MG-1 (the standard most US and many international motor manufacturers design and rate their products against) uses the maximum-deviation definition, so use that definition when working against NEMA-referenced guidance, and use whichever method is specified by the motor manufacturer, protection relay, or applicable standard for any other context.</p>
 
       <p><strong>Why motors are so sensitive to voltage unbalance:</strong> a three-phase induction motor's response to unbalanced voltage can be analyzed using symmetrical components &mdash; the unbalanced supply splits into a positive-sequence component (which drives normal torque production) and a negative-sequence component (which acts like a small voltage rotating backward relative to the motor). The motor's impedance to this negative-sequence component is very low (typically similar to its locked-rotor impedance), so even a small negative-sequence voltage drives a disproportionately large negative-sequence current &mdash; this is the physical reason current unbalance runs so much higher than voltage unbalance, and why the resulting localized heating can be severe even at voltage unbalance levels that look individually modest on a meter.</p>
 
@@ -599,9 +656,9 @@
 
       <p><strong>Diagnosing the source of unbalance:</strong> a useful first check is measuring voltage unbalance at the main incoming supply, before it reaches any facility distribution &mdash; if unbalance is already present there, the source is upstream (utility supply) and the facility may need to contact its utility. If the incoming supply is well-balanced but unbalance appears further downstream, the cause is within the facility's own wiring or load distribution, and the next step is checking phase currents at the main distribution board to identify which phase is carrying disproportionate load, followed by inspecting connections for looseness or corrosion (a surprisingly common root cause that's often overlooked in favor of assuming a load-balancing problem).</p>
 
-      <p><strong>Symmetrical components, briefly:</strong> any unbalanced three-phase voltage system can be mathematically decomposed into three balanced components &mdash; positive-sequence (rotating in the normal direction, doing the useful work), negative-sequence (rotating in the reverse direction, essentially "fighting" the motor's normal rotation), and zero-sequence (all three phases in phase with each other, relevant mainly for systems with a neutral or ground return path). For a three-phase motor without a neutral connection, the negative-sequence component is what matters for unbalance-related heating &mdash; it induces currents in the rotor at twice the normal slip frequency, and because the motor's impedance to this component is low, even a small negative-sequence voltage produces a disproportionately large, and thermally significant, current response.</p>
+      <p><strong>Symmetrical components, briefly:</strong> any unbalanced three-phase voltage system can be mathematically decomposed into three balanced components &mdash; positive-sequence (rotating in the normal direction, doing the useful work), negative-sequence (rotating in the reverse direction, essentially "fighting" the motor's normal rotation), and zero-sequence (all three phases in phase with each other, relevant mainly for systems with a neutral or ground return path). For most three-phase motor circuits without a neutral connection, negative-sequence components are the primary concern when analyzing motor heating caused by voltage unbalance &mdash; the negative-sequence voltage induces currents in the rotor at twice the normal slip frequency, and because the motor's impedance to this component is low, even a small negative-sequence voltage produces a disproportionately large, thermally significant current response. Zero-sequence behavior depends on the system connection and available return path, so it should be evaluated according to the specific system configuration rather than assumed.</p>
 
-      <p><strong>Summary:</strong> use % Voltage Unbalance = Maximum Deviation from Average &divide; Average &times; 100 (NEMA method), keep readings under 1% where possible, apply the NEMA derating curve for anything between 1% and 5%, never operate a motor continuously above 5% unbalance, and always investigate and correct the root cause rather than relying on derating alone as a permanent solution.</p>
+      <p><strong>Summary:</strong> use % Voltage Unbalance = Maximum Deviation from Average &divide; Average &times; 100 (NEMA method), keep readings under 1% where possible, apply the NEMA derating curve for anything between 1% and 5%, and treat operation above 5% unbalance as generally not recommended &mdash; follow the specific motor manufacturer's limits and the applicable standard, and always investigate and correct the root cause rather than relying on derating alone as a permanent solution.</p>
 
       <p><strong>Voltage unbalance and standby/backup generators:</strong> unbalance is a particularly common issue when a facility runs on a standby generator rather than utility supply, especially if the generator's automatic voltage regulator or the facility's load distribution wasn't specifically checked for balance under generator operation. Since generator source impedance is typically higher than a stiff utility grid connection, the same absolute load imbalance that produces negligible voltage unbalance on utility power can produce meaningfully worse unbalance on generator power &mdash; facilities that operate on backup generators for extended periods should specifically verify voltage unbalance under generator supply, not assume utility-power measurements apply.</p>
 
@@ -613,39 +670,40 @@
     </div>
 
     <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
-    <div id="cs-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+    <div id="voltage-unbalance-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
             <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
-      <p class="text-sm text-gray-600 leading-relaxed">V1=415V, V2=408V, V3=420V: Average = 414.33V, max deviation = 6.33V (V2), % Voltage Unbalance = 6.33 &divide; 414.33 &times; 100 &asymp; <strong>1.53%</strong> &mdash; above the NEMA 1% guideline, calling for a modest motor derating.</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Vab=415V, Vbc=408V, Vca=420V: Average = 414.33V, max deviation = 6.33V (Vbc), % Voltage Unbalance = 6.33 &divide; 414.33 &times; 100 &asymp; <strong>1.53%</strong> &mdash; above the commonly referenced 1% guideline; check the motor manufacturer's voltage-unbalance limits and derating guidance.</p>
     </div>
 
-    <p class="text-xs text-gray-400 mt-6">This calculator uses the NEMA maximum-deviation-from-average method, the most widely referenced definition for motor and equipment protection purposes. Some meters and standards (notably certain IEC references) use a different unbalance definition based on symmetrical components — these can give a numerically different percentage for the same three voltages, so always confirm which definition your equipment manufacturer or protection relay specification requires before comparing figures.</p>
+    <p class="text-xs text-gray-400 mt-6">This calculator uses the NEMA maximum-deviation-from-average method, a widely used definition for motor and equipment protection applications. Some power-quality standards and instruments use symmetrical-component-based negative-sequence voltage unbalance instead, which can produce a different numerical result from the maximum-deviation method for the same three voltages — so always confirm which definition your equipment manufacturer or protection relay specification requires before comparing figures.</p>
   </div>
 </section>
 
 <!-- ===================== SECOND SECTION ===================== -->
-<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+<section id="motor-derating" class="max-w-3xl mx-auto px-4 py-16">
   <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Motor Protection</span>
-  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">NEMA Motor Derating Factor for Voltage Unbalance</h2>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Illustrative Motor Derating Guidance for Voltage Unbalance (NEMA MG-1 Concept)</h2>
+    <p class="text-sm text-gray-500 mb-4">The table below illustrates the general shape of the derating relationship described in NEMA MG-1 for standard three-phase induction motors &mdash; it is not a verbatim reproduction of any single official table, and should not be treated as a precise, universally applicable set of factors. Always use the specific motor manufacturer's published derating curve for an actual sizing or operating decision.</p>
     <div class="not-prose overflow-x-auto my-4">
     <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
       <thead class="bg-gray-50 text-gray-600">
         <tr>
-          <th class="text-left px-4 py-2 font-semibold">Voltage Unbalance</th>
-          <th class="text-left px-4 py-2 font-semibold">NEMA Derating Factor</th>
-          <th class="text-left px-4 py-2 font-semibold">Guidance</th>
+          <th scope="col" class="text-left px-4 py-2 font-semibold">Voltage Unbalance</th>
+          <th scope="col" class="text-left px-4 py-2 font-semibold">Illustrative Derating Factor</th>
+          <th scope="col" class="text-left px-4 py-2 font-semibold">Guidance</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100">
-        <tr><td class="px-4 py-2">0-1%</td><td class="px-4 py-2">1.00 (no derating)</td><td class="px-4 py-2">Acceptable, no action needed</td></tr>
-        <tr><td class="px-4 py-2">2%</td><td class="px-4 py-2">~0.75</td><td class="px-4 py-2">Derate motor, investigate cause</td></tr>
-        <tr><td class="px-4 py-2">3%</td><td class="px-4 py-2">~0.58</td><td class="px-4 py-2">Significant derating required</td></tr>
-        <tr><td class="px-4 py-2">4%</td><td class="px-4 py-2">~0.50</td><td class="px-4 py-2">Severe derating, correct urgently</td></tr>
-        <tr><td class="px-4 py-2">5%+</td><td class="px-4 py-2">Not recommended</td><td class="px-4 py-2">Do not operate motor continuously</td></tr>
+        <tr><td class="px-4 py-2">0-1%</td><td class="px-4 py-2">~1.00 (no derating)</td><td class="px-4 py-2">Generally acceptable; monitor condition</td></tr>
+        <tr><td class="px-4 py-2">2%</td><td class="px-4 py-2">~0.95</td><td class="px-4 py-2">Derating recommended; investigate cause</td></tr>
+        <tr><td class="px-4 py-2">3%</td><td class="px-4 py-2">~0.90</td><td class="px-4 py-2">Significant derating; investigate promptly</td></tr>
+        <tr><td class="px-4 py-2">4%</td><td class="px-4 py-2">~0.83</td><td class="px-4 py-2">Severe condition; correct urgently</td></tr>
+        <tr><td class="px-4 py-2">5%</td><td class="px-4 py-2">~0.76</td><td class="px-4 py-2">Do not operate motor continuously without manufacturer guidance</td></tr>
       </tbody>
     </table>
   </div>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-    <p>This table reflects the general shape of the NEMA MG-1 derating curve for standard three-phase induction motors &mdash; the exact derating factor for a specific motor should be read from its manufacturer's published curve where available, since some motor designs (particularly those specifically rated for unbalanced supply tolerance) may have different derating characteristics. The steep drop in derating factor between 1% and 4% unbalance illustrates why voltage unbalance deserves attention even at levels that seem individually small &mdash.</p>
+    <p>This table reflects the general shape of the NEMA MG-1 derating curve for standard three-phase induction motors &mdash; the exact derating factor for a specific motor should be read from its manufacturer's published curve where available, since some motor designs (particularly those specifically rated for unbalanced supply tolerance) may have different derating characteristics. The consistent downward trend in derating factor from 1% to 5% unbalance illustrates why voltage unbalance deserves attention even at levels that seem individually small.</p>
       <p>It's also worth noting that NEMA's derating curve was developed for general-purpose motors under typical duty cycles &mdash; a motor already operating near its thermal limit for other reasons (high ambient temperature, poor ventilation, an already-marginal sizing decision) has less margin to absorb additional unbalance-driven heating than the curve alone might suggest, so treat the derating factor as a starting point for a conservative design decision, not a precise guarantee of safe operation at exactly that loading level.</p>
   </div>
 </section>
@@ -656,9 +714,9 @@
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Voltage Unbalance</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-            <p><strong>1. Using line-to-neutral voltages when line-to-line is expected, or vice versa.</strong> Voltage unbalance can be calculated from either line-to-line or line-to-neutral measurements, but the three values used together in one calculation must be consistent &mdash; mixing measurement types within the same calculation gives a meaningless result.</p>
+            <p><strong>1. Using line-to-neutral voltages instead of line-to-line for this NEMA-method calculator.</strong> This calculator's NEMA maximum-deviation method expects three consistent line-to-line voltages (Vab, Vbc, Vca) &mdash; entering line-to-neutral readings, or mixing the two measurement types within the same calculation, gives a meaningless result since the numbers aren't measuring comparable quantities.</p>
       <p><strong>2. Measuring voltage unbalance with the motor or major load disconnected.</strong> Unbalance can change significantly between no-load and loaded conditions &mdash; a reading taken with the equipment of interest switched off doesn't necessarily represent the unbalance that equipment actually experiences in normal operation.</p>
-      <p><strong>3. Assuming low voltage unbalance means low current unbalance.</strong> Because current unbalance runs roughly 6-10&times; the voltage unbalance percentage in a motor, a seemingly minor 2% voltage unbalance can correspond to 15-20%+ current unbalance and real thermal stress &mdash; always check current unbalance directly (or apply the NEMA derating curve) rather than assuming voltage unbalance alone tells the whole story.</p>
+      <p><strong>3. Assuming low voltage unbalance means low current unbalance.</strong> Because current unbalance runs roughly 6-10&times; the voltage unbalance percentage in a motor, a seemingly minor 2% voltage unbalance can correspond to roughly 12-20% current unbalance and real thermal stress &mdash; always check current unbalance directly (or apply the derating guidance) rather than assuming voltage unbalance alone tells the whole story.</p>
       <p><strong>4. Using the simple max-min method interchangeably with the NEMA method.</strong> These two common definitions ((Vmax&minus;Vmin)/Vavg vs max-deviation-from-average) give numerically different results for the same three voltages &mdash; always confirm which method a specification, protection relay, or code reference requires before comparing your calculated figure against a threshold.</p>
       <p><strong>5. Not investigating the root cause after finding elevated unbalance.</strong> Simply derating the motor addresses the symptom, not the cause &mdash; persistent voltage unbalance often traces back to an uneven single-phase load distribution, a loose connection, or a supply-side issue that should be identified and corrected rather than permanently accepted through derating alone.</p>
       <p><strong>6. Ignoring voltage unbalance because "the motor hasn't failed yet."</strong> Insulation damage from unbalance-driven overheating is cumulative and often invisible until a failure occurs &mdash; a motor can run for months or years under elevated unbalance before failing prematurely, making periodic unbalance checks a genuinely useful preventive maintenance practice rather than a reactive one.</p>
@@ -673,7 +731,6 @@
   <div class="text-center mb-10">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
-    <p class="text-xs text-gray-400 mt-2"></p>
   </div>
 
   <div class="divide-y divide-gray-200">
@@ -682,7 +739,7 @@
         What is the formula for voltage unbalance (NEMA method)?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">% Voltage Unbalance = (Maximum Deviation from Average Voltage ÷ Average Voltage) × 100. First calculate the average of the three line voltages, then find how far each individual voltage deviates from that average, and use the largest of those three deviations in the formula.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">% Voltage Unbalance = (Maximum Deviation from Average Voltage ÷ Average Voltage) × 100. First calculate the average of the three line-to-line voltages (Vab, Vbc, Vca), then find how far each individual voltage deviates from that average, and use the largest of those three deviations in the formula.</p>
     </details>
 
     <details class="py-5">
@@ -690,7 +747,7 @@
         Why does voltage unbalance damage three-phase motors?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Voltage unbalance produces a much larger current unbalance in a motor's windings — as a rule of thumb, percentage current unbalance runs roughly 6 to 10 times the percentage voltage unbalance. This uneven current distribution causes localized overheating in the winding carrying the highest current, dramatically shortening motor insulation life even at voltage unbalance levels that seem individually small.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Voltage unbalance produces a much larger current unbalance in a motor's windings — as a rule of thumb sometimes cited in industry literature, percentage current unbalance can run roughly 6 to 10 times the percentage voltage unbalance, though the actual relationship depends strongly on the specific motor's design, impedance, loading, and operating conditions. This uneven current distribution causes localized overheating in the winding carrying the highest current, dramatically shortening motor insulation life even at voltage unbalance levels that seem individually small.</p>
     </details>
 
     <details class="py-5">
@@ -698,7 +755,7 @@
         What is considered an acceptable level of voltage unbalance?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">NEMA recommends keeping voltage unbalance below 1% for motor applications, and states that operating a motor above 5% unbalance is not recommended at all. Between 1% and 5%, the motor's continuous output rating must be derated according to the NEMA derating curve, since running an undedirated motor in this range shortens its life significantly.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For motor applications, NEMA MG-1 provides guidance for maintaining voltage unbalance at or below 1% for rated operation. Above 1%, motor derating may be required according to the applicable motor design and manufacturer's guidance, following an approximate curve like the one on this page; operation above 5% is generally not recommended. Always follow the specific motor manufacturer's limits and published derating curve, since running an underrated (not derated) motor in this range shortens its life significantly.</p>
     </details>
 
     <details class="py-5">
@@ -714,7 +771,7 @@
         How does voltage unbalance relate to current unbalance?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The relationship is nonlinear and unbalance in current is amplified relative to voltage — for an induction motor, a given percentage voltage unbalance typically produces current unbalance roughly 6-10 times larger, because the motor's negative-sequence impedance (which drives the unbalanced current response) is much lower than its positive-sequence impedance. This is why even a seemingly modest 2-3% voltage unbalance can cause 15-25%+ current unbalance and serious localized heating.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The relationship is nonlinear and unbalance in current is amplified relative to voltage — for an induction motor, a given percentage voltage unbalance typically produces current unbalance roughly 6-10 times larger, because the motor's negative-sequence impedance (which drives the unbalanced current response) is much lower than its positive-sequence impedance. This is why even a seemingly modest 2% voltage unbalance can produce approximately 12-20% current unbalance in a fully loaded induction motor and serious localized heating, though actual results depend on the specific motor and operating conditions.</p>
     </details>
 
     <details class="py-5">
@@ -743,6 +800,14 @@
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I use line-to-line or line-to-neutral voltages?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For the NEMA maximum-deviation-from-average method used by this calculator, use three consistent line-to-line voltage measurements — Vab, Vbc, and Vca. Do not mix line-to-line and line-to-neutral readings within the same calculation, since the numbers wouldn't be measuring comparable quantities. If your equipment or power-quality instrument specifies a symmetrical-component-based method instead, use that method's own required measurements, since it can produce a different percentage than the NEMA method for the same supply.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
         How often should voltage unbalance be checked in an industrial facility?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
@@ -750,6 +815,8 @@
     </details>
   </div>
 </section>
+
+</main>
 
 <!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
 <div id="site-footer"></div>
@@ -766,18 +833,29 @@
     function setFeedback(val){
       document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
       document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+      document.getElementById('fbYes').setAttribute('aria-pressed', val === 'yes' ? 'true' : 'false');
+      document.getElementById('fbNo').setAttribute('aria-pressed', val === 'no' ? 'true' : 'false');
     }
 
-    function calculateVoltageUnbalance(){
-    const v1 = parseFloat(document.getElementById('v1').value);
-    const v2 = parseFloat(document.getElementById('v2').value);
-    const v3 = parseFloat(document.getElementById('v3').value);
+    const MAX = { voltage: 1000000 };
+
+    function calculateVoltageUnbalance(moveFocus){
+    const v1El = document.getElementById('v1');
+    const v2El = document.getElementById('v2');
+    const v3El = document.getElementById('v3');
+    const v1 = parseFloat(v1El.value);
+    const v2 = parseFloat(v2El.value);
+    const v3 = parseFloat(v3El.value);
 
     const validationBox = document.getElementById('validationBox');
     const errors = [];
-    if(isNaN(v1) || v1 <= 0){ errors.push('Enter a valid value for V1.'); }
-    if(isNaN(v2) || v2 <= 0){ errors.push('Enter a valid value for V2.'); }
-    if(isNaN(v3) || v3 <= 0){ errors.push('Enter a valid value for V3.'); }
+    [v1El, v2El, v3El].forEach(function(el){ el.removeAttribute('aria-invalid'); });
+
+    [[v1El, v1, 'Vab'], [v2El, v2, 'Vbc'], [v3El, v3, 'Vca']].forEach(function(entry){
+      var el = entry[0], val = entry[1], label = entry[2];
+      if(!Number.isFinite(val) || val <= 0){ errors.push('Enter a valid value for ' + label + '.'); el.setAttribute('aria-invalid', 'true'); }
+      else if(val > MAX.voltage){ errors.push(label + ' exceeds the calculator\'s maximum input range (max ' + MAX.voltage.toLocaleString() + ' V).'); el.setAttribute('aria-invalid', 'true'); }
+    });
 
     if(errors.length){
       validationBox.classList.remove('hidden');
@@ -786,6 +864,7 @@
       document.getElementById('rAvg').textContent = '\u2014';
       document.getElementById('rStatus').textContent = '\u2014';
       document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      if(moveFocus){ validationBox.focus(); }
       return;
     }
     validationBox.classList.add('hidden');
@@ -798,28 +877,38 @@
     const maxDev = Math.max(dev1, dev2, dev3);
     const unbalance = (maxDev / avg) * 100;
 
-    let status = 'Acceptable';
-    if(unbalance >= 5) status = 'Do not operate';
-    else if(unbalance >= 3) status = 'Severe \u2014 correct urgently';
-    else if(unbalance >= 2) status = 'Derating required';
-    else if(unbalance >= 1) status = 'Above NEMA 1% limit';
+    if(!Number.isFinite(unbalance)){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = '\u2022 Values entered are too large to compute \u2014 try smaller voltages.';
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rAvg').textContent = '\u2014';
+      document.getElementById('rStatus').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      return;
+    }
 
-    document.getElementById('rResult').textContent = unbalance.toLocaleString('en-US', {maximumFractionDigits:2}) + '%';
-    document.getElementById('resultSub').textContent = 'V1=' + v1 + 'V, V2=' + v2 + 'V, V3=' + v3 + 'V';
+    let status = 'Within 1% guideline';
+    if(unbalance >= 5) status = 'Above 5% \u2014 operation generally not recommended';
+    else if(unbalance >= 3) status = '3%+ \u2014 significant derating; investigate promptly';
+    else if(unbalance >= 2) status = '2%+ \u2014 derating may be needed; investigate cause';
+    else if(unbalance >= 1) status = 'Above 1% \u2014 derating may be needed';
+
+    document.getElementById('rResult').textContent = unbalance.toLocaleString(undefined, {maximumFractionDigits:2}) + '%';
+    document.getElementById('resultSub').textContent = 'Vab=' + v1 + 'V, Vbc=' + v2 + 'V, Vca=' + v3 + 'V';
     document.getElementById('rAvg').textContent = avg.toFixed(2) + ' V';
     document.getElementById('rStatus').textContent = status;
 
     document.getElementById('breakdownBox').innerHTML = `
         <table class="breakdown-table">
-            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <thead><tr><th scope="col">Quantity</th><th scope="col">Value</th></tr></thead>
             <tbody>
-                <tr><td>V1</td><td>${v1} V</td></tr>
-                <tr><td>V2</td><td>${v2} V</td></tr>
-                <tr><td>V3</td><td>${v3} V</td></tr>
+                <tr><td>Vab</td><td>${v1} V</td></tr>
+                <tr><td>Vbc</td><td>${v2} V</td></tr>
+                <tr><td>Vca</td><td>${v3} V</td></tr>
                 <tr><td>Average Voltage</td><td>${avg.toFixed(2)} V</td></tr>
-                <tr><td>Deviation V1</td><td>${dev1.toFixed(2)} V</td></tr>
-                <tr><td>Deviation V2</td><td>${dev2.toFixed(2)} V</td></tr>
-                <tr><td>Deviation V3</td><td>${dev3.toFixed(2)} V</td></tr>
+                <tr><td>Deviation Vab</td><td>${dev1.toFixed(2)} V</td></tr>
+                <tr><td>Deviation Vbc</td><td>${dev2.toFixed(2)} V</td></tr>
+                <tr><td>Deviation Vca</td><td>${dev3.toFixed(2)} V</td></tr>
                 <tr><td>Maximum Deviation</td><td>${maxDev.toFixed(2)} V</td></tr>
                 <tr><td><strong>Voltage Unbalance</strong></td><td><strong>${unbalance.toFixed(2)}%</strong></td></tr>
                 <tr><td>Status</td><td>${status}</td></tr>
@@ -829,39 +918,64 @@
   }
 
   calculateVoltageUnbalance();
+
+  // ===== Live recalculation on input, matching the site-wide pattern
+  // used on other calculators (e.g. HP-kW calculator, PT ratio) =====
+  ['v1', 'v2', 'v3'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', function(){ calculateVoltageUnbalance(); });
+  });
+
+  // ===== Accessibility: Enter key on any input triggers Calculate =====
+  document.querySelectorAll('#calculator input').forEach(function(el){
+    el.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        var btn = document.querySelector('#calculator button[onclick^="calculate"]');
+        if(btn) btn.click();
+      }
+    });
+  });
 </script>
 
 <script>
-  // ===== Generic Copy Result (added site-wide; does not touch page-specific calc logic) =====
+  // ===== Copy Result (page-specific: builds a clean structured summary rather
+  // than copying the raw result-panel innerText) =====
   function copyResultGeneric(){
-    var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
-    if (!panel || !btn) return;
+    if (!btn) return;
 
-    var excluded = panel.querySelectorAll('[data-copy-exclude]');
-    var prevDisplay = [];
-    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
-    var text = panel.innerText.trim();
-    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
-    function restore(){ btn.textContent = '📋 Copy Result'; }
-    if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+    var resultText = document.getElementById('rResult').textContent;
+    if (!resultText || resultText.trim() === '\u2014') {
+      btn.textContent = 'Nothing to copy';
+      setTimeout(function(){ btn.textContent = '\ud83d\udcCB Copy Result'; }, 1500);
+      return;
+    }
+
+    var lines = ['Voltage Unbalance Calculator'];
+    lines.push('Vab: ' + document.getElementById('v1').value + ' V');
+    lines.push('Vbc: ' + document.getElementById('v2').value + ' V');
+    lines.push('Vca: ' + document.getElementById('v3').value + ' V');
+    lines.push('Average Voltage: ' + document.getElementById('rAvg').textContent);
+    lines.push('Voltage Unbalance: ' + resultText);
+    lines.push('Status: ' + document.getElementById('rStatus').textContent);
+    var text = lines.join('\n');
+
+    function restore(){ btn.textContent = '\ud83d\udcCB Copy Result'; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function(){
-        btn.textContent = '✅ Copied';
+        btn.textContent = '\u2705 Copied';
         setTimeout(restore, 1800);
-      }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+      }).catch(function(){ btn.textContent = '\u26a0\ufe0f Copy failed'; setTimeout(restore, 1800); });
     } else {
-      btn.textContent = '⚠️ Not supported';
+      btn.textContent = '\u26a0\ufe0f Not supported';
       setTimeout(restore, 1800);
     }
   }
 
-  // ===== Generic number-input safety net (added site-wide; purely additive —
-  // runs on blur AFTER the page's own oninput/onchange calc handlers, and only
-  // corrects a value that is non-finite or outside the field's own declared
-  // min/max attributes, then re-fires "input" so the page's existing calc
-  // function recalculates with the corrected value. Never overrides or
-  // replaces any existing calculator logic. =====
+  // ===== Generic number-input safety net — runs on blur, corrects a value
+  // that is non-finite or outside the field's declared min/max, then
+  // directly recalculates (defensive: also re-fires "input" for the live
+  // listeners already on these fields). Never overrides existing logic. =====
   (function(){
     function clampNumberInput(el){
       if (el.type !== 'number' || el.value === '') return;
@@ -876,7 +990,7 @@
       else if (max !== null && v > max) { corrected = max; }
       if (corrected !== null && corrected !== v) {
         el.value = corrected;
-        el.dispatchEvent(new Event('input', { bubbles: true }));
+        if (typeof calculateVoltageUnbalance === 'function') { calculateVoltageUnbalance(); }
       }
     }
     document.querySelectorAll('input[type="number"]').forEach(function(el){
@@ -917,8 +1031,13 @@
         }
       }
     }
-    window.addEventListener('resize', positionShareBar);
-    document.addEventListener('DOMContentLoaded', positionShareBar);
+    var shareBarBreakpoint = window.matchMedia('(max-width: 1023px)');
+    if (shareBarBreakpoint.addEventListener) {
+      shareBarBreakpoint.addEventListener('change', positionShareBar);
+    } else if (shareBarBreakpoint.addListener) {
+      shareBarBreakpoint.addListener(positionShareBar); // Safari <14 fallback
+    }
+    document.addEventListener('DOMContentLoaded', positionShareBar); // no-op safety net; DOMContentLoaded has typically already fired by this point in the document, but this covers unusual load orderings
     positionShareBar();
   })();
 </script>
