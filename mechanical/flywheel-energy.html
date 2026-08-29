@@ -20,6 +20,8 @@
       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
     document.documentElement.classList.add(t);
     document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+    var themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta) { themeColorMeta.setAttribute('content', t === 'dark-theme' ? '#0B1220' : '#ffffff'); }
   } catch(e) {}
 })();
 </script>
@@ -32,7 +34,6 @@
 
 <!-- ===================== [PER-PAGE] SEO META ===================== -->
 <meta name="description" content="Free Flywheel Energy Calculator. Enter mass, radius and rotational speed for a solid disc flywheel to get stored kinetic energy and moment of inertia instantly, with formula and worked example.">
-<meta name="keywords" content="flywheel energy calculator, flywheel kinetic energy formula, moment of inertia disc, flywheel rpm energy, rotational kinetic energy calculator">
 <meta name="robots" content="index, follow">
 <!-- mechanical = electrical | mechanical | financial (no slashes).
      flywheel-energy = extensionless slug only, e.g. "cable-derating" — NOT
@@ -62,13 +63,15 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
+  "@type": "WebApplication",
   "name": "Flywheel Energy Calculator",
   "url": "https://www.electromechcalc.com/mechanical/flywheel-energy",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "description": "Free Flywheel Energy Calculator. Enter mass, radius and rotational speed for a solid disc flywheel to get stored kinetic energy and moment of inertia instantly, with formula and worked example.",
+  "description": "Free Flywheel Energy Calculator. Enter mass, radius and rotational speed for a solid disc or thin ring flywheel (or enter a custom moment of inertia directly) to get stored kinetic energy, plus optional usable-energy and average-power calculations, instantly.",
+  "author": { "@type": "Person", "name": "Umasankar Maity", "url": "https://www.electromechcalc.com/about" },
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
 </script>
@@ -93,7 +96,7 @@
     {
       "@type": "Question",
       "name": "What is the formula for flywheel kinetic energy?",
-      "acceptedAnswer": { "@type": "Answer", "text": "KE = ½ × I × ω², where I is the flywheel's moment of inertia and ω is its angular velocity in radians per second. For a solid uniform disc, I = ½ × m × r², where m is mass and r is the outer radius." }
+      "acceptedAnswer": { "@type": "Answer", "text": "KE = ½ × I × ω², where I is the flywheel's moment of inertia and ω is its angular velocity in radians per second. For a solid uniform disc, I = ½ × m × r²; for a thin ring or hoop, I = m × r²; or you can enter a known moment of inertia directly." }
     },
     {
       "@type": "Question",
@@ -103,12 +106,22 @@
     {
       "@type": "Question",
       "name": "Why does a solid disc use ½ mr² while a thin ring uses mr²?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Moment of inertia depends on how mass is distributed relative to the rotation axis — a solid disc has mass spread throughout its radius (average effectively at a smaller radius), giving I = ½mr², while a thin ring or hoop has all its mass concentrated at the outer radius, giving the full I = mr² — twice as much for the same mass and radius. This is why rim-heavy flywheel designs (mass concentrated near the outer edge) store more energy than a plain solid disc of the same total mass and outer radius." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Moment of inertia depends on how mass is distributed relative to the rotation axis — a solid disc has mass spread throughout its radius, giving I = ½mr², while a thin ring or hoop has all its mass concentrated at the outer radius, giving the full I = mr² — twice as much for the same mass and radius. The Thin Ring/Hoop mode assumes an idealized thin ring; real rim-heavy or spoked flywheels typically have an intermediate moment of inertia, so use Custom I with your flywheel's actual calculated or measured value when available." }
     },
     {
       "@type": "Question",
-      "name": "Why does flywheel energy increase so dramatically with speed?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Because angular velocity is squared in the formula (KE ∝ ω²) — doubling rotational speed quadruples stored kinetic energy, for the same flywheel. This is the core reason flywheel energy storage systems are designed to spin as fast as material strength safely allows, since speed is a far more effective lever for storing more energy than adding more mass." }
+      "name": "How much energy does a flywheel release when it slows down?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The usable energy released is the difference in kinetic energy between the starting and ending speed: ΔKE = ½I(ω1² − ω2²), not the full stored energy at the starting speed. Because of the squared relationship, the fraction released depends on the square of the speed ratio — for example, dropping from ω1 to 0.9ω1 releases about 19% of the initial kinetic energy, not 10%. Use the Advanced: Usable Energy & Power section above to calculate this directly, including average power if you also know the discharge time." }
+    },
+    {
+      "@type": "Question",
+      "name": "What safety consideration matters most at high flywheel speeds?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Centrifugal stresses in rotating components generally increase strongly with rotational speed and, for many flywheel geometries, scale with the square of angular speed — at sufficiently high RPM, this stress can exceed the material's strength and cause catastrophic failure (the flywheel bursting). Flywheel speed isn't limited only by how much energy you want to store; actual allowable speed requires a geometry- and material-specific stress analysis, which is a separate structural check from the energy calculation here." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do advanced flywheel energy storage systems use composite materials instead of steel?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Because specific energy (energy stored per unit mass) is ultimately limited by a material's strength-to-density ratio. High-strength fiber-reinforced composites can offer a higher strength-to-density ratio than conventional steels, letting them be spun faster before reaching their stress limit and store more energy per unit mass — making them attractive for high-speed flywheel systems once the full rotor, winding, fatigue, containment, bearing, and manufacturing design is considered." }
     },
     {
       "@type": "Question",
@@ -117,18 +130,13 @@
     },
     {
       "@type": "Question",
-      "name": "How much energy does a flywheel release when it slows down?",
-      "acceptedAnswer": { "@type": "Answer", "text": "The usable energy released is the DIFFERENCE in kinetic energy between the starting and ending speed: ΔKE = ½I(ω1² − ω2²), not the full stored energy at the starting speed. A flywheel that only slows from, say, 1500 to 1450 RPM during a work stroke releases a much smaller fraction of its total stored energy than the ratio of speeds alone might suggest, because of the squared relationship." }
+      "name": "How do I estimate moment of inertia for a rim-heavy or spoked flywheel to use with Custom I?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For a rim-heavy or spoked design, moment of inertia is best obtained from CAD software, a manufacturer's datasheet, or a physical measurement (such as a bifilar pendulum test) rather than estimated from mass and outer radius alone. As a rough hand calculation, you can also sum the moment of inertia of each major component (hub, spokes, rim) about the same rotation axis using their individual geometries, then enter the total directly using the Custom I mode above." }
     },
     {
       "@type": "Question",
-      "name": "Does flywheel shape matter if I only know mass and outer radius?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes significantly — this calculator's solid-disc assumption (I = ½mr²) is a reasonable approximation for a plain uniform disc, but a flywheel with most of its mass concentrated in a heavy outer rim (common in purpose-built energy-storage flywheels) has a moment of inertia closer to I = mr² for the same mass, storing up to twice the energy at the same speed and radius." }
-    },
-    {
-      "@type": "Question",
-      "name": "What safety consideration matters most at high flywheel speeds?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Centrifugal (hoop) stress in the flywheel material, which increases with the square of rotational speed — at sufficiently high RPM, this stress can exceed the material's strength and cause catastrophic failure (the flywheel bursting). Flywheel speed isn't limited only by how much energy you want to store, but fundamentally by the maximum safe rotational speed the material and geometry can withstand, which is a separate structural check from the energy calculation here." }
+      "name": "Does entering mass in lb or radius in mm/inches change the accuracy of the result?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No — mass and radius are converted internally to kilograms and meters before any calculation, so entering 110.23 lb or 50 kg, or 300 mm or 11.81 in radius, all produce the same result. Use whichever unit matches your source data to avoid a manual conversion error." }
     }
   ]
 }
@@ -227,7 +235,7 @@
   }
   .hidden-field{ display:none !important; }
   .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
-  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+  .flywheel-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
 
   .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
   .breakdown-table th, .breakdown-table td{
@@ -324,6 +332,14 @@
   .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
   body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
 
+  body.dark-theme .bg-amber-50{ background:rgba(245,158,11,0.08) !important; }
+  body.dark-theme .border-amber-200{ border-color:#78350f !important; }
+  body.dark-theme .text-amber-800{ color:#fbbf24 !important; }
+
+  body.dark-theme .sky-callout{
+    background:rgba(14,165,233,0.08); border-color:#164e63; color:#7dd3fc;
+  }
+
   .author-box{
     border:2px solid #000000;
   }
@@ -341,17 +357,17 @@
   .breakdown-wrap{ min-width:0; }
   /* Dark-mode fix: "Worked Example / Reference" box (bg-sky-50/60) had no
      body.dark-theme override, so it stayed near-invisible in dark mode. */
-  body.dark-theme #cs-example-box{
+  body.dark-theme #flywheel-example-box{
     background:rgba(14,165,233,0.07); border-color:#164e63;
   }
-  body.dark-theme #cs-example-box thead tr{ border-color:#164e63; }
-  body.dark-theme #cs-example-box th{ color:#7dd3fc; }
-  body.dark-theme #cs-example-box tbody{ color:#cbd5e1; }
-  body.dark-theme #cs-example-box tbody tr{ border-color:rgba(125,211,252,0.15); }
-  body.dark-theme #cs-example-box .text-gray-400{ color:#64748b; }
-  body.dark-theme #cs-example-box .text-gray-500{ color:#7dd3fc; }
-  body.dark-theme #cs-example-box .text-gray-600{ color:#cbd5e1; }
-  body.dark-theme #cs-example-box .text-gray-700{ color:#e2e8f0; }
+  body.dark-theme #flywheel-example-box thead tr{ border-color:#164e63; }
+  body.dark-theme #flywheel-example-box th{ color:#7dd3fc; }
+  body.dark-theme #flywheel-example-box tbody{ color:#cbd5e1; }
+  body.dark-theme #flywheel-example-box tbody tr{ border-color:rgba(125,211,252,0.15); }
+  body.dark-theme #flywheel-example-box .text-gray-400{ color:#64748b; }
+  body.dark-theme #flywheel-example-box .text-gray-500{ color:#7dd3fc; }
+  body.dark-theme #flywheel-example-box .text-gray-600{ color:#cbd5e1; }
+  body.dark-theme #flywheel-example-box .text-gray-700{ color:#e2e8f0; }
 
   .hero-typing-box{
     display:flex;
@@ -436,14 +452,14 @@
     </div>
 
         <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
-          Free flywheel energy calculator — enter mass, radius, and rotational speed to instantly get the kinetic energy stored in a solid-disc flywheel.
+          Free flywheel energy calculator — calculate stored kinetic energy from mass, radius, and RPM using a solid-disc or thin-ring model, or enter a known moment of inertia directly.
         </p>
       </div>
 
       <!-- Animation column -->
       <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
         <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
-          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" aria-hidden="true" style="opacity:.9">
             <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
             <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
           </svg>
@@ -462,42 +478,109 @@
     <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
             <div id="calcHeaderBar">
         <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Flywheel Energy Details</h2>
-      <p class="text-xs text-gray-500 mb-6">Solid uniform disc — enter mass, radius, and speed.</p>
+      <p class="text-xs text-gray-500 mb-6">Choose a flywheel type, then enter mass/radius or a known moment of inertia, and speed.</p>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide block mb-2">Flywheel Type</label>
+        <div class="flex gap-2" id="flywheelTypeToggle" role="group" aria-label="Flywheel type">
+          <button type="button" class="toggle-btn active" data-type="disc" aria-pressed="true" onclick="setFlywheelType('disc')">Solid Disc</button>
+          <button type="button" class="toggle-btn" data-type="ring" aria-pressed="false" onclick="setFlywheelType('ring')">Thin Ring / Hoop</button>
+          <button type="button" class="toggle-btn" data-type="custom" aria-pressed="false" onclick="setFlywheelType('custom')">Custom I</button>
+        </div>
+        <div class="mt-2 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2 text-[11px] text-gray-500 leading-relaxed">
+          <strong class="text-gray-600">Which one to use?</strong> Solid Disc — a plain uniform disc (I = ½mr²). Thin Ring/Hoop — an idealized model with all mass concentrated at the outer radius (I = mr²); useful as a limiting case for comparing rim-heavy designs. Custom I — you already have the actual moment of inertia from CAD, a datasheet, or a measurement.
+        </div>
       </div>
 
       <div class="space-y-4 mb-5">
-        <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="mass">Flywheel Mass, m (kg)</label>
-          <input id="mass" type="number" value="50" step="1" min="0" placeholder="e.g. 50" class="input-field mt-2">
+        <p class="text-[11px] text-gray-400 -mb-1">Changing a unit reinterprets the entered number — it does not convert the existing value.</p>
+        <div id="massField">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="mass">Flywheel Mass, m</label>
+          <div class="flex gap-2 mt-2">
+            <input id="mass" type="number" value="50" step="1" min="0" max="10000000" placeholder="e.g. 50" class="input-field flex-1">
+            <select id="massUnit" class="input-field" style="width:78px" aria-label="Mass unit">
+              <option value="kg" selected>kg</option>
+              <option value="lb">lb</option>
+            </select>
+          </div>
         </div>
-        <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="radius">Outer Radius, r (m)</label>
-          <input id="radius" type="number" value="0.3" step="0.01" min="0" placeholder="e.g. 0.3" class="input-field mt-2">
+        <div id="radiusField">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="radius">Outer Radius, r</label>
+          <div class="flex gap-2 mt-2">
+            <input id="radius" type="number" value="0.3" step="0.01" min="0" max="10000" placeholder="e.g. 0.3" class="input-field flex-1">
+            <select id="radiusUnit" class="input-field" style="width:78px" aria-label="Radius unit">
+              <option value="m" selected>m</option>
+              <option value="mm">mm</option>
+              <option value="in">in</option>
+            </select>
+          </div>
+        </div>
+        <div id="customIField" class="hidden-field">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="customI">Moment of Inertia, I (kg·m²)</label>
+          <input id="customI" type="number" step="0.01" min="0" max="1000000000" placeholder="e.g. 3.5" class="input-field mt-2">
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="rpmFly">Rotational Speed, N (RPM)</label>
-          <input id="rpmFly" type="number" value="1500" step="10" min="0" placeholder="e.g. 1500" class="input-field mt-2">
+          <input id="rpmFly" type="number" value="1500" step="10" min="0" max="1000000" placeholder="e.g. 1500" class="input-field mt-2">
         </div>
       </div>
 
-      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+      <details class="mb-5 border border-gray-100 rounded-lg px-4" id="advancedUsableEnergy">
+        <summary class="py-3 text-xs font-semibold text-brandDark uppercase tracking-wide flex justify-between items-center">
+          Advanced: Usable Energy &amp; Power
+          <span class="plus text-sky-500 text-lg">+</span>
+        </summary>
+        <div class="space-y-4 pb-4">
+          <p class="text-xs text-gray-500 -mt-1">Optional — leave blank to see total stored energy only.</p>
+          <div class="sky-callout rounded-lg border border-sky-100 bg-sky-50 px-3 py-2 text-[11px] text-sky-700 leading-relaxed">
+            <strong>Note:</strong> Initial and Minimum Speed below are independent of the Rotational Speed field above — they're used only for this usable-energy calculation, so they can be set to any values (e.g. to model a different operating scenario).
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="initRpm">Initial Speed (RPM)</label>
+            <input id="initRpm" type="number" step="10" min="0" max="1000000" placeholder="e.g. 1500" class="input-field mt-2" aria-describedby="initRpmError">
+            <p id="initRpmError" class="text-xs text-red-600 mt-1 hidden" role="alert"></p>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="minRpm">Minimum Speed (RPM)</label>
+            <input id="minRpm" type="number" step="10" min="0" max="1000000" placeholder="e.g. 1350" class="input-field mt-2" aria-describedby="minRpmError">
+            <p id="minRpmError" class="text-xs text-red-600 mt-1 hidden" role="alert"></p>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="dischargeTime">Discharge Time, t (s)</label>
+            <input id="dischargeTime" type="number" step="0.01" min="0" max="100000" placeholder="e.g. 0.25" class="input-field mt-2" aria-describedby="dischargeTimeError">
+            <p id="dischargeTimeError" class="text-xs text-red-600 mt-1 hidden" role="alert"></p>
+          </div>
+        </div>
+      </details>
 
-      <button onclick="calculateFlywheelEnergy()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+      <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button type="button" onclick="calculateFlywheelEnergy()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate
       </button>
 
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
-        <span class="formula-chip">KE = ½ I ω², I = ½ mr²</span>
+        <span class="formula-chip" id="formulaChip">KE = ½ I ω², I = ½ mr²</span>
+      </div>
+
+      <div class="mt-4 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-lg px-4 py-3 leading-relaxed">
+        <strong>⚠️ Engineering Safety Note:</strong> This calculator estimates rotational kinetic energy only. It does not verify flywheel structural integrity, allowable RPM, burst speed, shaft stress, bearing limits, or containment requirements — a separate structural design check is always required. Never increase flywheel speed based on the calculated energy alone; allowable speed must be established from a complete rotor stress, fatigue, bearing, shaft, and containment analysis.
       </div>
     </div>
 
     <!-- RESULT PANEL -->
     <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
             <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
-        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
-        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Kinetic Energy Stored</span>
-        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full flywheel-badge opacity-20"></div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Kinetic Energy Stored</span>
+          <span id="rTypeBadge" class="font-mono text-[9px] uppercase tracking-wider bg-white/10 text-sky-300 px-2 py-0.5 rounded-full">Solid Disc</span>
+        </div>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1" aria-live="polite" role="status">—</div>
+        <p class="text-xs text-gray-500 mt-0.5" id="rSecondaryUnits"></p>
         <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+        <p class="text-[10px] text-gray-500 mt-2 italic">Energy result only — not an allowable-speed or structural design calculation.</p>
 
         <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
           <div>
@@ -511,9 +594,30 @@
         </div>
       </div>
 
+      <div id="usableEnergyResult" class="hidden-field bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Usable Energy &amp; Power</span>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Available Energy</span>
+            <span id="rDeltaKE" class="font-display font-semibold text-lg text-brandDark" aria-live="polite" role="status">—</span>
+          </div>
+          <div id="rAvgPowerBlock" class="hidden-field">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Average Ideal Mechanical Power</span>
+            <span id="rAvgPower" class="font-display font-semibold text-lg text-brandDark" aria-live="polite" role="status">—</span>
+          </div>
+        </div>
+        <p id="zeroUsableNote" class="text-xs text-gray-500 mt-2 hidden">Initial and minimum speed are equal, so no energy is available from deceleration.</p>
+        <p id="avgPowerCaveat" class="text-xs text-gray-500 mt-2 hidden">Ideal average mechanical power available during the assumed discharge interval — actual delivered power will depend on drivetrain, generator/motor efficiency, torque limits, and the real discharge profile.</p>
+      </div>
+
       <div class="bg-white rounded-xl border border-gray-100 p-4">
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
         <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Speed vs. Energy (this flywheel)</span>
+        <div id="speedEnergyTable" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see how energy scales with speed.</p></div>
       </div>
 
     </div>
@@ -526,13 +630,13 @@
 <section id="shareFeedbackBar" class="max-w-6xl mx-auto px-4 mb-14">
   <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
     <div class="flex items-center gap-2 flex-wrap">
-      <button class="share-result-btn" onclick="loadShareModal()">🔗 Share Result</button>
-      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
+      <button type="button" class="share-result-btn" onclick="loadShareModal()">🔗 Share Result</button>
+      <button type="button" class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
       <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
-      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
-      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+      <button type="button" id="fbYes" class="action-icon-btn" aria-pressed="false" onclick="setFeedback('yes')">👍 Yes</button>
+      <button type="button" id="fbNo" class="action-icon-btn" aria-pressed="false" onclick="setFeedback('no')">👎 No</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
       <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Flywheel%20Energy%20Calculator">✉️ Feedback</a>
@@ -558,6 +662,9 @@
           Spring Rate Calculator <span class="text-sky-500">→</span>
         </a>
         </div>
+        <a href="/mechanical-calculators" class="sky-callout mt-2 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-sky-100 bg-sky-50 text-sm font-semibold text-sky-700">
+          View All Mechanical Calculators <span class="text-sky-500">→</span>
+        </a>
       </div>
 </section>
 
@@ -581,7 +688,7 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard rotational kinetic energy formula (rigid-body dynamics, solid disc assumption)</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Technical basis: Classical rigid-body rotational dynamics; solid uniform disc and thin-ring moment-of-inertia models</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Flywheel Kinetic Energy Is Calculated</h2>
@@ -590,42 +697,36 @@
 
       <p><strong>Formula used:</strong> KE = ½ × I × ω², where I is the moment of inertia and ω is angular velocity in rad/s. For a solid, uniform disc, I = ½ × m × r², where m is the flywheel's mass and r is its outer radius. Angular velocity converts from RPM via ω = 2πN/60.</p>
 
-      <p><strong>Worked example:</strong> a 50 kg solid steel disc flywheel with a 0.3 m outer radius, spinning at 1500 RPM: I = ½ × 50 × 0.3² = 2.25 kg·m². ω = 2π × 1500 ÷ 60 ≈ 157.08 rad/s. KE = ½ × 2.25 × 157.08² ≈ 27,750 J ≈ 27.75 kJ. That's the total kinetic energy stored in the spinning disc at that instant.</p>
+      <p><strong>Worked example:</strong> a 50 kg solid steel disc flywheel with a 0.3 m outer radius, spinning at 1500 RPM: I = ½ × 50 × 0.3² = 2.25 kg·m². ω = 2π × 1500 ÷ 60 ≈ 157.08 rad/s. KE = ½ × 2.25 × 157.08² ≈ 27,758 J ≈ 27.76 kJ. That's the total kinetic energy stored in the spinning disc at that instant.</p>
 
-      <p><strong>Why speed dominates flywheel energy design:</strong> since ω is squared in the formula, doubling rotational speed quadruples stored energy for the exact same flywheel — far more effective than doubling mass, which only doubles energy. This is exactly why flywheel energy storage systems are engineered to spin as fast as the material and bearings can safely tolerate, rather than simply being built heavier: speed is the far more powerful lever, gram for gram.</p>
+      <p><strong>Why speed dominates flywheel energy design:</strong> since ω is squared in the formula, doubling rotational speed quadruples stored energy for the exact same flywheel — far more effective than doubling mass, which only doubles energy. This is exactly why flywheel energy storage systems are engineered to spin as fast as the material and bearings can safely tolerate, rather than simply being built heavier: speed has a quadratic effect on stored kinetic energy, whereas mass has only a linear effect.</p>
 
-      <p><strong>Usable energy vs total stored energy:</strong> in most real applications, a flywheel doesn't discharge all its stored energy — it slows down from an operating speed to a slightly lower speed while delivering a work pulse, then re-accelerates. The usable energy released during that slowdown is ΔKE = ½I(ω₁² − ω₂²), not the full KE at the starting speed — because of the squared relationship, even a modest speed drop (say 10%) releases a disproportionately large or small fraction of total energy depending on where in the speed range it occurs, which is a key consideration when sizing a flywheel for a punch press or similar pulsed-load application.</p>
+      <p><strong>Usable energy vs total stored energy:</strong> in most real applications, a flywheel doesn't discharge all its stored energy — it slows down from an operating speed to a slightly lower speed while delivering a work pulse, then re-accelerates. The usable energy released during that slowdown is ΔKE = ½I(ω₁² − ω₂²), not the full KE at the starting speed. Because of the squared relationship, the fraction of stored energy released depends on the square of the speed ratio, not the speed drop itself — for example, reducing speed from ω₁ to 0.9ω₁ releases about 19% of the initial kinetic energy, not 10%. Use the Advanced: Usable Energy &amp; Power section above to calculate this directly for your own initial and minimum speeds, which is a key step when sizing a flywheel for a punch press or similar pulsed-load application.</p>
 
-      <p><strong>Flywheel shape and how it affects stored energy per unit mass:</strong> for a given mass and outer radius, how that mass is distributed radially significantly changes moment of inertia and therefore stored energy. A solid uniform disc (I = ½mr², this calculator's assumption) is the baseline case. A thin ring or hoop with all mass at the outer radius (I = mr²) stores twice the energy of an equal-mass solid disc at the same speed and radius. Real flywheel designs often sit between these extremes, or deliberately favor a rim-heavy design (a heavy outer rim connected by lighter spokes to a central hub) specifically to approach the ring's higher energy density without the manufacturing complexity of a true thin hoop.</p>
+      <p><strong>Flywheel shape and how it affects stored energy per unit mass:</strong> for a given mass and outer radius, how that mass is distributed radially significantly changes moment of inertia and therefore stored energy. A solid uniform disc (I = ½mr², this calculator's assumption) is the baseline case. A thin ring or hoop with all mass at the outer radius (I = mr²) stores twice the energy of an equal-mass solid disc at the same speed and radius. Many practical flywheel geometries have a moment of inertia between these two limits, or deliberately favor a rim-heavy design (a heavy outer rim connected by lighter spokes to a central hub) specifically to approach the ring's higher energy density without the manufacturing complexity of a true thin hoop — but the actual value always depends on the complete mass distribution, so it should be calculated from the real geometry or obtained from CAD/manufacturer data rather than assumed.</p>
 
-      <p><strong>Flywheels in engines versus dedicated energy storage:</strong> an engine flywheel's job is primarily to smooth torque delivery between combustion pulses, not to store large amounts of energy for later release — it operates over a narrow speed band, absorbing and releasing relatively small amounts of kinetic energy each cycle. A dedicated flywheel energy storage system, by contrast, is engineered to operate over a wide speed range specifically to store and later discharge a large fraction of its total kinetic energy, often spinning in a vacuum enclosure on magnetic bearings to minimize windage and friction losses over the storage period — a fundamentally different design problem from an engine's smoothing flywheel, even though both rely on the same underlying KE = ½Iω² physics.</p>
+      <p><strong>Flywheels in engines versus dedicated energy storage:</strong> an engine flywheel's job is primarily to smooth torque delivery between combustion pulses, not to store large amounts of energy for later release — it operates over a narrow speed band, absorbing and releasing relatively small amounts of kinetic energy each cycle. A dedicated flywheel energy storage system, by contrast, is engineered to operate over a wide speed range specifically to store and later discharge a large fraction of its total kinetic energy; high-performance systems may use vacuum enclosures and low-loss or magnetic bearings to reduce parasitic losses over the storage period — a fundamentally different design problem from an engine's smoothing flywheel, even though both rely on the same underlying KE = ½Iω² physics.</p>
 
-      <p><strong>Specific energy versus energy density:</strong> flywheel designers often compare designs using specific energy (energy per unit mass, J/kg) or energy density (energy per unit volume). Since energy scales with the square of speed but only linearly with moment of inertia contribution from a given mass distribution, and since centrifugal stress also scales with the square of speed, the practical ceiling on a flywheel's specific energy is ultimately set by the strength-to-density ratio of its material — which is why advanced flywheel energy storage systems increasingly use high-strength composite materials (carbon fiber) rather than steel, since composites can be spun much faster before reaching their stress limit, storing considerably more energy per unit mass.</p>
+      <p><strong>Specific energy versus energy density:</strong> flywheel designers often compare designs using specific energy (energy per unit mass, J/kg) or energy density (energy per unit volume). Since energy scales with the square of speed but only linearly with moment of inertia contribution from a given mass distribution, and since centrifugal stress also scales with the square of speed, the practical ceiling on a flywheel's specific energy is ultimately set by the strength-to-density ratio of its material. High-strength fiber-reinforced composites can offer a higher strength-to-density ratio than conventional steels, making them attractive for high-speed flywheel systems once the full rotor, winding, fatigue, containment, bearing, and manufacturing design is considered.</p>
 
       <p><strong>Bearing and friction losses over time:</strong> a spinning flywheel doesn't hold its stored energy indefinitely — bearing friction and, for a flywheel operating in open air, aerodynamic drag (windage) both continuously bleed off rotational kinetic energy, gradually slowing the flywheel even with no useful work being extracted. For a punch press or engine flywheel operating continuously with constant re-energizing between cycles, this loss is simply part of the ongoing power balance; for a dedicated energy storage flywheel meant to hold energy for minutes or hours, minimizing these losses (via vacuum enclosures, magnetic bearings, and low-drag designs) becomes a central design challenge distinct from the basic energy calculation this tool performs.</p>
 
-      <p><strong>Sizing a flywheel for a punch press or shear:</strong> a common industrial application is sizing a flywheel to supply a short, high-power burst during a punching or shearing operation, then re-accelerate between strokes using a comparatively small, continuously-running motor. The design process typically starts from the energy required for one punch (from the material, thickness, and punch geometry), the acceptable speed drop during that punch (commonly limited to around 10-20% of operating speed to avoid excessive torque and current demands on the drive motor), and works backward through ΔKE = ½I(ω₁²−ω₂²) to find the required moment of inertia — a substantially different (and more involved) calculation than simply finding total stored energy at one operating speed, though it builds directly on the same underlying formula this calculator demonstrates.</p>
+      <p><strong>Sizing a flywheel for a punch press or shear:</strong> a common industrial application is sizing a flywheel to supply a short, high-power burst during a punching or shearing operation, then re-accelerate between strokes using a comparatively small, continuously-running motor. The design process typically starts from the energy required for one punch (from the material, thickness, and punch geometry), then the allowable speed drop during that punch — selected based on the application, drive characteristics, torque requirements, and machine design, though some preliminary designs use a specified percentage speed drop (often in the rough range of 10-20% of operating speed) as a starting design constraint — and works backward through ΔKE = ½I(ω₁²−ω₂²) to find the required moment of inertia — a substantially different (and more involved) calculation than simply finding total stored energy at one operating speed, though it builds directly on the same underlying formula this calculator demonstrates.</p>
 
-      <p><strong>Why this calculator uses a solid disc as the default assumption:</strong> a plain, uniform, solid disc is both the simplest flywheel geometry to manufacture and analyze, and a conservative (lower-bound) assumption for stored energy compared to any design that concentrates mass toward the outer radius. Starting a preliminary flywheel sizing exercise with the solid-disc formula, then refining toward an actual rim-heavy or spoked design once initial feasibility is confirmed, is a common and sensible design progression — the actual final design's moment of inertia should always be calculated from its real geometry (or measured directly) before committing to a final specification.</p>
+      <p><strong>Why this calculator uses a solid disc as the default assumption:</strong> a plain, uniform, solid disc is both the simplest flywheel geometry to manufacture and analyze, and a convenient baseline approximation — it should not be treated as a conservative or universally representative estimate, because the actual moment of inertia depends on the complete mass distribution relative to the rotation axis, not just total mass and outer radius. Starting a preliminary flywheel sizing exercise with the solid-disc formula, then refining toward an actual rim-heavy or spoked design once initial feasibility is confirmed, is a common and sensible design progression — the actual final design's moment of inertia should always be calculated from its real geometry (or obtained from CAD/manufacturer data) before committing to a final specification.</p>
 
       <p><strong>Summary:</strong> use KE = ½Iω² with I = ½mr² for a quick solid-disc estimate of stored kinetic energy, remember that speed matters far more than mass (quadratically versus linearly), distinguish total stored energy from the usable energy actually released during a work cycle, and always run a separate centrifugal stress check before finalizing any flywheel design intended to run at meaningful rotational speed.</p>
 
-      <p>A flywheel is, in a sense, one of the oldest and simplest energy storage technologies still in active use today — from the potter's wheel to the modern grid-scale flywheel energy storage installation, the underlying physics captured in this calculator's formula has remained unchanged, even as materials and bearing technology have advanced enough to make genuinely high-performance mechanical energy storage a practical alternative to batteries in certain applications, particularly where very fast charge/discharge cycles and long cycle life matter more than maximum energy density.</p>
-
-      <p>Whether you're sizing a small punch press flywheel or exploring a large-scale energy storage concept, the same core relationship applies: energy scales with mass linearly and with speed quadratically, so understanding where a given design sits on that trade-off is the first and most important step before diving into the more detailed structural, bearing, and containment engineering that a complete flywheel design ultimately requires.</p>
-
-      <p>This calculator's job is to get that first step right, quickly and reliably — the rest of the design work, appropriately, belongs to a fuller engineering process.</p>
-
-      <p>Use the worked examples and the reference table above to build intuition for how mass and speed each contribute, then apply the same formula with your own actual figures to get a defensible starting number for whatever flywheel problem you're working on.</p>
+      <p>Whether you're sizing a small punch press flywheel or exploring a large-scale energy storage concept, the same core relationship applies: energy scales linearly with mass and quadratically with speed, so understanding that trade-off is the first step before the more detailed structural, bearing, and containment engineering a complete flywheel design requires. Use the worked example and the speed-scaling table on this page to build intuition, then apply the same formula with your own figures to get a defensible starting number.</p>
     </div>
 
     <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
-    <div id="cs-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+    <div id="flywheel-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
             <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
-      <p class="text-sm text-gray-600 leading-relaxed">m = 50 kg, r = 0.3 m, N = 1500 RPM: I = ½ × 50 × 0.3² = 2.25 kg·m², ω = 2π × 1500 ÷ 60 ≈ 157.08 rad/s, KE = ½ × 2.25 × 157.08² ≈ <strong>27,750 J (27.75 kJ)</strong>.</p>
+      <p class="text-sm text-gray-600 leading-relaxed">m = 50 kg, r = 0.3 m, N = 1500 RPM: I = ½ × 50 × 0.3² = 2.25 kg·m², ω = 2π × 1500 ÷ 60 ≈ 157.08 rad/s, KE = ½ × 2.25 × 157.08² ≈ <strong>27,758 J (27.76 kJ)</strong>.</p>
     </div>
 
-    <p class="text-xs text-gray-400 mt-6">This calculator assumes a solid, uniform disc flywheel (moment of inertia I = ½mr²) — a rim-heavy flywheel, spoked wheel, or other non-solid-disc geometry has a different, generally higher, moment of inertia for the same mass and outer radius, and will store more energy at the same speed. For a flywheel with a specific published moment of inertia, use that value directly with KE = ½Iω² instead of this mass/radius approximation.</p>
+    <p class="text-xs text-gray-400 mt-6">This calculator assumes the flywheel behaves as a rigid body rotating about a fixed axis — deformation, eccentricity, imbalance, and transient structural effects are not modeled. The Solid Disc and Thin Ring/Hoop modes are idealized geometries (I = ½mr² and I = mr² respectively); a real rim-heavy or spoked flywheel generally has an intermediate moment of inertia and different geometries will store more or less energy at the same mass, radius, and speed. For a flywheel with a specific published or measured moment of inertia, use Custom I with KE = ½Iω² instead of the mass/radius approximation.</p>
   </div>
 </section>
 
@@ -644,16 +745,16 @@
       </thead>
       <tbody class="divide-y divide-gray-100">
         <tr><td class="px-4 py-2">750 RPM</td><td class="px-4 py-2">0.5×</td><td class="px-4 py-2">6.94 kJ</td></tr>
-        <tr><td class="px-4 py-2">1500 RPM</td><td class="px-4 py-2">1× (baseline)</td><td class="px-4 py-2">27.75 kJ</td></tr>
-        <tr><td class="px-4 py-2">3000 RPM</td><td class="px-4 py-2">2×</td><td class="px-4 py-2">111.0 kJ (4×)</td></tr>
-        <tr><td class="px-4 py-2">4500 RPM</td><td class="px-4 py-2">3×</td><td class="px-4 py-2">249.75 kJ (9×)</td></tr>
+        <tr><td class="px-4 py-2">1500 RPM</td><td class="px-4 py-2">1× (baseline)</td><td class="px-4 py-2">27.76 kJ</td></tr>
+        <tr><td class="px-4 py-2">3000 RPM</td><td class="px-4 py-2">2×</td><td class="px-4 py-2">111.03 kJ (4×)</td></tr>
+        <tr><td class="px-4 py-2">4500 RPM</td><td class="px-4 py-2">3×</td><td class="px-4 py-2">249.82 kJ (9×)</td></tr>
       </tbody>
     </table>
   </div>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-    <p>This is the square-law relationship in action: doubling speed quadruples energy, tripling speed gives nine times the energy — for the exact same flywheel mass and radius. This is why flywheel energy storage system designers push rotational speed as high as bearing and material strength safely allow rather than adding more mass, and also why any flywheel bursting failure at high speed is so violently energetic.</p>
-      <p>This is exactly why flywheel containment and burst protection (a properly designed containment housing capable of absorbing a burst flywheel's fragments) is a standard safety requirement for high-speed flywheel systems.</p>
-      <p>This table also illustrates why doubling a flywheel's mass (a linear lever on energy) is a much less effective way to increase stored energy than a modest increase in operating speed — for the same percentage increase, speed always wins by a wide margin, which is the core reason flywheel energy storage engineering focuses so heavily on maximizing safe operating speed rather than simply building a heavier flywheel.</p>
+    <p>This is the square-law relationship in action: doubling speed quadruples energy, tripling speed gives nine times the energy — for the exact same flywheel mass and radius. This is why flywheel energy storage system designers push rotational speed as high as bearing and material strength safely allow rather than adding more mass, and also why a high-speed flywheel failure can release a very large amount of stored energy and eject hazardous fragments.</p>
+      <p>High-speed flywheel systems require appropriately engineered containment and burst protection (a properly designed housing capable of absorbing a burst flywheel's fragments) as part of the overall safety design.</p>
+      <p>This table also illustrates why a given percentage increase in speed grows stored energy far more than the same percentage increase in mass: energy is proportional to speed squared but only to mass to the first power, so for the same percentage increase, rotational speed has roughly twice the percentage sensitivity of mass. This is the core reason flywheel energy storage engineering focuses so heavily on maximizing safe operating speed rather than simply building a heavier flywheel — subject always to the centrifugal-stress limit discussed above.</p>
   </div>
 </section>
 
@@ -669,8 +770,8 @@
       <p><strong>4. Confusing total stored energy with usable (delivered) energy.</strong> The full KE = ½Iω² at operating speed is the total stored energy — the energy actually released during a work pulse is the difference in KE between the starting and ending speed, which because of the squared relationship is not a simple proportional fraction of total stored energy.</p>
       <p><strong>5. Ignoring centrifugal (hoop) stress at high speed.</strong> This calculator only checks energy, not structural safety — flywheel material experiences centrifugal stress that increases with the square of rotational speed, and can exceed the material's safe strength well before energy storage requirements alone would suggest a speed limit; a separate structural/stress check is always required for a real flywheel design.</p>
       <p><strong>6. Mixing up mass and weight.</strong> The formula needs mass (kg), not weight (which would be in Newtons, mass × g) — accidentally entering a weight value where mass is expected introduces roughly a 9.8× error (since g ≈ 9.81 m/s²).</p>
-      <p><strong>7. Assuming a rim-heavy or spoked flywheel behaves like a solid disc.</strong> A flywheel with substantial mass concentrated in an outer rim has meaningfully higher moment of inertia than a solid disc of the same total mass and outer radius — using this calculator's solid-disc assumption on such a design understates actual stored energy.</p>
-      <p><strong>8. Not checking centrifugal stress separately from the energy calculation.</strong> Energy storage requirements and structural speed limits are two independent constraints — a flywheel design that comfortably meets an energy target may still be unsafe at the required speed if centrifugal stress hasn't been checked against the material's strength separately.</p>
+      <p><strong>7. Ignoring rotational axis and geometry when using a published moment of inertia.</strong> A published or datasheet moment of inertia is only valid for the specific rotation axis and geometry it was calculated or measured for — applying it to a different axis, mounting, or a modified design without re-deriving I will give a wrong result.</p>
+      <p><strong>8. Not accounting for mechanical losses.</strong> The ideal KE = ½Iω² calculation is the energy stored in the rotating mass — it does not represent the energy actually delivered after bearing friction, windage, coupling, and generator/motor losses, which reduce the usable output below this ideal figure.</p>
     </div>
   </div>
 </section>
@@ -689,7 +790,7 @@
         What is the formula for flywheel kinetic energy?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">KE = ½ × I × ω², where I is the flywheel's moment of inertia and ω is its angular velocity in radians per second. For a solid uniform disc, I = ½ × m × r², where m is mass and r is the outer radius.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">KE = ½ × I × ω², where I is the flywheel's moment of inertia and ω is its angular velocity in radians per second. For a solid uniform disc, I = ½ × m × r²; for a thin ring or hoop, I = m × r²; or you can enter a known moment of inertia directly.</p>
     </details>
 
     <details class="py-5">
@@ -705,15 +806,31 @@
         Why does a solid disc use ½ mr² while a thin ring uses mr²?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Moment of inertia depends on how mass is distributed relative to the rotation axis — a solid disc has mass spread throughout its radius (average effectively at a smaller radius), giving I = ½mr², while a thin ring or hoop has all its mass concentrated at the outer radius, giving the full I = mr² — twice as much for the same mass and radius. This is why rim-heavy flywheel designs (mass concentrated near the outer edge) store more energy than a plain solid disc of the same total mass and outer radius.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Moment of inertia depends on how mass is distributed relative to the rotation axis — a solid disc has mass spread throughout its radius, giving I = ½mr², while a thin ring or hoop has all its mass concentrated at the outer radius, giving the full I = mr² — twice as much for the same mass and radius. The Thin Ring/Hoop mode assumes an idealized thin ring; real rim-heavy or spoked flywheels typically have an intermediate moment of inertia, so use Custom I with your flywheel's actual calculated or measured value when available.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Why does flywheel energy increase so dramatically with speed?
+        How much energy does a flywheel release when it slows down?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Because angular velocity is squared in the formula (KE ∝ ω²) — doubling rotational speed quadruples stored kinetic energy, for the same flywheel. This is the core reason flywheel energy storage systems are designed to spin as fast as material strength safely allows, since speed is a far more effective lever for storing more energy than adding more mass.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The usable energy released is the difference in kinetic energy between the starting and ending speed: ΔKE = ½I(ω1² − ω2²), not the full stored energy at the starting speed. Because of the squared relationship, the fraction released depends on the square of the speed ratio — for example, dropping from ω1 to 0.9ω1 releases about 19% of the initial kinetic energy, not 10%. Use the Advanced: Usable Energy &amp; Power section above to calculate this directly, including average power if you also know the discharge time.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What safety consideration matters most at high flywheel speeds?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Centrifugal stresses in rotating components generally increase strongly with rotational speed and, for many flywheel geometries, scale with the square of angular speed — at sufficiently high RPM, this stress can exceed the material's strength and cause catastrophic failure (the flywheel bursting). Flywheel speed isn't limited only by how much energy you want to store; actual allowable speed requires a geometry- and material-specific stress analysis, which is a separate structural check from the energy calculation here.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why do advanced flywheel energy storage systems use composite materials instead of steel?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Because specific energy (energy stored per unit mass) is ultimately limited by a material's strength-to-density ratio. High-strength fiber-reinforced composites can offer a higher strength-to-density ratio than conventional steels, letting them be spun faster before reaching their stress limit and store more energy per unit mass — making them attractive for high-speed flywheel systems once the full rotor, winding, fatigue, containment, bearing, and manufacturing design is considered.</p>
     </details>
 
     <details class="py-5">
@@ -726,34 +843,18 @@
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        How much energy does a flywheel release when it slows down?
+        How do I estimate moment of inertia for a rim-heavy or spoked flywheel to use with Custom I?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The usable energy released is the DIFFERENCE in kinetic energy between the starting and ending speed: ΔKE = ½I(ω1² − ω2²), not the full stored energy at the starting speed. A flywheel that only slows from, say, 1500 to 1450 RPM during a work stroke releases a much smaller fraction of its total stored energy than the ratio of speeds alone might suggest, because of the squared relationship.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For a rim-heavy or spoked design, moment of inertia is best obtained from CAD software, a manufacturer's datasheet, or a physical measurement (such as a bifilar pendulum test) rather than estimated from mass and outer radius alone. As a rough hand calculation, you can also sum the moment of inertia of each major component (hub, spokes, rim) about the same rotation axis using their individual geometries, then enter the total directly using the Custom I mode above.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Does flywheel shape matter if I only know mass and outer radius?
+        Does entering mass in lb or radius in mm/inches change the accuracy of the result?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes significantly — this calculator's solid-disc assumption (I = ½mr²) is a reasonable approximation for a plain uniform disc, but a flywheel with most of its mass concentrated in a heavy outer rim (common in purpose-built energy-storage flywheels) has a moment of inertia closer to I = mr² for the same mass, storing up to twice the energy at the same speed and radius.</p>
-    </details>
-
-    <details class="py-5">
-      <summary class="font-semibold text-brandDark flex justify-between items-center">
-        What safety consideration matters most at high flywheel speeds?
-        <span class="plus text-sky-500 text-xl">+</span>
-      </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Centrifugal (hoop) stress in the flywheel material, which increases with the square of rotational speed — at sufficiently high RPM, this stress can exceed the material's strength and cause catastrophic failure (the flywheel bursting). Flywheel speed isn't limited only by how much energy you want to store, but fundamentally by the maximum safe rotational speed the material and geometry can withstand, which is a separate structural check from the energy calculation here.</p>
-    </details>
-
-    <details class="py-5">
-      <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Why do advanced flywheel energy storage systems use composite materials instead of steel?
-        <span class="plus text-sky-500 text-xl">+</span>
-      </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Because specific energy (energy stored per unit mass) is ultimately limited by a material's strength-to-density ratio, and high-strength composites like carbon fiber can be spun considerably faster than steel before reaching their stress limit — since stored energy scales with the square of speed, this lets composite flywheels store meaningfully more energy per unit mass than an equivalent steel design.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — mass and radius are converted internally to kilograms and meters before any calculation, so entering 110.23 lb or 50 kg, or 300 mm or 11.81 in radius, all produce the same result. Use whichever unit matches your source data to avoid a manual conversion error.</p>
     </details>
   </div>
 </section>
@@ -770,79 +871,361 @@
   function setFeedback(val){
     document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
     document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+    document.getElementById('fbYes').setAttribute('aria-pressed', val === 'yes' ? 'true' : 'false');
+    document.getElementById('fbNo').setAttribute('aria-pressed', val === 'no' ? 'true' : 'false');
   }
-    function calculateFlywheelEnergy(){
-    const mass = parseFloat(document.getElementById('mass').value);
-    const radius = parseFloat(document.getElementById('radius').value);
-    const rpm = parseFloat(document.getElementById('rpmFly').value);
 
+  // ===== Unit conversion tables =====
+  const MASS_TO_KG = { kg: 1, lb: 0.45359237 };
+  const RADIUS_TO_M = { m: 1, mm: 0.001, in: 0.0254 };
+  const TYPE_LABEL = { disc: 'Solid Disc', ring: 'Thin Ring / Hoop', custom: 'Custom I' };
+  const FORMULA_CHIP = {
+    disc: 'KE = \u00bd I \u03c9\u00b2, I = \u00bd mr\u00b2',
+    ring: 'KE = \u00bd I \u03c9\u00b2, I = mr\u00b2',
+    custom: 'KE = \u00bd I \u03c9\u00b2'
+  };
+  let flywheelType = 'disc';
+  const MAX = { massKg: 1e7, radiusM: 1e4, rpm: 1e6, customI: 1e9, dischargeTime: 1e5 };
+
+  // ===== Flywheel type toggle (Solid Disc / Ring / Custom I) =====
+  function setFlywheelType(type){
+    flywheelType = type;
+    document.querySelectorAll('#flywheelTypeToggle .toggle-btn').forEach(function(btn){
+      const active = btn.getAttribute('data-type') === type;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+    document.getElementById('massField').classList.toggle('hidden-field', type === 'custom');
+    document.getElementById('radiusField').classList.toggle('hidden-field', type === 'custom');
+    document.getElementById('customIField').classList.toggle('hidden-field', type !== 'custom');
+    document.getElementById('formulaChip').textContent = FORMULA_CHIP[type];
+    calculateFlywheelEnergy();
+  }
+
+  function formatEnergy(joules){
+    const kJ = joules / 1000;
+    return kJ >= 1 ? kJ.toLocaleString('en-US', {maximumFractionDigits:2}) + ' kJ' : joules.toFixed(1) + ' J';
+  }
+
+  function calculateFlywheelEnergy(){
+    const rpmEl = document.getElementById('rpmFly');
+    const rpm = parseFloat(rpmEl.value);
     const validationBox = document.getElementById('validationBox');
     const errors = [];
-    if(isNaN(mass) || mass <= 0){ errors.push('Enter a valid mass greater than 0.'); }
-    if(isNaN(radius) || radius <= 0){ errors.push('Enter a valid radius greater than 0.'); }
-    if(isNaN(rpm) || rpm <= 0){ errors.push('Enter a valid rotational speed greater than 0.'); }
+    let I = NaN;
+    let breakdownRows = '';
+
+    const massEl = document.getElementById('mass');
+    const radiusEl = document.getElementById('radius');
+    const customIEl = document.getElementById('customI');
+    [massEl, radiusEl, customIEl, rpmEl].forEach(function(el){ el.removeAttribute('aria-invalid'); });
+
+    if(flywheelType === 'custom'){
+      const customI = parseFloat(customIEl.value);
+      if(!Number.isFinite(customI) || customI <= 0){ errors.push('Enter a valid moment of inertia greater than 0.'); customIEl.setAttribute('aria-invalid', 'true'); }
+      else if(customI > MAX.customI){ errors.push('Moment of inertia exceeds the calculator\'s maximum input range (max ' + MAX.customI.toLocaleString('en-US') + ' kg\u00b7m\u00b2).'); customIEl.setAttribute('aria-invalid', 'true'); }
+      I = customI;
+      breakdownRows += `<tr><td>Moment of Inertia (I, entered directly)</td><td>${Number.isFinite(customI) ? customI.toFixed(4) : '\u2014'} kg\u00b7m\u00b2</td></tr>`;
+    } else {
+      const massVal = parseFloat(massEl.value);
+      const massUnit = document.getElementById('massUnit').value;
+      const radiusVal = parseFloat(radiusEl.value);
+      const radiusUnit = document.getElementById('radiusUnit').value;
+      if(!Number.isFinite(massVal) || massVal <= 0){ errors.push('Enter a valid mass greater than 0.'); massEl.setAttribute('aria-invalid', 'true'); }
+      if(!Number.isFinite(radiusVal) || radiusVal <= 0){ errors.push('Enter a valid radius greater than 0.'); radiusEl.setAttribute('aria-invalid', 'true'); }
+      const massKg = massVal * (MASS_TO_KG[massUnit] || 1);
+      const radiusM = radiusVal * (RADIUS_TO_M[radiusUnit] || 1);
+      if(Number.isFinite(massKg) && massKg > MAX.massKg){ errors.push('Mass exceeds the calculator\'s maximum input range (max ' + MAX.massKg.toLocaleString('en-US') + ' kg).'); massEl.setAttribute('aria-invalid', 'true'); }
+      if(Number.isFinite(radiusM) && radiusM > MAX.radiusM){ errors.push('Radius exceeds the calculator\'s maximum input range (max ' + MAX.radiusM.toLocaleString('en-US') + ' m).'); radiusEl.setAttribute('aria-invalid', 'true'); }
+      I = flywheelType === 'ring' ? massKg * Math.pow(radiusM,2) : 0.5 * massKg * Math.pow(radiusM,2);
+      if(Number.isFinite(massVal) && Number.isFinite(radiusVal)){
+        breakdownRows += `<tr><td>Mass (m)</td><td>${massVal} ${massUnit}${massUnit!=='kg' ? ' (' + massKg.toFixed(3) + ' kg)' : ''}</td></tr>`;
+        breakdownRows += `<tr><td>Outer Radius (r)</td><td>${radiusVal} ${radiusUnit}${radiusUnit!=='m' ? ' (' + radiusM.toFixed(4) + ' m)' : ''}</td></tr>`;
+        breakdownRows += `<tr><td>Moment of Inertia (I = ${flywheelType === 'ring' ? 'mr\u00b2' : '\u00bdmr\u00b2'})</td><td>${I.toFixed(4)} kg\u00b7m\u00b2</td></tr>`;
+      }
+    }
+
+    if(!Number.isFinite(rpm) || rpm <= 0){ errors.push('Enter a valid rotational speed greater than 0.'); rpmEl.setAttribute('aria-invalid', 'true'); }
+    else if(rpm > MAX.rpm){ errors.push('Rotational speed exceeds the calculator\'s maximum input range (max ' + MAX.rpm.toLocaleString('en-US') + ' RPM).'); rpmEl.setAttribute('aria-invalid', 'true'); }
 
     if(errors.length){
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
       document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rSecondaryUnits').textContent = '';
       document.getElementById('rInertia').textContent = '\u2014';
       document.getElementById('rOmega').textContent = '\u2014';
       document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      document.getElementById('speedEnergyTable').innerHTML = '<p class="text-xs text-gray-400 p-3">Enter values above to see how energy scales with speed.</p>';
+      document.getElementById('usableEnergyResult').classList.add('hidden-field');
       return;
     }
-    validationBox.classList.add('hidden');
-    validationBox.innerHTML = '';
 
-    const I = 0.5 * mass * Math.pow(radius,2);
     const omega = 2 * Math.PI * rpm / 60;
     const KE = 0.5 * I * Math.pow(omega,2);
     const KEkJ = KE / 1000;
 
-    document.getElementById('rResult').textContent = (KEkJ >= 1 ? KEkJ.toLocaleString('en-US', {maximumFractionDigits:2}) + ' kJ' : KE.toFixed(1) + ' J');
-    document.getElementById('resultSub').textContent = mass + ' kg disc, r=' + radius + 'm at ' + rpm.toLocaleString('en-US') + ' RPM';
+    if(!Number.isFinite(I) || !Number.isFinite(omega) || !Number.isFinite(KE)){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = '\u2022 Values entered are too large to compute — try smaller mass, radius, speed, or I.';
+      document.getElementById('rResult').textContent = '\u2014';
+      document.getElementById('rSecondaryUnits').textContent = '';
+      document.getElementById('rInertia').textContent = '\u2014';
+      document.getElementById('rOmega').textContent = '\u2014';
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      document.getElementById('speedEnergyTable').innerHTML = '<p class="text-xs text-gray-400 p-3">Enter values above to see how energy scales with speed.</p>';
+      document.getElementById('usableEnergyResult').classList.add('hidden-field');
+      return;
+    }
+
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
+
+    document.getElementById('rTypeBadge').textContent = TYPE_LABEL[flywheelType];
+    document.getElementById('rResult').textContent = formatEnergy(KE);
+    document.getElementById('rSecondaryUnits').textContent =
+      KE.toLocaleString('en-US', {maximumFractionDigits:0}) + ' J \u00b7 ' +
+      (KE/3.6e6).toFixed(5) + ' kWh \u00b7 ' +
+      (KE/3600).toFixed(2) + ' Wh';
+    document.getElementById('resultSub').textContent =
+      (flywheelType === 'custom' ? 'I = ' + I.toFixed(3) + ' kg\u00b7m\u00b2' : TYPE_LABEL[flywheelType]) +
+      ' at ' + rpm.toLocaleString('en-US') + ' RPM';
     document.getElementById('rInertia').textContent = I.toFixed(3) + ' kg\u00b7m\u00b2';
     document.getElementById('rOmega').textContent = omega.toFixed(2) + ' rad/s';
+
+    breakdownRows += `<tr><td>Flywheel Type</td><td>${TYPE_LABEL[flywheelType]}</td></tr>`;
+    breakdownRows += `<tr><td>Speed (N)</td><td>${rpm.toLocaleString('en-US')} RPM</td></tr>`;
+    breakdownRows += `<tr><td>Angular Velocity (\u03c9)</td><td>${omega.toFixed(3)} rad/s</td></tr>`;
+    breakdownRows += `<tr><td><strong>Kinetic Energy</strong></td><td><strong>${KE.toLocaleString('en-US', {maximumFractionDigits:1})} J (${KEkJ.toFixed(3)} kJ)</strong></td></tr>`;
 
     document.getElementById('breakdownBox').innerHTML = `
         <table class="breakdown-table">
             <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
-            <tbody>
-                <tr><td>Mass (m)</td><td>${mass} kg</td></tr>
-                <tr><td>Outer Radius (r)</td><td>${radius} m</td></tr>
-                <tr><td>Speed (N)</td><td>${rpm.toLocaleString('en-US')} RPM</td></tr>
-                <tr><td>Angular Velocity (\u03c9)</td><td>${omega.toFixed(3)} rad/s</td></tr>
-                <tr><td>Moment of Inertia (I = \u00bdmr\u00b2)</td><td>${I.toFixed(4)} kg\u00b7m\u00b2</td></tr>
-                <tr><td><strong>Kinetic Energy</strong></td><td><strong>${KE.toLocaleString('en-US', {maximumFractionDigits:1})} J (${KEkJ.toFixed(3)} kJ)</strong></td></tr>
-            </tbody>
+            <tbody>${breakdownRows}</tbody>
         </table>
+    `;
+
+    updateSpeedEnergyTable(I, rpm);
+    updateUsableEnergy(I);
+  }
+
+  // ===== Dynamic Speed vs. Energy comparison, based on the current flywheel's I =====
+  function updateSpeedEnergyTable(I, baseRpm){
+    const multipliers = [0.5, 1, 1.5, 2, 3];
+    let rows = '';
+    let skippedForRange = false;
+    multipliers.forEach(function(m){
+      const speed = baseRpm * m;
+      if(speed > MAX.rpm){ skippedForRange = true; return; }
+      const om = 2 * Math.PI * speed / 60;
+      const ke = 0.5 * I * Math.pow(om,2);
+      if(!Number.isFinite(speed) || !Number.isFinite(om) || !Number.isFinite(ke)){ return; }
+      rows += `<tr><td>${speed.toLocaleString('en-US',{maximumFractionDigits:0})} RPM</td><td>${m}\u00d7${m===1?' (baseline)':''}</td><td>${formatEnergy(ke)}</td></tr>`;
+    });
+    if(!rows){
+      document.getElementById('speedEnergyTable').innerHTML = '<p class="text-xs text-gray-400 p-3">Values are too large to display a scaling table.</p>';
+      return;
+    }
+    document.getElementById('speedEnergyTable').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Speed</th><th>Multiplier</th><th>Stored Energy</th></tr></thead>
+            <tbody>${rows}</tbody>
+        </table>
+        <p class="text-xs text-gray-400 p-3 pb-0">For the same flywheel, stored energy is proportional to RPM\u00b2 — doubling speed increases stored energy by 4\u00d7, mass alone would need to double just to match that.</p>
+        <p class="text-xs text-gray-400 px-3 pb-3">This table shows mathematical scaling only — it does not imply the displayed speeds are mechanically safe for your flywheel; always run a separate centrifugal-stress check.${skippedForRange ? ' Some higher-multiplier rows are omitted because they would exceed this calculator\u2019s ' + MAX.rpm.toLocaleString('en-US') + ' RPM input limit.' : ''}</p>
     `;
   }
 
-  calculateFlywheelEnergy();
+  // ===== Optional: Usable Energy (initial \u2192 minimum speed) and Average Power =====
+  function updateUsableEnergy(I){
+    const initRpmEl = document.getElementById('initRpm');
+    const minRpmEl = document.getElementById('minRpm');
+    const dischargeTimeEl = document.getElementById('dischargeTime');
+    const initRpmRaw = initRpmEl.value;
+    const minRpmRaw = minRpmEl.value;
+    const dischargeRaw = dischargeTimeEl.value;
+    const initRpm = parseFloat(initRpmRaw);
+    const minRpm = parseFloat(minRpmRaw);
+    const dischargeTime = parseFloat(dischargeRaw);
+    const usableBox = document.getElementById('usableEnergyResult');
+    const powerBlock = document.getElementById('rAvgPowerBlock');
+    const initErrorEl = document.getElementById('initRpmError');
+    const minErrorEl = document.getElementById('minRpmError');
+    const dischargeErrorEl = document.getElementById('dischargeTimeError');
+    const zeroNote = document.getElementById('zeroUsableNote');
+    const powerCaveat = document.getElementById('avgPowerCaveat');
+
+    [initErrorEl, minErrorEl, dischargeErrorEl].forEach(function(el){ el.classList.add('hidden'); el.textContent = ''; });
+    [initRpmEl, minRpmEl, dischargeTimeEl].forEach(function(el){ el.removeAttribute('aria-invalid'); });
+    zeroNote.classList.add('hidden');
+    powerCaveat.classList.add('hidden');
+
+    function setFieldError(el, msg){
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      const inputEl = document.getElementById(el.id.replace('Error', ''));
+      if(inputEl){ inputEl.setAttribute('aria-invalid', 'true'); }
+    }
+
+    const initProvided = initRpmRaw.trim() !== '';
+    const minProvided = minRpmRaw.trim() !== '';
+    const dischargeProvided = dischargeRaw.trim() !== '';
+
+    if(!initProvided && !minProvided){
+      usableBox.classList.add('hidden-field');
+      if(dischargeProvided){
+        setFieldError(dischargeErrorEl, 'Enter Initial Speed and Minimum Speed above to calculate power from discharge time.');
+      }
+      return;
+    }
+
+    let hasBlockingError = false;
+    if(!initProvided){
+      setFieldError(initErrorEl, 'Enter an Initial Speed to calculate usable energy.');
+      hasBlockingError = true;
+    } else if(!Number.isFinite(initRpm) || initRpm <= 0){
+      setFieldError(initErrorEl, 'Initial Speed must be greater than 0 RPM.');
+      hasBlockingError = true;
+    } else if(initRpm > MAX.rpm){
+      setFieldError(initErrorEl, 'Initial Speed exceeds the calculator\'s maximum input range (max ' + MAX.rpm.toLocaleString('en-US') + ' RPM).');
+      hasBlockingError = true;
+    }
+
+    if(!minProvided){
+      setFieldError(minErrorEl, 'Enter a Minimum Speed to calculate usable energy.');
+      hasBlockingError = true;
+    } else if(!Number.isFinite(minRpm) || minRpm < 0){
+      setFieldError(minErrorEl, 'Minimum Speed must be 0 RPM or greater.');
+      hasBlockingError = true;
+    } else if(minRpm > MAX.rpm){
+      setFieldError(minErrorEl, 'Minimum Speed exceeds the calculator\'s maximum input range (max ' + MAX.rpm.toLocaleString('en-US') + ' RPM).');
+      hasBlockingError = true;
+    } else if(initProvided && Number.isFinite(initRpm) && minRpm > initRpm){
+      setFieldError(minErrorEl, 'Minimum Speed must be less than or equal to Initial Speed.');
+      hasBlockingError = true;
+    }
+
+    if(hasBlockingError){
+      usableBox.classList.add('hidden-field');
+      return;
+    }
+
+    const omega1 = 2 * Math.PI * initRpm / 60;
+    const omega2 = 2 * Math.PI * minRpm / 60;
+    const deltaKE = 0.5 * I * (Math.pow(omega1,2) - Math.pow(omega2,2));
+
+    if(!Number.isFinite(deltaKE)){
+      setFieldError(initErrorEl, 'These values are too large to compute usable energy.');
+      usableBox.classList.add('hidden-field');
+      return;
+    }
+
+    usableBox.classList.remove('hidden-field');
+    document.getElementById('rDeltaKE').textContent = formatEnergy(deltaKE);
+    if(deltaKE === 0){
+      zeroNote.classList.remove('hidden');
+    }
+
+    if(!dischargeProvided){
+      powerBlock.classList.add('hidden-field');
+      return;
+    }
+    if(!Number.isFinite(dischargeTime) || dischargeTime <= 0){
+      setFieldError(dischargeErrorEl, 'Discharge Time must be a valid number greater than 0 seconds.');
+      powerBlock.classList.add('hidden-field');
+      return;
+    }
+    if(dischargeTime > MAX.dischargeTime){
+      setFieldError(dischargeErrorEl, 'Discharge Time exceeds the calculator\'s maximum input range (max ' + MAX.dischargeTime.toLocaleString('en-US') + ' s).');
+      powerBlock.classList.add('hidden-field');
+      return;
+    }
+
+    const avgPowerW = deltaKE / dischargeTime;
+    if(!Number.isFinite(avgPowerW)){
+      setFieldError(dischargeErrorEl, 'Average power is too large to compute with that discharge time.');
+      powerBlock.classList.add('hidden-field');
+      return;
+    }
+
+    powerBlock.classList.remove('hidden-field');
+    document.getElementById('rAvgPower').textContent =
+      avgPowerW >= 1000 ? (avgPowerW/1000).toLocaleString('en-US',{maximumFractionDigits:2}) + ' kW' : avgPowerW.toFixed(1) + ' W';
+    powerCaveat.classList.remove('hidden');
+  }
+
+  setFlywheelType('disc');
+
+  // ===== Unit dropdown change must re-trigger calculation (reinterprets already-entered numbers) =====
+  document.getElementById('massUnit').addEventListener('change', calculateFlywheelEnergy);
+  document.getElementById('radiusUnit').addEventListener('change', calculateFlywheelEnergy);
+
+  // ===== Advanced fields: live (debounced) recalculation on input, since these commonly need
+  // quick iteration and are less error-prone to recalc live than the main mass/radius/RPM fields =====
+  (function(){
+    var advancedDebounceTimer;
+    ['initRpm', 'minRpm', 'dischargeTime'].forEach(function(id){
+      document.getElementById(id).addEventListener('input', function(){
+        clearTimeout(advancedDebounceTimer);
+        advancedDebounceTimer = setTimeout(calculateFlywheelEnergy, 200);
+      });
+    });
+  })();
+
+  // ===== Accessibility: Enter key on any input triggers Calculate (generic, no page logic duplication) =====
+  document.querySelectorAll('#calculator input').forEach(function(el){
+    el.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        var btn = document.querySelector('button[onclick^="calculate"]');
+        if(btn) btn.click();
+      }
+    });
+  });
 </script>
 
 <script>
-  // ===== Generic Copy Result (added site-wide; does not touch page-specific calc logic) =====
+  // ===== Copy Result (page-specific: builds a clean structured summary rather
+  // than copying the raw result-panel innerText, which included UI labels,
+  // the breakdown table, and the speed-vs-energy table verbatim) =====
   function copyResultGeneric(){
-    var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
-    if (!panel || !btn) return;
+    if (!btn) return;
 
-    var excluded = panel.querySelectorAll('[data-copy-exclude]');
-    var prevDisplay = [];
-    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
-    var text = panel.innerText.trim();
-    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
-    function restore(){ btn.textContent = '📋 Copy Result'; }
-    if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+    var resultText = document.getElementById('rResult').textContent;
+    if (!resultText || resultText.trim() === '\u2014') {
+      btn.textContent = 'Nothing to copy';
+      setTimeout(function(){ btn.textContent = '\ud83d\udcCB Copy Result'; }, 1500);
+      return;
+    }
+
+    var lines = ['Flywheel Energy Calculator', 'Flywheel Type: ' + document.getElementById('rTypeBadge').textContent];
+    if (flywheelType === 'custom'){
+      lines.push('Moment of Inertia (entered): ' + document.getElementById('customI').value + ' kg\u00b7m\u00b2');
+    } else {
+      lines.push('Mass: ' + document.getElementById('mass').value + ' ' + document.getElementById('massUnit').value);
+      lines.push('Radius: ' + document.getElementById('radius').value + ' ' + document.getElementById('radiusUnit').value);
+    }
+    lines.push('Speed: ' + document.getElementById('rpmFly').value + ' RPM');
+    lines.push('Moment of Inertia: ' + document.getElementById('rInertia').textContent);
+    lines.push('Angular Velocity: ' + document.getElementById('rOmega').textContent);
+    lines.push('Kinetic Energy: ' + resultText);
+    if (!document.getElementById('usableEnergyResult').classList.contains('hidden-field')){
+      lines.push('Available Energy (usable): ' + document.getElementById('rDeltaKE').textContent);
+      if (!document.getElementById('rAvgPowerBlock').classList.contains('hidden-field')){
+        lines.push('Average Ideal Mechanical Power: ' + document.getElementById('rAvgPower').textContent);
+      }
+    }
+    var text = lines.join('\n');
+
+    function restore(){ btn.textContent = '\ud83d\udcCB Copy Result'; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function(){
-        btn.textContent = '✅ Copied';
+        btn.textContent = '\u2705 Copied';
         setTimeout(restore, 1800);
-      }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+      }).catch(function(){ btn.textContent = '\u26a0\ufe0f Copy failed'; setTimeout(restore, 1800); });
     } else {
-      btn.textContent = '⚠️ Not supported';
+      btn.textContent = '\u26a0\ufe0f Not supported';
       setTimeout(restore, 1800);
     }
   }
@@ -850,9 +1233,10 @@
   // ===== Generic number-input safety net (added site-wide; purely additive —
   // runs on blur AFTER the page's own oninput/onchange calc handlers, and only
   // corrects a value that is non-finite or outside the field's own declared
-  // min/max attributes, then re-fires "input" so the page's existing calc
-  // function recalculates with the corrected value. Never overrides or
-  // replaces any existing calculator logic. =====
+  // min/max attributes, then re-fires "input" AND directly calls this page's
+  // calculateFlywheelEnergy() (this page has no live input-listener, only a
+  // Calculate button, so the "input" event alone would not recalculate).
+  // Never overrides or replaces any existing calculator logic. =====
   (function(){
     function clampNumberInput(el){
       if (el.type !== 'number' || el.value === '') return;
@@ -868,6 +1252,7 @@
       if (corrected !== null && corrected !== v) {
         el.value = corrected;
         el.dispatchEvent(new Event('input', { bubbles: true }));
+        if (typeof calculateFlywheelEnergy === 'function') { calculateFlywheelEnergy(); }
       }
     }
     document.querySelectorAll('input[type="number"]').forEach(function(el){
@@ -908,7 +1293,12 @@
         }
       }
     }
-    window.addEventListener('resize', positionShareBar);
+    var shareBarBreakpoint = window.matchMedia('(max-width: 1023px)');
+    if (shareBarBreakpoint.addEventListener) {
+      shareBarBreakpoint.addEventListener('change', positionShareBar);
+    } else if (shareBarBreakpoint.addListener) {
+      shareBarBreakpoint.addListener(positionShareBar); // Safari <14 fallback
+    }
     document.addEventListener('DOMContentLoaded', positionShareBar);
     positionShareBar();
   })();
