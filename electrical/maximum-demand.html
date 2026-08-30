@@ -29,7 +29,8 @@
      crossorigin="anonymous"></script>
 
 <!-- ===================== [PER-PAGE] SEO META ===================== -->
-<meta name="description" content="Free Maximum Demand Calculator for connected load, demand factor, group diversity, and kVA demand estimation — with formula, worked example, and a maximum demand table for transformer and service sizing.">
+<meta name="description" content="Free Maximum Demand Calculator for connected load, demand factor, group diversity, and kVA demand estimation — with formula, worked example, and a maximum demand table for preliminary transformer, service, and electrical system planning.">
+
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.electromechcalc.com/electrical/maximum-demand">
 <link rel="icon" href="/favicon.png" type="image/png">
@@ -59,7 +60,7 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "description": "Free Maximum Demand Calculator for connected load, demand factor, group diversity, and kVA demand estimation — with formula, worked example, and a maximum demand table for transformer and service sizing.",
+  "description": "Free Maximum Demand Calculator for connected load, demand factor, group diversity, and kVA demand estimation — with formula, worked example, and a maximum demand table for preliminary transformer, service, and electrical system planning.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
 </script>
@@ -109,7 +110,7 @@
     {
       "@type": "Question",
       "name": "Does the demand factor for a load category change with the size of the installation?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Often, yes — many code tables provide a decreasing demand factor as connected load increases in certain categories (particularly general lighting and receptacle loads), reflecting the statistical reality that a larger population of connected devices is even less likely to all peak simultaneously than a smaller one. Always check whether your applicable table has size-dependent tiers rather than assuming one flat demand factor regardless of scale." }
+      "acceptedAnswer": { "@type": "Answer", "text": "For some load categories, yes — some code tables provide a decreasing demand factor as connected load increases (particularly general lighting and receptacle loads), reflecting the statistical reality that a larger population of connected devices is even less likely to all peak simultaneously than a smaller one. Always check whether your applicable table has size-dependent tiers rather than assuming one flat demand factor regardless of scale." }
     },
     {
       "@type": "Question",
@@ -123,8 +124,8 @@
     },
     {
       "@type": "Question",
-      "name": "Should I add a safety margin on top of calculated maximum demand when sizing equipment?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes, this is standard practice — a project-specific growth margin may be applied on top of the calculated maximum demand based on expected future load, expansion plans, utility requirements, and engineering criteria, before finalizing transformer or service size, both to accommodate normal load growth over the equipment's service life and to avoid a design that's already at its ceiling on day one of operation." }
+      "name": "Should I add a growth or design margin on top of calculated maximum demand when sizing equipment?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A project-specific growth or design margin may be appropriate, depending on expected future load, expansion plans, utility requirements, equipment loading limits, and engineering criteria, before finalizing transformer or service size — both to accommodate normal load growth over the equipment's service life and to avoid a design that's already at its ceiling on day one of operation. The margin should not be treated as a universal fixed percentage or as a substitute for code-required calculations." }
     },
     {
       "@type": "Question",
@@ -448,7 +449,7 @@
     </div>
 
         <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
-          Estimate maximum demand from connected load using demand factor, plus group diversified demand for multiple similar feeders or units — the basis for correctly sizing a transformer or service.
+          Estimate maximum demand from connected load using demand factor, plus group diversified demand for multiple similar feeders or units — a useful starting point for preliminary transformer or service sizing.
         </p>
       </div>
 
@@ -483,7 +484,13 @@
           <input id="connectedLoad" type="number" value="100" step="1" min="0" placeholder="e.g. 100" class="input-field mt-2">
         </div>
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="demandFactor">Demand Factor (0-1)</label>
+          <div class="flex items-center gap-1.5">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="demandFactor">Demand Factor (0-1)</label>
+            <span class="info-icon" tabindex="0" role="button" aria-label="More info">
+              i
+              <span class="info-tooltip">Enter a value greater than 0 and no greater than 1.</span>
+            </span>
+          </div>
           <input id="demandFactor" type="number" value="0.7" step="0.01" min="0.01" max="1" placeholder="e.g. 0.7" class="input-field mt-2">
         </div>
         <div>
@@ -491,18 +498,28 @@
           <input id="numUnits" type="number" value="1" step="1" min="1" placeholder="e.g. 1" class="input-field mt-2">
         </div>
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="diversityFactor">Diversity Factor <span class="normal-case text-gray-400">(not applicable for one unit)</span></label>
+          <div class="flex items-center gap-1.5">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="diversityFactor">Diversity Factor</label>
+            <span class="info-icon" tabindex="0" role="button" aria-label="More info">
+              i
+              <span class="info-tooltip">Not applicable for one unit — fixed at 1.0. For multiple units, this field prefills with 1.2 as an illustrative starting value only; replace it with a value supported by your load study, applicable design standard, utility requirement, or measured operating data.</span>
+            </span>
+          </div>
           <input id="diversityFactor" type="number" value="1.0" step="0.01" min="1" placeholder="e.g. 1.2" class="input-field mt-2" disabled>
-          <p class="text-[11px] text-gray-400 mt-1">For multiple units, enter a diversity factor supported by your load study, applicable design standard, utility requirement, or measured operating data. For a single unit, diversity factor is fixed at 1.0.</p>
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="powerFactor">Power Factor <span class="normal-case text-gray-400">(optional, for kVA demand)</span></label>
           <input id="powerFactor" type="number" step="0.01" min="0.1" max="1" placeholder="e.g. 0.9" class="input-field mt-2">
         </div>
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="marginPercent">Planning / Growth Margin (%) <span class="normal-case text-gray-400">(optional)</span></label>
+          <div class="flex items-center gap-1.5">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="marginPercent">Planning / Growth Margin (%) <span class="normal-case text-gray-400">(optional)</span></label>
+            <span class="info-icon" tabindex="0" role="button" aria-label="More info">
+              i
+              <span class="info-tooltip">A project-specific growth or design margin may be appropriate, depending on expected future load, expansion plans, utility requirements, equipment loading limits, and engineering criteria — not a universal fixed percentage.</span>
+            </span>
+          </div>
           <input id="marginPercent" type="number" value="0" step="1" min="0" max="100" placeholder="e.g. 20" class="input-field mt-2">
-          <p class="text-[11px] text-gray-400 mt-1">A project-specific growth margin may be applied based on expected future load, expansion plans, utility requirements, and engineering criteria — not a universal code requirement.</p>
         </div>
       </div>
 
@@ -536,10 +553,10 @@
           </div>
         </div>
         <div class="mt-3 pt-3 border-t border-white/10">
-          <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Estimated Apparent Power Demand <span class="normal-case">(at entered PF)</span></span>
+          <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Estimated kVA Demand <span class="normal-case">(not the final transformer rating)</span></span>
           <span id="rKva" class="font-display font-semibold text-lg">Enter power factor above</span>
         </div>
-        <p class="text-[11px] text-gray-400 mt-3 pt-3 border-t border-white/10">Planning demand is an estimate for preliminary sizing only. Calculated kVA demand is an estimated load requirement, not necessarily the final transformer nameplate rating — final equipment selection must also follow the applicable design standard, standard equipment ratings, continuous loading, ambient conditions, future expansion, harmonics, starting loads, voltage, and fault level.</p>
+        <p class="text-[11px] text-gray-400 mt-3 pt-3 border-t border-white/10">Planning demand is an estimate for preliminary sizing only. Calculated kVA demand is an estimated load requirement, not necessarily the final transformer nameplate rating — final equipment selection must also follow the applicable design standard, standard equipment ratings, continuous loading, ambient conditions, future expansion, harmonics, starting loads, voltage, and fault level. Do not use this calculated result as a substitute for the applicable code-required load calculation.</p>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
@@ -631,13 +648,13 @@
 
       <p><strong>Formula used (individual maximum demand):</strong> Maximum Demand = Connected Load &times; Demand Factor. Demand factor is normally between 0 and 1.0 for conventional load calculations, published by code or derived from your own facility's measured operating pattern, and reflects the realistic fraction of connected load that actually contributes to peak demand.</p>
 
-      <p><strong>Formula used (group diversified demand):</strong> Group Maximum Demand = Sum of Individual Maximum Demands &divide; Diversity Factor. For identical similar units or feeders, the sum is calculated as Individual Maximum Demand &times; Number of Units. Diversity factor is normally 1.0 or greater when defined as the ratio of the sum of individual maximum demands to the coincident group maximum demand, and accounts for the fact that even loads which individually reach their own peak demand rarely all do so at the exact same instant &mdash; the more independent units combined, the more this effect typically matters.</p>
+      <p><strong>Formula used (group diversified demand):</strong> Group Maximum Demand = Sum of Individual Maximum Demands &divide; Diversity Factor. For identical similar units or feeders, the sum is calculated as Individual Maximum Demand &times; Number of Units. Diversity factor is normally 1.0 or greater when defined as the ratio of the sum of individual maximum demands to the coincident group maximum demand. The effect depends on how closely the individual loads' peak demands coincide; a diversity factor greater than 1 should have a documented basis such as measured data, a load study, applicable design criteria, or an accepted engineering assumption.</p>
 
-      <p><strong>Worked example:</strong> a facility has 5 similar production line feeders, each with a connected load of 100 kW and a demand factor of 0.7 (based on the specific equipment mix on each line). Individual Maximum Demand per feeder = 100 &times; 0.7 = 70 kW. Sum of individual maximum demands across 5 feeders = 70 &times; 5 = 350 kW. With a diversity factor of 1.2 (reflecting that not all 5 lines peak at exactly the same moment): Group Maximum Demand = 350 &divide; 1.2 &asymp; 291.7 kW. This 291.7 kW figure, not the naive 500 kW total connected load or even the 350 kW sum of individual demands, is the realistic number to size a shared transformer or main switchgear against.</p>
+      <p><strong>Worked example:</strong> a facility has 5 similar production line feeders, each with a connected load of 100 kW and a demand factor of 0.7 (based on the specific equipment mix on each line). Individual Maximum Demand per feeder = 100 &times; 0.7 = 70 kW. Sum of individual maximum demands across 5 feeders = 70 &times; 5 = 350 kW. With a diversity factor of 1.2 (an assumed value reflecting that not all 5 lines peak at exactly the same moment): Group Maximum Demand = 350 &divide; 1.2 &asymp; 291.7 kW. This 291.7 kW figure is the calculated group maximum demand under the stated demand and diversity-factor assumptions — not the naive 500 kW total connected load, nor the 350 kW sum of individual demands. It can be used as a preliminary input for transformer, service, or switchgear sizing, subject to the applicable code, utility requirements, load characteristics, and engineering design criteria.</p>
 
       <p><strong>Why demand factor is always &le; 1, and diversity factor is always &ge; 1:</strong> both factors describe the same underlying phenomenon &mdash; non-coincident peak usage &mdash; but applied at different stages. Demand factor reduces a single load category's connected rating down toward its realistic peak (dividing by demand factor would be wrong; you multiply connected load by demand factor, a number less than 1, to shrink it). Diversity factor then reduces the sum of several already-realistic individual maximum demands down further, to their combined, coincident group peak (you divide by diversity factor, a number greater than 1, to shrink the naive sum). Keeping these two operations and their factor ranges straight is one of the most common sources of confusion in demand calculations. <strong>Important:</strong> do not use demand factor and diversity factor as independent "discounts." Demand factor should describe the relationship between a load's connected load and its own maximum demand, while diversity factor should be based on the relationship between individual maximum demands and the coincident group demand — each factor should have a defensible basis such as an applicable standard, utility requirement, load study, measured operating data, or documented engineering design assumption. Using overly optimistic values for both at once can significantly underestimate the required capacity.</p>
 
-      <p><strong>Multi-category demand calculation for a complete facility:</strong> a real building rarely has just one load category &mdash; a typical commercial facility combines lighting, general power outlets, HVAC, and possibly motors or specialized equipment, each with its own connected load and demand factor. The complete approach calculates each category's individual maximum demand separately (its own connected load &times; its own demand factor), then sums those individual maximum demands together to get the facility's total maximum demand. This total sum may then have a further overall diversity factor applied if the different categories themselves don't all peak at exactly the same time of day (lighting peaking in the evening, HVAC peaking in the afternoon heat, for example) &mdash; though many simpler designs conservatively assume all category peaks coincide and skip this additional diversity step.</p>
+      <p><strong>Multi-category demand calculation for a complete facility:</strong> a real building rarely has just one load category &mdash; a typical commercial facility combines lighting, general power outlets, HVAC, and possibly motors or specialized equipment, each with its own connected load and demand factor. The complete approach calculates each category's individual maximum demand separately (its own connected load &times; its own demand factor), then sums those individual maximum demands together to get the facility's total maximum demand. For a complete facility, category maximum demands should be combined using the coincident-load or diversity method required by the applicable design standard or load study &mdash; do not apply an additional diversity factor merely as a second blanket reduction unless its basis and scope are clearly defined, since doing so risks double-counting the same non-coincidence effect that demand factor has already accounted for.</p>
 
       <p><strong>Where demand and diversity factor tables come from:</strong> unlike a formula derived from first-principles physics, these factors are empirical &mdash; built up over decades from utility metering data and load research studies across large numbers of similar facilities. This is why demand factor tables are periodically revised as building usage patterns change (for example, as lighting has become more efficient and HVAC has become a larger share of typical commercial demand, older tables' category weightings have shifted) &mdash; always confirm you're using a current edition of the applicable code's demand factor table rather than a decades-old reference that may no longer reflect typical modern load behavior.</p>
 
@@ -698,9 +715,9 @@
 <!-- ===================== MAXIMUM DEMAND TABLE (QUICK REFERENCE) ===================== -->
 <section id="qref-table" class="max-w-3xl mx-auto px-4 py-16">
   <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Quick Reference</span>
-  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Maximum Demand Table (Connected Load &times; Demand Factor)</h2>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Maximum Demand Quick Reference Table</h2>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed mb-4">
-    <p>A quick max demand table for common connected-load and demand-factor combinations, computed as Maximum Demand = Connected Load &times; Demand Factor. Use it for a fast sanity check on the calculator's result, or enter your own exact values above for a precise figure.</p>
+    <p>Calculated using MD = Connected Load &times; Demand Factor for common connected-load and demand-factor combinations. These are illustrative combinations, not code-prescribed demand factors — use the table for a fast sanity check on the calculator's result, or enter your own exact values above for a precise figure.</p>
   </div>
   <div class="not-prose overflow-x-auto my-4 qref-scroll">
     <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
@@ -735,9 +752,9 @@
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Maximum Demand</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
             <p><strong>1. Applying demand factor and diversity factor the same way (both as multipliers).</strong> Demand factor multiplies connected load (a factor &le;1, shrinking the number); diversity factor divides the sum of individual demands (a factor &ge;1, also shrinking the number, but through division) &mdash; mixing these operations up produces a significantly wrong result in either direction.</p>
-      <p><strong>2. Sizing equipment solely from total connected load.</strong> Using the full nameplate sum of every connected device, without considering applicable demand rules, can lead to unnecessary oversizing and cost in installations where those rules permit a lower calculated demand.</p>
+      <p><strong>2. Sizing equipment solely from total connected load — or the reverse mistake.</strong> Using the full nameplate sum of every connected device, without applying applicable demand-calculation rules, can produce an overly conservative design where the governing standard permits a lower calculated demand. However, demand factors must never be used simply to reduce equipment size below code, utility, or engineering requirements — applying an unjustified demand factor just to shrink the number carries a real risk of undersizing.</p>
       <p><strong>3. Using a single generic demand factor across dissimilar load categories.</strong> Lighting, motors, HVAC, and general power outlets each have their own characteristic demand factor &mdash; applying one blanket demand factor across a mixed-load facility, rather than calculating each category separately and summing the results, can meaningfully misstate the true maximum demand.</p>
-      <p><strong>4. Forgetting to add a growth/safety margin on top of the calculated maximum demand.</strong> The raw calculated figure represents current, realistic peak usage &mdash; without applying a project-specific growth margin based on expected future load, expansion plans, and engineering criteria, equipment sized exactly at today's calculated maximum demand can become inadequate within a few years of normal facility growth.</p>
+      <p><strong>4. Forgetting to consider a growth/design margin on top of the calculated maximum demand.</strong> The raw calculated figure represents current, realistic peak usage &mdash; without applying a project-specific growth or design margin based on expected future load, expansion plans, and engineering criteria, equipment sized exactly at today's calculated maximum demand can become inadequate within a few years of normal facility growth.</p>
       <p><strong>5. Using an assumed diversity factor without any basis in actual load behavior.</strong> Diversity factor genuinely depends on how correlated or independent the peak timing of different loads or feeders actually is &mdash; picking an arbitrary or overly optimistic diversity factor to make a design look more economical, without data or code guidance to support it, risks undersizing shared equipment.</p>
       <p><strong>6. Confusing maximum demand (a planning estimate) with actual billed/metered demand.</strong> Maximum demand calculated here is a design-stage estimate; billed demand from a utility meter is the empirical, measured reality once a facility is operating &mdash; treating a pre-construction calculation as if it were confirmed operational data overstates its certainty.</p>
       <p><strong>7. Applying a flat demand factor to motor loads without special treatment.</strong> Motor groups should not automatically be assigned one generic demand factor for every design purpose &mdash; the largest motor, starting current, duty cycle, simultaneous operation, feeder requirements, and the applicable electrical standard may all affect the final design; apply the specific rules required by the governing code and equipment design criteria rather than a single blanket group demand factor.</p>
@@ -800,7 +817,7 @@
         Does the demand factor for a load category change with the size of the installation?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Often, yes — many code tables provide a decreasing demand factor as connected load increases in certain categories (particularly general lighting and receptacle loads), reflecting the statistical reality that a larger population of connected devices is even less likely to all peak simultaneously than a smaller one. Always check whether your applicable table has size-dependent tiers rather than assuming one flat demand factor regardless of scale.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For some load categories, yes — some code tables provide a decreasing demand factor as connected load increases (particularly general lighting and receptacle loads), reflecting the statistical reality that a larger population of connected devices is even less likely to all peak simultaneously than a smaller one. Always check whether your applicable table has size-dependent tiers rather than assuming one flat demand factor regardless of scale.</p>
     </details>
 
     <details class="py-5">
@@ -821,10 +838,10 @@
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Should I add a safety margin on top of calculated maximum demand when sizing equipment?
+        Should I add a growth or design margin on top of calculated maximum demand when sizing equipment?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, this is standard practice — a project-specific growth margin may be applied on top of the calculated maximum demand based on expected future load, expansion plans, utility requirements, and engineering criteria, before finalizing transformer or service size, both to accommodate normal load growth over the equipment's service life and to avoid a design that's already at its ceiling on day one of operation.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A project-specific growth or design margin may be appropriate, depending on expected future load, expansion plans, utility requirements, equipment loading limits, and engineering criteria, before finalizing transformer or service size — both to accommodate normal load growth over the equipment's service life and to avoid a design that's already at its ceiling on day one of operation. The margin should not be treated as a universal fixed percentage or as a substitute for code-required calculations.</p>
     </details>
 
     <details class="py-5">
@@ -874,7 +891,7 @@
     const validationBox = document.getElementById('validationBox');
     const errors = [];
     if(isNaN(connectedLoad) || connectedLoad <= 0){ errors.push('Enter a valid connected load greater than 0.'); }
-    if(isNaN(demandFactor) || demandFactor < 0.01 || demandFactor > 1){ errors.push('Demand factor must be between 0.01 and 1.'); }
+    if(isNaN(demandFactor) || demandFactor < 0.01 || demandFactor > 1){ errors.push('Enter a demand factor greater than 0 and up to 1.'); }
     if(isNaN(numUnits) || numUnits < 1 || !Number.isInteger(numUnits)){ errors.push('Enter a whole number of units (1 or more).'); }
     if(isNaN(diversityFactor) || diversityFactor < 1){ errors.push('Diversity factor must be 1.0 or greater.'); }
     else if(numUnits === 1 && diversityFactor !== 1){ errors.push('For one unit, diversity factor must be 1.0.'); }
@@ -919,7 +936,7 @@
       document.getElementById('rKva').textContent = kvaGroup.toFixed(1) + ' kVA';
       kvaRowHtml = `
                 <tr><td>Power Factor</td><td>${powerFactor}</td></tr>
-                <tr><td>Estimated Apparent Power Demand</td><td>${kvaGroup.toFixed(2)} kVA</td></tr>
+                <tr><td>Estimated kVA Demand</td><td>${kvaGroup.toFixed(2)} kVA</td></tr>
                 <tr><td>Planning kVA Demand (+${marginPercent}%)</td><td>${kvaMargin.toFixed(2)} kVA</td></tr>`;
     } else {
       document.getElementById('rKva').textContent = 'Enter power factor above';
@@ -1020,6 +1037,19 @@
     }
     document.querySelectorAll('input[type="number"]').forEach(function(el){
       el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+</script>
+<script>
+  // ===== Page-specific: recalculate after the shared number-input safety
+  // net (above) corrects an out-of-range value on blur. This calculator
+  // uses click-to-calculate rather than live recalculation on every
+  // keystroke, so without this a silently-corrected value would leave a
+  // stale result on screen until the user clicks Calculate again. =====
+  (function(){
+    ['connectedLoad','demandFactor','numUnits','diversityFactor','powerFactor','marginPercent'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.addEventListener('blur', function(){ calculateMaximumDemand(); });
     });
   })();
 </script>
