@@ -468,7 +468,15 @@
     <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
             <div id="calcHeaderBar">
         <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Harmonic Distortion Details</h2>
-      <p class="text-xs text-gray-500 mb-6">Enter individual harmonic magnitudes as % of fundamental.</p>
+      <p class="text-xs text-gray-500 mb-6">Enter individual harmonic magnitudes as % of fundamental, calculated from the 3rd through 13th harmonics entered below.</p>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide block mb-2">Measurement Type</label>
+        <div class="flex gap-2 bg-gray-50 border border-gray-200 rounded-lg p-1" role="group" aria-label="Measurement Type">
+          <button type="button" id="typeVoltageBtn" class="toggle-btn active" aria-pressed="true" onclick="setThdType('voltage')">Voltage THD</button>
+          <button type="button" id="typeCurrentBtn" class="toggle-btn" aria-pressed="false" onclick="setThdType('current')">Current THD</button>
+        </div>
       </div>
 
       <div class="space-y-3 mb-5">
@@ -502,6 +510,8 @@
         </div>
       </div>
 
+      <p class="text-xs text-gray-400 mb-5">Leave a harmonic at 0% if it wasn't measured or is negligible — a blank field is treated the same as 0%.</p>
+
       <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculateTHD()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
@@ -517,7 +527,7 @@
     <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
             <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
-        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Total Harmonic Distortion</span>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Total Harmonic Distortion (THDv)</span>
         <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
         <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
 
@@ -527,11 +537,13 @@
             <span id="rDominant" class="font-display font-semibold text-lg">—</span>
           </div>
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Status</span>
-            <span id="rStatus" class="font-display font-semibold text-lg">—</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Type</span>
+            <span id="rType" class="font-display font-semibold text-lg">THD-F</span>
           </div>
         </div>
       </div>
+
+      <p class="text-xs text-gray-400 px-1">Calculated from the 3rd–13th harmonics entered above using the THD-F definition (relative to the fundamental) — compare the result with the applicable limit for your system. Significant harmonics beyond the 13th, if present, will increase actual THD.</p>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
@@ -603,16 +615,16 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard THD formula (IEEE 519 style)</p>
+      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Calculation method: RMS-based THD formulation (root-sum-square) &nbsp;|&nbsp; Reference: IEEE 519 for harmonic limits and power-quality assessment</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Total Harmonic Distortion (THD) Is Calculated</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-            <p><strong>THD formula:</strong> THD % = (√(H2² + H3² + H4² + ...) ÷ H1) × 100, where H1 is the fundamental and H2, H3... are harmonic magnitudes. A perfectly clean AC voltage or current waveform is a pure sine wave at the fundamental frequency (50 Hz or 60 Hz depending on region). Real-world non-linear loads distort this waveform, and that distortion can be mathematically decomposed into the fundamental frequency plus a series of harmonic components at whole-number multiples of it. Total Harmonic Distortion (THD) combines all these harmonic components into a single percentage describing overall waveform distortion.</p>
+            <p><strong>General THD-F formula:</strong> THD % = (√(H2² + H3² + H4² + ...) ÷ H1) × 100, where H1 is the fundamental RMS magnitude and H2, H3... are individual harmonic RMS magnitudes. A perfectly clean AC voltage or current waveform is a pure sine wave at the fundamental frequency (50 Hz or 60 Hz depending on region). Real-world non-linear loads distort this waveform, and that distortion can be mathematically decomposed into the fundamental frequency plus a series of harmonic components at whole-number multiples of it. Total Harmonic Distortion (THD) combines all these harmonic components into a single percentage describing overall waveform distortion.</p>
 
-      <p><strong>Formula used:</strong> THD (%) = &radic;(H3&sup2; + H5&sup2; + H7&sup2; + H9&sup2; + H11&sup2; + H13&sup2; + ...), where each Hn is that specific harmonic's magnitude expressed as a percentage of the fundamental. This is a root-sum-square combination, not a simple sum, since harmonics at different frequencies don't add linearly.</p>
+      <p><strong>Formula used by this calculator:</strong> because each harmonic you enter below is already expressed as a percentage of the fundamental (rather than a raw RMS magnitude), the general formula above simplifies to THD (%) = &radic;(H3&sup2; + H5&sup2; + H7&sup2; + H9&sup2; + H11&sup2; + H13&sup2;), using only the 3rd through 13th harmonics. This is a root-sum-square combination, not a simple sum &mdash; harmonic components are effectively orthogonal sinusoids at different frequencies, so their contributions combine by root-sum-square rather than by direct arithmetic addition.</p>
 
-      <p><strong>Worked example:</strong> a measurement shows 3rd harmonic at 25% of fundamental, 5th at 18%, 7th at 10%, 9th at 5%, 11th at 6%, and 13th at 4%. THD = &radic;(25&sup2; + 18&sup2; + 10&sup2; + 5&sup2; + 6&sup2; + 4&sup2;) = &radic;(625 + 324 + 100 + 25 + 36 + 16) = &radic;1126 &asymp; 33.56%. This is a fairly high THD, typical of a 6-pulse VFD or rectifier load without any harmonic mitigation applied.</p>
+      <p><strong>Worked example:</strong> a measurement shows 3rd harmonic at 25% of fundamental, 5th at 18%, 7th at 10%, 9th at 5%, 11th at 6%, and 13th at 4%. THD = &radic;(25&sup2; + 18&sup2; + 10&sup2; + 5&sup2; + 6&sup2; + 4&sup2;) = &radic;(625 + 324 + 100 + 25 + 36 + 16) = &radic;1126 &asymp; 33.56%. This is an illustrative high-distortion example mixing characteristic 6-pulse harmonics (5th, 7th, 11th, 13th) with non-characteristic components (3rd, 9th) &mdash; actual harmonic spectra vary by equipment type and system conditions.</p>
 
       <p><strong>Why the root-sum-square (not simple sum) combination:</strong> harmonics exist at different frequencies and generally don't align in phase with each other or with the fundamental in a way that would make direct addition meaningful &mdash; the root-sum-square method is the mathematically correct way to combine independent sinusoidal components based on their RMS (root-mean-square) contribution to total waveform distortion, analogous to how independent random errors combine in statistics, or how orthogonal vector components combine via the Pythagorean theorem.</p>
 
@@ -644,7 +656,7 @@
 <!-- ===================== SECOND SECTION ===================== -->
 <section id="second" class="max-w-3xl mx-auto px-4 py-16">
   <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference</span>
-  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Harmonic Sources and Typical IEEE 519 Limits</h2>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Harmonic Sources and Dominant Harmonics</h2>
     <div class="not-prose overflow-x-auto my-4">
     <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
       <thead class="bg-gray-50 text-gray-600">
@@ -654,8 +666,8 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100">
-        <tr><td class="px-4 py-2">6-pulse VFD / rectifier</td><td class="px-4 py-2">5th, 7th, 11th, 13th</td></tr>
-        <tr><td class="px-4 py-2">12-pulse VFD / rectifier</td><td class="px-4 py-2">11th, 13th, 23rd, 25th (5th and 7th cancelled)</td></tr>
+        <tr><td class="px-4 py-2">6-pulse VFD / rectifier</td><td class="px-4 py-2">Typically 5th, 7th, 11th, 13th</td></tr>
+        <tr><td class="px-4 py-2">12-pulse VFD / rectifier</td><td class="px-4 py-2">Typically 11th, 13th, 23rd, 25th (5th and 7th theoretically cancelled under ideal phase-shifted operation)</td></tr>
         <tr><td class="px-4 py-2">Single-phase switch-mode power supplies (IT loads, LED drivers)</td><td class="px-4 py-2">3rd, 9th (triplen harmonics)</td></tr>
         <tr><td class="px-4 py-2">Arc furnaces / welding equipment</td><td class="px-4 py-2">Broad spectrum, often non-integer/inter-harmonics too</td></tr>
       </tbody>
@@ -785,26 +797,36 @@
       document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
     }
 
+    let thdType = 'voltage';
+    function setThdType(type){
+      thdType = type;
+      const vBtn = document.getElementById('typeVoltageBtn');
+      const cBtn = document.getElementById('typeCurrentBtn');
+      vBtn.classList.toggle('active', type === 'voltage');
+      vBtn.setAttribute('aria-pressed', type === 'voltage');
+      cBtn.classList.toggle('active', type === 'current');
+      cBtn.setAttribute('aria-pressed', type === 'current');
+      calculateTHD();
+    }
+
     function calculateTHD(){
-    const h3 = parseFloat(document.getElementById('h3').value) || 0;
-    const h5 = parseFloat(document.getElementById('h5').value) || 0;
-    const h7 = parseFloat(document.getElementById('h7').value) || 0;
-    const h9 = parseFloat(document.getElementById('h9').value) || 0;
-    const h11 = parseFloat(document.getElementById('h11').value) || 0;
-    const h13 = parseFloat(document.getElementById('h13').value) || 0;
+    const ids = ['h3','h5','h7','h9','h11','h13'];
+    const raws = ids.map(function(id){ return document.getElementById(id).value.trim(); });
+    const values = raws.map(function(r){ return r === '' ? 0 : Number(r); });
+    const [h3, h5, h7, h9, h11, h13] = values;
 
     const validationBox = document.getElementById('validationBox');
-    const values = [h3, h5, h7, h9, h11, h13];
     const errors = [];
-    if(values.every(v => v === 0)){ errors.push('Enter at least one non-zero harmonic value.'); }
+    if(raws.some(function(r, i){ return r !== '' && !Number.isFinite(values[i]); })){ errors.push('Enter a valid number for each harmonic field.'); }
     if(values.some(v => v < 0)){ errors.push('Harmonic values cannot be negative.'); }
+    if(values.every(v => v === 0)){ errors.push('Enter at least one non-zero harmonic value.'); }
 
     if(errors.length){
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
       document.getElementById('rResult').textContent = '\u2014';
       document.getElementById('rDominant').textContent = '\u2014';
-      document.getElementById('rStatus').textContent = '\u2014';
+      document.getElementById('rType').textContent = '\u2014';
       document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
       return;
     }
@@ -817,14 +839,14 @@
     const harmonics = [{n:3,v:h3},{n:5,v:h5},{n:7,v:h7},{n:9,v:h9},{n:11,v:h11},{n:13,v:h13}];
     const dominant = harmonics.reduce((a,b) => b.v > a.v ? b : a);
 
-    let status = 'Low distortion';
-    if(thd > 20) status = 'High \u2014 mitigation likely needed';
-    else if(thd > 8) status = 'Moderate \u2014 check applicable limit';
+    const typeLabel = thdType === 'current' ? 'THDi' : 'THDv';
+    const measurementLabel = thdType === 'current' ? 'Current THD (THDi)' : 'Voltage THD (THDv)';
 
+    document.getElementById('resultLabel').textContent = 'Total Harmonic Distortion (' + typeLabel + ')';
     document.getElementById('rResult').textContent = thd.toLocaleString('en-US', {maximumFractionDigits:2}) + '%';
-    document.getElementById('resultSub').textContent = 'From ' + harmonics.filter(h=>h.v>0).length + ' harmonic(s) entered';
-    document.getElementById('rDominant').textContent = dominant.n + (dominant.n===3?'rd':dominant.n===13?'th':dominant.n===11?'th':'th') + ' (' + dominant.v + '%)';
-    document.getElementById('rStatus').textContent = status;
+    document.getElementById('resultSub').textContent = measurementLabel + ' \u00b7 from ' + harmonics.filter(h=>h.v>0).length + ' harmonic(s) entered';
+    document.getElementById('rDominant').textContent = dominant.n + (dominant.n === 3 ? 'rd' : 'th') + ' (' + dominant.v + '%)';
+    document.getElementById('rType').textContent = 'THD-F';
 
     document.getElementById('breakdownBox').innerHTML = `
         <table class="breakdown-table">
@@ -836,14 +858,18 @@
                 <tr><td>9th</td><td>${h9}%</td></tr>
                 <tr><td>11th</td><td>${h11}%</td></tr>
                 <tr><td>13th</td><td>${h13}%</td></tr>
+                <tr><td>Measurement</td><td>${measurementLabel}</td></tr>
                 <tr><td><strong>Total Harmonic Distortion</strong></td><td><strong>${thd.toFixed(2)}%</strong></td></tr>
-                <tr><td>Status</td><td>${status}</td></tr>
+                <tr><td>Type</td><td>THD-F</td></tr>
             </tbody>
         </table>
     `;
   }
 
   calculateTHD();
+  document.querySelectorAll('#h3, #h5, #h7, #h9, #h11, #h13').forEach(function(el){
+    el.addEventListener('input', calculateTHD);
+  });
 </script>
 
 <script>
