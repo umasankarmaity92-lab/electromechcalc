@@ -126,7 +126,7 @@
     {
       "@type": "Question",
       "name": "Does this calculator apply ambient temperature or grouping derating automatically?",
-      "acceptedAnswer": { "@type": "Answer", "text": "No — this calculator uses standard 30°C, single-cable reference ratings. If your installation runs at higher ambient temperature or has multiple loaded cables grouped together, apply the applicable correction factors to the reference capacity and select the next standard size that satisfies the resulting derated condition. Do not assume that moving up one or two standard sizes automatically compensates for derating." }
+      "acceptedAnswer": { "@type": "Answer", "text": "No — this calculator's reference capacity values are simplified baseline figures for preliminary screening, and do not represent an installation-specific 30°C IEC/IS ampacity table. If your installation runs at higher ambient temperature or has multiple loaded cables grouped together, apply the applicable correction factors to the reference capacity and select the next standard size that satisfies the resulting derated condition. Do not assume that moving up one or two standard sizes automatically compensates for derating." }
     },
     {
       "@type": "Question",
@@ -136,7 +136,7 @@
     {
       "@type": "Question",
       "name": "What size should the neutral conductor be?",
-      "acceptedAnswer": { "@type": "Answer", "text": "By default, size the neutral the same as the phase conductors — the calculator's result panel shows this default value alongside the active conductor size. For predominantly balanced multiphase loads with low harmonic content, a reduced neutral may be permitted under the applicable standard, but it must still carry the expected out-of-balance current; the calculator does not check for or apply that reduction. Where substantial triplen-harmonic-generating loads are expected (VFDs, electronic drivers, IT/data loads, and similar), the neutral may need to be sized equal to or larger than the phase conductors, since these harmonics can add together in the neutral rather than cancelling — the calculator does not detect harmonic loading, so increase the neutral size manually if this applies to your installation." }
+      "acceptedAnswer": { "@type": "Answer", "text": "By default, size the neutral the same as the phase conductors — the calculator's result panel shows this default value alongside the active conductor size. For predominantly balanced multiphase loads with low harmonic content, a reduced neutral may be permitted under the applicable standard, but it must still carry the expected out-of-balance current; the calculator does not check for or apply that reduction. Where a substantial population of nonlinear single-phase loads is expected (such as electronic lighting drivers, switched-mode power supplies, and IT/data equipment on a three-phase four-wire system), the neutral may need to be sized equal to or larger than the phase conductors, since the triplen harmonics from these loads can add together in the neutral rather than cancelling — the calculator does not detect harmonic loading, so increase the neutral size manually if this applies to your installation." }
     },
     {
       "@type": "Question",
@@ -517,7 +517,13 @@
       </div>
 
       <div class="mb-5">
-        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_cable_size">System</span>
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" id="tgLabel1_cable_size">
+          System
+          <span class="info-icon" tabindex="0" role="button" aria-label="Single phase vs three phase">
+            i
+            <span class="info-tooltip">Single Phase uses line-to-neutral voltage across 2 wires; Three Phase uses line-to-line voltage across 3 (or 4, with neutral) wires — this changes both the current formula and the default supply voltage preset below.</span>
+          </span>
+        </span>
         <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_cable_size">
           <button type="button" id="phaseSingle" class="toggle-btn" aria-pressed="false" onclick="setPhase('single')">Single Phase</button>
           <button type="button" id="phaseThree" class="toggle-btn active" aria-pressed="true" onclick="setPhase('three')">Three Phase</button>
@@ -526,7 +532,13 @@
 
       <div class="grid sm:grid-cols-2 gap-4 mb-5">
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="inputType">Input Type</label>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="inputType">
+            Input Type
+            <span class="info-icon" tabindex="0" role="button" aria-label="How to choose an input type">
+              i
+              <span class="info-tooltip">Choose how you want to enter the load: kilowatt (kW) electrical power, Horsepower (HP, motor shaft output — converted using motor efficiency), or a directly known load current in Amps.</span>
+            </span>
+          </label>
           <select id="inputType" class="input-field mt-2" onchange="toggleLoadInput()">
             <option value="kw">Kilowatt (kW)</option>
             <option value="hp">Horsepower (HP — motor shaft output)</option>
@@ -534,7 +546,13 @@
           </select>
         </div>
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="loadValueLabel" for="loadValue">Load Value (kW)</label>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" id="loadValueLabel" for="loadValue">
+            Load Value (kW)
+            <span class="info-icon" tabindex="0" role="button" aria-label="What to enter here">
+              i
+              <span class="info-tooltip">Enter the load value in the unit shown above — kW for electrical power, HP for motor shaft output, or A for a directly known load current.</span>
+            </span>
+          </label>
           <input id="loadValue" type="number" value="20" step="0.5" min="0.01" max="100000" placeholder="e.g. 20" class="input-field mt-2">
         </div>
       </div>
@@ -556,12 +574,23 @@
 
       <div class="grid sm:grid-cols-2 gap-4 mb-5">
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="voltage" id="voltageLabel">Supply Voltage — Line-to-Line (V)</label>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="voltage" id="voltageLabel">
+            Supply Voltage &mdash; Line-to-Line (V)
+            <span class="info-icon" tabindex="0" role="button" aria-label="Supply voltage range covered">
+              i
+              <span class="info-tooltip">This calculator covers low-voltage (LV) systems up to 1000 V. Use line-to-line voltage for three-phase, or line-to-neutral for single-phase, matching your actual supply.</span>
+            </span>
+          </label>
           <input id="voltage" type="number" value="415" step="1" min="1" max="1000" placeholder="e.g. 415" class="input-field mt-2" oninput="voltageTouched = true; syncQuickVoltageActive();">
-          <p class="text-[11px] text-gray-400 mt-1">This calculator covers low-voltage (LV) systems up to 1000 V.</p>
         </div>
         <div id="pfField">
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pf">Power Factor</label>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="pf">
+            Power Factor
+            <span class="info-icon" tabindex="0" role="button" aria-label="How to choose power factor">
+              i
+              <span class="info-tooltip">Use the actual/nameplate power factor where available. A purely resistive load (e.g. a heater) is close to 1.0; motors and other inductive loads are typically around 0.8&ndash;0.9 — the default shown is only a generic placeholder.</span>
+            </span>
+          </label>
           <input id="pf" type="number" value="0.85" step="0.01" min="0.1" max="1" placeholder="e.g. 0.85" class="input-field mt-2">
           <p id="pfMotorHint" class="text-[11px] text-gray-400 mt-1 hidden">For motor loads, use the motor nameplate power factor when available — the default shown is only a generic placeholder.</p>
           <p id="pfAmpHint" class="text-[11px] text-gray-400 mt-1 hidden">Not needed when entering load current directly.</p>
@@ -589,24 +618,40 @@
 
       <div class="grid sm:grid-cols-2 gap-4 mb-5">
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="length">Cable Length (m, one-way)</label>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="length">
+            Cable Length (m, one-way)
+            <span class="info-icon" tabindex="0" role="button" aria-label="What length to enter">
+              i
+              <span class="info-tooltip">Enter the one-way cable run length from source to load, in metres — used for the voltage-drop screening calculation below.</span>
+            </span>
+          </label>
           <input id="length" type="number" value="60" step="1" min="0.1" max="10000" placeholder="e.g. 60" class="input-field mt-2">
         </div>
         <div>
-          <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel2_cable_size">Conductor Material</span>
+          <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" id="tgLabel2_cable_size">
+            Conductor Material
+            <span class="info-icon" tabindex="0" role="button" aria-label="Copper vs aluminium">
+              i
+              <span class="info-tooltip">Aluminium has lower conductivity than copper, so it needs a larger cross-section for the same current — each material uses its own reference-capacity and resistance table here. Aluminium 1.5 sq.mm is not included in this preliminary reference table.</span>
+            </span>
+          </span>
           <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel2_cable_size">
             <button type="button" id="materialCopper" class="toggle-btn active" aria-pressed="true" onclick="setMaterial('copper')">Copper</button>
             <button type="button" id="materialAluminium" class="toggle-btn" aria-pressed="false" onclick="setMaterial('aluminium')">Aluminium</button>
           </div>
-          <p class="text-[11px] text-gray-400 mt-1.5">Aluminium 1.5 sq.mm is not included in this preliminary reference table.</p>
         </div>
       </div>
 
       <label class="flex items-start gap-2.5 mb-6 cursor-pointer select-none">
         <input id="marginToggle" type="checkbox" class="w-4 h-4 accent-brandBlue mt-0.5">
         <span>
-          <span class="text-xs font-semibold text-gray-600 block">Planning Margin (+20%)</span>
-          <span class="text-[11px] text-gray-400 block mt-0.5">Optional planning margin: increases the calculated running current by 20% for preliminary spare-capacity planning, and this increased value is then used for cable sizing, voltage drop, and the protective-device rating below. This is not a code-required demand, diversity, derating, or protection factor.</span>
+          <span class="text-xs font-semibold text-gray-600 inline-flex items-center gap-1.5">
+            Planning Margin (+20%)
+            <span class="info-icon" tabindex="0" role="button" aria-label="What the planning margin does">
+              i
+              <span class="info-tooltip">Optional planning margin: increases the calculated running current by 20% for preliminary spare-capacity planning, and this increased value is then used for cable sizing, voltage drop, and the protective-device rating below. This is not a code-required demand, diversity, derating, or protection factor.</span>
+            </span>
+          </span>
         </span>
       </label>
 
@@ -647,11 +692,15 @@
             <span id="rDesignCurrent" class="font-display font-semibold text-lg text-white">— A</span>
           </div>
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Preliminary Reference Capacity</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 inline-flex items-center gap-1">Preliminary Reference Capacity
+              <span class="info-icon" tabindex="0" role="button" aria-label="What this reference capacity means">
+                i
+                <span class="info-tooltip">This is a conservative illustrative reference value for preliminary screening only — it is not a code ampacity table and must not be treated as the allowable current for a specific installation. The planning allowance (if enabled) is included in the design current used for both the reference-capacity and voltage-drop checks below.</span>
+              </span>
+            </span>
             <span id="rCableRating" class="font-display font-semibold text-lg text-white">— A</span>
           </div>
         </div>
-        <p class="text-[10px] text-slate-400 mt-1.5 leading-snug">This is a conservative illustrative reference value for preliminary screening only — it is not a code ampacity table and must not be treated as the allowable current for a specific installation. The planning allowance (if enabled) is included in the design current used for both the reference-capacity and voltage-drop checks below.</p>
 
         <div class="mt-3 pt-3 border-t border-white/10 grid grid-cols-2 gap-3">
           <div>
@@ -673,25 +722,38 @@
         </div>
 
         <div class="mt-3 pt-3 border-t border-white/10">
-          <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Indicative Protective-Device Rating</span>
+          <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 inline-flex items-center gap-1">Indicative Protection Rating &mdash; Screening Only
+            <span class="info-icon" tabindex="0" role="button" aria-label="What this rating means">
+              i
+              <span class="info-tooltip">Simplified preliminary rating only, chosen so it sits at or above the planning sizing current (Ib) and at or below this cable's reference capacity (Ib ≤ In ≤ reference capacity). This preliminary rating is based on the calculated planning current — it is not a final MCB/MCCB/RCBO/fuse selection; final selection must still verify the actual derated cable capacity, fault level, trip characteristics and coordination requirements.</span>
+            </span>
+          </span>
           <div class="flex items-baseline gap-2">
             <span id="rProtectiveDevice" class="font-display font-semibold text-lg text-white">— A</span>
             <span id="rProtectiveDeviceNote" class="text-[11px] text-amber-400"></span>
           </div>
-          <p class="text-[10px] text-slate-400 mt-1 leading-snug">Simplified preliminary rating only, chosen so it sits at or above the planning sizing current (Ib) and at or below this cable's reference capacity (Ib ≤ In ≤ reference capacity). This preliminary rating is based on the calculated planning current — it is not a final MCB/MCCB/RCBO/fuse selection; final selection must still verify the actual derated cable capacity, fault level, trip characteristics and coordination requirements.</p>
         </div>
 
         <div class="mt-3 pt-3 border-t border-white/10 grid grid-cols-2 gap-3">
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Neutral Conductor <span class="normal-case text-slate-400">(default)</span></span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 inline-flex items-center gap-1">Neutral <span class="normal-case text-slate-400">(default)</span>
+              <span class="info-icon" tabindex="0" role="button" aria-label="What this default neutral size means">
+                i
+                <span class="info-tooltip">This is the simplified same-as-active default only — it does not check load balance or harmonic content; see the Neutral Conductor Sizing guidance below for when a different size may apply.</span>
+              </span>
+            </span>
             <span id="rNeutral" class="font-display font-semibold text-lg text-white">— sq.mm</span>
           </div>
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Earth/CPC Conductor <span class="normal-case text-slate-400">(rule of thumb)</span></span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 inline-flex items-center gap-1">Earth/CPC <span class="normal-case text-slate-400">(rule of thumb)</span>
+              <span class="info-icon" tabindex="0" role="button" aria-label="How this earth size is calculated">
+                i
+                <span class="info-tooltip">Uses a simplified rule of thumb (same as active up to 16 sq.mm, held at 16 sq.mm from 16&ndash;35 sq.mm, then half the active size above 35 sq.mm, rounded up to the next standard size) — it is not the adiabatic, fault-current-based calculation required for a final design; use the dedicated <a href="/electrical/earthing-conductor-size" class="text-sky-300 underline">Earthing Conductor Size Calculator</a> for that.</span>
+              </span>
+            </span>
             <span id="rEarth" class="font-display font-semibold text-lg text-white">— sq.mm</span>
           </div>
         </div>
-        <p class="text-[10px] text-slate-400 mt-1.5 leading-snug">Neutral shown here is the simplified same-as-active default only — it does not check load balance or harmonic content; see the Neutral Conductor Sizing guidance below for when a different size may apply. Earth/CPC uses a simplified rule of thumb (same as active up to 16 sq.mm, held at 16 sq.mm from 16&ndash;35 sq.mm, then half the active size above 35 sq.mm, rounded up to the next standard size) — it is not the adiabatic, fault-current-based calculation required for a final design; use the dedicated <a href="/electrical/earthing-conductor-size" class="text-sky-400 underline hover:text-sky-300">Earthing Conductor Size Calculator</a> for that.</p>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
@@ -794,7 +856,7 @@
 
       <p>The comparison table below the result shows ampacity and estimated voltage drop side by side for the recommended size and its immediate neighbours, and states the actual reason a smaller size falls short — insufficient ampacity, high voltage drop, or both — so you can see at a glance why a given size was or wasn't selected for your specific run length.</p>
 
-      <p>This tool is especially useful for electrical contractors and engineers planning a new circuit, panel feeder, or distribution run who need a starting-point cable size, voltage drop indication, and breaker rating before consulting a full derating and voltage-drop table for the final installation design.</p>
+      <p>This tool is especially useful for electrical contractors and engineers planning a new circuit, panel feeder, or distribution run who need a starting-point cable size, voltage drop indication, and indicative protective-device rating before consulting a full derating and voltage-drop table for the final installation design.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Why Cable Size Matters: Current, Heat, and Voltage Drop</h3>
       <p>Every conductor has resistance, and current flowing through that resistance generates heat (I²R losses). If a cable is too thin for the current it carries, it heats up beyond the safe rating of its insulation, which accelerates insulation ageing and, in the worst case, leads to a fire. This is why every conductor size has a published current-carrying capacity (also called ampacity) for a given installation method, insulation type, and ambient temperature. At the same time, resistance also causes a voltage drop along the cable's length: the further the load is from the source, the more voltage is "lost" in the wire before it reaches the equipment. A motor or panel that receives a significantly lower voltage than it was designed for can overheat, underperform, or trip on undervoltage — which is why voltage drop, not just current rating, has to be checked separately for long cable runs.</p>
@@ -913,12 +975,12 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
 
     <p class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-3">Illustrative example arrangements</p>
     <div class="svg-table-card bg-white border border-gray-200 rounded-lg p-3 my-4">
-      <svg viewBox="0 0 660 380" width="100%" height="auto" role="img" aria-label="Illustrative diagram: example physical arrangements of parallel single-core cable conductors per phase, for two-phase and three-phase circuits, with 2, 3, and 4 conductors per phase">
+      <svg viewBox="0 0 660 380" width="100%" height="auto" role="img" aria-label="Illustrative diagram: example physical arrangements of parallel single-core cable conductors, for single-phase (2-conductor) and three-phase (3-conductor) circuits, with 2, 3, and 4 parallel conductors per phase">
           <rect x="0.5" y="0.5" width="659" height="379" fill="none" stroke="#e2e8f0" stroke-width="1" rx="8"/>
           <path d="M0.5,34 V8 Q0.5,0.5 8,0.5 H652 Q659.5,0.5 659.5,8 V34 Z" fill="#0B1220"/>
           <text x="10" y="21.4" font-size="12.5" font-weight="700" fill="#fff">Mode</text>
-          <text x="150" y="21.4" font-size="12.5" font-weight="700" fill="#fff">Two-phase</text>
-          <text x="400" y="21.4" font-size="12.5" font-weight="700" fill="#fff">Three-phase</text>
+          <text x="150" y="21.4" font-size="12.5" font-weight="700" fill="#fff">Single-phase (2 conductors)</text>
+          <text x="400" y="21.4" font-size="12.5" font-weight="700" fill="#fff">Three-phase (3 conductors)</text>
           <line x1="140" y1="0" x2="140" y2="380" stroke="#e2e8f0" stroke-width="1"/>
           <line x1="390" y1="0" x2="390" y2="380" stroke="#e2e8f0" stroke-width="1"/>
           <line x1="0" y1="34" x2="660" y2="34" stroke="#e2e8f0" stroke-width="1"/>
@@ -932,7 +994,8 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
           <line x1="0" y1="134" x2="660" y2="134" stroke="#e2e8f0" stroke-width="1"/>
           <text x="10" y="169.0" font-size="12" fill="#1f2937">Three conductors</text>
           <text x="10" y="184.0" font-size="12" fill="#1f2937">per phase</text>
-          <text x="265.0" y="177.0" text-anchor="middle" font-size="12" fill="#1f2937">Not recommended</text>
+          <text x="265.0" y="170.0" text-anchor="middle" font-size="10.5" fill="#1f2937">Use a standard-defined</text>
+          <text x="265.0" y="184.0" text-anchor="middle" font-size="10.5" fill="#1f2937">symmetric arrangement</text>
           <circle cx="430.0" cy="158.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="430.0" y="162.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="419.5" cy="177.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="419.5" y="180.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="440.5" cy="177.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="440.5" y="180.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text>
           <circle cx="525.0" cy="158.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="525.0" y="162.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="514.5" cy="177.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="514.5" y="180.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text><circle cx="535.5" cy="177.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="535.5" y="180.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text>
           <circle cx="620.0" cy="158.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="620.0" y="162.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text><circle cx="609.5" cy="177.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="609.5" y="180.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="630.5" cy="177.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="630.5" y="180.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text>
@@ -1010,8 +1073,8 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
     </div>
 
     <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Neutral Conductor Sizing</h3>
-    <p>In a perfectly balanced three-phase system, the neutral carries little to no current, since the three phase currents cancel out at the neutral point. Historically, this let designers size the neutral the same as, or occasionally smaller than, the phase conductors for predominantly balanced multi-phase loads. Two things complicate that default: genuine load imbalance between phases, which the neutral must carry directly, and harmonic currents from nonlinear loads (variable frequency drives, LED and electronic lighting drivers, switched-mode power supplies, and similar equipment) — triplen harmonics (3rd, 9th, 15th, and so on) in particular do not cancel between phases the way the fundamental current does, and can add together in the neutral instead, sometimes pushing neutral current above any individual phase's current.</p>
-    <p>Because of this, most wiring standards (including AS/NZS 3000 and IEC 60364-5-52-style guidance) converge on a similar overall approach even though the exact clause wording differs by jurisdiction: size the neutral the same as the phase conductors by default, allow a reduced neutral only for predominantly balanced multi-phase loads with low harmonic content (and even then, sized to carry at least the expected out-of-balance current), and require a neutral rated equal to or larger than the phase conductors whenever substantial triplen-harmonic-generating loads are expected. The table below summarizes this general pattern.</p>
+    <p>In a perfectly balanced three-phase system, the neutral carries little to no current, since the three phase currents cancel out at the neutral point. Historically, this let designers size the neutral the same as, or occasionally smaller than, the phase conductors for predominantly balanced multi-phase loads. Two things complicate that default: genuine load imbalance between phases, which the neutral must carry directly, and harmonic currents from nonlinear loads — in particular, a substantial population of nonlinear <em>single-phase</em> loads on a three-phase, four-wire system (such as electronic lighting drivers, switched-mode power supplies, and other IT/data equipment) generates triplen harmonics (3rd, 9th, 15th, and so on) that do not cancel between phases the way the fundamental current does, and can add together in the neutral instead, sometimes pushing neutral current above any individual phase's current. Three-phase nonlinear loads such as VFDs generate harmonics too, but this specific neutral-accumulation effect is most strongly associated with nonlinear single-phase loads.</p>
+    <p>Because of this, most wiring standards (including AS/NZS 3000 and IEC 60364-5-52-style guidance) converge on a similar overall approach even though the exact clause wording differs by jurisdiction: size the neutral the same as the phase conductors by default, allow a reduced neutral only for predominantly balanced multi-phase loads with low harmonic content (and even then, sized to carry at least the expected out-of-balance current), and require a neutral rated equal to or larger than the phase conductors whenever a substantial population of triplen-harmonic-generating nonlinear single-phase loads is expected. The table below summarizes this general pattern.</p>
 
     <div class="svg-table-card bg-white border border-gray-200 rounded-lg p-3 my-4">
       <svg viewBox="0 0 660 214" width="100%" height="auto" role="img" aria-label="Table: Circuit Type | Typical Neutral Sizing Guidance">
@@ -1032,9 +1095,9 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
           <text x="290.0" y="119.8" font-size="12" fill="#1f2937">expected out-of-balance (and any</text>
           <text x="290.0" y="134.8" font-size="12" fill="#1f2937">harmonic) current</text>
           <line x1="0" y1="139" x2="660" y2="139" stroke="#e2e8f0" stroke-width="1"/>
-          <text x="10.0" y="159.8" font-size="12" fill="#1f2937">Substantial triplen-harmonic-generating</text>
-          <text x="10.0" y="174.8" font-size="12" fill="#1f2937">loads expected (VFDs, electronic</text>
-          <text x="10.0" y="189.8" font-size="12" fill="#1f2937">ballasts/drivers, IT/data loads, etc.)</text>
+          <text x="10.0" y="159.8" font-size="12" fill="#1f2937">Substantial nonlinear single-phase</text>
+          <text x="10.0" y="174.8" font-size="12" fill="#1f2937">loads expected (electronic drivers,</text>
+          <text x="10.0" y="189.8" font-size="12" fill="#1f2937">SMPS, IT/data loads, etc.)</text>
           <text x="290.0" y="167.3" font-size="12" fill="#1f2937">Neutral sized equal to, or larger than,</text>
           <text x="290.0" y="182.3" font-size="12" fill="#1f2937">the phase conductors</text>
           <line x1="0" y1="214" x2="660" y2="214" stroke="#e2e8f0" stroke-width="1"/>
@@ -1197,7 +1260,7 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
         Does this calculator apply ambient temperature or grouping derating automatically?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — this calculator uses standard 30°C, single-cable reference ratings. If your installation runs at higher ambient temperature or has multiple loaded cables grouped together, apply the applicable correction factors to the reference capacity shown above and select the next standard size that satisfies the resulting derated condition. Do not assume that moving up one or two standard sizes automatically compensates for derating.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — this calculator's reference capacity values are simplified baseline figures for preliminary screening, and do not represent an installation-specific 30°C IEC/IS ampacity table. If your installation runs at higher ambient temperature or has multiple loaded cables grouped together, apply the applicable correction factors to the reference capacity shown above and select the next standard size that satisfies the resulting derated condition. Do not assume that moving up one or two standard sizes automatically compensates for derating.</p>
     </details>
 
     <details class="py-5">
@@ -1213,7 +1276,7 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
         What size should the neutral conductor be?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">By default, size the neutral the same as the phase conductors — the calculator's result panel shows this default value alongside the active conductor size. For predominantly balanced multiphase loads with low harmonic content, a reduced neutral may be permitted under the applicable standard, but it must still carry the expected out-of-balance current; the calculator does not check for or apply that reduction. Where substantial triplen-harmonic-generating loads are expected (VFDs, electronic drivers, IT/data loads, and similar), the neutral may need to be sized equal to or larger than the phase conductors, since these harmonics can add together in the neutral rather than cancelling — the calculator does not detect harmonic loading, so increase the neutral size manually if this applies to your installation.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">By default, size the neutral the same as the phase conductors — the calculator's result panel shows this default value alongside the active conductor size. For predominantly balanced multiphase loads with low harmonic content, a reduced neutral may be permitted under the applicable standard, but it must still carry the expected out-of-balance current; the calculator does not check for or apply that reduction. Where a substantial population of nonlinear single-phase loads is expected (such as electronic lighting drivers, switched-mode power supplies, and IT/data equipment on a three-phase four-wire system), the neutral may need to be sized equal to or larger than the phase conductors, since the triplen harmonics from these loads can add together in the neutral rather than cancelling — the calculator does not detect harmonic loading, so increase the neutral size manually if this applies to your installation.</p>
     </details>
 
     <details class="py-5">
