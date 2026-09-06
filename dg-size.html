@@ -23,10 +23,10 @@
   } catch(e) {}
 })();
 </script>
-<title>DG Size Calculator (kVA) | ElectroMechCalc</title>
+<title>DG Size Calculator (kVA Rating & Capacity) | ElectroMechCalc</title>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
      crossorigin="anonymous"></script>
-<meta name="description" content="Free DG size calculator. Find the required diesel generator (DG set) capacity in kVA, full-load current, and estimated fuel consumption from your kW load, power factor, voltage, and safety margin.">
+<meta name="description" content="Free DG size calculator — find diesel generator rating &amp; capacity in kVA, full-load current, and fuel use from your kW load, power factor, and voltage.">
 <meta name="keywords" content="DG size calculator, diesel generator size calculator, generator sizing, genset sizing calculator, kVA calculator, generator capacity calculator, generator kVA calculator, generator fuel consumption">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.electromechcalc.com/dg-size">
@@ -35,7 +35,7 @@
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ElectroMechCalc">
-<meta property="og:title" content="DG Size Calculator (kVA) | ElectroMechCalc">
+<meta property="og:title" content="DG Size Calculator (kVA Rating & Capacity)">
 <meta property="og:description" content="Find the right diesel generator capacity in kVA, full-load current, and estimated fuel consumption from your connected load, power factor, and voltage.">
 <meta property="og:url" content="https://www.electromechcalc.com/dg-size">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
@@ -43,7 +43,7 @@
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="DG Size Calculator (kVA) | ElectroMechCalc">
+<meta name="twitter:title" content="DG Size Calculator (kVA Rating & Capacity)">
 <meta name="twitter:description" content="Free tool to size a diesel generator in kVA, with full-load current and fuel consumption estimate.">
 <meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
 
@@ -57,7 +57,7 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "description": "Free online calculator to determine diesel generator (DG set) capacity in kVA, full-load current, and estimated fuel consumption for single-phase and three-phase electrical loads.",
+  "description": "Free DG size calculator \u2014 find diesel generator rating & capacity in kVA, full-load current, and fuel use from your kW load, power factor, and voltage.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
 </script>
@@ -119,6 +119,16 @@
       "@type": "Question",
       "name": "How does altitude or ambient temperature affect DG output?",
       "acceptedAnswer": { "@type": "Answer", "text": "Diesel engines lose power output at higher altitude (thinner air reduces combustion efficiency) and at higher ambient temperature (reduced air density and cooling capacity). Manufacturers publish derating charts for both factors — for installations above roughly 1000m altitude or in consistently hot climates, check the derated output rather than the sea-level nameplate rating." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is DG rating the same as DG capacity?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — \"DG rating\" and \"DG capacity\" are generally used interchangeably to mean the generator's rated output, expressed in kVA (apparent power). Some manufacturers distinguish a standby rating from a prime rating for the same physical generator, so when comparing a \"rating\" figure between two DG sets, confirm both are quoted under the same duty class (standby vs. prime) before treating them as directly comparable." }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the standard DG sizes in kVA?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Common standard DG (diesel generator) sizes in kVA include 5, 7.5, 10, 15, 20, 25, 30, 40, 50, 62.5, 75, 82.5, 100, 125, 160, 200, 250, 320, 380, 500, 625, 750, 1000, 1250, 1500, 2000, and 2500 kVA — see the standard DG size chart above for the full reference list this calculator uses. Actual available sizes and step increments still vary by manufacturer and region, so confirm exact catalogue sizes with your local supplier." }
     }
   ]
 }
@@ -408,7 +418,7 @@
     </div>
 
         <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
-          Free DG set (diesel generator) sizing calculator — enter your connected load in kW, HP, or Amp to instantly estimate the required generator kVA, nearest reference size, full-load current, and fuel consumption.
+          Free DG set (diesel generator) sizing calculator — enter your connected load in kW, HP, or Amp to instantly estimate the required generator kVA rating/capacity, nearest standard size, full-load current, and fuel consumption.
         </p>
       </div>
 
@@ -538,6 +548,10 @@
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Reference DG Size</span>
         <div id="rResult" class="font-display font-bold text-3xl mt-1 text-white">— kVA</div>
         <p class="text-xs text-slate-300 mt-1" id="resultSub">Nearest reference DG set size — actual standard availability varies by manufacturer and region</p>
+        <div class="mt-3 pt-3 border-t border-white/10">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Full-Load Current (DG Output)</span>
+          <span id="rCurrent" class="font-display font-semibold text-lg text-white">— A</span>
+        </div>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
@@ -617,8 +631,9 @@
     <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
       <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
       <li><a href="#how-it-works" class="hover:underline">2. Understanding DG sizing</a></li>
-      <li><a href="#dg-by-region" class="hover:underline">3. Sizing by voltage and region</a></li>
-      <li><a href="#faqs" class="hover:underline">4. FAQs</a></li>
+      <li><a href="#dg-size-chart" class="hover:underline">3. Standard DG size chart</a></li>
+      <li><a href="#dg-by-region" class="hover:underline">4. Sizing by voltage and region</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
     </ul>
   </div>
 </nav>
@@ -641,6 +656,7 @@
       <p>The resulting current draw is calculated using <strong>I = (kVA × 1000) ÷ (√3 × V)</strong> for a three-phase supply, or <strong>I = (kVA × 1000) ÷ V</strong> for single-phase, which determines the cable and breaker sizing on the generator's output. Fuel consumption is approximated using a commonly used diesel-generator rule of thumb of roughly 0.27 litres per hour for every kW of load, though actual consumption varies by engine efficiency and load factor.</p>
 
       <p><strong>Worked example:</strong> A facility has a three-phase connected load of 80 kW at a power factor of 0.8, supplied at 415 V, with a 20% safety margin. The base DG capacity is kVA = 80 ÷ 0.8 = 100 kVA. Adding the 20% margin: 100 × 1.20 = 120 kVA, which would typically be rounded up to the nearest standard DG size of 125 kVA. The full-load current at 415 V is I = (120 × 1000) ÷ (1.732 × 415) ≈ 167.0 A, and estimated fuel consumption is roughly 80 × 0.27 ≈ 21.6 L/hr.</p>
+      <p><strong>125 kVA DG load calculation (reverse direction):</strong> if you already have a 125 kVA DG set and want to check how much load it can safely carry, work backward using the same convention: recommended continuous load &asymp; DG capacity &times; PF &divide; (1 + margin%). At PF 0.8 and a 20% margin, that's 125 &times; 0.8 &divide; 1.20 &asymp; 83.3 kW &mdash; treat this as a planning estimate, not the generator's actual prime/standby rating, which is set by the manufacturer's datasheet.</p>
 
       <p>This tool is especially useful for facility engineers and contractors selecting a backup or prime power DG set, sizing the generator's output cable and protection, or estimating fuel budget and tank capacity for continuous or standby operation.</p>
 
@@ -666,6 +682,22 @@
         <li><strong>Using an unrealistic power factor.</strong> Assuming PF = 1 for a load that is actually 0.75–0.85 (typical for motor-heavy loads) will undersize the generator; use your actual metered power factor where possible.</li>
         <li><strong>Confusing standby and prime power ratings.</strong> A generator rated for occasional standby duty is not necessarily suitable for continuous, daily prime power operation at the same load — check the manufacturer's duty rating.</li>
       </ul>
+
+      <h3 id="dg-size-chart" class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Standard DG Size Chart (kVA)</h3>
+      <p>The table below lists the same standard DG (diesel generator) sizes in kVA that this calculator's reference series uses to round your calculated capacity up to a realistic, commonly available rating. Treat this as a general reference chart, not a guarantee of availability &mdash; actual standard DG sizes and step increments vary by manufacturer and region, so confirm the exact catalogue sizes with your local supplier before finalizing a purchase.</p>
+      <div class="not-prose overflow-x-auto my-4">
+        <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+          <thead class="bg-gray-50 text-gray-600">
+            <tr><th class="text-left px-4 py-2 font-semibold">Standard DG Sizes (kVA)</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr><td class="px-4 py-2">5, 7.5, 10, 15, 20, 25, 30, 40, 50</td></tr>
+            <tr><td class="px-4 py-2">62.5, 75, 82.5, 100, 125, 160</td></tr>
+            <tr><td class="px-4 py-2">200, 250, 320, 380, 500, 625, 750</td></tr>
+            <tr><td class="px-4 py-2">1000, 1250, 1500, 2000, 2500</td></tr>
+          </tbody>
+        </table>
+      </div>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Illustrative DG Capacity Ranges and Common Applications</h3>
       <div class="overflow-x-auto my-3">
@@ -791,6 +823,22 @@
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">Diesel engines lose power output at higher altitude (thinner air reduces combustion efficiency) and at higher ambient temperature (reduced air density and cooling capacity). Manufacturers publish derating charts for both factors — for installations above roughly 1000m altitude or in consistently hot climates, check the derated output rather than the sea-level nameplate rating.</p>
     </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is DG rating the same as DG capacity?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — "DG rating" and "DG capacity" are generally used interchangeably to mean the generator's rated output, expressed in kVA (apparent power). Some manufacturers distinguish a standby rating from a prime rating for the same physical generator, so when comparing a "rating" figure between two DG sets, confirm both are quoted under the same duty class (standby vs. prime) before treating them as directly comparable.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What are the standard DG sizes in kVA?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Common standard DG (diesel generator) sizes in kVA include 5, 7.5, 10, 15, 20, 25, 30, 40, 50, 62.5, 75, 82.5, 100, 125, 160, 200, 250, 320, 380, 500, 625, 750, 1000, 1250, 1500, 2000, and 2500 kVA — see the <a href="#dg-size-chart" class="text-sky-600 underline">standard DG size chart</a> above for the full reference list this calculator uses. Actual available sizes and step increments still vary by manufacturer and region, so confirm exact catalogue sizes with your local supplier.</p>
+    </details>
   </div>
 </section>
 
@@ -888,6 +936,7 @@
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
       document.getElementById('rResult').textContent = '— kVA';
+      document.getElementById('rCurrent').textContent = '— A';
       document.getElementById('detailBox').textContent = 'Fix the input errors above to see a valid result.';
       document.getElementById('formulaBox').textContent = 'Fix the input errors above to see the worked formula.';
       return;
@@ -940,6 +989,7 @@
     if (recommended === null){
       document.getElementById('rResult').textContent = 'Above ' + dgSizes[dgSizes.length - 1] + ' kVA';
       document.getElementById('resultSub').textContent = 'Custom/utility-specific DG selection required — see note below';
+      document.getElementById('rCurrent').textContent = current.toFixed(2) + ' A';
       document.getElementById('detailBox').textContent =
 `Phase Type: ${phaseLabel}
 Load: ${kw.toFixed(2)} kW (${amp.toFixed(2)} A)
@@ -965,6 +1015,7 @@ Above the ${dgSizes[dgSizes.length - 1]} kVA reference series — engineering re
 
     document.getElementById('rResult').textContent = recommended + ' kVA';
     document.getElementById('resultSub').textContent = `${phaseLabel}, for a ${kw.toFixed(2)} kW load at PF ${pf}`;
+    document.getElementById('rCurrent').textContent = current.toFixed(2) + ' A';
 
     document.getElementById('detailBox').textContent =
 `Phase Type: ${phaseLabel}
