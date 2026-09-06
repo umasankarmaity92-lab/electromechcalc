@@ -127,6 +127,21 @@
       "@type": "Question",
       "name": "Does this calculator apply ambient temperature or grouping derating automatically?",
       "acceptedAnswer": { "@type": "Answer", "text": "No — this calculator uses standard 30°C, single-cable reference ratings. If your installation runs at higher ambient temperature or has multiple loaded cables grouped together, apply the applicable correction factors to the reference capacity and select the next standard size that satisfies the resulting derated condition. Do not assume that moving up one or two standard sizes automatically compensates for derating." }
+    },
+    {
+      "@type": "Question",
+      "name": "How should parallel single-core cables be arranged for balanced phase currents?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Cables of the same phase should be grouped and positioned according to the arrangement diagram in the applicable installation standard (such as AS/NZS 3008.1 or IEC 60364-5-52) for the number of parallel cables per phase in your design, rather than an arbitrary layout — mutual inductance between an uneven arrangement of parallel cables and phases can otherwise leave some cables carrying meaningfully more current than others, and this calculator does not model or check parallel-cable arrangement." }
+    },
+    {
+      "@type": "Question",
+      "name": "What size should the neutral conductor be?",
+      "acceptedAnswer": { "@type": "Answer", "text": "By default, size the neutral the same as the phase conductors — the calculator's result panel shows this default value alongside the active conductor size. For predominantly balanced multiphase loads with low harmonic content, a reduced neutral may be permitted under the applicable standard, but it must still carry the expected out-of-balance current; the calculator does not check for or apply that reduction. Where substantial triplen-harmonic-generating loads are expected (VFDs, electronic drivers, IT/data loads, and similar), the neutral may need to be sized equal to or larger than the phase conductors, since these harmonics can add together in the neutral rather than cancelling — the calculator does not detect harmonic loading, so increase the neutral size manually if this applies to your installation." }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the preliminary earth (CPC) conductor size calculated?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The calculator uses a simplified, widely-cited rule of thumb: the earth/CPC conductor is sized the same as the active conductor up to 16 sq.mm, held at 16 sq.mm for active sizes from 16 to 35 sq.mm, and sized at half the active conductor's cross-section (rounded up to the next standard size) above 35 sq.mm. This is a preliminary approximation only, not the adiabatic calculation (based on fault current and disconnection time) that most wiring standards require for a final design — use the dedicated Earthing Conductor Size Calculator for a properly calculated value." }
     }
   ]
 }
@@ -425,6 +440,11 @@
   @media (prefers-reduced-motion: reduce){
     .hero-cursor{ animation:none; }
   }
+  /* SVG-rendered reference tables use fixed text/background colors (not
+     theme-adaptive), so their wrapper card must stay light in dark mode
+     too — otherwise dark-on-dark text becomes unreadable when the
+     site-wide .bg-white override flips it dark. */
+  body.dark-theme .svg-table-card{ background:#fff !important; border-color:#e5e7eb !important; }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -660,6 +680,18 @@
           </div>
           <p class="text-[10px] text-slate-400 mt-1 leading-snug">Simplified preliminary rating only, chosen so it sits at or above the planning sizing current (Ib) and at or below this cable's reference capacity (Ib ≤ In ≤ reference capacity). This preliminary rating is based on the calculated planning current — it is not a final MCB/MCCB/RCBO/fuse selection; final selection must still verify the actual derated cable capacity, fault level, trip characteristics and coordination requirements.</p>
         </div>
+
+        <div class="mt-3 pt-3 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Neutral Conductor <span class="normal-case text-slate-400">(default)</span></span>
+            <span id="rNeutral" class="font-display font-semibold text-lg text-white">— sq.mm</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Earth/CPC Conductor <span class="normal-case text-slate-400">(rule of thumb)</span></span>
+            <span id="rEarth" class="font-display font-semibold text-lg text-white">— sq.mm</span>
+          </div>
+        </div>
+        <p class="text-[10px] text-slate-400 mt-1.5 leading-snug">Neutral shown here is the simplified same-as-active default only — it does not check load balance or harmonic content; see the Neutral Conductor Sizing guidance below for when a different size may apply. Earth/CPC uses a simplified rule of thumb (same as active up to 16 sq.mm, held at 16 sq.mm from 16&ndash;35 sq.mm, then half the active size above 35 sq.mm, rounded up to the next standard size) — it is not the adiabatic, fault-current-based calculation required for a final design; use the dedicated <a href="/electrical/earthing-conductor-size" class="text-sky-400 underline hover:text-sky-300">Earthing Conductor Size Calculator</a> for that.</p>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
@@ -733,7 +765,8 @@
       <li><a href="#how-it-works" class="hover:underline">2. How to calculate cable size</a></li>
       <li><a href="#cs-by-region" class="hover:underline">3. Sizing by voltage and region</a></li>
       <li><a href="#cs-derating" class="hover:underline">4. Derating factors in detail</a></li>
-      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+      <li><a href="#cs-phase-neutral" class="hover:underline">5. Phase arrangement, neutral sizing & laying methods</a></li>
+      <li><a href="#faqs" class="hover:underline">6. FAQs</a></li>
     </ul>
   </div>
 </nav>
@@ -867,6 +900,233 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
   </div>
 </section>
 
+<!-- ===================== PHASE ARRANGEMENT / NEUTRAL SIZING / LAYING METHODS ===================== -->
+<section id="cs-phase-neutral" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Beyond a Single Cable</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Phase Arrangement, Neutral Sizing &amp; Cable Laying Methods</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>The calculator above sizes a single conductor per phase for a straightforward run. Larger installations often split each phase across two or more parallel single-core cables instead of one large conductor, and route it using a specific laying method — both of which introduce considerations this calculator does not cover. This section explains those concepts at a general level; the calculator itself does not model parallel-cable arrangement, harmonic-adjusted neutral sizing, or a specific laying method.</p>
+
+    <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Optimal Arrangement for Parallel Single-Core Cables</h3>
+    <p>When a single conductor would be too large to handle, manufacture, or physically pull into a duct, each phase is instead run as two or more single-core cables in parallel, sharing the total current between them. In principle each parallel cable should carry an equal share of the current, but in practice the physical arrangement of the cables relative to each other changes the mutual inductance between phases and between parallel cables of the same phase — and an uneven arrangement can leave some cables carrying meaningfully more current than others, while also increasing localized heating between closely-grouped cables. Two broad arrangement families address this: a tight triangular ("trefoil") grouping of the three phases for each parallel circuit, and a flat, evenly-spaced arrangement across all circuits — each with different current-sharing and derating behavior.</p>
+    <p>Because the current-sharing imbalance gets progressively harder to manage as more parallel cables are added per phase, installation standards (such as AS/NZS 3008.1 for arrangement guidance, alongside IEC 60364-5-52 and equivalent national installation codes) publish specific recommended physical layouts for up to typically four parallel circuits per phase, rather than leaving the arrangement to installer preference. The general pattern across these arrangements is summarized below at a concept level — always use the specific diagram and cable-transposition sequence given in the applicable standard for the actual number of parallel cables in your design, since the exact layout (not just the general idea) is what keeps current-sharing balanced.</p>
+
+    <p class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-3">Illustrative example arrangements</p>
+    <div class="svg-table-card bg-white border border-gray-200 rounded-lg p-3 my-4">
+      <svg viewBox="0 0 660 380" width="100%" height="auto" role="img" aria-label="Illustrative diagram: example physical arrangements of parallel single-core cable conductors per phase, for two-phase and three-phase circuits, with 2, 3, and 4 conductors per phase">
+          <rect x="0.5" y="0.5" width="659" height="379" fill="none" stroke="#e2e8f0" stroke-width="1" rx="8"/>
+          <path d="M0.5,34 V8 Q0.5,0.5 8,0.5 H652 Q659.5,0.5 659.5,8 V34 Z" fill="#0B1220"/>
+          <text x="10" y="21.4" font-size="12.5" font-weight="700" fill="#fff">Mode</text>
+          <text x="150" y="21.4" font-size="12.5" font-weight="700" fill="#fff">Two-phase</text>
+          <text x="400" y="21.4" font-size="12.5" font-weight="700" fill="#fff">Three-phase</text>
+          <line x1="140" y1="0" x2="140" y2="380" stroke="#e2e8f0" stroke-width="1"/>
+          <line x1="390" y1="0" x2="390" y2="380" stroke="#e2e8f0" stroke-width="1"/>
+          <line x1="0" y1="34" x2="660" y2="34" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10" y="80.0" font-size="12" fill="#1f2937">Two conductors</text>
+          <text x="10" y="95.0" font-size="12" fill="#1f2937">per phase</text>
+          <circle cx="190.6" cy="84.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="190.6" y="87.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="209.4" cy="84.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="209.4" y="87.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text>
+          <circle cx="310.6" cy="84.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="310.6" y="87.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="329.4" cy="84.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="329.4" y="87.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text>
+          <circle cx="460.0" cy="67.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="460.0" y="71.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="449.5" cy="86.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="449.5" y="89.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="470.5" cy="86.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="470.5" y="89.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text>
+          <circle cx="590.0" cy="67.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="590.0" y="71.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text><circle cx="579.5" cy="86.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="579.5" y="89.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="600.5" cy="86.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="600.5" y="89.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text>
+          <rect x="0" y="134" width="660" height="78" fill="#f8fafc"/>
+          <line x1="0" y1="134" x2="660" y2="134" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10" y="169.0" font-size="12" fill="#1f2937">Three conductors</text>
+          <text x="10" y="184.0" font-size="12" fill="#1f2937">per phase</text>
+          <text x="265.0" y="177.0" text-anchor="middle" font-size="12" fill="#1f2937">Not recommended</text>
+          <circle cx="430.0" cy="158.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="430.0" y="162.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="419.5" cy="177.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="419.5" y="180.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="440.5" cy="177.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="440.5" y="180.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text>
+          <circle cx="525.0" cy="158.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="525.0" y="162.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="514.5" cy="177.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="514.5" y="180.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text><circle cx="535.5" cy="177.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="535.5" y="180.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text>
+          <circle cx="620.0" cy="158.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="620.0" y="162.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text><circle cx="609.5" cy="177.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="609.5" y="180.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="630.5" cy="177.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="630.5" y="180.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text>
+          <line x1="0" y1="212" x2="660" y2="212" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10" y="292.0" font-size="12" fill="#1f2937">Four conductors</text>
+          <text x="10" y="307.0" font-size="12" fill="#1f2937">per phase</text>
+          <circle cx="165.6" cy="256.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="165.6" y="259.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="184.4" cy="256.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="184.4" y="259.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text>
+          <circle cx="223.6" cy="256.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="223.6" y="259.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="242.4" cy="256.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="242.4" y="259.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text>
+          <circle cx="281.6" cy="256.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="281.6" y="259.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="300.4" cy="256.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="300.4" y="259.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text>
+          <circle cx="339.6" cy="256.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="339.6" y="259.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="358.4" cy="256.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="358.4" y="259.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text>
+          <text x="265.0" y="300.0" text-anchor="middle" font-size="11" font-style="italic" fill="#64748b">or</text>
+          <circle cx="165.6" cy="336.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="165.6" y="339.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="184.4" cy="336.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="184.4" y="339.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text>
+          <circle cx="223.6" cy="336.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="223.6" y="339.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="242.4" cy="336.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="242.4" y="339.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text>
+          <circle cx="281.6" cy="336.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="281.6" y="339.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="300.4" cy="336.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="300.4" y="339.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text>
+          <circle cx="339.6" cy="336.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="339.6" y="339.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="358.4" cy="336.0" r="10" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="358.4" y="339.1" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text>
+          <circle cx="430.0" cy="239.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="430.0" y="243.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="419.5" cy="258.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="419.5" y="261.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="440.5" cy="258.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="440.5" y="261.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text>
+          <circle cx="495.0" cy="239.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="495.0" y="243.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="484.5" cy="258.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="484.5" y="261.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="505.5" cy="258.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="505.5" y="261.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text>
+          <circle cx="560.0" cy="239.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="560.0" y="243.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="549.5" cy="258.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="549.5" y="261.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="570.5" cy="258.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="570.5" y="261.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text>
+          <circle cx="625.0" cy="239.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="625.0" y="243.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="614.5" cy="258.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="614.5" y="261.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="635.5" cy="258.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="635.5" y="261.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text>
+          <text x="525.0" y="300.0" text-anchor="middle" font-size="11" font-style="italic" fill="#64748b">or</text>
+          <circle cx="430.0" cy="319.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="430.0" y="323.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="419.5" cy="338.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="419.5" y="341.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="440.5" cy="338.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="440.5" y="341.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text>
+          <circle cx="495.0" cy="319.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="495.0" y="323.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="484.5" cy="338.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="484.5" y="341.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text><circle cx="505.5" cy="338.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="505.5" y="341.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text>
+          <circle cx="560.0" cy="319.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="560.0" y="323.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text><circle cx="549.5" cy="338.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="549.5" y="341.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="570.5" cy="338.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="570.5" y="341.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text>
+          <circle cx="625.0" cy="319.9" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="625.0" y="323.0" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">A</text><circle cx="614.5" cy="338.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="614.5" y="341.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">B</text><circle cx="635.5" cy="338.1" r="11" fill="#fff" stroke="#0B1220" stroke-width="1.4"/><text x="635.5" y="341.2" text-anchor="middle" font-size="9" font-weight="700" fill="#0B1220">C</text>
+      </svg>
+      <p class="text-[11px] text-gray-400 mt-1.5">Illustrative example layouts only, showing the general concept of grouped ("trefoil") vs flat conductor arrangement across parallel circuits &mdash; not a reproduction of any specific standard's published figure. The applicable installation standard (e.g. AS/NZS 3008.1, IEC 60364-5-52) gives the complete, specific set of recommended and alternative arrangements, including additional symmetric options and neutral-conductor placement, for the actual number of parallel conductors in your design.</p>
+    </div>
+
+    <p class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-3 mt-6">Summary by conductor count</p>
+    <div class="svg-table-card bg-white border border-gray-200 rounded-lg p-3 my-4">
+      <svg viewBox="0 0 660 279" width="100%" height="auto" role="img" aria-label="Table: Parallel Cables per Phase | General Arrangement Concept | Why It Matters">
+          <rect x="0.5" y="0.5" width="659" height="278" fill="none" stroke="#e2e8f0" stroke-width="1" rx="8"/>
+          <path d="M0.5,34 V8 Q0.5,0.5 8,0.5 H652 Q659.5,0.5 659.5,8 V34 Z" fill="#0B1220"/>
+          <text x="10.0" y="21.4" font-size="12.5" font-weight="700" fill="#ffffff">Parallel Cables per Phase</text>
+          <text x="165.0" y="21.4" font-size="12.5" font-weight="700" fill="#ffffff">General Arrangement Concept</text>
+          <text x="425.0" y="21.4" font-size="12.5" font-weight="700" fill="#ffffff">Why It Matters</text>
+          <line x1="155" y1="0" x2="155" y2="279" stroke="#e2e8f0" stroke-width="1"/>
+          <line x1="415" y1="0" x2="415" y2="279" stroke="#e2e8f0" stroke-width="1"/>
+          <line x1="0" y1="34" x2="660" y2="34" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10.0" y="54.8" font-size="12" fill="#1f2937">1 (single cable per</text>
+          <text x="10.0" y="69.8" font-size="12" fill="#1f2937">phase)</text>
+          <text x="165.0" y="62.3" font-size="12" fill="#1f2937">No arrangement choice needed</text>
+          <text x="425.0" y="54.8" font-size="12" fill="#1f2937">Only one path for current, so</text>
+          <text x="425.0" y="69.8" font-size="12" fill="#1f2937">sharing isn't a concern</text>
+          <line x1="0" y1="84" x2="660" y2="84" stroke="#e2e8f0" stroke-width="1"/>
+          <rect x="0" y="84" width="660" height="56" fill="#f8fafc"/>
+          <text x="10.0" y="107.3" font-size="12" fill="#1f2937">2</text>
+          <text x="165.0" y="104.8" font-size="12" fill="#1f2937">Cables of the same phase kept close</text>
+          <text x="165.0" y="119.8" font-size="12" fill="#1f2937">together, evenly positioned relative to</text>
+          <text x="165.0" y="134.8" font-size="12" fill="#1f2937">the other phases</text>
+          <text x="425.0" y="104.8" font-size="12" fill="#1f2937">Keeps the mutual inductance each</text>
+          <text x="425.0" y="119.8" font-size="12" fill="#1f2937">parallel cable experiences roughly</text>
+          <text x="425.0" y="134.8" font-size="12" fill="#1f2937">similar</text>
+          <line x1="0" y1="140" x2="660" y2="140" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10.0" y="163.3" font-size="12" fill="#1f2937">3</text>
+          <text x="165.0" y="155.8" font-size="12" fill="#1f2937">Grouped-trefoil per circuit, circuits</text>
+          <text x="165.0" y="170.8" font-size="12" fill="#1f2937">positioned symmetrically, or a defined</text>
+          <text x="165.0" y="185.8" font-size="12" fill="#1f2937">flat sequence</text>
+          <text x="425.0" y="155.8" font-size="12" fill="#1f2937">Imbalance risk grows with more</text>
+          <text x="425.0" y="170.8" font-size="12" fill="#1f2937">parallel paths, so the specific</text>
+          <text x="425.0" y="185.8" font-size="12" fill="#1f2937">sequence matters more</text>
+          <rect x="0" y="196" width="660" height="83" fill="#f8fafc"/>
+          <line x1="0" y1="196" x2="660" y2="196" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10.0" y="219.3" font-size="12" fill="#1f2937">4</text>
+          <text x="165.0" y="211.8" font-size="12" fill="#1f2937">A defined repeating/transposed</text>
+          <text x="165.0" y="226.8" font-size="12" fill="#1f2937">sequence across the full group, per the</text>
+          <text x="165.0" y="241.8" font-size="12" fill="#1f2937">applicable standard's diagram</text>
+          <text x="425.0" y="211.8" font-size="12" fill="#1f2937">At this count, an arbitrary</text>
+          <text x="425.0" y="226.8" font-size="12" fill="#1f2937">arrangement can produce a</text>
+          <text x="425.0" y="241.8" font-size="12" fill="#1f2937">materially uneven current split</text>
+          <text x="425.0" y="256.8" font-size="12" fill="#1f2937">between cables</text>
+          <line x1="0" y1="279" x2="660" y2="279" stroke="#e2e8f0" stroke-width="1"/>
+      </svg>
+      <p class="text-[11px] text-gray-400 mt-1.5">General concept summary only, not a substitute for the specific arrangement diagrams published in the applicable installation standard (e.g. AS/NZS 3008.1, IEC 60364-5-52, or the equivalent standard for your jurisdiction).</p>
+    </div>
+
+    <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Neutral Conductor Sizing</h3>
+    <p>In a perfectly balanced three-phase system, the neutral carries little to no current, since the three phase currents cancel out at the neutral point. Historically, this let designers size the neutral the same as, or occasionally smaller than, the phase conductors for predominantly balanced multi-phase loads. Two things complicate that default: genuine load imbalance between phases, which the neutral must carry directly, and harmonic currents from nonlinear loads (variable frequency drives, LED and electronic lighting drivers, switched-mode power supplies, and similar equipment) — triplen harmonics (3rd, 9th, 15th, and so on) in particular do not cancel between phases the way the fundamental current does, and can add together in the neutral instead, sometimes pushing neutral current above any individual phase's current.</p>
+    <p>Because of this, most wiring standards (including AS/NZS 3000 and IEC 60364-5-52-style guidance) converge on a similar overall approach even though the exact clause wording differs by jurisdiction: size the neutral the same as the phase conductors by default, allow a reduced neutral only for predominantly balanced multi-phase loads with low harmonic content (and even then, sized to carry at least the expected out-of-balance current), and require a neutral rated equal to or larger than the phase conductors whenever substantial triplen-harmonic-generating loads are expected. The table below summarizes this general pattern.</p>
+
+    <div class="svg-table-card bg-white border border-gray-200 rounded-lg p-3 my-4">
+      <svg viewBox="0 0 660 214" width="100%" height="auto" role="img" aria-label="Table: Circuit Type | Typical Neutral Sizing Guidance">
+          <rect x="0.5" y="0.5" width="659" height="213" fill="none" stroke="#e2e8f0" stroke-width="1" rx="8"/>
+          <path d="M0.5,34 V8 Q0.5,0.5 8,0.5 H652 Q659.5,0.5 659.5,8 V34 Z" fill="#0B1220"/>
+          <text x="10.0" y="21.4" font-size="12.5" font-weight="700" fill="#ffffff">Circuit Type</text>
+          <text x="290.0" y="21.4" font-size="12.5" font-weight="700" fill="#ffffff">Typical Neutral Sizing Guidance</text>
+          <line x1="280" y1="0" x2="280" y2="214" stroke="#e2e8f0" stroke-width="1"/>
+          <line x1="0" y1="34" x2="660" y2="34" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10.0" y="54.8" font-size="12" fill="#1f2937">General/default multiphase circuit</text>
+          <text x="10.0" y="69.8" font-size="12" fill="#1f2937">(mains, submains, final subcircuits)</text>
+          <text x="290.0" y="62.3" font-size="12" fill="#1f2937">Neutral sized the same as the phase conductors</text>
+          <line x1="0" y1="84" x2="660" y2="84" stroke="#e2e8f0" stroke-width="1"/>
+          <rect x="0" y="84" width="660" height="55" fill="#f8fafc"/>
+          <text x="10.0" y="104.8" font-size="12" fill="#1f2937">Predominantly balanced multiphase</text>
+          <text x="10.0" y="119.8" font-size="12" fill="#1f2937">loads, low harmonic content</text>
+          <text x="290.0" y="104.8" font-size="12" fill="#1f2937">May be reduced, but must still carry the</text>
+          <text x="290.0" y="119.8" font-size="12" fill="#1f2937">expected out-of-balance (and any</text>
+          <text x="290.0" y="134.8" font-size="12" fill="#1f2937">harmonic) current</text>
+          <line x1="0" y1="139" x2="660" y2="139" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10.0" y="159.8" font-size="12" fill="#1f2937">Substantial triplen-harmonic-generating</text>
+          <text x="10.0" y="174.8" font-size="12" fill="#1f2937">loads expected (VFDs, electronic</text>
+          <text x="10.0" y="189.8" font-size="12" fill="#1f2937">ballasts/drivers, IT/data loads, etc.)</text>
+          <text x="290.0" y="167.3" font-size="12" fill="#1f2937">Neutral sized equal to, or larger than,</text>
+          <text x="290.0" y="182.3" font-size="12" fill="#1f2937">the phase conductors</text>
+          <line x1="0" y1="214" x2="660" y2="214" stroke="#e2e8f0" stroke-width="1"/>
+      </svg>
+      <p class="text-[11px] text-gray-400 mt-1.5">General pattern summary only &mdash; the specific sizing rule, exceptions, and any required calculation method are set by the applicable wiring standard for your jurisdiction (e.g. AS/NZS 3000, IEC 60364-5-52, IS installation practice, or BS 7671), not by this calculator.</p>
+    </div>
+
+    <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Common Cable Laying / Installation Methods</h3>
+    <p>The same conductor size can have a meaningfully different current rating depending on how it's installed, because each method affects how easily the cable sheds heat. The table below is a general orientation to commonly used laying methods, not an exhaustive or standard-specific installation-method reference table.</p>
+
+    <div class="svg-table-card bg-white border border-gray-200 rounded-lg p-3 my-4">
+      <svg viewBox="0 0 660 524" width="100%" height="auto" role="img" aria-label="Table: Laying Method | Typical Application | Key Consideration">
+          <rect x="0.5" y="0.5" width="659" height="523" fill="none" stroke="#e2e8f0" stroke-width="1" rx="8"/>
+          <path d="M0.5,34 V8 Q0.5,0.5 8,0.5 H652 Q659.5,0.5 659.5,8 V34 Z" fill="#0B1220"/>
+          <text x="10.0" y="21.4" font-size="12.5" font-weight="700" fill="#ffffff">Laying Method</text>
+          <text x="185.0" y="21.4" font-size="12.5" font-weight="700" fill="#ffffff">Typical Application</text>
+          <text x="430.0" y="21.4" font-size="12.5" font-weight="700" fill="#ffffff">Key Consideration</text>
+          <line x1="175" y1="0" x2="175" y2="524" stroke="#e2e8f0" stroke-width="1"/>
+          <line x1="420" y1="0" x2="420" y2="524" stroke="#e2e8f0" stroke-width="1"/>
+          <line x1="0" y1="34" x2="660" y2="34" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10.0" y="62.3" font-size="12" fill="#1f2937">Direct burial in ground</text>
+          <text x="185.0" y="54.8" font-size="12" fill="#1f2937">Underground distribution runs</text>
+          <text x="185.0" y="69.8" font-size="12" fill="#1f2937">between buildings or substations</text>
+          <text x="430.0" y="54.8" font-size="12" fill="#1f2937">Soil thermal resistivity and burial</text>
+          <text x="430.0" y="69.8" font-size="12" fill="#1f2937">depth strongly affect rating</text>
+          <rect x="0" y="84" width="660" height="65" fill="#f8fafc"/>
+          <line x1="0" y1="84" x2="660" y2="84" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10.0" y="119.8" font-size="12" fill="#1f2937">Buried duct/pipe</text>
+          <text x="185.0" y="104.8" font-size="12" fill="#1f2937">Underground runs needing future</text>
+          <text x="185.0" y="119.8" font-size="12" fill="#1f2937">re-pulling or multiple cables in one</text>
+          <text x="185.0" y="134.8" font-size="12" fill="#1f2937">route</text>
+          <text x="430.0" y="104.8" font-size="12" fill="#1f2937">Trapped air around the cable</text>
+          <text x="430.0" y="119.8" font-size="12" fill="#1f2937">typically lowers the rating versus</text>
+          <text x="430.0" y="134.8" font-size="12" fill="#1f2937">direct burial</text>
+          <line x1="0" y1="149" x2="660" y2="149" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10.0" y="184.8" font-size="12" fill="#1f2937">Perforated cable tray</text>
+          <text x="185.0" y="177.3" font-size="12" fill="#1f2937">Indoor switchrooms, panel rooms, and</text>
+          <text x="185.0" y="192.3" font-size="12" fill="#1f2937">general industrial routing</text>
+          <text x="430.0" y="169.8" font-size="12" fill="#1f2937">Good airflow; rating depends on</text>
+          <text x="430.0" y="184.8" font-size="12" fill="#1f2937">single-layer vs</text>
+          <text x="430.0" y="199.8" font-size="12" fill="#1f2937">multi-layer/touching arrangement</text>
+          <rect x="0" y="214" width="660" height="50" fill="#f8fafc"/>
+          <line x1="0" y1="214" x2="660" y2="214" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10.0" y="242.3" font-size="12" fill="#1f2937">Cable ladder</text>
+          <text x="185.0" y="234.8" font-size="12" fill="#1f2937">Large power cables in industrial</text>
+          <text x="185.0" y="249.8" font-size="12" fill="#1f2937">plant areas</text>
+          <text x="430.0" y="234.8" font-size="12" fill="#1f2937">Open support with good ventilation;</text>
+          <text x="430.0" y="249.8" font-size="12" fill="#1f2937">simplifies future circuit additions</text>
+          <line x1="0" y1="264" x2="660" y2="264" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10.0" y="292.3" font-size="12" fill="#1f2937">Conduit (surface or</text>
+          <text x="10.0" y="307.3" font-size="12" fill="#1f2937">embedded)</text>
+          <text x="185.0" y="292.3" font-size="12" fill="#1f2937">Control wiring and shorter power</text>
+          <text x="185.0" y="307.3" font-size="12" fill="#1f2937">runs, walls/floors/ceilings</text>
+          <text x="430.0" y="284.8" font-size="12" fill="#1f2937">Restricted airflow versus open</text>
+          <text x="430.0" y="299.8" font-size="12" fill="#1f2937">tray; number of cables per conduit</text>
+          <text x="430.0" y="314.8" font-size="12" fill="#1f2937">affects derating</text>
+          <rect x="0" y="329" width="660" height="65" fill="#f8fafc"/>
+          <line x1="0" y1="329" x2="660" y2="329" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10.0" y="357.3" font-size="12" fill="#1f2937">Cleated direct on a</text>
+          <text x="10.0" y="372.3" font-size="12" fill="#1f2937">surface</text>
+          <text x="185.0" y="357.3" font-size="12" fill="#1f2937">Short exposed runs, utility or</text>
+          <text x="185.0" y="372.3" font-size="12" fill="#1f2937">temporary wiring</text>
+          <text x="430.0" y="349.8" font-size="12" fill="#1f2937">No mechanical protection from</text>
+          <text x="430.0" y="364.8" font-size="12" fill="#1f2937">conduit or tray; spacing from the</text>
+          <text x="430.0" y="379.8" font-size="12" fill="#1f2937">surface matters</text>
+          <line x1="0" y1="394" x2="660" y2="394" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10.0" y="422.3" font-size="12" fill="#1f2937">Aerial/overhead</text>
+          <text x="10.0" y="437.3" font-size="12" fill="#1f2937">(messenger wire)</text>
+          <text x="185.0" y="414.8" font-size="12" fill="#1f2937">Service runs to remote or separate</text>
+          <text x="185.0" y="429.8" font-size="12" fill="#1f2937">structures where trenching isn't</text>
+          <text x="185.0" y="444.8" font-size="12" fill="#1f2937">practical</text>
+          <text x="430.0" y="414.8" font-size="12" fill="#1f2937">Needs adequate mechanical support</text>
+          <text x="430.0" y="429.8" font-size="12" fill="#1f2937">and ground clearance; weather</text>
+          <text x="430.0" y="444.8" font-size="12" fill="#1f2937">exposure</text>
+          <rect x="0" y="459" width="660" height="65" fill="#f8fafc"/>
+          <line x1="0" y1="459" x2="660" y2="459" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="10.0" y="487.3" font-size="12" fill="#1f2937">Free air, spaced from</text>
+          <text x="10.0" y="502.3" font-size="12" fill="#1f2937">surface</text>
+          <text x="185.0" y="487.3" font-size="12" fill="#1f2937">Where the highest ampacity for a</text>
+          <text x="185.0" y="502.3" font-size="12" fill="#1f2937">given size is needed</text>
+          <text x="430.0" y="479.8" font-size="12" fill="#1f2937">Requires sufficient spacing/support</text>
+          <text x="430.0" y="494.8" font-size="12" fill="#1f2937">to actually achieve free-air</text>
+          <text x="430.0" y="509.8" font-size="12" fill="#1f2937">airflow</text>
+          <line x1="0" y1="524" x2="660" y2="524" stroke="#e2e8f0" stroke-width="1"/>
+          </svg>
+      <p class="text-[11px] text-gray-400 mt-1.5">General orientation only &mdash; the applicable current-rating table always specifies ratings per installation method precisely, and the exact terminology and permitted methods vary by standard and jurisdiction.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This section is conceptual background, not a design tool &mdash; it does not calculate a parallel-cable arrangement or an installation-method-specific ampacity, and it does not adjust the neutral or earth size shown in the calculator above for load imbalance or harmonic content (that calculator shows only the simplified same-as-active neutral default and a rule-of-thumb earth size). For an actual design, use the specific arrangement diagrams, neutral-sizing clauses, and installation-method rating tables in the standard applicable to your installation (such as AS/NZS 3008.1/3000, IEC 60364-5-52, IS installation practice, or BS 7671), and verify with a qualified electrical engineer.</p>
+  </div>
+</section>
+
 <!-- ===================== [PER-PAGE] FAQ ===================== -->
 <section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
   <div class="text-center mb-10">
@@ -938,6 +1198,30 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — this calculator uses standard 30°C, single-cable reference ratings. If your installation runs at higher ambient temperature or has multiple loaded cables grouped together, apply the applicable correction factors to the reference capacity shown above and select the next standard size that satisfies the resulting derated condition. Do not assume that moving up one or two standard sizes automatically compensates for derating.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How should parallel single-core cables be arranged for balanced phase currents?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Cables of the same phase should be grouped and positioned according to the arrangement diagram in the applicable installation standard (such as AS/NZS 3008.1 or IEC 60364-5-52) for the number of parallel cables per phase in your design, rather than an arbitrary layout — mutual inductance between an uneven arrangement of parallel cables and phases can otherwise leave some cables carrying meaningfully more current than others, and this calculator does not model or check parallel-cable arrangement.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What size should the neutral conductor be?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">By default, size the neutral the same as the phase conductors — the calculator's result panel shows this default value alongside the active conductor size. For predominantly balanced multiphase loads with low harmonic content, a reduced neutral may be permitted under the applicable standard, but it must still carry the expected out-of-balance current; the calculator does not check for or apply that reduction. Where substantial triplen-harmonic-generating loads are expected (VFDs, electronic drivers, IT/data loads, and similar), the neutral may need to be sized equal to or larger than the phase conductors, since these harmonics can add together in the neutral rather than cancelling — the calculator does not detect harmonic loading, so increase the neutral size manually if this applies to your installation.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How is the preliminary earth (CPC) conductor size calculated?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The calculator uses a simplified, widely-cited rule of thumb: the earth/CPC conductor is sized the same as the active conductor up to 16 sq.mm, held at 16 sq.mm for active sizes from 16 to 35 sq.mm, and sized at half the active conductor's cross-section (rounded up to the next standard size) above 35 sq.mm. This is a preliminary approximation only, not the adiabatic calculation (based on fault current and disconnection time) that most wiring standards require for a final design — use the dedicated <a href="/electrical/earthing-conductor-size" class="text-sky-600 underline">Earthing Conductor Size Calculator</a> for a properly calculated value.</p>
     </details>
   </div>
 </section>
@@ -1038,6 +1322,26 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
   }
 
   const cableSizes = [1.5, 2.5, 4, 6, 10, 16, 25, 35, 50, 70, 95, 120, 150, 185, 240, 300, 400];
+
+  // Rounds a target cross-section up to the next available standard size in
+  // cableSizes — used for the simplified Earth/CPC rule-of-thumb below, since
+  // "half the active size" rarely lands exactly on a standard size itself.
+  function nextStandardSize(target){
+    for(const s of cableSizes){ if(s >= target - 1e-9) return s; }
+    return cableSizes[cableSizes.length - 1];
+  }
+
+  // Simplified, widely-cited rule-of-thumb Earth/CPC sizing relative to the
+  // active conductor — NOT the adiabatic (fault-current and disconnection-time
+  // based) calculation that most wiring standards actually require for a
+  // final design. See the dedicated Earthing Conductor Size Calculator for that.
+  function ruleOfThumbEarthSize(activeSize){
+    let target;
+    if(activeSize <= 16) target = activeSize;
+    else if(activeSize <= 35) target = 16;
+    else target = activeSize / 2;
+    return nextStandardSize(target);
+  }
   const copperRating    = [10,16,25,32,40,63,80,100,125,160,200,250,315,355,400,500,630];
   const aluminiumRating = [null,10,16,25,32,40,63,80,100,125,160,200,250,315,355,400,500];
   // Approximate conductor resistance reference values at ~20°C, ohms/km.
@@ -1087,6 +1391,8 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
       document.getElementById('rLength').textContent = '— m';
       document.getElementById('rProtectiveDevice').textContent = '— A';
       document.getElementById('rProtectiveDeviceNote').textContent = '';
+      document.getElementById('rNeutral').textContent = '— sq.mm';
+      document.getElementById('rEarth').textContent = '— sq.mm';
       document.getElementById('rVdrop').textContent = '—%';
       document.getElementById('rVdropNote').textContent = '';
       document.getElementById('checkAmpacity').textContent = '— Reference-capacity check';
@@ -1144,6 +1450,8 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
       document.getElementById('rLength').textContent = '\u2014 m';
       document.getElementById('rProtectiveDevice').textContent = '\u2014 A';
       document.getElementById('rProtectiveDeviceNote').textContent = '';
+      document.getElementById('rNeutral').textContent = '\u2014 sq.mm';
+      document.getElementById('rEarth').textContent = '\u2014 sq.mm';
       document.getElementById('rVdrop').textContent = '\u2014%';
       document.getElementById('rVdropNote').textContent = '';
       document.getElementById('checkAmpacity').textContent = '\u2014 Reference-capacity check';
@@ -1230,6 +1538,20 @@ L = Length (m), R = Conductor resistance (Ω/km), √3 = 1.732</div>
     document.getElementById('rProtectiveDeviceNote').textContent = deviceUncoordinated
       ? '(no standard rating both covers the design current and stays within this cable\'s reference capacity — recheck cable size)'
       : (deviceOutOfRange ? '(above 630 A — detailed protection selection required)' : '');
+
+    // ---- Neutral (simplified same-as-active default) and Earth/CPC
+    //      (simplified rule-of-thumb) conductor sizes, shown only when a
+    //      valid active-conductor recommendation actually exists. ----
+    if(ampacityOk){
+      const neutralSize = recSize;
+      const earthSize = ruleOfThumbEarthSize(recSize);
+      document.getElementById('rNeutral').textContent = neutralSize + ' sq.mm';
+      document.getElementById('rEarth').textContent = earthSize + ' sq.mm';
+    } else {
+      document.getElementById('rNeutral').textContent = '\u2014 sq.mm';
+      document.getElementById('rEarth').textContent = '\u2014 sq.mm';
+    }
+
     document.getElementById('rVdrop').textContent = recVdrop.toFixed(2) + '%';
 
     const vdropNote = document.getElementById('rVdropNote');
