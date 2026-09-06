@@ -30,7 +30,6 @@
 
 <!-- ===================== [PER-PAGE] SEO META ===================== -->
 <meta name="description" content="Free Relay Setting Calculator for IDMT overcurrent protection relays. Enter CT ratio, load current, and fault current to get pickup (plug) setting and required Time Multiplier Setting (TMS) instantly, with the IEC standard inverse formula.">
-<meta name="keywords" content="relay setting calculator, idmt relay calculator, plug setting multiplier, time multiplier setting calculator, overcurrent relay coordination, iec standard inverse curve">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.electromechcalc.com/electrical/relay-setting">
 <link rel="icon" href="/favicon.png" type="image/png">
@@ -61,7 +60,9 @@
   "operatingSystem": "Any",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "description": "Free Relay Setting Calculator for IDMT overcurrent protection relays. Enter CT ratio, load current, and fault current to get pickup (plug) setting and required Time Multiplier Setting (TMS) instantly, with the IEC standard inverse formula.",
-  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" },
+  "author": { "@type": "Person", "name": "Umasankar Maity", "url": "https://www.electromechcalc.com/about" },
+  "dateModified": "2026-09-06"
 }
 </script>
 
@@ -105,7 +106,7 @@
     {
       "@type": "Question",
       "name": "How do I choose the right pickup current margin above normal load?",
-      "acceptedAnswer": { "@type": "Answer", "text": "A commonly used margin is roughly 1.25-1.3 times the maximum expected normal load current, giving enough headroom to avoid nuisance tripping during normal load variation and any brief legitimate overload, while still being sensitive enough to detect a genuine sustained overload or fault condition promptly." }
+      "acceptedAnswer": { "@type": "Answer", "text": "A commonly used starting margin is roughly 1.25-1.3 times the maximum expected normal load current, giving enough headroom to avoid nuisance tripping during normal load variation and any brief legitimate overload, while still being sensitive enough to detect a genuine sustained overload or fault condition promptly. This is a simplified preliminary margin for a quick calculation, not a universal protection-setting rule \u2014 the actual margin for a real installation can depend on load characteristics, motor starting/inrush, transformer energization, and relay/CT accuracy, and should be confirmed against the specific application." }
     },
     {
       "@type": "Question",
@@ -126,6 +127,11 @@
       "@type": "Question",
       "name": "Do modern numerical/digital relays use the same IDMT formulas as older electromechanical relays?",
       "acceptedAnswer": { "@type": "Answer", "text": "Yes, largely — while numerical relays offer far more flexibility (multiple curve types, additional protection functions, communication capability, event logging), most still implement and reference the same standardized IEC (and ANSI/IEEE, for US-influenced systems) time-current curve formulas for their basic overcurrent inverse-time functions, maintaining compatibility with the well-established coordination principles developed for earlier electromechanical relay technology." }
+    },
+    {
+      "@type": "Question",
+      "name": "How can I check the actual trip time an already-configured relay setting will produce?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This calculator solves backward from a desired operating time to the required TMS/pickup. To go the other direction — enter an already-configured pickup, TMS/TD, and fault current to find the actual trip time it produces, for the Standard Inverse curve or any other IEC/IEEE curve — use the dedicated TOC/IDMT Relay Trip Time Calculator." }
     }
   ]
 }
@@ -303,6 +309,24 @@
 
   /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
 
+  /* Calculator heading bar: solid navy, bled to the card's edges,
+     matching the pattern used on transformer-size.html — LIGHT MODE ONLY;
+     dark mode keeps the card's own existing look, no override needed. */
+  body:not(.dark-theme) #calculator #calcHeaderBar{
+    background:#0B1220 !important;
+    margin:-1.5rem -1.5rem 1rem -1.5rem !important;
+    padding:0.85rem 1.5rem !important;
+    border-radius:16px 16px 0 0 !important;
+  }
+  body:not(.dark-theme) #calculator #calcHeaderBar h2{ color:#fff !important; margin-bottom:0.25rem !important; }
+  body:not(.dark-theme) #calculator #calcHeaderBar p{ color:#94a3b8 !important; }
+  @media (min-width: 768px){
+    body:not(.dark-theme) #calculator #calcHeaderBar{
+      margin:-2rem -2rem 1rem -2rem !important;
+      padding:0.85rem 2rem !important;
+    }
+  }
+
   /* .action-icon-btn was missing from this page's styles entirely,
      leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
   .action-icon-btn{
@@ -343,6 +367,14 @@
   body.dark-theme #cs-example-box{
     background:rgba(14,165,233,0.07); border-color:#164e63;
   }
+  body.dark-theme #cs-not-calculated-box{
+    background:rgba(245,158,11,0.07); border-color:#78350f;
+  }
+  body.dark-theme #cs-not-calculated-box .text-gray-600{ color:#cbd5e1; }
+  body.dark-theme #cs-not-calculated-box table{ border-color:#78350f; }
+  body.dark-theme #cs-not-calculated-box thead{ background:rgba(245,158,11,0.15); color:#e2e8f0; }
+  body.dark-theme #cs-not-calculated-box tbody{ color:#cbd5e1; }
+  body.dark-theme #cs-not-calculated-box tbody tr{ border-color:rgba(245,158,11,0.15); }
   body.dark-theme #cs-example-box thead tr{ border-color:#164e63; }
   body.dark-theme #cs-example-box th{ color:#7dd3fc; }
   body.dark-theme #cs-example-box tbody{ color:#cbd5e1; }
@@ -428,6 +460,7 @@
         <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
           Relay Setting <span class="text-sky-400">Calculator</span>
         </h1>
+        <p class="text-amber-300 text-xs font-mono uppercase tracking-wide mb-3">IEC 60255 Standard Inverse (SI) curve — single-relay calculation, verify against a full coordination study</p>
     <div class="hero-typing-box">
       <p class="hero-typing text-[#d4af37] text-sm font-mono font-bold justify-center" aria-label="Calculate Smarter. Work Faster. Practical Calculators & Maintenance Guides.">
         <span id="heroTypingText">Calculate Smarter. Work Faster.</span><span class="hero-cursor" aria-hidden="true"></span>
@@ -458,43 +491,71 @@
   <div class="grid lg:grid-cols-5 gap-6">
 
     <!-- INPUT PANEL -->
-    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel overflow-hidden p-6 md:p-8">
             <div id="calcHeaderBar">
         <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Relay Setting Details</h2>
-      <p class="text-xs text-gray-500 mb-6">Enter CT ratio, load current, and fault current.</p>
+      <p class="text-xs text-gray-500 mb-1">Enter CT ratio, load current, fault current, and desired operating time.</p>
+      <p class="text-xs text-gray-400 mb-6">Use a decimal point (e.g. 0.5), not a comma, for decimal values.</p>
       </div>
 
       <div class="space-y-4 mb-5">
         <div class="grid sm:grid-cols-2 gap-4">
           <div>
             <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="ctPrimary">CT Primary Rating (A)</label>
-            <input id="ctPrimary" type="number" value="400" step="10" min="0" placeholder="e.g. 400" class="input-field mt-2">
+            <input id="ctPrimary" name="ctPrimary" inputmode="decimal" type="number" value="400" step="10" min="1" max="20000" placeholder="e.g. 400" class="input-field mt-2">
           </div>
           <div>
             <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="ctSecondary">CT Secondary (A)</label>
-            <select id="ctSecondary" class="input-field mt-2">
+            <select id="ctSecondary" name="ctSecondary" class="input-field mt-2">
               <option value="5" selected>5 A</option>
               <option value="1">1 A</option>
             </select>
           </div>
         </div>
+        <p class="text-[11px] text-gray-400 -mt-2">Assumes the relay's own rated current input matches the selected CT secondary (1 A or 5 A) &mdash; verify this compatibility for your specific relay.</p>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="maxLoad">Maximum Load Current (A, primary)</label>
-          <input id="maxLoad" type="number" value="300" step="1" min="0" placeholder="e.g. 300" class="input-field mt-2">
+          <input id="maxLoad" name="maxLoad" inputmode="decimal" type="number" value="300" step="1" min="0.1" max="20000" placeholder="e.g. 300" class="input-field mt-2">
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="marginSelect">Pickup Margin</label>
+            <select id="marginSelect" name="marginSelect" class="input-field mt-2">
+              <option value="1.25" selected>1.25×</option>
+              <option value="1.30">1.30×</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div id="customMarginWrap" class="hidden">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="customMargin">Custom Margin (×)</label>
+            <input id="customMargin" name="customMargin" inputmode="decimal" type="number" value="1.25" step="0.01" min="1.01" max="3" placeholder="e.g. 1.25" class="input-field mt-2">
+          </div>
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="faultCurrent">Fault Current at Relay Location (A, primary)</label>
-          <input id="faultCurrent" type="number" value="4000" step="10" min="0" placeholder="e.g. 4000" class="input-field mt-2">
+          <input id="faultCurrent" name="faultCurrent" inputmode="decimal" type="number" value="4000" step="10" min="0.1" max="200000" placeholder="e.g. 4000" class="input-field mt-2">
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="desiredTime">Desired Operating Time at Fault (seconds)</label>
-          <input id="desiredTime" type="number" value="0.5" step="0.05" min="0.01" placeholder="e.g. 0.5" class="input-field mt-2">
+          <input id="desiredTime" name="desiredTime" inputmode="decimal" type="number" value="0.5" step="0.05" min="0.01" max="10" placeholder="e.g. 0.5" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tapSetSelect">Pickup Tap Set</label>
+          <select id="tapSetSelect" name="tapSetSelect" class="input-field mt-2">
+            <option value="common" selected>Common example set (50–200%, coarse steps)</option>
+            <option value="continuous">Continuous / numerical relay (no tap rounding)</option>
+          </select>
+          <p class="text-[11px] text-gray-400 mt-1.5">The common set is an illustrative example, not a universal standard &mdash; actual tap/setting resolution varies by relay manufacturer and model. Choose "Continuous" if your relay allows fine or software-defined pickup settings.</p>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="minFaultCurrent">Minimum Fault Current to Detect (A, primary) &mdash; optional</label>
+          <input id="minFaultCurrent" name="minFaultCurrent" inputmode="decimal" type="number" step="1" min="0.1" max="200000" placeholder="e.g. 1500 (leave blank to skip this check)" class="input-field mt-2">
         </div>
       </div>
 
-      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+      <div id="validationBox" role="alert" tabindex="-1" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
-      <button onclick="calculateRelaySetting()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+      <button type="button" onclick="calculateRelaySetting()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate
       </button>
 
@@ -505,22 +566,44 @@
 
     <!-- RESULT PANEL -->
     <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
-            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden" aria-live="polite" aria-atomic="true">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
-        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Required TMS</span>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-emerald-400" id="resultLabel">Example Tap &amp; TMS (Illustrative Tap Set)</span>
         <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
         <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+        <p class="text-[11px] text-gray-500 mt-2">Rounded to the tap set selected above and recalculated for the actual pickup &mdash; still a single-relay Standard Inverse (SI) estimate; always verify against the curve type actually configured on the relay and a full multi-relay coordination study.</p>
+        <p class="text-[11px] font-semibold text-amber-700 bg-amber-100 inline-block px-2 py-0.5 rounded mt-2">Illustrative example only — confirm against your relay's actual available tap/TMS resolution and a coordination study</p>
 
         <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Pickup Setting</span>
-            <span id="rPickup" class="font-display font-semibold text-lg">—</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Example Tap (Selected Tap Set)</span>
+            <span id="rTap" class="font-display font-semibold text-lg">—</span>
           </div>
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">PSM</span>
-            <span id="rPSM" class="font-display font-semibold text-lg">—</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Recalculated PSM</span>
+            <span id="rTapPSM" class="font-display font-semibold text-lg">—</span>
           </div>
         </div>
+        <p class="text-xs text-gray-400 mt-2">Nearby steps for an illustrative 0.05 TMS increment (verify your relay's actual resolution) with the actual operating time each one produces &mdash; faster trip: <span id="rTapTMSLower" class="font-display font-semibold text-white">—</span>, more coordination margin: <span id="rTapTMSUpper" class="font-display font-semibold text-white">—</span>. Choose based on your coordination requirement.</p>
+
+        <div id="rSensitivityWarning" class="hidden text-[11px] font-semibold text-red-200 bg-red-900/40 border border-red-400/40 rounded px-2 py-1.5 mt-3"></div>
+
+        <div class="mt-4 pt-4 border-t border-white/10">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block mb-2">Theoretical (Unrounded) Values</span>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Theoretical Pickup</span>
+              <span id="rPickup" class="font-display font-semibold text-base text-gray-300">—</span>
+            </div>
+            <div>
+              <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Theoretical PSM</span>
+              <span id="rPSM" class="font-display font-semibold text-base text-gray-300">—</span>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">Theoretical TMS (before tap rounding): <span id="rTheoreticalTMS" class="font-display font-semibold text-gray-300">—</span></p>
+        </div>
+
+        <a href="/electrical/idmt-trip-time-calculator" class="text-xs text-sky-400 hover:text-sky-300 underline mt-3 inline-block">Need the actual trip time for an already-configured relay (any IEC/IEEE curve)? Use the TOC/IDMT Trip Time Calculator &rarr;</a>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
@@ -538,13 +621,13 @@
 <section id="shareFeedbackBar" class="max-w-6xl mx-auto px-4 mb-14">
   <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
     <div class="flex items-center gap-2 flex-wrap">
-      <button class="share-result-btn" onclick="loadShareModal()">🔗 Share Result</button>
-      <button class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
+      <button type="button" class="share-result-btn" onclick="loadShareModal()">🔗 Share Result</button>
+      <button type="button" class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
       <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
-      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
-      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+      <button type="button" id="fbYes" class="action-icon-btn" aria-pressed="false" onclick="setFeedback('yes')">👍 Yes</button>
+      <button type="button" id="fbNo" class="action-icon-btn" aria-pressed="false" onclick="setFeedback('no')">👎 No</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
       <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Relay%20Setting%20Calculator">✉️ Feedback</a>
@@ -557,7 +640,10 @@
   <div id="relatedCalculatorsBox" class="bg-white rounded-xl border border-gray-100 p-4" data-copy-exclude>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
         <div class="grid sm:grid-cols-2 gap-1.5">
-          <a href="/electrical/ct-ratio" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          <a href="/electrical/idmt-trip-time-calculator" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          TOC/IDMT Trip Time Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical/ct-ratio" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
           CT Ratio Calculator <span class="text-sky-500">→</span>
         </a>
         <a href="/electrical/pt-ratio" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
@@ -568,6 +654,9 @@
         </a>
         <a href="/electrical/mccb-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
           MCCB Size Calculator <span class="text-sky-500">→</span>
+        </a>
+        <a href="/electrical-calculators" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+          All Electrical Calculators <span class="text-sky-500">→</span>
         </a>
         </div>
       </div>
@@ -581,8 +670,9 @@
       <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
       <li><a href="#how-it-works" class="hover:underline">2. Understanding IDMT relay settings</a></li>
       <li><a href="#second" class="hover:underline">3. IEC standard curve types</a></li>
-      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
-      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+      <li><a href="#lv-hv-setting" class="hover:underline">4. LV release vs HV/MV relay setting</a></li>
+      <li><a href="#mistakes" class="hover:underline">5. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">6. FAQs</a></li>
     </ul>
   </div>
 </nav>
@@ -593,30 +683,30 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IEC 60255 standard inverse (SI) time-current curve</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Standards referenced: IEC 60255 standard inverse (SI) time-current curve</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How IDMT Relay Pickup and Time Settings Are Calculated</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
             <p>An IDMT (Inverse Definite Minimum Time) overcurrent relay is the workhorse of power system protection &mdash; it monitors current through a current transformer (CT), and trips a breaker when current exceeds a set threshold for long enough, with an operating time that automatically decreases as fault current increases. Correctly setting one requires two separate decisions: where the pickup (plug) threshold sits, and how the time-current curve is scaled via the Time Multiplier Setting (TMS).</p>
 
-      <p><strong>Step 1 &mdash; pickup (plug) setting:</strong> Pickup Current (primary) = Maximum Load Current &times; Margin (typically 1.25-1.3). This must sit above normal maximum load (so the relay doesn't trip on legitimate load) and below the minimum fault current the relay needs to detect. Plug Setting % = (Pickup Current &divide; CT Primary Rating) &times; 100, giving the percentage tap setting on the relay (most electromechanical and many numerical relays offer discrete plug setting taps, commonly in steps like 50%, 75%, 100%, 125%, 150%, 175%, 200% of rated current).</p>
+      <p><strong>Step 1 &mdash; pickup (plug) setting:</strong> Pickup Current (primary) = Maximum Load Current &times; Margin (typically 1.25-1.3). This must sit above normal maximum load (so the relay doesn't trip on legitimate load) and below the minimum fault current the relay needs to detect. Plug Setting % = (Pickup Current &divide; CT Primary Rating) &times; 100, giving the percentage tap setting on the relay (most electromechanical and many numerical relays offer discrete plug setting taps, commonly in steps like 50%, 75%, 100%, 125%, 150%, 175%, 200% of rated current). <strong>The 1.25-1.3&times; figure is a simplified, preliminary starting margin for a quick calculation, not a universal protection-setting rule</strong> &mdash; real margin selection can depend on load characteristics, motor starting/inrush, transformer energization, permissible overload, relay and CT accuracy, and downstream coordination requirements, and should be confirmed against the specific application and the governing standard or utility practice.</p>
 
       <p><strong>Step 2 &mdash; Plug Setting Multiplier (PSM):</strong> PSM = Actual Fault Current &divide; Pickup Current Setting. This tells you how many multiples above pickup the relay actually experiences during a specific fault, and is the direct input to the time-current curve formula.</p>
 
       <p><strong>Step 3 &mdash; required TMS for a target operating time:</strong> using the IEC standard inverse (SI) curve, t = TMS &times; [0.14 &divide; (PSM^0.02 &minus; 1)], rearranged to solve for TMS: TMS = Desired Operating Time &divide; [0.14 &divide; (PSM^0.02 &minus; 1)].</p>
 
-      <p><strong>Worked example:</strong> a 400/5 A CT protects a feeder with 300 A maximum normal load and 4000 A available fault current at the relay's location, with a desired 0.5 second operating time at that fault level. Pickup Current = 300 &times; 1.25 = 375 A (Plug Setting = 375&divide;400 &times; 100 = 93.75%, would round to the nearest available tap, commonly 100% in a typical relay's tap steps). PSM = 4000 &divide; 375 &asymp; 10.67. Using the SI formula: 0.14 &divide; (10.67^0.02 &minus; 1) &asymp; 0.14 &divide; (1.0485 &minus; 1) &asymp; 0.14 &divide; 0.0485 &asymp; 2.888 seconds at TMS=1.0. Required TMS = 0.5 &divide; 2.888 &asymp; 0.173, which would be set to the nearest available TMS tap (commonly available in fine steps like 0.05 or 0.1 increments) on the relay.</p>
+      <p><strong>Worked example:</strong> a 400/5 A CT protects a feeder with 300 A maximum normal load and 4000 A available fault current at the relay's location, with a desired 0.5 second operating time at that fault level. Theoretical Pickup Current = 300 &times; 1.25 = 375 A (Plug Setting = 375&divide;400 &times; 100 = 93.75%). PSM = 4000 &divide; 375 &asymp; 10.67. Using the SI formula: 0.14 &divide; (10.67^0.02 &minus; 1) &asymp; 0.14 &divide; (1.0485 &minus; 1) &asymp; 0.14 &divide; 0.0485 &asymp; 2.888 seconds at TMS=1.0, giving a theoretical TMS = 0.5 &divide; 2.888 &asymp; 0.173. Since 93.75% isn't an available tap, select the <strong>next higher available tap (100%, giving an actual pickup of 400 A)</strong> and recalculate: PSM = 4000&divide;400 = 10.00, time at TMS=1.0 &asymp; 2.971 s, so the recalculated TMS for the actual configured pickup is 0.5&divide;2.971 &asymp; <strong>0.168</strong> &mdash; this recalculated figure, not the theoretical 0.173, is the one that reflects what the relay will actually do once a real tap is selected.</p>
 
       <p><strong>Why the relay curve flattens at high PSM:</strong> notice that PSM^0.02 changes very little even for large changes in PSM, since raising a number to the 0.02 power is a very gentle function &mdash; this is intentional in the standard inverse curve design, giving relatively modest additional speed improvement for very high fault currents beyond a certain point, since a relay already operating in well under a second doesn't need to get dramatically faster still for an even larger fault; the meaningful speed variation the curve provides is concentrated in the region just above pickup, where distinguishing marginal overload from genuine fault matters most for coordination purposes.</p>
 
-      <p><strong>How TMS enables coordination between relays in series:</strong> consider two relays in series along a feeder, an upstream relay closer to the source and a downstream relay closer to the load, both seeing the same fault current for a fault beyond the downstream relay. If both relays used identical pickup and TMS settings, they'd operate at the same instant &mdash; a coordination failure, since the downstream relay should trip first, isolating only the affected downstream section. By giving the upstream relay a higher TMS (a scaled-up, slower curve) than the downstream relay, the upstream relay's operating time for the same fault current becomes deliberately longer, providing a time margin (commonly 0.2-0.4 seconds, called the coordination time interval) for the downstream relay to operate and clear the fault first. Only if the downstream device fails to clear the fault does the upstream relay eventually operate as a backup, after its own longer delay has elapsed.</p>
+      <p><strong>How TMS enables coordination between relays in series:</strong> consider two relays in series along a feeder, an upstream relay closer to the source and a downstream relay closer to the load, both seeing the same fault current for a fault beyond the downstream relay. If both relays used identical pickup and TMS settings, they'd operate at the same instant &mdash; a coordination failure, since the downstream relay should trip first, isolating only the affected downstream section. By giving the upstream relay a higher TMS (a scaled-up, slower curve) than the downstream relay, the upstream relay's operating time for the same fault current becomes deliberately longer, providing a time margin (a commonly cited illustrative range of 0.2-0.4 seconds, called the coordination time interval) for the downstream relay to operate and clear the fault first. Only if the downstream device fails to clear the fault does the upstream relay eventually operate as a backup, after its own longer delay has elapsed.</p>
 
-      <p><strong>Relationship between plug setting taps and the calculated percentage:</strong> most relays, especially traditional electromechanical and many numerical models, offer plug setting only in discrete steps rather than continuous adjustment &mdash; common tap steps include 50%, 75%, 100%, 125%, 150%, 175%, and 200% of the relay's rated current. A calculated pickup requirement that falls between two taps (as in the worked example's 93.75%, between the 75% and 100% taps) needs to be rounded to an actual available tap, almost always rounding up to ensure the pickup setting doesn't drop below the safe margin above normal load that the calculation was designed to provide.</p>
+      <p><strong>Relationship between plug setting taps and the calculated percentage:</strong> most relays, especially traditional electromechanical and many numerical models, offer plug setting only in discrete steps rather than continuous adjustment &mdash; common tap steps include 50%, 75%, 100%, 125%, 150%, 175%, and 200% of the relay's rated current. A calculated pickup requirement that falls between two taps (as in the worked example's 93.75%, between the 75% and 100% taps) needs an available tap that still satisfies the protection requirement. For this calculator's illustrative discrete tap-selection method, the <strong>next higher available tap</strong> is selected rather than whichever tap is numerically nearest, so the calculated load margin isn't reduced by rounding down &mdash; but this is a simplified selection method, not a universal protection-setting rule. Actual relay tap selection should also weigh minimum fault sensitivity, relay/CT characteristics, and coordination requirements, and must be verified against the specific relay model.</p>
 
       <p><strong>Numerical relay flexibility versus traditional tap-based settings:</strong> modern numerical (microprocessor-based) protection relays often allow much finer-grained, sometimes continuously adjustable, pickup and TMS settings compared to the discrete tap steps of older electromechanical relays, along with the ability to select from multiple curve types (and sometimes fully custom curves) within a single physical device. This flexibility doesn't change the underlying calculation principles covered here, but it does mean a numerical relay can often achieve a setting much closer to the theoretically calculated ideal value, rather than needing to round to a comparatively coarse traditional tap step.</p>
 
-      <p><strong>Summary:</strong> use Pickup Current = Max Load &times; 1.25-1.3 for the plug setting, PSM = Fault Current &divide; Pickup Current, and TMS = Desired Operating Time &divide; [0.14&divide;(PSM^0.02&minus;1)] for the Standard Inverse curve, rounding both pickup and TMS to the nearest available tap on the actual relay hardware. Verify the calculation against the actual curve type configured on the relay (Standard, Very, or Extremely Inverse each use different constants), and treat single-relay calculations like this one as one input into a broader, multi-device coordination study for a complete, safe protection design.</p>
+      <p><strong>Summary:</strong> use Pickup Current = Max Load &times; Margin (typically 1.25-1.3, a starting point rather than a fixed rule) for the plug setting, PSM = Fault Current &divide; Pickup Current, and TMS = Desired Operating Time &divide; [0.14&divide;(PSM^0.02&minus;1)] for the Standard Inverse curve. Select the <strong>next higher available pickup tap</strong> so sensitivity margin isn't lost, then recalculate PSM and TMS at that actual pickup, and select an available TMS step according to your relay's own resolution and the coordination requirement (a lower nearby step trips faster, a higher one adds coordination margin) &mdash; then re-verify the operating time that step actually produces (see the recalculated figures in the result panel above). Verify the calculation against the actual curve type configured on the relay (Standard, Very, or Extremely Inverse each use different constants), and treat single-relay calculations like this one as one input into a broader, multi-device coordination study for a complete, safe protection design.</p>
 
       <p><strong>Where this calculation fits into a broader protection design workflow:</strong> a complete overcurrent protection study typically starts with a fault current analysis across the whole system (establishing maximum and minimum fault current at every relay location, for both close-in and remote faults), followed by pickup setting selection for every relay (ensuring adequate sensitivity margin above load, everywhere), then TMS coordination working from the most remote (downstream) relay backward toward the source, ensuring each successive upstream relay has adequate time margin over the one immediately downstream. This calculator addresses the pickup and TMS calculation for one relay at one operating point &mdash; the coordination sequencing across multiple relays is the additional, more involved step that a complete protection study performs.</p>
 
@@ -628,7 +718,32 @@
     <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
     <div id="cs-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
             <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
-      <p class="text-sm text-gray-600 leading-relaxed">400/5A CT, max load 300A, fault 4000A, target 0.5s: Pickup = 300&times;1.25=375A. PSM = 4000&divide;375 &asymp; 10.67. Required TMS &asymp; <strong>0.173</strong> (round to nearest available tap).</p>
+      <p class="text-sm text-gray-600 leading-relaxed">400/5A CT, max load 300A, fault 4000A, target 0.5s: theoretical Pickup = 300&times;1.25=375A (93.75% tap, PSM&asymp;10.67, theoretical TMS&asymp;<strong>0.173</strong>). Rounding to the <strong>next higher available tap (100%, 400A)</strong> &mdash; the setting actually used on real hardware &mdash; gives PSM=10.00 and a recalculated TMS &asymp; <strong>0.168</strong> for the same 0.5s target.</p>
+    </div>
+
+    <div id="cs-not-calculated-box" class="mt-6 bg-amber-50/60 border border-amber-100 rounded-2xl p-6">
+      <p class="text-sm font-semibold text-brandDark mb-2">What This Calculator Does Not Calculate</p>
+      <p class="text-sm text-gray-600 leading-relaxed mb-4">This tool computes single-relay pickup and TMS settings using the IEC Standard Inverse (SI) curve only, and includes an example rounding to a common discrete pickup tap set. It does not calculate: multi-relay coordination margins, settings for Very Inverse/Extremely Inverse or ANSI/IEEE curve types, minimum fault current sensitivity beyond a basic preliminary check, CT saturation or accuracy-class limitations, or the exact tap/TMS resolution of your specific relay model &mdash; and it does not confirm which curve type is actually configured on your physical relay. These all need separate verification, or a qualified protection engineer's review, before finalizing settings for a real installation.</p>
+      <div class="not-prose overflow-x-auto">
+        <table class="w-full text-xs border border-amber-200/60 rounded-lg overflow-hidden">
+          <thead class="bg-amber-100/60 text-brandDark">
+            <tr>
+              <th class="text-left px-3 py-2 font-semibold">Check</th>
+              <th class="text-left px-3 py-2 font-semibold">This Calculator</th>
+              <th class="text-left px-3 py-2 font-semibold">Must Verify Separately</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-amber-200/40">
+            <tr><td class="px-3 py-2">Single-relay pickup &amp; TMS (SI curve)</td><td class="px-3 py-2">&#10003;</td><td class="px-3 py-2">&mdash;</td></tr>
+            <tr><td class="px-3 py-2">Example rounding to a common pickup tap set</td><td class="px-3 py-2">&#10003;</td><td class="px-3 py-2">Your relay's actual available taps</td></tr>
+            <tr><td class="px-3 py-2">Preliminary minimum-fault sensitivity check</td><td class="px-3 py-2">&#10003;</td><td class="px-3 py-2">CT/relay tolerance, fault study</td></tr>
+            <tr><td class="px-3 py-2">Multi-relay coordination margin</td><td class="px-3 py-2">&#10007;</td><td class="px-3 py-2">Coordination study</td></tr>
+            <tr><td class="px-3 py-2">VI / EI / ANSI-IEEE curve types</td><td class="px-3 py-2">&#10007;</td><td class="px-3 py-2">Relay manual / study</td></tr>
+            <tr><td class="px-3 py-2">CT saturation / accuracy class</td><td class="px-3 py-2">&#10007;</td><td class="px-3 py-2">CT datasheet / study</td></tr>
+            <tr><td class="px-3 py-2">Your specific relay's exact tap/TMS resolution</td><td class="px-3 py-2">&#10007;</td><td class="px-3 py-2">Relay setting sheet</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <p class="text-xs text-gray-400 mt-6">This calculator uses the IEC standard inverse (SI) curve formula for a single relay in isolation — real protection coordination involves multiple relays (or relays and fuses/breakers) at different points in a system, each needing settings coordinated with the others so faults are cleared selectively, closest device first. A complete protection coordination study, typically using dedicated software and reviewed by a protection engineer, is required for a final, safe settings design on any real power system. Confirm the actual curve type (SI, VI, or EI) configured on your specific relay matches the formula used for any manual calculation before applying calculated settings.</p>
@@ -661,20 +776,57 @@
   </div>
 </section>
 
+<!-- ===================== LV RELEASE vs HV/MV RELAY SETTING ===================== -->
+<section id="lv-hv-setting" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Distribution System Context</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">LV Release Setting vs HV/MV Relay Setting</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>The calculator above solves one specific case &mdash; an IEC Standard Inverse overcurrent relay on a single HV/MV circuit. In a real distribution system, that relay is only one link in a chain of protective devices running from the incoming HV/MV transformer down to the individual LV loads it feeds, and each link in that chain is set with a different philosophy depending on where it sits. The two ends of that chain &mdash; the LV release at an end-use load, and the HV/MV relay further upstream &mdash; are worth understanding separately, since neither is a smaller or simpler version of the other.</p>
+
+      <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">LV release setting for end equipment (motors, capacitor banks)</h3>
+      <p>An LV circuit breaker's release feeding a single, specific piece of equipment &mdash; a motor, a capacitor bank &mdash; sits at the very end of the distribution chain. There's no further downstream breaker or cable protection to coordinate with beyond that point, so its instantaneous (short-circuit) element may often be set to trip with minimal intentional delay, subject to the breaker manufacturer's own trip-unit limits, the equipment's actual starting/inrush characteristics, and any coordination requirements that still apply: any current that clearly exceeds the equipment's own starting/inrush behavior is generally treated as a genuine internal fault rather than a condition that benefits from a graded delay. This is different from a feeder breaker further up the chain that still has other breakers or cable runs downstream needing to clear first.</p>
+      <p>Two nameplate quantities drive this setting: <strong>FLA</strong> (Full Load Ampere &mdash; the motor's rated running current, used for the thermal/overload element) and <strong>LRA</strong> (Locked Rotor Ampere &mdash; the much higher current drawn momentarily while the motor accelerates from standstill, used to keep the instantaneous element from tripping on a normal start). The instantaneous pickup is typically coordinated above the expected starting/inrush current, with appropriate margin and manufacturer-specific tolerances, while remaining sensitive enough to clear a genuine fault quickly. A capacitor bank's own inrush during energizing plays the same role LRA does for a motor &mdash; both need the instantaneous element pushed above a brief, expected transient rather than above steady running current alone.</p>
+      <p>A <strong>&minus;ve tolerance</strong> allowance is also built into the practical setting: any breaker's own trip unit and any CT feeding it have a manufacturing tolerance band, and a release calculated exactly at the theoretical minimum can trip early if the real device happens to sit at the negative end of that tolerance. Adding a margin for this negative tolerance, on top of the LRA/inrush margin, is standard practice rather than an optional refinement.</p>
+
+      <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">LV release setting for a transformer's LV main (incomer)</h3>
+      <p>A transformer's LV main breaker is a different case entirely &mdash; it isn't feeding one piece of equipment, it's the single point every downstream LV feeder passes through, so it must never be the first device to trip for a fault that a downstream feeder should clear on its own. Instantaneous protection may need to be restrained or coordinated differently here so that downstream devices have an opportunity to clear their faults first; the actual setting depends on the breaker, system fault level, and selectivity requirements. The general aim is for the LV main's own time-current curve to sit above every downstream feeder's curve at any current level the main could realistically see, giving every downstream breaker a genuine chance to clear its own fault first.</p>
+      <p>Two approaches are used to size this setting, depending on how well the downstream loads are known at design time:</p>
+      <p><strong>Approach A &mdash; based on known, fixed downstream loads:</strong> when every feeder the LV main serves is already defined and no further loads are planned, the main's pickup can be based directly on the actual combined demand of those known feeders (their added FLAs, with margin), and its curve graded to sit above each feeder's own curve. This gives a tightly-matched setting, but it needs revisiting if a new feeder is added later.</p>
+      <p><strong>Approach B &mdash; based on the transformer's own rating:</strong> when the downstream load picture isn't fully fixed, or future feeders are expected, the LV main is instead sized against the transformer's own full-load current rating (with a design margin, commonly in the 1.25&ndash;1.5&times; range) rather than against today's actual connected load. This keeps the main's setting valid even as feeders are added or changed later, at the cost of being somewhat less tightly matched to present-day load than Approach A.</p>
+      <p><strong>Bus coupler consideration:</strong> where two transformer-fed LV buses can be tied together through a bus coupler (for standby/parallel operation), the coupler's own release is set with reference to whichever of the two buses carries the heavier load, since that's the worst-case current the coupler itself could be asked to carry, and its curve needs to be graded to sit between the individual feeder curves and the transformer LV main curves on both sides of the tie.</p>
+      <p><strong>Ground (earth) fault at LV:</strong> the same FLA/LRA-based thinking extends to the ground-fault element, but typically set more sensitively (a lower pickup than the phase-overcurrent element) since a ground fault path often carries less current than a bolted phase fault, yet still represents a genuine safety and equipment-damage risk that benefits from faster, more sensitive detection than the phase elements alone would provide.</p>
+
+      <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">HV/MV relay setting concepts</h3>
+      <p>Moving further upstream, HV/MV protection is handled by a relay reading current through a CT rather than a breaker's own built-in release, and the relay issues the trip command to a separate breaker. Two broad time-current characteristic families are used: <strong>IDMT</strong> (Inverse Definite Minimum Time &mdash; the family this calculator's Standard Inverse curve belongs to, where operating time shortens automatically as fault current rises) and <strong>DMT</strong> (Definite Minimum Time &mdash; a fixed time delay applied once current exceeds pickup, independent of how far above pickup the actual fault current sits). DMT trades away the automatic speed-up of IDMT for a simpler, purely time-graded coordination scheme, which some coordination schemes prefer for predictability between successive relays.</p>
+      <p><strong>Instantaneous (element "50") protection for a motor at HV/MV:</strong> conceptually mirrors the LV motor release case &mdash; set above the motor's starting current with margin, but low enough to clear a genuine terminal or winding fault quickly, since a motor fault left to clear only on the slower IDMT curve risks more severe damage the longer it's allowed to persist.</p>
+      <p><strong>Instantaneous ("50") protection for a transformer:</strong> the connected-load-based versus rating-based split described above for the LV main is a useful conceptual starting point for scaling the setting, but it is not the whole picture &mdash; a transformer's actual instantaneous/high-set setting also has to account for inrush current on energization, the transformer's own impedance and through-fault withstand, CT characteristics, any differential protection already covering the transformer, downstream coordination, and breaker interrupting capability. Treat the two-approach split as a starting scale for the setting, not a complete determination of it.</p>
+      <p><strong>Through-fault current:</strong> this is the fault current that flows through a transformer for a fault occurring beyond it (typically on its LV side) rather than inside the transformer's own winding. A transformer's HV-side protection setting has to be checked against this figure specifically, since the transformer must be able to carry that current, undamaged, for however long it takes downstream/LV protection to clear the external fault, before the HV relay's own instantaneous element would otherwise operate unnecessarily for a fault that isn't even inside the transformer's own protected zone.</p>
+      <p><strong>Earth fault protection at HV/MV:</strong> typically senses the residual (zero-sequence) current directly, either through a dedicated core-balance CT or via the residual connection of three phase CTs, and is set well below the phase overcurrent pickup &mdash; earth faults at HV/MV are frequently lower in magnitude than a bolted three-phase fault, so a phase-current-only setting would be far too insensitive to reliably detect them.</p>
+      <p><strong>RMU (Ring Main Unit) relay setting:</strong> in ring-operated distribution arrangements such as an RMU, fault-current contribution can depend on the network's specific configuration and current operating state &mdash; current may arrive through the associated transformer from the LV side, along the HV ring itself, or both, depending on how the ring is normally run and switched. Protection settings for an RMU should be based on the relevant supply paths for that specific arrangement and operating state, rather than assuming a single fixed direction of fault current flow applies to every ring topology.</p>
+      <p><strong>Combining multiple transformers on a common HV bus:</strong> where several transformers feed a shared HV incomer protected by one upstream relay, two related but distinct ideas come into play. For the normal-load-based (overcurrent) pickup, the relevant current is the <em>sum</em> of every individual transformer's full-load current, since that's what actually flows through the common point under normal operation. For the instantaneous element, the relevant current is instead the <em>largest single transformer's own through-fault contribution</em>, added to the normal full-load current the remaining transformers continue to contribute &mdash; representing the realistic worst-case total the upstream relay would see for an internal fault on the biggest unit while the others keep serving their own load.</p>
+
+      <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">Coordination discrimination — LV versus HV/MV</h3>
+      <p>The two ends of the chain are also graded differently. At LV, successive breakers are typically checked using manufacturer time-current curves and selectivity data together &mdash; not the curves in isolation &mdash; since real selectivity also depends on breaker tolerances, any instantaneous or short-time overrides, and manufacturer-published selectivity tables for specific breaker combinations; the underlying principle is still ensuring a genuine <em>current-axis</em> gap between one breaker's curve and the next at every relevant current level, not simply a fixed time step. At HV/MV, by contrast, both time and current discrimination matter together, and a deliberate minimum time step &mdash; the <strong>Coordination Time Interval (CTI)</strong> &mdash; is added between each pair of relays in the chain (commonly cited in the few-hundred-millisecond range, with IEEE 242, the "Buff Book," as a widely referenced source for how it's derived) to absorb real-world breaker interrupting time, relay overshoot, and CT/relay tolerance, so the downstream relay reliably finishes clearing the fault before the upstream relay's own delay elapses.</p>
+      <p>None of this changes the single-relay IDMT calculation this page performs &mdash; it's the broader context that calculation sits inside. A relay setting that's correct in isolation still needs to be checked against the LV and HV/MV coordination principles above, and against the actual settings of every adjacent device, before it's finalized for a real installation.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== COMMON MISTAKES ===================== -->
 <section id="mistakes" class="bg-white border-y border-gray-100 py-16">
   <div class="max-w-3xl mx-auto px-4">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Relay Settings</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-            <p><strong>1. Setting pickup current too close to normal maximum load.</strong> Without adequate margin (commonly 1.25-1.3&times;), normal load fluctuation or a brief legitimate overload can cause nuisance tripping &mdash; but too much margin reduces sensitivity to genuine, moderate overload conditions, so this margin needs deliberate, informed selection, not an arbitrary large number.</p>
+            <p><strong>1. Setting pickup current too close to normal maximum load.</strong> Without adequate margin (commonly 1.25-1.3&times; as a starting point, not a fixed rule), normal load fluctuation or a brief legitimate overload can cause nuisance tripping &mdash; but too much margin reduces sensitivity to genuine, moderate overload conditions, so this margin needs deliberate, informed selection based on the actual application, not an arbitrary large number.</p>
       <p><strong>2. Confusing CT secondary current with CT primary current in the pickup calculation.</strong> Plug setting percentage is based on the relay's rated current (referenced to CT secondary, typically 1A or 5A), but load and fault currents are usually known in primary (actual system) amps &mdash; keep clear which side of the CT ratio you're working on at each step of the calculation.</p>
       <p><strong>3. Calculating TMS using an inconsistent curve type from what the physical relay is actually set to.</strong> The k and &alpha; constants differ between Standard Inverse, Very Inverse, and Extremely Inverse curves &mdash; calculating a TMS value using Standard Inverse constants, then setting a relay actually configured for Very Inverse, gives a wrong and uncoordinated result.</p>
       <p><strong>4. Setting a single relay's parameters without checking coordination with adjacent devices.</strong> A relay correctly calculated in isolation can still create a coordination problem if it doesn't operate with adequate time margin relative to devices upstream and downstream &mdash; a complete protection study checks operating times across the whole system for a range of fault locations and magnitudes, not just one relay's own settings.</p>
       <p><strong>5. Using an unrealistic or unverified fault current figure.</strong> The PSM (and therefore the resulting TMS calculation) depends entirely on the fault current value used &mdash; using an outdated, assumed, or poorly-sourced fault current figure (rather than one confirmed via an actual fault current study) undermines the validity of the entire settings calculation.</p>
-      <p><strong>6. Assuming a calculated exact TMS value is directly settable.</strong> Real relays offer TMS in discrete steps (commonly 0.05 or 0.1 increments, though numerical relays often allow finer resolution) &mdash; always round to the nearest available tap on the actual relay hardware being used, and verify the resulting actual operating time with the rounded setting, not just the theoretically calculated exact value.</p>
+      <p><strong>6. Assuming a calculated exact TMS value is directly settable, or always rounding to the nearest step without thinking about direction.</strong> Real relays offer TMS in discrete steps (commonly 0.05 or 0.1 increments, though numerical relays often allow finer resolution) &mdash; rounding down gives a faster trip, rounding up adds coordination margin, and which one is appropriate depends on the specific coordination requirement, not a fixed rule. Always verify the resulting actual operating time with whichever step you select, not just the theoretically calculated exact value.</p>
       <p><strong>7. Mixing IEC and ANSI/IEEE curve formula families.</strong> These reference standards use different constants and sometimes different curve-shape conventions for nominally similar curve names &mdash; confirm which family your relay and coordination study actually use, and don't apply one family's formula to a relay configured for the other.</p>
-      <p><strong>8. Not providing adequate coordination time interval between successive relays.</strong> A coordinated pair of relays needs a real time margin (commonly 0.2-0.4 seconds) between their operating times for the same fault, not just a marginally different TMS &mdash; too small a margin risks both relays operating together during real-world timing variation and CT/relay tolerances, defeating the purpose of coordination.</p>
+      <p><strong>8. Not providing adequate coordination time interval between successive relays.</strong> A coordinated pair of relays needs a real time margin (a commonly cited illustrative range of 0.2-0.4 seconds, though the appropriate value depends on breaker clearing time, relay overshoot, and CT/relay tolerances) between their operating times for the same fault, not just a marginally different TMS &mdash; too small a margin risks both relays operating together during real-world timing variation, defeating the purpose of coordination.</p>
     </div>
   </div>
 </section>
@@ -684,7 +836,6 @@
   <div class="text-center mb-10">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
-    <p class="text-xs text-gray-400 mt-2"></p>
   </div>
 
   <div class="divide-y divide-gray-200">
@@ -725,7 +876,7 @@
         How do I choose the right pickup current margin above normal load?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A commonly used margin is roughly 1.25-1.3 times the maximum expected normal load current, giving enough headroom to avoid nuisance tripping during normal load variation and any brief legitimate overload, while still being sensitive enough to detect a genuine sustained overload or fault condition promptly.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A commonly used starting margin is roughly 1.25-1.3 times the maximum expected normal load current, giving enough headroom to avoid nuisance tripping during normal load variation and any brief legitimate overload, while still being sensitive enough to detect a genuine sustained overload or fault condition promptly. This is a simplified preliminary margin for a quick calculation, not a universal protection-setting rule — the actual margin for a real installation can depend on load characteristics, motor starting/inrush, transformer energization, and relay/CT accuracy, and should be confirmed against the specific application.</p>
     </details>
 
     <details class="py-5">
@@ -759,6 +910,14 @@
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, largely — while numerical relays offer far more flexibility (multiple curve types, additional protection functions, communication capability, event logging), most still implement and reference the same standardized IEC (and ANSI/IEEE, for US-influenced systems) time-current curve formulas for their basic overcurrent inverse-time functions, maintaining compatibility with the well-established coordination principles developed for earlier electromechanical relay technology.</p>
     </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How can I check the actual trip time an already-configured relay setting will produce?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This calculator solves backward from a desired operating time to the required TMS/pickup. To go the other direction — enter an already-configured pickup, TMS/TD, and fault current to find the actual trip time it produces, for the Standard Inverse curve or any other IEC/IEEE curve — use the dedicated <a href="/electrical/idmt-trip-time-calculator" class="text-sky-600 underline">TOC/IDMT Relay Trip Time Calculator</a>.</p>
+    </details>
   </div>
 </section>
 
@@ -775,35 +934,142 @@
     // "setFeedback is not defined" and did nothing. Matches the
     // implementation used on every other calculator page.
     function setFeedback(val){
-      document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
-      document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+      const fbYes = document.getElementById('fbYes');
+      const fbNo = document.getElementById('fbNo');
+      fbYes.classList.toggle('active-like', val === 'yes');
+      fbNo.classList.toggle('active-dislike', val === 'no');
+      fbYes.setAttribute('aria-pressed', val === 'yes');
+      fbNo.setAttribute('aria-pressed', val === 'no');
+    }
+
+    // Tracks whether the user has changed any main input away from its
+    // pre-filled default. The page runs an initial calculation on load
+    // so the result panel isn't empty, but that first result is computed
+    // from placeholder example values, not real fault data.
+    let mainInputsTouched = false;
+    ['ctPrimary','ctSecondary','maxLoad','marginSelect','customMargin','faultCurrent','desiredTime','tapSetSelect','minFaultCurrent'].forEach(function(id){
+      const el = document.getElementById(id);
+      if(el) el.addEventListener('input', function(){ mainInputsTouched = true; });
+      if(el) el.addEventListener('change', function(){ mainInputsTouched = true; });
+    });
+
+    // Show/hide the custom-margin input based on the Pickup Margin select.
+    const marginSelectEl = document.getElementById('marginSelect');
+    const customMarginWrap = document.getElementById('customMarginWrap');
+    marginSelectEl.addEventListener('change', function(){
+      customMarginWrap.classList.toggle('hidden', marginSelectEl.value !== 'custom');
+    });
+
+    // A common example plug (pickup) setting tap set, as already
+    // described in this page's own explanatory content — illustrative
+    // only, not a universal standard. Actual tap/setting resolution
+    // varies by relay manufacturer and model; the "Continuous / numerical
+    // relay" option below skips this rounding entirely for relays that
+    // support fine or software-defined pickup settings.
+    const STANDARD_PLUG_TAPS = [50, 75, 100, 125, 150, 175, 200];
+
+    // For this calculator's illustrative discrete tap-selection method,
+    // the next higher available tap is selected so the calculated load
+    // margin isn't reduced by rounding down — never the numerically
+    // nearest tap. This is a simplified selection method, not a
+    // universal protection-setting rule: real relay tap selection must
+    // also weigh minimum fault sensitivity, relay/CT characteristics,
+    // and coordination requirements, and should be verified against the
+    // specific relay model.
+    function nextHigherTap(pct){
+      const found = STANDARD_PLUG_TAPS.find(t => t >= pct);
+      return found !== undefined ? found : null;
+    }
+
+    // Illustrative TMS step size only — real relays vary widely in their
+    // actual TMS/TD resolution (some offer fine or continuous digital
+    // settings), so this is explicitly an example increment, not an
+    // assumed universal minimum. Returns the nearby lower/upper example
+    // steps AND the actual operating time each one would produce, so the
+    // choice between "faster trip" and "more coordination margin" is
+    // based on real numbers rather than the step value alone.
+    const ILLUSTRATIVE_TMS_STEP = 0.05;
+    function describeTMSSteps(exactTMS, timeAtTMS1){
+      const ratio = exactTMS / ILLUSTRATIVE_TMS_STEP;
+      const lowerN = Math.floor(ratio + 1e-9);
+      const upperN = Math.ceil(ratio - 1e-9);
+      const lowerRaw = lowerN * ILLUSTRATIVE_TMS_STEP;
+      const upperRaw = upperN * ILLUSTRATIVE_TMS_STEP;
+      const belowMinStep = lowerN < 1;
+      const exact = !belowMinStep && upperN === lowerN;
+      return {
+        lowerStep: belowMinStep ? null : lowerRaw,
+        lowerTime: belowMinStep ? null : lowerRaw * timeAtTMS1,
+        upperStep: upperRaw,
+        upperTime: upperRaw * timeAtTMS1,
+        exact: exact,
+        belowMinStep: belowMinStep
+      };
+    }
+    function renderTMSSteps(exactTMS, timeAtTMS1, lowerEl, upperEl){
+      const d = describeTMSSteps(exactTMS, timeAtTMS1);
+      if(d.belowMinStep){
+        lowerEl.textContent = 'below ' + ILLUSTRATIVE_TMS_STEP.toFixed(2) + ' example step';
+        upperEl.textContent = d.upperStep.toFixed(2) + ' \u2192 ' + d.upperTime.toFixed(3) + ' s';
+      } else if(d.exact){
+        lowerEl.textContent = d.lowerStep.toFixed(2) + ' \u2192 ' + d.lowerTime.toFixed(3) + ' s (matches exactly)';
+        upperEl.textContent = 'same as left \u2014 no rounding needed';
+      } else {
+        lowerEl.textContent = d.lowerStep.toFixed(2) + ' \u2192 ' + d.lowerTime.toFixed(3) + ' s';
+        upperEl.textContent = d.upperStep.toFixed(2) + ' \u2192 ' + d.upperTime.toFixed(3) + ' s';
+      }
+      return d;
     }
 
     function calculateRelaySetting(){
     const ctPrimary = parseFloat(document.getElementById('ctPrimary').value);
     const ctSecondary = parseFloat(document.getElementById('ctSecondary').value);
     const maxLoad = parseFloat(document.getElementById('maxLoad').value);
+    const marginChoice = document.getElementById('marginSelect').value;
+    const customMarginVal = parseFloat(document.getElementById('customMargin').value);
     const faultCurrent = parseFloat(document.getElementById('faultCurrent').value);
     const desiredTime = parseFloat(document.getElementById('desiredTime').value);
+    const tapSetChoice = document.getElementById('tapSetSelect').value;
+    const minFaultRaw = document.getElementById('minFaultCurrent').value;
+    const minFaultCurrent = minFaultRaw === '' ? null : parseFloat(minFaultRaw);
+
+    const margin = marginChoice === 'custom' ? customMarginVal : parseFloat(marginChoice);
 
     const validationBox = document.getElementById('validationBox');
     const errors = [];
-    if(isNaN(ctPrimary) || ctPrimary <= 0){ errors.push('Enter a valid CT primary rating greater than 0.'); }
-    if(isNaN(maxLoad) || maxLoad <= 0){ errors.push('Enter a valid maximum load current greater than 0.'); }
-    if(isNaN(faultCurrent) || faultCurrent <= 0){ errors.push('Enter a valid fault current greater than 0.'); }
-    if(isNaN(desiredTime) || desiredTime <= 0){ errors.push('Enter a valid desired operating time greater than 0.'); }
+    if(!Number.isFinite(ctPrimary) || ctPrimary < 1){ errors.push('Enter a CT primary rating from 1 to 20,000 A.'); }
+    else if(ctPrimary > 20000){ errors.push('CT primary rating above 20,000 A is outside this calculator\u2019s intended range.'); }
+    if(!Number.isFinite(maxLoad) || maxLoad < 0.1){ errors.push('Enter a maximum load current from 0.1 to 20,000 A.'); }
+    else if(maxLoad > 20000){ errors.push('Maximum load current above 20,000 A is outside this calculator\u2019s intended range.'); }
+    if(marginChoice === 'custom' && (!Number.isFinite(customMarginVal) || customMarginVal < 1.01 || customMarginVal > 3)){
+      errors.push('Enter a custom pickup margin from 1.01 to 3.0.');
+    }
+    if(!Number.isFinite(faultCurrent) || faultCurrent < 0.1){ errors.push('Enter a fault current from 0.1 to 200,000 A.'); }
+    else if(faultCurrent > 200000){ errors.push('Fault current above 200,000 A is outside this calculator\u2019s intended range.'); }
+    if(!Number.isFinite(desiredTime) || desiredTime < 0.01){ errors.push('Enter a desired operating time from 0.01 to 10 seconds.'); }
+    else if(desiredTime > 10){ errors.push('Desired operating time above 10 s is outside this calculator\u2019s intended range.'); }
+    if(minFaultCurrent !== null && (!Number.isFinite(minFaultCurrent) || minFaultCurrent < 0.1 || minFaultCurrent > 200000)){
+      errors.push('Minimum fault current to detect must be from 0.1 to 200,000 A, or left blank.');
+    }
 
-    const pickupCurrent = maxLoad * 1.25;
-    if(!isNaN(faultCurrent) && !isNaN(pickupCurrent) && faultCurrent <= pickupCurrent){
+    const pickupCurrent = maxLoad * margin;
+    if(Number.isFinite(faultCurrent) && Number.isFinite(pickupCurrent) && faultCurrent <= pickupCurrent){
       errors.push('Fault current must be greater than the calculated pickup current for a valid PSM.');
     }
 
     if(errors.length){
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+      validationBox.focus();
       document.getElementById('rResult').textContent = '\u2014';
       document.getElementById('rPickup').textContent = '\u2014';
       document.getElementById('rPSM').textContent = '\u2014';
+      document.getElementById('rTheoreticalTMS').textContent = '\u2014';
+      document.getElementById('rTap').textContent = '\u2014';
+      document.getElementById('rTapPSM').textContent = '\u2014';
+      document.getElementById('rTapTMSLower').textContent = '\u2014';
+      document.getElementById('rTapTMSUpper').textContent = '\u2014';
+      document.getElementById('rSensitivityWarning').classList.add('hidden');
       document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
       return;
     }
@@ -814,11 +1080,83 @@
     const psm = faultCurrent / pickupCurrent;
     const timeAtTMS1 = 0.14 / (Math.pow(psm, 0.02) - 1);
     const requiredTMS = desiredTime / timeAtTMS1;
+    const pickupCurrentSecondary = pickupCurrent * (ctSecondary / ctPrimary);
 
-    document.getElementById('rResult').textContent = requiredTMS.toLocaleString('en-US', {maximumFractionDigits:3});
-    document.getElementById('resultSub').textContent = 'For ' + desiredTime + 's at ' + faultCurrent + 'A fault';
-    document.getElementById('rPickup').textContent = pickupCurrent.toFixed(1) + ' A';
+    document.getElementById('resultSub').textContent = (mainInputsTouched ? '' : 'Example values \u2014 replace with your actual data. ') +
+      'For ' + desiredTime + 's at ' + faultCurrent + 'A fault, margin ' + margin + '\u00d7';
+    document.getElementById('rPickup').textContent = pickupCurrent.toFixed(1) + ' A (primary), ' + pickupCurrentSecondary.toFixed(3) + ' A (relay/CT secondary side)';
     document.getElementById('rPSM').textContent = psm.toFixed(2) + '×';
+    document.getElementById('rTheoreticalTMS').textContent = requiredTMS.toFixed(3);
+
+    const rResultEl = document.getElementById('rResult');
+    const rTapEl = document.getElementById('rTap');
+    const rTapPSMEl = document.getElementById('rTapPSM');
+    const rTapTMSLowerEl = document.getElementById('rTapTMSLower');
+    const rTapTMSUpperEl = document.getElementById('rTapTMSUpper');
+
+    let tapPickupCurrent = null;
+    let tapPSM = null;
+    let tapTMS = null;
+    let recommendedTap = null;
+
+    if(tapSetChoice === 'continuous'){
+      // Numerical relay with fine/continuous pickup adjustment — no tap
+      // rounding needed, so the "recommended setting" is simply the
+      // theoretical value itself.
+      tapPickupCurrent = pickupCurrent;
+      tapPSM = psm;
+      tapTMS = requiredTMS;
+      rTapEl.textContent = plugSettingPercent.toFixed(2) + '% (' + pickupCurrent.toFixed(1) + ' A, continuous)';
+      rTapPSMEl.textContent = psm.toFixed(2) + '×';
+      rResultEl.textContent = 'Pickup ' + plugSettingPercent.toFixed(2) + '% · TMS ' + requiredTMS.toFixed(3);
+      renderTMSSteps(requiredTMS, timeAtTMS1, rTapTMSLowerEl, rTapTMSUpperEl);
+    } else {
+      recommendedTap = nextHigherTap(plugSettingPercent);
+      if(recommendedTap === null){
+        rTapEl.textContent = 'Above 200% \u2014 verify relay range';
+        rTapPSMEl.textContent = '\u2014';
+        rResultEl.textContent = 'Above the common example tap range \u2014 verify your relay\u2019s actual maximum tap';
+        rTapTMSLowerEl.textContent = '\u2014';
+        rTapTMSUpperEl.textContent = '\u2014';
+      } else {
+        tapPickupCurrent = ctPrimary * (recommendedTap / 100);
+        tapPSM = faultCurrent / tapPickupCurrent;
+        rTapEl.textContent = recommendedTap + '% (' + tapPickupCurrent.toFixed(1) + ' A)';
+        if(tapPSM <= 1){
+          rTapPSMEl.textContent = tapPSM.toFixed(2) + '\u00d7 (invalid)';
+          rResultEl.textContent = 'Tap ' + recommendedTap + '% \u2014 fault current does not exceed this tap\u2019s pickup';
+          rTapTMSLowerEl.textContent = '\u2014';
+          rTapTMSUpperEl.textContent = '\u2014';
+        } else {
+          const tapTimeAtTMS1 = 0.14 / (Math.pow(tapPSM, 0.02) - 1);
+          tapTMS = desiredTime / tapTimeAtTMS1;
+          rTapPSMEl.textContent = tapPSM.toFixed(2) + '\u00d7';
+          rResultEl.textContent = 'Tap ' + recommendedTap + '% · TMS ' + tapTMS.toFixed(3);
+          renderTMSSteps(tapTMS, tapTimeAtTMS1, rTapTMSLowerEl, rTapTMSUpperEl);
+        }
+      }
+    }
+
+    // Minimum-sensitivity advisory (non-blocking, preliminary only): the
+    // pickup selected must stay below the minimum fault current the
+    // relay is meant to detect, not just below the maximum available
+    // fault current — this is a different check from the PSM>1
+    // validation above. It does not account for CT saturation, relay
+    // pickup tolerance, or fault-current calculation uncertainty.
+    const sensitivityBox = document.getElementById('rSensitivityWarning');
+    if(minFaultCurrent !== null && Number.isFinite(minFaultCurrent)){
+      const checkPickup = tapPickupCurrent !== null ? tapPickupCurrent : pickupCurrent;
+      if(checkPickup >= minFaultCurrent){
+        sensitivityBox.classList.remove('hidden');
+        sensitivityBox.textContent = 'Preliminary primary-side sensitivity check: the pickup current (' + checkPickup.toFixed(1) + ' A) is at or above the minimum fault current you need to detect (' + minFaultCurrent + ' A) \u2014 this relay may not reliably pick up for that fault. Consider reviewing the pickup margin, CT ratio, or tap set with a protection engineer/coordination study. This is only a preliminary check; it does not account for CT saturation, relay pickup tolerance, or fault-current calculation uncertainty.';
+      } else {
+        sensitivityBox.classList.add('hidden');
+        sensitivityBox.textContent = '';
+      }
+    } else {
+      sensitivityBox.classList.add('hidden');
+      sensitivityBox.textContent = '';
+    }
 
     document.getElementById('breakdownBox').innerHTML = `
         <table class="breakdown-table">
@@ -826,13 +1164,19 @@
             <tbody>
                 <tr><td>CT Ratio</td><td>${ctPrimary}/${ctSecondary} A</td></tr>
                 <tr><td>Maximum Load Current</td><td>${maxLoad} A</td></tr>
-                <tr><td>Pickup Current (×1.25)</td><td>${pickupCurrent.toFixed(1)} A</td></tr>
-                <tr><td>Plug Setting</td><td>${plugSettingPercent.toFixed(1)}%</td></tr>
+                <tr><td>Pickup Margin Used</td><td>${margin}\u00d7</td></tr>
+                <tr><td>Theoretical Pickup Current (primary)</td><td>${pickupCurrent.toFixed(1)} A</td></tr>
+                <tr><td>Theoretical Relay Pickup Current (CT secondary side)</td><td>${pickupCurrentSecondary.toFixed(3)} A</td></tr>
+                <tr><td>Theoretical Plug Setting</td><td>${plugSettingPercent.toFixed(2)}%</td></tr>
                 <tr><td>Fault Current</td><td>${faultCurrent} A</td></tr>
-                <tr><td>PSM (Fault ÷ Pickup)</td><td>${psm.toFixed(2)}</td></tr>
-                <tr><td>Time at TMS=1.0</td><td>${timeAtTMS1.toFixed(3)} s</td></tr>
+                <tr><td>PSM (Theoretical, Fault ÷ Pickup)</td><td>${psm.toFixed(2)}</td></tr>
+                <tr><td>Time at TMS=1.0 (Theoretical)</td><td>${timeAtTMS1.toFixed(3)} s</td></tr>
                 <tr><td>Desired Operating Time</td><td>${desiredTime} s</td></tr>
-                <tr><td><strong>Required TMS</strong></td><td><strong>${requiredTMS.toFixed(3)}</strong></td></tr>
+                <tr><td>Theoretical TMS (before tap rounding)</td><td>${requiredTMS.toFixed(3)}</td></tr>
+                <tr><td>Pickup Tap Set</td><td>${tapSetChoice === 'continuous' ? 'Continuous / numerical relay' : 'Common example set (50\u2013200%)'}</td></tr>
+                <tr><td>Example Tap From Selected Tap Set</td><td>${recommendedTap !== null ? recommendedTap + '%' : (tapSetChoice === 'continuous' ? plugSettingPercent.toFixed(2) + '%' : 'Above 200% \u2014 verify relay range')}</td></tr>
+                <tr><td>Recalculated PSM at That Setting</td><td>${tapPSM !== null ? tapPSM.toFixed(2) : '\u2014'}</td></tr>
+                <tr><td><strong>Recalculated TMS at That Setting</strong></td><td><strong>${tapTMS !== null ? tapTMS.toFixed(3) : '\u2014'}</strong></td></tr>
             </tbody>
         </table>
     `;
@@ -904,7 +1248,15 @@
     var s = document.createElement('script');
     s.src = '/assets/share-modal.js';
     s.onload = function(){ __shareModalLoading = false; openShareModal(); };
-    s.onerror = function(){ __shareModalLoading = false; };
+    s.onerror = function(){
+      __shareModalLoading = false;
+      var btn = document.querySelector('.share-result-btn');
+      if (btn) {
+        var original = btn.textContent;
+        btn.textContent = '⚠️ Share unavailable';
+        setTimeout(function(){ btn.textContent = original; }, 2200);
+      }
+    };
     document.head.appendChild(s);
   }
 </script>

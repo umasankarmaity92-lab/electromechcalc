@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<!-- ===================== THEME (FLASH/CLS PREVENTION) =====================
+     Runs synchronously, before any stylesheet or paint, so the correct
+     dark-theme/light-theme class is already present on <html> the instant
+     CSS starts applying. A matching inline script sits right after the body tag opens to cover body.dark-theme / body.light-theme selectors too.
+     site-nav.js still re-applies both classes on DOMContentLoaded as a
+     no-op safety net and handles the toggle button switching themes. -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [PER-PAGE] TITLE ===================== -->
+<title>TOC/IDMT Relay Trip Time Calculator (IEC 60255 & IEEE C37.112) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<!-- ===================== [PER-PAGE] SEO META ===================== -->
+<meta name="description" content="Free Inverse Time Overcurrent (TOC/IDMT) relay trip time calculator supporting IEC 60255 (Standard, Very, Extremely, Long-Time Inverse) and IEEE C37.112-1996 (Moderately, Very, Extremely Inverse) curves. Enter pickup current, fault current, and TMS/TD to get trip time instantly, plus a side-by-side comparison across every standard curve.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/idmt-trip-time-calculator">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="TOC/IDMT Relay Trip Time Calculator">
+<meta property="og:description" content="Free TOC/IDMT relay trip time calculator — IEC 60255 and IEEE C37.112-1996 curves, plus a side-by-side comparison across every standard curve type.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/idmt-trip-time-calculator">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TOC/IDMT Relay Trip Time Calculator">
+<meta name="twitter:description" content="Free TOC/IDMT relay trip time calculator — IEC 60255 and IEEE C37.112-1996 curves, plus a side-by-side comparison across every standard curve type.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "TOC/IDMT Relay Trip Time Calculator",
+  "url": "https://www.electromechcalc.com/electrical/idmt-trip-time-calculator",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "Free Inverse Time Overcurrent (TOC/IDMT) relay trip time calculator supporting IEC 60255 and IEEE C37.112-1996 standard curves. Enter pickup current, fault current, and TMS/TD to get trip time instantly, plus a side-by-side comparison across every standard curve.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" },
+  "author": { "@type": "Person", "name": "Umasankar Maity", "url": "https://www.electromechcalc.com/about" },
+  "dateModified": "2026-09-06"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electrical Calculators", "item": "https://www.electromechcalc.com/electrical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "TOC/IDMT Relay Trip Time Calculator", "item": "https://www.electromechcalc.com/electrical/idmt-trip-time-calculator" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is Inverse Time Overcurrent (TOC/IDMT) protection?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Inverse Time Overcurrent (TOC), also called Inverse Definite Minimum Time (IDMT), is a relay characteristic where the trip (operating) time gets shorter automatically as the fault current gets larger, rather than tripping after a single fixed delay regardless of fault severity. This lets a more severe fault clear faster while still allowing marginal overloads just above pickup a longer, more tolerant delay." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the IEC 60255 IDMT trip-time formula and what do k and \u03b1 mean?",
+      "acceptedAnswer": { "@type": "Answer", "text": "t = TMS \u00d7 [k \u00f7 ((I \u00f7 Is)^\u03b1 \u2212 1)], where I is the actual (fault) current, Is is the relay's pickup current setting, TMS is the Time Multiplier Setting, and k and \u03b1 are constants that define the specific curve shape (Standard Inverse, Very Inverse, Extremely Inverse, or Long-Time Standard Inverse) as published in IEC 60255." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the IEEE C37.112-1996 IDMT trip-time formula and how does it differ from the IEC formula?",
+      "acceptedAnswer": { "@type": "Answer", "text": "t = TD \u00d7 [A \u00f7 ((I \u00f7 Is)^p \u2212 1) + B], where TD is the Time Dial setting and A, B, and p are curve-specific constants (Moderately Inverse, Very Inverse, or Extremely Inverse) published in IEEE C37.112-1996. The key structural difference from the IEC formula is the added constant B, which shifts every point on the IEEE curve rather than only scaling it, giving IEEE curves a slightly different shape even where the exponent looks similar to an IEC curve." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is PSM (or M) and why does it drive the trip time?",
+      "acceptedAnswer": { "@type": "Answer", "text": "PSM (Plug Setting Multiplier, sometimes just called M) is the ratio of actual current to the relay's pickup current setting: PSM = I \u00f7 Is. It tells you how many multiples above pickup the relay is actually seeing, and both the IEC and IEEE formulas use PSM (raised to the curve's own exponent) as the core driver of trip time \u2014 a higher PSM means a shorter trip time, which is the entire basis of the inverse-time characteristic." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I choose between IEC Standard, Very, Extremely, and Long-Time Inverse curves?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Standard Inverse (SI) is the general-purpose default for most feeder and transformer coordination. Very Inverse (VI) and Extremely Inverse (EI) curves fall off more steeply with rising current, making them better suited to coordinating with fuses or motor starting characteristics, which are themselves steep. Long-Time Standard Inverse (LTI) is comparatively flat and slow-reacting, and is typically reserved for specific applications like motor thermal backup or ground-fault schemes where a deliberately long, gently-inverse delay is wanted." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I choose between IEEE Moderately Inverse, Very Inverse, and Extremely Inverse curves?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The IEEE curve family follows the same general logic as its IEC counterparts \u2014 Moderately Inverse behaves similarly in role to IEC's Standard Inverse (a general-purpose default), while Very Inverse and Extremely Inverse fall off more steeply for coordination with steep upstream/downstream devices like fuses. The specific choice ultimately depends on matching the curve already assumed in an existing coordination study, or the convention used by the relay manufacturer and the region/utility standard being followed." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is there a universal formula to convert a Time Dial Multiplier (TDM) to a Time Dial (TD)?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No \u2014 unlike the IEEE C37.112 trip-time formula itself, the relationship between a manufacturer's own Time Dial Multiplier (TDM) setting and the standard's Time Dial (TD) value is not a single universal equation; it depends on how that specific relay model's firmware defines its TDM range and scaling. Always use the exact conversion given in your relay's own manual or manufacturer documentation rather than assuming a generic formula." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I directly compare an IEC-curve relay and an IEEE-curve relay for coordination?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Only by calculating each relay's actual trip time at the fault currents of interest and comparing those resulting times \u2014 you cannot compare TMS and TD values, or k/\u03b1 and A/B/p constants, directly against each other, since they belong to different formulas with different structures. This calculator's comparison table is built for exactly this purpose: it computes trip time for every standard curve at the same pickup and fault current so IEC- and IEEE-curve devices can be compared on equal footing." }
+    }
+  ]
+}
+</script>
+
+<!-- ===================== [SHARED] TAILWIND + FONTS + GLOBAL STYLES ===================== -->
+<link rel="preload" as="style" href="/assets/site.min.css?v=1">
+<link rel="stylesheet" href="/assets/site.min.css?v=1" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/site.min.css?v=1"></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .calc-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(11,18,32,0.10);
+    border-color:#0ea5e9;
+  }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    background:#eaf6fd;
+    color:#0369a1;
+    padding:3px 9px;
+    border-radius:6px;
+    display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .premium-disabled{
+    cursor:not-allowed;
+    opacity:0.55;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  .input-field{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    color:#0B1220;
+    outline:none;
+  }
+  .input-field:focus{
+    border-color:#0ea5e9;
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+  }
+  .toggle-btn{
+    flex:1;
+    text-align:center;
+    padding:10px 8px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    color:#64748b;
+    transition:.15s ease;
+  }
+  .toggle-btn.active{
+    background:#0ea5e9;
+    color:#fff;
+    box-shadow:0 4px 10px rgba(14,165,233,0.35);
+  }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{
+    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    border-radius:8px; border:1px solid #e5e7eb;
+  }
+
+  /* search bar styles live in /assets/theme.css?v=2 — this page links the
+     shared stylesheet as the single source of truth for search-bar
+     layout, so no local duplicate is defined here. */
+
+  .tab-pill{
+    font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
+    background:#fff; border:1px solid #e2e8f0; color:#475569; cursor:pointer;
+    transition:.15s ease;
+  }
+  .tab-pill:hover{ border-color:#0ea5e9; color:#0369a1; }
+  .tab-pill.active{ background:#0ea5e9; border-color:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .quick-chip{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 10px; }
+  .quick-chip .qval{ font-family:'JetBrains Mono',monospace; font-weight:600; color:#0B1220; display:block; }
+  .quick-chip .qunit{ color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:.03em; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
+  .nav-icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:9999px; flex-shrink:0;
+    box-shadow:0 2px 5px rgba(0,0,0,0.25);
+  }
+
+  .nav-dropdown-link{
+    display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220;
+  }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+
+  .mobile-sublink{
+    display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85;
+  }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
+     .theme-switch / .theme-switch-dot styles live in /assets/theme.css?v=2 —
+     no local duplicate needed here. */
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
+     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
+     live in /assets/theme.css?v=2 via CSS variables — only page-specific
+     component overrides (below) belong here. */
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+  body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
+  body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+
+  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
+
+  /* Calculator/Verify heading bar: solid navy, bled to the card's edges,
+     matching the pattern used on transformer-size.html — LIGHT MODE ONLY;
+     dark mode keeps the card's own existing look, no override needed. */
+  body:not(.dark-theme) #calculator #calcHeaderBar,
+  body:not(.dark-theme) #verify #verifyHeaderBar,
+  body:not(.dark-theme) #compare #compareHeaderBar{
+    background:#0B1220 !important;
+    margin:-1.5rem -1.5rem 1rem -1.5rem !important;
+    padding:0.85rem 1.5rem !important;
+    border-radius:16px 16px 0 0 !important;
+  }
+  body:not(.dark-theme) #calculator #calcHeaderBar h2,
+  body:not(.dark-theme) #verify #verifyHeaderBar h2,
+  body:not(.dark-theme) #compare #compareHeaderBar h2{ color:#fff !important; margin-bottom:0.25rem !important; }
+  body:not(.dark-theme) #calculator #calcHeaderBar p,
+  body:not(.dark-theme) #verify #verifyHeaderBar p,
+  body:not(.dark-theme) #verify #verifyHeaderBar span,
+  body:not(.dark-theme) #compare #compareHeaderBar p,
+  body:not(.dark-theme) #compare #compareHeaderBar span{ color:#94a3b8 !important; }
+  @media (min-width: 768px){
+    body:not(.dark-theme) #calculator #calcHeaderBar,
+    body:not(.dark-theme) #verify #verifyHeaderBar,
+  body:not(.dark-theme) #compare #compareHeaderBar{
+      margin:-2rem -2rem 1rem -2rem !important;
+      padding:0.85rem 2rem !important;
+    }
+  }
+
+  /* .action-icon-btn was missing from this page's styles entirely,
+     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  .action-icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:8px 12px;
+    font-size:13px;
+    color:#334155;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
+  .author-box{
+    border:2px solid #000000;
+  }
+  body.dark-theme .author-box{
+    border-color:#ffffff;
+    background:#0B1220;
+    color:#e2e8f0;
+  }
+  /* Prevents wide nowrap breakdown tables (and any other wide content in
+     the result column) from forcing flex/grid ancestors to expand past
+     the viewport on mobile — without this, overflow-x:auto on
+     .breakdown-wrap never gets a chance to kick in. */
+  .lg\:col-span-2.flex.flex-col.gap-4{ min-width:0; }
+  .lg\:col-span-2.flex.flex-col.gap-4 > div{ min-width:0; }
+  .breakdown-wrap{ min-width:0; }
+  /* Dark-mode fix: "Worked Example / Reference" box (bg-sky-50/60) had no
+     body.dark-theme override, so it stayed near-invisible in dark mode. */
+  body.dark-theme #cs-example-box{
+    background:rgba(14,165,233,0.07); border-color:#164e63;
+  }
+  body.dark-theme #cs-not-calculated-box{
+    background:rgba(245,158,11,0.07); border-color:#78350f;
+  }
+  body.dark-theme #cs-not-calculated-box .text-gray-600{ color:#cbd5e1; }
+  body.dark-theme #cs-not-calculated-box table{ border-color:#78350f; }
+  body.dark-theme #cs-not-calculated-box thead{ background:rgba(245,158,11,0.15); color:#e2e8f0; }
+  body.dark-theme #cs-not-calculated-box tbody{ color:#cbd5e1; }
+  body.dark-theme #cs-not-calculated-box tbody tr{ border-color:rgba(245,158,11,0.15); }
+  body.dark-theme #cs-example-box thead tr{ border-color:#164e63; }
+  body.dark-theme #cs-example-box th{ color:#7dd3fc; }
+  body.dark-theme #cs-example-box tbody{ color:#cbd5e1; }
+  body.dark-theme #cs-example-box tbody tr{ border-color:rgba(125,211,252,0.15); }
+  body.dark-theme #cs-example-box .text-gray-400{ color:#64748b; }
+  body.dark-theme #cs-example-box .text-gray-500{ color:#7dd3fc; }
+  body.dark-theme #cs-example-box .text-gray-600{ color:#cbd5e1; }
+  body.dark-theme #cs-example-box .text-gray-700{ color:#e2e8f0; }
+
+  .hero-typing-box{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:2.75em;
+    max-width:640px;
+    margin:0 auto 0.5rem;
+    padding:0.4rem 1rem;
+    box-sizing:border-box;
+  }
+  .hero-typing{
+    display:inline-flex;
+    color:#d4af37;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    white-space:normal;
+    word-break:break-word;
+    line-height:1.3;
+    margin:0;
+  }
+  .hero-cursor{
+    display:inline-block;
+    width:2px;
+    height:1em;
+    margin-left:4px;
+    flex-shrink:0;
+    background:currentColor;
+    animation:heroCursorBlink 0.8s steps(1) infinite;
+  }
+  @keyframes heroCursorBlink{
+    50%{ opacity:0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero-cursor{ animation:none; }
+  }
+
+  /* ===================== [PER-PAGE] LARGE FORMULA REFERENCE CARDS =====================
+     Big fraction-style formula display (real selectable/crawlable HTML text,
+     not an image) — numerator over denominator with a rule line, matching
+     the visual convention of printed relay-curve reference sheets. */
+  .formula-card{
+    background:#fff;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:1.1rem 1.25rem;
+    height:100%;
+  }
+  .formula-row{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:0.3rem;
+    font-family:'JetBrains Mono',monospace;
+    font-size:16px;
+    color:#0B1220;
+    margin-top:0.5rem;
+  }
+  .formula-frac{
+    display:inline-flex;
+    flex-direction:column;
+    align-items:center;
+    vertical-align:middle;
+    margin:0 2px;
+    line-height:1.25;
+  }
+  .formula-frac .fnum{ padding:0 8px 3px; border-bottom:2px solid currentColor; }
+  .formula-frac .fden{ padding:3px 8px 0; }
+  body.dark-theme .formula-card{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .formula-row{ color:#e2e8f0; }
+
+  /* Curve-shape comparison chart: SVG lines/gridlines follow theme text
+     colors via CSS variables so the chart re-colors correctly in dark
+     mode without a duplicate dark-only SVG. */
+  .curve-chart-frame{ background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:1rem; }
+  .curve-chart-frame .chart-axis, .curve-chart-frame .chart-grid{ stroke:#cbd5e1; }
+  .curve-chart-frame .chart-label{ fill:#64748b; font-family:'JetBrains Mono',monospace; }
+  /* This diagram's SVG text uses fixed colors (like a scanned lab-manual
+     figure), so its card must stay light in dark mode too — otherwise
+     dark-on-dark text becomes unreadable when the site-wide .bg-white
+     override flips it dark. */
+  body.dark-theme .lab-diagram-card{ background:#fff !important; border-color:#e5e7eb !important; }
+  body.dark-theme .curve-chart-frame{ background:#111c2e; border-color:#1f2f47; }
+  body.dark-theme .curve-chart-frame .chart-axis, body.dark-theme .curve-chart-frame .chart-grid{ stroke:#1f2f47; }
+  body.dark-theme .curve-chart-frame .chart-label{ fill:#94a3b8; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<div id="site-header"></div>
+
+<!-- ===================== [SHARED] BREADCRUMB =====================
+     Filled server-side by functions/_middleware.js from
+     /search-index.json — same data source the Related Calculators
+     widget already uses. No per-page edits needed; add/rename/
+     re-categorize a page in search-index.json and every page's
+     breadcrumb updates automatically. Empty on non-calculator pages
+     (home, about, etc.) since middleware injects nothing there. -->
+<div id="breadcrumb"></div>
+
+<!-- ===================== [PER-PAGE] HERO ===================== -->
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical · Protection & Switchgear
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          TOC/IDMT Relay Trip Time <span class="text-sky-400">Calculator</span>
+        </h1>
+        <p class="text-amber-300 text-xs font-mono uppercase tracking-wide mb-3">IEC 60255 &amp; IEEE C37.112-1996 curves — forward trip-time calculation, plus a full curve comparison table</p>
+    <div class="hero-typing-box">
+      <p class="hero-typing text-[#d4af37] text-sm font-mono font-bold justify-center" aria-label="Calculate Smarter. Work Faster. Practical Calculators & Maintenance Guides.">
+        <span id="heroTypingText">Calculate Smarter. Work Faster.</span><span class="hero-cursor" aria-hidden="true"></span>
+      </p>
+    </div>
+
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Free Inverse Time Overcurrent (TOC/IDMT) relay trip time calculator — select an IEC 60255 or IEEE C37.112-1996 curve, enter pickup current, fault current, and TMS/TD to get trip time instantly.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] CALCULATOR SECTION ===================== -->
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel overflow-hidden p-6 md:p-8">
+      <div id="calcHeaderBar">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Relay & Fault Details</h2>
+        <p class="text-xs text-gray-500 mb-6">Select the trip curve, then enter pickup current, fault current, and TMS/TD.</p>
+      </div>
+
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="curveSelect">Trip Curve</label>
+          <select id="curveSelect" name="curveSelect" class="input-field mt-2">
+            <optgroup label="IEC 60255">
+              <option value="iec_si" data-family="iec" data-k="0.140" data-a="0.020" selected>IEC Standard Inverse (SI)</option>
+              <option value="iec_vi" data-family="iec" data-k="13.5" data-a="1">IEC Very Inverse (VI)</option>
+              <option value="iec_ei" data-family="iec" data-k="80" data-a="2">IEC Extremely Inverse (EI)</option>
+              <option value="iec_lti" data-family="iec" data-k="120" data-a="1">IEC Long-Time Standard Inverse (LTI)</option>
+            </optgroup>
+            <optgroup label="IEEE C37.112-1996">
+              <option value="ieee_mi" data-family="ieee" data-A="0.0515" data-B="0.114" data-p="0.02">IEEE Moderately Inverse</option>
+              <option value="ieee_vi" data-family="ieee" data-A="19.61" data-B="0.491" data-p="2">IEEE Very Inverse</option>
+              <option value="ieee_ei" data-family="ieee" data-A="28.2" data-B="0.1217" data-p="2.0">IEEE Extremely Inverse</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pickupCurrent">Relay Pickup Current, Is (A)</label>
+            <input id="pickupCurrent" name="pickupCurrent" inputmode="decimal" type="number" value="1000" step="1" min="0.1" max="50000" placeholder="e.g. 1000" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="faultCurrent">Fault Current, I (A)</label>
+            <input id="faultCurrent" name="faultCurrent" inputmode="decimal" type="number" value="10000" step="10" min="0.1" max="500000" placeholder="e.g. 10000" class="input-field mt-2">
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="multiplierLabel" for="multiplier">Time Multiplier Setting (TMS)</label>
+          <input id="multiplier" name="multiplier" inputmode="decimal" type="number" value="1" step="0.01" min="0.01" max="30" placeholder="e.g. 1" class="input-field mt-2">
+        </div>
+        <div id="tdmNote" class="hidden bg-sky-50 border border-sky-100 text-[11px] text-gray-600 rounded-lg px-3 py-2 leading-relaxed">
+          Some relay manufacturers specify a <strong>Time Dial Multiplier (TDM)</strong> instead of the standard's Time Dial (TD) directly. There is no single universal TDM&rarr;TD formula &mdash; it's defined per relay model/firmware. Use the exact conversion given in your relay's own manual, then enter the resulting TD value above.
+        </div>
+      </div>
+
+      <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button type="button" onclick="calculateTripTime()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip">IEC: t = TMS × k ÷ ((I/Is)^α − 1)</span>
+        <span class="formula-chip">IEEE: t = TD × [A ÷ ((I/Is)^p − 1) + B]</span>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden" aria-live="polite" aria-atomic="true">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Trip Time</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+        <p class="text-[11px] text-gray-500 mt-2">Single-relay trip-time calculation only — always verify against the exact curve actually implemented on your physical relay and a full coordination study.</p>
+        <p class="text-[11px] font-semibold text-amber-700 bg-amber-100 inline-block px-2 py-0.5 rounded mt-2">Design estimate only — confirm against relay manufacturer documentation</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">PSM (I ÷ Is)</span>
+            <span id="rPSM" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Curve Constants</span>
+            <span id="rConstants" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
+        <a href="#compare" class="text-xs text-sky-400 hover:text-sky-300 underline mt-3 inline-block">Compare across all standard curves below &darr;</a>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] COMPARE: ALL STANDARD CURVES ===================== -->
+<section id="compare" class="max-w-6xl mx-auto px-4 pb-14">
+  <div class="flex flex-col gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+      <div id="compareHeaderBar">
+        <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Comparison</span>
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Compare Trip Time Across All Standard Curves</h2>
+        <p class="text-xs text-gray-500 mb-0">Uses the same pickup and fault current entered above, with one multiplier value applied uniformly to every curve (as TMS for the IEC rows, as TD for the IEEE rows) — useful for choosing a curve type, or for comparing an IEC-curve relay against an IEEE-curve relay on equal footing.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-3 gap-4 mb-4 mt-6">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="cIs">Relay Pickup Current, Is (A)</label>
+          <input id="cIs" name="cIs" inputmode="decimal" type="number" value="1000" step="1" min="0.1" max="50000" placeholder="e.g. 1000" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="cI">Fault Current, I (A)</label>
+          <input id="cI" name="cI" inputmode="decimal" type="number" value="10000" step="10" min="0.1" max="500000" placeholder="e.g. 10000" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="cMultiplier">Reference Multiplier (applied as TMS to IEC rows, TD to IEEE rows)</label>
+          <input id="cMultiplier" name="cMultiplier" inputmode="decimal" type="number" value="1" step="0.01" min="0.01" max="30" placeholder="e.g. 1" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div id="cValidationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+
+      <button type="button" onclick="compareAllCurves()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Run Comparison
+      </button>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="compareResultPanel" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 flex flex-col">
+      <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Comparison Result</span>
+      <div id="compareResultBox" class="space-y-3 text-sm text-gray-600" aria-live="polite" aria-atomic="true">
+        <p class="text-xs text-gray-400">Enter values above and click Run Comparison.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="text-xs text-gray-400 mt-6">This comparison applies the same numeric multiplier value to every curve for a like-for-like reference &mdash; it does not mean an IEC TMS of, say, 1.0 is equivalent in setting philosophy to an IEEE TD of 1.0 on a real relay; each curve family's multiplier range and typical values are defined independently by its own standard and by relay manufacturers. Use this table to compare shapes and relative trip times only, not as a substitute for coordinating actual configured settings.</p>
+</section>
+
+<!-- ===================== SHARE / FEEDBACK BAR ===================== -->
+<span id="shareFeedbackAnchor"></span>
+<section id="shareFeedbackBar" class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button type="button" class="share-result-btn" onclick="loadShareModal()">🔗 Share Result</button>
+      <button type="button" class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()">📋 Copy Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button type="button" id="fbYes" class="action-icon-btn" aria-pressed="false" onclick="setFeedback('yes')">👍 Yes</button>
+      <button type="button" id="fbNo" class="action-icon-btn" aria-pressed="false" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20TOC%2FIDMT%20Trip%20Time%20Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RELATED CALCULATORS (moved below Share/Feedback bar) ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-6">
+  <div id="relatedCalculatorsBox" class="bg-white rounded-xl border border-gray-100 p-4" data-copy-exclude>
+    <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+    <div class="grid sm:grid-cols-2 gap-1.5">
+      <a href="/electrical/relay-setting" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        Relay Setting Calculator <span class="text-sky-500">→</span>
+      </a>
+      <a href="/electrical/ct-ratio" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        CT Ratio Calculator <span class="text-sky-500">→</span>
+      </a>
+      <a href="/electrical/short-circuit-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        Short Circuit Current Calculator <span class="text-sky-500">→</span>
+      </a>
+      <a href="/electrical-calculators" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        All Electrical Calculators <span class="text-sky-500">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TABLE OF CONTENTS ===================== -->
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#compare" class="hover:underline">2. Compare across curve types</a></li>
+      <li><a href="#how-it-works" class="hover:underline">3. Understanding TOC/IDMT trip time</a></li>
+      <li><a href="#second" class="hover:underline">4. IEC & IEEE curve constants</a></li>
+      <li><a href="#mistakes" class="hover:underline">5. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">6. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===================== EXPLANATION ===================== -->
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Standards referenced: IEC 60255 and IEEE C37.112-1996 inverse-time overcurrent curves</p>
+    </div>
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How TOC/IDMT Relay Trip Time Is Calculated</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Inverse Time Overcurrent (TOC) protection, also called Inverse Definite Minimum Time (IDMT), describes a relay whose trip time automatically shortens as fault current rises, instead of tripping after one fixed delay no matter how severe the fault is. The relay compares the actual current it sees, I, against its own pickup setting, Is, and the ratio between them — I &divide; Is, commonly called PSM (Plug Setting Multiplier) or simply M — is the single number that drives how fast the relay operates on either the IEC or IEEE curve families below.</p>
+
+      <p><strong>IEC 60255 formula:</strong> t = TMS &times; [k &divide; ((I&divide;Is)^&alpha; &minus; 1)], where k and &alpha; are constants fixed by the specific curve (Standard, Very, Extremely, or Long-Time Standard Inverse — see the reference table below), and TMS (Time Multiplier Setting) scales the whole curve up or down without changing its shape.</p>
+
+      <p><strong>IEEE C37.112-1996 formula:</strong> t = TD &times; [A &divide; ((I&divide;Is)^p &minus; 1) + B], where A, B, and p are constants fixed by the specific curve (Moderately, Very, or Extremely Inverse), and TD (Time Dial) plays the same scaling role TMS plays in the IEC formula. The structural difference that matters here is the added constant B inside the brackets — it shifts every point on the curve by a fixed amount rather than only scaling the whole curve, which is why an IEEE curve's shape isn't simply a rescaled IEC curve even when their exponents look similar.</p>
+
+      <p><strong>Worked example — IEC Standard Inverse:</strong> Is = 1000 A, I = 10,000 A, so PSM = 10. With k=0.140, &alpha;=0.020: (10)^0.020 &asymp; 1.0471, so k&divide;(PSM^&alpha;&minus;1) = 0.140&divide;0.0471 &asymp; 2.971 s at TMS=1.0. At the default TMS=1.0 entered above, trip time &asymp; <strong>2.971 s</strong>.</p>
+
+      <p><strong>Worked example — IEEE Moderately Inverse:</strong> using the same Is=1000 A, I=10,000 A (PSM=10), with A=0.0515, B=0.114, p=0.02: A&divide;(PSM^p&minus;1) = 0.0515&divide;0.0471 &asymp; 1.093, plus B=0.114 gives &asymp; 1.207 s at TD=1.0 — noticeably faster than the IEC Standard Inverse curve at the identical PSM and multiplier value, illustrating why the two families aren't directly interchangeable setting-for-setting.</p>
+
+      <p><strong>Why doubling fault current doesn't halve trip time:</strong> both formulas raise PSM to a fractional or low-integer exponent (&alpha; or p) before it enters the rest of the calculation, so the relationship between fault current and trip time is nonlinear — for the Standard Inverse curve's very small &alpha;=0.02 exponent in particular, trip time changes only modestly across a wide range of PSM values, with most of the curve's real speed variation concentrated at PSM values just above 1.</p>
+
+      <p><strong>PSM must exceed 1 for the relay to operate:</strong> both formulas produce an undefined or negative result when PSM &le; 1 (that is, when the actual current doesn't exceed the pickup setting) — physically this simply means the relay hasn't picked up at all yet and there is no trip time to calculate, not a calculation error.</p>
+
+      <p><strong>Discrete relay taps versus continuous inputs:</strong> like the underlying pickup and TMS/TD settings themselves, this calculator treats Is, I, and the multiplier as continuous values, but many physical relays (especially older electromechanical types) only offer discrete tap steps for some or all of these settings — always round to the nearest available tap on the actual relay hardware, and re-run the calculation with the rounded value to confirm the achieved trip time still meets the original coordination requirement.</p>
+
+      <p><strong>Matching the calculator's curve to the relay's actual configured curve:</strong> selecting the wrong curve type in this calculator — for example, calculating with an IEC Standard Inverse curve when the physical relay is actually configured for IEEE Very Inverse — produces a trip time that has nothing to do with what the real relay will do. Always confirm the exact curve type, and the exact standard family (IEC or IEEE), configured on the physical device before relying on a calculated trip time.</p>
+
+      <p><strong>Where this calculator fits alongside a Relay Setting Calculator:</strong> a Relay Setting Calculator (solving backward from a desired trip time to the TMS/pickup that achieves it) and this trip-time calculator (solving forward from a known configuration to the resulting trip time) are complementary directions of the same underlying formula — use one to design a setting, and the other to sanity-check a setting you already have, whether it came from a prior coordination study, a relay's existing configuration, or this page's own comparison table below.</p>
+
+      <p><strong>Summary:</strong> compute PSM = I &divide; Is, apply the correct curve family's formula (IEC's k/&alpha; form, or IEEE's A/B/p form) with the matching curve constants, scale by the actual configured TMS or TD, and always cross-check the result against the exact curve implemented on the physical relay and a complete multi-relay coordination study before finalizing any real installation.</p>
+    </div>
+
+    <!-- ===================== [PER-PAGE] LAB / TEST SETUP DIAGRAM ===================== -->
+    <div class="mt-10">
+      <p class="text-sm font-semibold text-brandDark mb-2">Typical Laboratory Setup for Verifying IDMT Characteristics</p>
+      <p class="text-sm text-gray-600 leading-relaxed mb-4">One common way to verify an IDMT relay's actual trip time against the calculated curve: inject a controlled fault current downstream of the relay's CT while a breaker (C.B.) is ready to trip, and time the interval from fault injection to trip-coil operation. The single-line diagram below shows the test circuit; the schematic beneath it shows the simplified trip circuit (bus-bar &rarr; C.B. trip coil, C.T. &rarr; relay coil &rarr; normally-open contact) that actually operates the breaker once the relay picks up.</p>
+      <div class="bg-white rounded-xl border border-gray-100 p-4 sm:p-6 lab-diagram-card">
+        <svg viewBox="0 0 780 520" width="100%" height="auto" role="img" aria-label="Single-line diagram of a power source feeding a CT, circuit breaker, transmission line with a three-phase ground fault and busbars B1 and B2, to a load, with an IDMT overcurrent protective relay connected to the CT and breaker; below it, a trip circuit schematic showing the CT secondary feeding the IDMT relay coil, which mechanically operates a normally-open contact in a separate DC trip circuit that energizes the C.B. trip coil; and an illustrative numerical relay panel with an LCD display, indicator LEDs and a keypad.">
+          <!-- ===== Single-line diagram ===== -->
+          <circle cx="70" cy="90" r="30" fill="none" stroke="#0B1220" stroke-width="2"/>
+          <path d="M52,90 Q61,72 70,90 T88,90" fill="none" stroke="#0B1220" stroke-width="2"/>
+          <text x="70" y="138" text-anchor="middle" font-size="13" font-weight="700" fill="#0B1220">Power source</text>
+
+          <line x1="100" y1="90" x2="133" y2="90" stroke="#0B1220" stroke-width="2"/>
+          <rect x="133" y="75" width="14" height="30" rx="7" fill="none" stroke="#0284c7" stroke-width="2"/>
+          <text x="140" y="65" text-anchor="middle" font-size="13" font-weight="700" fill="#0B1220">CT</text>
+
+          <line x1="147" y1="90" x2="172" y2="90" stroke="#0B1220" stroke-width="2"/>
+          <rect x="172" y="72" width="40" height="36" fill="#ef4444" stroke="#991b1b" stroke-width="1.5"/>
+          <text x="192" y="94" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">C.B</text>
+
+          <line x1="212" y1="90" x2="480" y2="90" stroke="#0B1220" stroke-width="2"/>
+          <line x1="260" y1="72" x2="260" y2="108" stroke="#0B1220" stroke-width="3"/>
+          <text x="260" y="58" text-anchor="middle" font-size="13" font-weight="700" fill="#0B1220">B1</text>
+          <line x1="480" y1="72" x2="480" y2="108" stroke="#0B1220" stroke-width="3"/>
+          <text x="480" y="58" text-anchor="middle" font-size="13" font-weight="700" fill="#0B1220">B2</text>
+          <text x="370" y="60" text-anchor="middle" font-size="14" font-weight="700" fill="#0B1220">Transmission line</text>
+
+          <path d="M352,90 L362,108 L346,108 L358,128" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linejoin="round"/>
+          <line x1="358" y1="128" x2="358" y2="140" stroke="#0B1220" stroke-width="1.5"/>
+          <line x1="345" y1="140" x2="371" y2="140" stroke="#0B1220" stroke-width="2"/>
+          <line x1="350" y1="146" x2="366" y2="146" stroke="#0B1220" stroke-width="1.5"/>
+          <line x1="354" y1="152" x2="362" y2="152" stroke="#0B1220" stroke-width="1"/>
+          <text x="385" y="112" font-size="12" font-weight="700" fill="#0B1220">Three-phase</text>
+          <text x="385" y="127" font-size="12" font-weight="700" fill="#0B1220">ground fault</text>
+
+          <line x1="480" y1="90" x2="520" y2="90" stroke="#0B1220" stroke-width="2"/>
+          <rect x="520" y="40" width="90" height="110" fill="#f7c59f" stroke="#0B1220" stroke-width="1.5"/>
+          <text x="565" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#0B1220">Load</text>
+          <circle cx="602" cy="118" r="1.6" fill="#0B1220"/>
+          <circle cx="602" cy="126" r="1.6" fill="#0B1220"/>
+          <circle cx="602" cy="134" r="1.6" fill="#0B1220"/>
+
+          <line x1="140" y1="105" x2="140" y2="195" stroke="#0B1220" stroke-width="1.5" stroke-dasharray="5,4"/>
+          <line x1="192" y1="108" x2="192" y2="195" stroke="#0B1220" stroke-width="1.5" stroke-dasharray="5,4"/>
+          <rect x="110" y="195" width="200" height="55" rx="4" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5"/>
+          <text x="210" y="217" text-anchor="middle" font-size="13" font-weight="700" fill="#0B1220">IDMT overcurrent</text>
+          <text x="210" y="235" text-anchor="middle" font-size="13" font-weight="700" fill="#0B1220">protective relay</text>
+
+          <!-- ===== Professional Trip Circuit Schematic =====
+               CT Secondary -> IDMT Relay Coil -- (mechanical operation, dashed) --> N.O. Contact
+               +DC -> N.O. Contact -> C.B. Trip Coil -> 0V/-DC
+               (CT/relay sensing circuit and DC trip circuit are NOT
+               electrically joined -- the relay only operates its own
+               N.O. contact.) -->
+          <rect x="15" y="285" width="380" height="220" rx="8" fill="none" stroke="#1d4ed8" stroke-width="2"/>
+          <text x="30" y="303" font-size="16" font-weight="700" fill="#1d4ed8">TRIP CIRCUIT SCHEMATIC</text>
+
+          <!-- CT secondary / protection circuit -->
+          <text x="35" y="328" font-size="11" font-weight="700" fill="#1d4ed8">CT SECONDARY</text>
+          <line x1="40" y1="370" x2="67" y2="370" stroke="#1d4ed8" stroke-width="2.5"/>
+          <circle cx="87" cy="370" r="22" fill="none" stroke="#1d4ed8" stroke-width="2.5"/>
+          <circle cx="87" cy="370" r="15" fill="none" stroke="#1d4ed8" stroke-width="1.5"/>
+          <text x="87" y="375" text-anchor="middle" font-size="12" font-weight="700" fill="#1d4ed8">CT</text>
+          <line x1="109" y1="370" x2="132" y2="370" stroke="#1d4ed8" stroke-width="2.5"/>
+          <rect x="132" y="354" width="45" height="32" rx="3" fill="none" stroke="#1d4ed8" stroke-width="2"/>
+          <path d="M138,370 q5,-10 10,0 q5,10 10,0 q5,-10 10,0" fill="none" stroke="#1d4ed8" stroke-width="1.8"/>
+          <text x="154.5" y="401" text-anchor="middle" font-size="10" font-weight="600" fill="#1d4ed8">IDMT RELAY</text>
+          <line x1="177" y1="370" x2="190" y2="370" stroke="#1d4ed8" stroke-width="2.5"/>
+          <line x1="190" y1="370" x2="190" y2="415" stroke="#1d4ed8" stroke-width="2.5"/>
+          <line x1="190" y1="415" x2="40" y2="415" stroke="#1d4ed8" stroke-width="2.5"/>
+          <line x1="40" y1="415" x2="40" y2="370" stroke="#1d4ed8" stroke-width="2.5"/>
+
+          <!-- DC trip / control circuit -->
+          <text x="230" y="328" font-size="11" font-weight="700" fill="#1d4ed8">DC TRIP / CONTROL</text>
+
+          <!-- +DC supply: label above a short stub feeding the rail via a junction dot -->
+          <text x="215" y="345" font-size="10" font-weight="700" fill="#1d4ed8">+DC</text>
+          <line x1="215" y1="348" x2="215" y2="358" stroke="#1d4ed8" stroke-width="2.5"/>
+          <circle cx="215" cy="358" r="2.5" fill="#1d4ed8"/>
+          <line x1="215" y1="358" x2="265" y2="358" stroke="#1d4ed8" stroke-width="2.5"/>
+
+          <!-- Conventional N.O. contact: a real break in the rail, fixed
+               terminal dot, and an open moving blade not touching the
+               other terminal -->
+          <circle cx="265" cy="358" r="3.5" fill="#1d4ed8"/>
+          <line x1="265" y1="358" x2="290" y2="341" stroke="#1d4ed8" stroke-width="2.5"/>
+          <circle cx="300" cy="358" r="3.5" fill="#1d4ed8"/>
+          <text x="305" y="345" font-size="9" font-weight="700" fill="#1d4ed8">N.O. CONTACT</text>
+
+          <line x1="300" y1="358" x2="300" y2="380" stroke="#1d4ed8" stroke-width="2.5"/>
+          <rect x="280" y="380" width="40" height="38" rx="3" fill="none" stroke="#1d4ed8" stroke-width="2"/>
+          <path d="M285,399 q5,-12 10,0 q5,12 10,0 q5,-12 10,0" fill="none" stroke="#1d4ed8" stroke-width="1.8"/>
+          <text x="325" y="395" font-size="7.5" font-weight="700" fill="#1d4ed8">C.B. TRIP COIL</text>
+          <line x1="300" y1="418" x2="300" y2="455" stroke="#1d4ed8" stroke-width="2.5"/>
+          <line x1="300" y1="455" x2="365" y2="455" stroke="#1d4ed8" stroke-width="2.5"/>
+          <text x="365" y="470" text-anchor="end" font-size="10" font-weight="700" fill="#1d4ed8">0V / &minus;DC</text>
+
+          <!-- Mechanical (not electrical) link: relay operates its N.O. contact -->
+          <line x1="177" y1="370" x2="265" y2="358" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,4"/>
+
+          <!-- Separate annotation row, clear of every conductor/symbol -->
+          <line x1="140" y1="448" x2="255" y2="448" stroke="#64748b" stroke-width="1.3" stroke-dasharray="5,4"/>
+          <path d="M255,448 l-7,-4 v8 z" fill="#64748b"/>
+          <text x="197" y="463" text-anchor="middle" font-size="9" font-style="italic" fill="#64748b">relay operation</text>
+
+          <text x="30" y="488" font-size="10" fill="#475569">IDMT relay operation closes the N.O. contact and energizes the C.B. trip coil.</text>
+
+          <!-- ===== Illustrative numerical relay panel (not a specific manufacturer's product) ===== -->
+          <rect x="430" y="290" width="290" height="215" rx="10" fill="#374151" stroke="#111827" stroke-width="2"/>
+          <rect x="450" y="303" width="120" height="14" rx="2" fill="#1f2937"/>
+          <text x="460" y="313" font-size="9" fill="#9ca3af">NUMERICAL RELAY</text>
+          <rect x="450" y="325" width="230" height="55" rx="3" fill="#14532d" stroke="#052e16" stroke-width="1"/>
+          <rect x="462" y="336" width="130" height="6" fill="#4ade80"/>
+          <rect x="462" y="349" width="90" height="6" fill="#4ade80"/>
+          <rect x="462" y="362" width="150" height="6" fill="#4ade80"/>
+          <circle cx="447" cy="392" r="4" fill="#4ade80"/>
+          <circle cx="447" cy="406" r="4" fill="#4ade80"/>
+          <circle cx="447" cy="420" r="4" fill="#f59e0b"/>
+          <circle cx="447" cy="434" r="4" fill="#ef4444"/>
+          <rect x="565" y="392" width="18" height="18" rx="3" fill="#1f2937"/>
+          <rect x="565" y="418" width="18" height="18" rx="3" fill="#1f2937"/>
+          <rect x="547" y="410" width="18" height="18" rx="3" fill="#1f2937"/>
+          <rect x="583" y="410" width="18" height="18" rx="3" fill="#1f2937"/>
+          <circle cx="574" cy="419" r="9" fill="#4b5563" stroke="#1f2937" stroke-width="1"/>
+          <path d="M574,406 l4,7 h-8 z" fill="#e5e7eb"/>
+          <path d="M574,432 l4,-7 h-8 z" fill="#e5e7eb"/>
+          <path d="M556,419 l7,-4 v8 z" fill="#e5e7eb"/>
+          <path d="M592,419 l-7,-4 v8 z" fill="#e5e7eb"/>
+          <rect x="625" y="392" width="70" height="46" rx="4" fill="#1f2937" stroke="#4b5563" stroke-width="1"/>
+          <text x="660" y="418" text-anchor="middle" font-size="9" fill="#9ca3af">RS-485</text>
+          <rect x="450" y="483" width="24" height="18" rx="3" fill="#4b5563"/>
+          <rect x="480" y="483" width="24" height="18" rx="3" fill="#4b5563"/>
+          <rect x="510" y="483" width="24" height="18" rx="3" fill="#4b5563"/>
+          <rect x="670" y="481" width="30" height="22" rx="4" fill="#dc2626" stroke="#7f1d1d" stroke-width="1"/>
+          <text x="685" y="496" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">TRIP</text>
+        </svg>
+        <p class="text-xs text-gray-400 mt-3">Illustrative diagram, not a specific manufacturer's product or wiring standard &mdash; actual test-bench wiring, relay panel layout, and trip-circuit design vary by manufacturer and installation; consult the relay's own manual and the test lab's safety procedure before performing an actual injection test.</p>
+      </div>
+    </div>
+
+    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+    <div id="cs-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Is=1000A, I=10,000A (PSM=10): IEC Standard Inverse at TMS=1.0 trips in &asymp; <strong>2.971 s</strong>; IEEE Moderately Inverse at TD=1.0 trips in &asymp; <strong>1.207 s</strong> for the same PSM &mdash; the two curve families are not directly interchangeable at the same multiplier value.</p>
+    </div>
+
+    <div id="cs-not-calculated-box" class="mt-6 bg-amber-50/60 border border-amber-100 rounded-2xl p-6">
+      <p class="text-sm font-semibold text-brandDark mb-2">What This Calculator Does Not Calculate</p>
+      <p class="text-sm text-gray-600 leading-relaxed mb-4">This tool computes single-relay trip time from a given curve, pickup current, fault current, and TMS/TD only. It does not calculate: multi-relay coordination margins, discrete relay tap-step rounding, CT saturation or accuracy-class limitations, breaker interrupting time, minimum sensitivity for remote faults, or a manufacturer-specific TDM-to-TD conversion — and it does not confirm which curve is actually configured on your physical relay. Check each of these separately against the relay's own documentation, a coordination study, or a protection engineer's review before treating any calculated trip time as final.</p>
+      <div class="not-prose overflow-x-auto">
+        <table class="w-full text-xs border border-amber-200/60 rounded-lg overflow-hidden">
+          <thead class="bg-amber-100/60 text-brandDark">
+            <tr>
+              <th class="text-left px-3 py-2 font-semibold">Check</th>
+              <th class="text-left px-3 py-2 font-semibold">This Calculator</th>
+              <th class="text-left px-3 py-2 font-semibold">Must Verify Separately</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-amber-200/40">
+            <tr><td class="px-3 py-2">Single-relay trip time (IEC or IEEE curve)</td><td class="px-3 py-2">&#10003;</td><td class="px-3 py-2">&mdash;</td></tr>
+            <tr><td class="px-3 py-2">Multi-relay coordination margin</td><td class="px-3 py-2">&#10007;</td><td class="px-3 py-2">Coordination study</td></tr>
+            <tr><td class="px-3 py-2">Manufacturer TDM&rarr;TD conversion</td><td class="px-3 py-2">&#10007;</td><td class="px-3 py-2">Relay manual</td></tr>
+            <tr><td class="px-3 py-2">Discrete relay tap-step rounding</td><td class="px-3 py-2">&#10007;</td><td class="px-3 py-2">Relay setting sheet</td></tr>
+            <tr><td class="px-3 py-2">CT saturation / accuracy class</td><td class="px-3 py-2">&#10007;</td><td class="px-3 py-2">CT datasheet / study</td></tr>
+            <tr><td class="px-3 py-2">Breaker interrupting time</td><td class="px-3 py-2">&#10007;</td><td class="px-3 py-2">Breaker datasheet</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator computes trip time for a single relay in isolation, using the standard IEC 60255 or IEEE C37.112-1996 formula for the curve you select — it does not check protection coordination between multiple devices, confirm the curve type actually configured on a physical relay, or account for CT/relay tolerances. Treat any figure from this page as an input to a broader coordination review, not a finished setting — dedicated coordination software and sign-off from a qualified protection engineer are the appropriate next step before it's applied to a real installation.</p>
+  </div>
+</section>
+
+<!-- ===================== SECOND SECTION ===================== -->
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">IEC 60255 &amp; IEEE C37.112-1996 Curve Constants</h2>
+
+  <!-- ===================== LARGE FORMULA REFERENCE CARDS ===================== -->
+  <p class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-3">Curve formulas at a glance</p>
+  <div class="grid sm:grid-cols-2 gap-3 mb-8">
+    <div class="formula-card">
+      <p class="text-xs font-semibold text-sky-600">IEC Standard Inverse (SI)</p>
+      <div class="formula-row">
+        <span>t&nbsp;=&nbsp;TMS&nbsp;&times;</span>
+        <span class="formula-frac"><span class="fnum">0.14</span><span class="fden">(I/Is)<sup>0.02</sup>&nbsp;&minus;&nbsp;1</span></span>
+      </div>
+    </div>
+    <div class="formula-card">
+      <p class="text-xs font-semibold text-sky-600">IEC Very Inverse (VI)</p>
+      <div class="formula-row">
+        <span>t&nbsp;=&nbsp;TMS&nbsp;&times;</span>
+        <span class="formula-frac"><span class="fnum">13.5</span><span class="fden">(I/Is)<sup>1</sup>&nbsp;&minus;&nbsp;1</span></span>
+      </div>
+    </div>
+    <div class="formula-card">
+      <p class="text-xs font-semibold text-sky-600">IEC Extremely Inverse (EI)</p>
+      <div class="formula-row">
+        <span>t&nbsp;=&nbsp;TMS&nbsp;&times;</span>
+        <span class="formula-frac"><span class="fnum">80</span><span class="fden">(I/Is)<sup>2</sup>&nbsp;&minus;&nbsp;1</span></span>
+      </div>
+    </div>
+    <div class="formula-card">
+      <p class="text-xs font-semibold text-sky-600">IEC Long-Time Standard Inverse (LTI)</p>
+      <div class="formula-row">
+        <span>t&nbsp;=&nbsp;TMS&nbsp;&times;</span>
+        <span class="formula-frac"><span class="fnum">120</span><span class="fden">(I/Is)<sup>1</sup>&nbsp;&minus;&nbsp;1</span></span>
+      </div>
+    </div>
+    <div class="formula-card">
+      <p class="text-xs font-semibold text-amber-600">IEEE Moderately Inverse</p>
+      <div class="formula-row">
+        <span>t&nbsp;=&nbsp;TD&nbsp;&times;</span>
+        <span>{</span>
+        <span class="formula-frac"><span class="fnum">0.0515</span><span class="fden">(I/Is)<sup>0.02</sup>&nbsp;&minus;&nbsp;1</span></span>
+        <span>+&nbsp;0.114}</span>
+      </div>
+    </div>
+    <div class="formula-card">
+      <p class="text-xs font-semibold text-amber-600">IEEE Very Inverse</p>
+      <div class="formula-row">
+        <span>t&nbsp;=&nbsp;TD&nbsp;&times;</span>
+        <span>{</span>
+        <span class="formula-frac"><span class="fnum">19.61</span><span class="fden">(I/Is)<sup>2</sup>&nbsp;&minus;&nbsp;1</span></span>
+        <span>+&nbsp;0.491}</span>
+      </div>
+    </div>
+    <div class="formula-card sm:col-span-2">
+      <p class="text-xs font-semibold text-amber-600">IEEE Extremely Inverse</p>
+      <div class="formula-row">
+        <span>t&nbsp;=&nbsp;TD&nbsp;&times;</span>
+        <span>{</span>
+        <span class="formula-frac"><span class="fnum">28.2</span><span class="fden">(I/Is)<sup>2</sup>&nbsp;&minus;&nbsp;1</span></span>
+        <span>+&nbsp;0.1217}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CURVE-SHAPE COMPARISON CHART ===================== -->
+  <p class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-3">Curve shape comparison &mdash; trip time vs. PSM at TMS/TD&nbsp;=&nbsp;1.0 (log-log)</p>
+  <div class="curve-chart-frame mb-3">
+    <svg viewBox="0 0 720 460" width="100%" height="auto" role="img" aria-label="Log-log chart comparing trip time versus plug setting multiplier for all seven IEC and IEEE curves at TMS or TD equal to 1.0">
+      <!-- plot border -->
+      <rect x="110" y="40" width="580" height="360" fill="none" class="chart-axis" stroke-width="1"/>
+      <!-- vertical gridlines: PSM = 2,3,5,7,10,15,20,30 -->
+      <g class="chart-grid" stroke-width="1">
+        <line x1="189.6" y1="40" x2="189.6" y2="400"/>
+        <line x1="264.5" y1="40" x2="264.5" y2="400"/>
+        <line x1="358.9" y1="40" x2="358.9" y2="400"/>
+        <line x1="421.1" y1="40" x2="421.1" y2="400"/>
+        <line x1="487.0" y1="40" x2="487.0" y2="400"/>
+        <line x1="561.9" y1="40" x2="561.9" y2="400"/>
+        <line x1="615.1" y1="40" x2="615.1" y2="400"/>
+        <line x1="690.0" y1="40" x2="690.0" y2="400"/>
+      </g>
+      <!-- horizontal gridlines: t = 0.1,1,10,100 -->
+      <g class="chart-grid" stroke-width="1">
+        <line x1="110" y1="364.4" x2="690" y2="364.4"/>
+        <line x1="110" y1="275.6" x2="690" y2="275.6"/>
+        <line x1="110" y1="186.7" x2="690" y2="186.7"/>
+        <line x1="110" y1="97.8" x2="690" y2="97.8"/>
+      </g>
+      <!-- x tick labels -->
+      <g class="chart-label" font-size="12" text-anchor="middle">
+        <text x="189.6" y="416">2</text>
+        <text x="264.5" y="416">3</text>
+        <text x="358.9" y="416">5</text>
+        <text x="421.1" y="416">7</text>
+        <text x="487.0" y="416">10</text>
+        <text x="561.9" y="416">15</text>
+        <text x="615.1" y="416">20</text>
+        <text x="690.0" y="416">30</text>
+      </g>
+      <!-- y tick labels -->
+      <g class="chart-label" font-size="12" text-anchor="end">
+        <text x="102" y="368.4">0.1s</text>
+        <text x="102" y="279.6">1s</text>
+        <text x="102" y="190.7">10s</text>
+        <text x="102" y="101.8">100s</text>
+      </g>
+      <!-- axis titles -->
+      <text x="400" y="445" class="chart-label" font-size="12" text-anchor="middle">Plug Setting Multiplier, PSM = I &divide; Is</text>
+      <text x="-220" y="20" class="chart-label" font-size="12" text-anchor="middle" transform="rotate(-90)">Trip Time (s)</text>
+
+      <!-- IEC curves (solid) -->
+      <polyline points="110.0,148.9 136.4,165.7 159.6,176.2 189.6,186.6 230.8,197.4 264.5,204.5 317.7,213.6 358.9,219.4 392.6,223.6 421.1,226.9 457.0,230.6 487.0,233.5 520.7,236.5 561.9,239.9 615.1,244.0 656.3,246.8 690.0,249.0" fill="none" stroke="#0ea5e9" stroke-width="2.5"/>
+      <polyline points="110.0,128.6 136.4,148.3 159.6,161.3 189.6,175.1 230.8,190.7 264.5,201.8 317.7,217.5 358.9,228.6 392.6,237.2 421.1,244.3 457.0,252.9 487.0,259.9 520.7,267.6 561.9,277.0 615.1,288.7 656.3,297.8 690.0,305.1" fill="none" stroke="#0284c7" stroke-width="2.5"/>
+      <polyline points="110.0,92.1 136.4,115.0 159.6,131.0 189.6,148.8 230.8,170.4 264.5,186.7 317.7,210.9 358.9,229.1 392.6,243.6 421.1,255.8 457.0,271.1 487.0,283.8 520.7,298.0 561.9,315.3 615.1,337.6 656.3,354.9 690.0,368.9" fill="none" stroke="#075985" stroke-width="2.5"/>
+      <polyline points="110.0,44.3 136.4,64.0 159.6,77.0 189.6,90.7 230.8,106.4 264.5,117.5 317.7,133.2 358.9,144.3 392.6,152.9 421.1,159.9 457.0,168.5 487.0,175.6 520.7,183.3 561.9,192.6 615.1,204.4 656.3,213.4 690.0,220.7" fill="none" stroke="#7dd3fc" stroke-width="2.5"/>
+
+      <!-- IEEE curves (dashed) -->
+      <polyline points="110.0,187.0 136.4,203.7 159.6,213.9 189.6,224.0 230.8,234.5 264.5,241.2 317.7,249.9 358.9,255.3 392.6,259.3 421.1,262.2 457.0,265.7 487.0,268.3 520.7,271.0 561.9,274.1 615.1,277.6 656.3,280.1 690.0,282.0" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6,3"/>
+      <polyline points="110.0,145.7 136.4,168.1 159.6,183.5 189.6,200.3 230.8,219.9 264.5,233.9 317.7,252.9 358.9,265.2 392.6,273.6 421.1,279.6 457.0,285.8 487.0,289.9 520.7,293.5 561.9,296.7 615.1,299.3 656.3,300.6 690.0,301.3" fill="none" stroke="#ea580c" stroke-width="2.5" stroke-dasharray="6,3"/>
+      <polyline points="110.0,132.2 136.4,155.1 159.6,170.9 189.6,188.6 230.8,209.8 264.5,225.6 317.7,248.8 358.9,265.5 392.6,278.5 421.1,288.8 457.0,301.0 487.0,310.3 520.7,319.7 561.9,329.4 615.1,339.2 656.3,344.7 690.0,348.0" fill="none" stroke="#9a3412" stroke-width="2.5" stroke-dasharray="6,3"/>
+    </svg>
+  </div>
+  <div class="not-prose grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1.5 text-xs text-gray-600 mb-8">
+    <span class="flex items-center gap-1.5"><span style="display:inline-block;width:14px;height:2.5px;background:#0ea5e9;"></span>IEC SI</span>
+    <span class="flex items-center gap-1.5"><span style="display:inline-block;width:14px;height:2.5px;background:#0284c7;"></span>IEC VI</span>
+    <span class="flex items-center gap-1.5"><span style="display:inline-block;width:14px;height:2.5px;background:#075985;"></span>IEC EI</span>
+    <span class="flex items-center gap-1.5"><span style="display:inline-block;width:14px;height:2.5px;background:#7dd3fc;"></span>IEC LTI</span>
+    <span class="flex items-center gap-1.5"><span style="display:inline-block;width:14px;border-top:2.5px dashed #f59e0b;"></span>IEEE Moderately Inv.</span>
+    <span class="flex items-center gap-1.5"><span style="display:inline-block;width:14px;height:2.5px;border-top:2.5px dashed #ea580c;"></span>IEEE Very Inv.</span>
+    <span class="flex items-center gap-1.5"><span style="display:inline-block;width:14px;height:2.5px;border-top:2.5px dashed #9a3412;"></span>IEEE Extremely Inv.</span>
+  </div>
+  <p class="text-xs text-gray-400 mb-8">Chart computed directly from the same formula and constants this calculator uses (not a manufacturer sample curve) &mdash; useful for seeing which curve is relatively faster or slower at a given PSM, not for reading off an exact trip time; use the calculator above for that.</p>
+
+  <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">IEC 60255 Curve</th>
+          <th class="text-left px-4 py-2 font-semibold">k</th>
+          <th class="text-left px-4 py-2 font-semibold">&alpha;</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">Standard Inverse (SI)</td><td class="px-4 py-2">0.140</td><td class="px-4 py-2">0.020</td></tr>
+        <tr><td class="px-4 py-2">Very Inverse (VI)</td><td class="px-4 py-2">13.5</td><td class="px-4 py-2">1</td></tr>
+        <tr><td class="px-4 py-2">Extremely Inverse (EI)</td><td class="px-4 py-2">80</td><td class="px-4 py-2">2</td></tr>
+        <tr><td class="px-4 py-2">Long-Time Standard Inverse (LTI)</td><td class="px-4 py-2">120</td><td class="px-4 py-2">1</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">IEEE C37.112-1996 Curve</th>
+          <th class="text-left px-4 py-2 font-semibold">A</th>
+          <th class="text-left px-4 py-2 font-semibold">B</th>
+          <th class="text-left px-4 py-2 font-semibold">p</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">Moderately Inverse</td><td class="px-4 py-2">0.0515</td><td class="px-4 py-2">0.114</td><td class="px-4 py-2">0.02</td></tr>
+        <tr><td class="px-4 py-2">Very Inverse</td><td class="px-4 py-2">19.61</td><td class="px-4 py-2">0.491</td><td class="px-4 py-2">2</td></tr>
+        <tr><td class="px-4 py-2">Extremely Inverse</td><td class="px-4 py-2">28.2</td><td class="px-4 py-2">0.1217</td><td class="px-4 py-2">2.0</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Both formulas use the identical PSM (I&divide;Is) as their core driver, but structure the rest of the calculation differently: the IEC form is a pure scaling of k&divide;(PSM^&alpha;&minus;1) by TMS, while the IEEE form adds a constant B inside the brackets before scaling by TD — this is why an IEC curve and an IEEE curve with visually similar exponents (compare IEC's Very/Extremely Inverse &alpha; values of 1 and 2 against IEEE's Very/Extremely Inverse p values of 2 and 2) still don't produce identical trip times at the same PSM and multiplier value.</p>
+    <p>Relay manufacturers and regional practices vary in which family is the default — IEC 60255 curves are more common in installations following European/IEC-influenced standards, while IEEE C37.112-1996 curves are more common in North American and other ANSI/IEEE-influenced systems. Many modern numerical relays support both families in the same device, selectable per protection function, so always confirm which family and which specific curve is actually configured, rather than assuming one based on the relay's country of manufacture alone.</p>
+  </div>
+</section>
+
+<!-- ===================== COMMON MISTAKES ===================== -->
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating TOC/IDMT Trip Time</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p><strong>1. Mixing IEC and IEEE constants in the same calculation.</strong> The IEC (k, &alpha;) and IEEE (A, B, p) constants belong to different formula structures — plugging IEC constants into the IEEE formula (or vice versa) produces a number that isn't a valid trip time for either standard.</p>
+      <p><strong>2. Assuming a relay's country of origin tells you its curve family.</strong> Many modern numerical relays support both IEC and IEEE curve families in the same physical device, selectable per protection element — always confirm the actual configured family and curve type in the relay's own settings, not an assumption based on brand or region.</p>
+      <p><strong>3. Confusing a manufacturer's Time Dial Multiplier (TDM) with the standard's Time Dial (TD).</strong> These are not always numerically the same value, and there is no single universal conversion between them — using a TDM value directly as TD in the IEEE formula, without checking the relay's own conversion, can produce a meaningfully wrong trip time.</p>
+      <p><strong>4. Entering a fault current at or below the pickup setting.</strong> PSM must be greater than 1 for either formula to produce a valid, finite trip time — a fault current equal to or below pickup means the relay simply hasn't operated yet, not a calculation to solve.</p>
+      <p><strong>5. Using CT secondary current where the relay's pickup is set in primary terms (or vice versa).</strong> Both I and Is need to be expressed on the same side of the CT ratio — mixing primary and secondary values anywhere in the PSM calculation produces a badly wrong ratio.</p>
+      <p><strong>6. Assuming a calculated exact TMS/TD value is directly settable on the physical relay.</strong> Many relays, especially electromechanical types, only offer discrete tap steps for TMS/TD and sometimes for pickup current — always round to the actual nearest available tap and re-verify the resulting trip time, not just the theoretical calculated value.</p>
+      <p><strong>7. Treating a single relay's trip time as proof of adequate coordination.</strong> A correctly calculated trip time for one relay says nothing about whether it's properly time-graded against the relays or fuses immediately upstream and downstream of it — coordination requires comparing operating times across every relevant device at every fault current of interest, not checking one relay in isolation.</p>
+      <p><strong>8. Extrapolating a curve far beyond the fault current range it was designed for.</strong> Both curve families are defined and verified by their standards over a bounded PSM range typical of real protection applications — using extremely high or extremely low PSM values can produce numerically valid but practically meaningless results outside the range the relay manufacturer actually tested and published curve data for.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2"></p>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is Inverse Time Overcurrent (TOC/IDMT) protection?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Inverse Time Overcurrent (TOC), also called Inverse Definite Minimum Time (IDMT), is a relay characteristic where the trip (operating) time gets shorter automatically as the fault current gets larger, rather than tripping after a single fixed delay regardless of fault severity. This lets a more severe fault clear faster while still allowing marginal overloads just above pickup a longer, more tolerant delay.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the IEC 60255 IDMT trip-time formula and what do k and α mean?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">t = TMS × [k ÷ ((I ÷ Is)^α − 1)], where I is the actual (fault) current, Is is the relay's pickup current setting, TMS is the Time Multiplier Setting, and k and α are constants that define the specific curve shape (Standard Inverse, Very Inverse, Extremely Inverse, or Long-Time Standard Inverse) as published in IEC 60255.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the IEEE C37.112-1996 IDMT trip-time formula and how does it differ from the IEC formula?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">t = TD × [A ÷ ((I ÷ Is)^p − 1) + B], where TD is the Time Dial setting and A, B, and p are curve-specific constants (Moderately Inverse, Very Inverse, or Extremely Inverse) published in IEEE C37.112-1996. The key structural difference from the IEC formula is the added constant B, which shifts every point on the IEEE curve rather than only scaling it, giving IEEE curves a slightly different shape even where the exponent looks similar to an IEC curve.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is PSM (or M) and why does it drive the trip time?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">PSM (Plug Setting Multiplier, sometimes just called M) is the ratio of actual current to the relay's pickup current setting: PSM = I ÷ Is. It tells you how many multiples above pickup the relay is actually seeing, and both the IEC and IEEE formulas use PSM (raised to the curve's own exponent) as the core driver of trip time — a higher PSM means a shorter trip time, which is the entire basis of the inverse-time characteristic.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I choose between IEC Standard, Very, Extremely, and Long-Time Inverse curves?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Standard Inverse (SI) is the general-purpose default for most feeder and transformer coordination. Very Inverse (VI) and Extremely Inverse (EI) curves fall off more steeply with rising current, making them better suited to coordinating with fuses or motor starting characteristics, which are themselves steep. Long-Time Standard Inverse (LTI) is comparatively flat and slow-reacting, and is typically reserved for specific applications like motor thermal backup or ground-fault schemes where a deliberately long, gently-inverse delay is wanted.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I choose between IEEE Moderately Inverse, Very Inverse, and Extremely Inverse curves?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The IEEE curve family follows the same general logic as its IEC counterparts — Moderately Inverse behaves similarly in role to IEC's Standard Inverse (a general-purpose default), while Very Inverse and Extremely Inverse fall off more steeply for coordination with steep upstream/downstream devices like fuses. The specific choice ultimately depends on matching the curve already assumed in an existing coordination study, or the convention used by the relay manufacturer and the region/utility standard being followed.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is there a universal formula to convert a Time Dial Multiplier (TDM) to a Time Dial (TD)?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — unlike the IEEE C37.112 trip-time formula itself, the relationship between a manufacturer's own Time Dial Multiplier (TDM) setting and the standard's Time Dial (TD) value is not a single universal equation; it depends on how that specific relay model's firmware defines its TDM range and scaling. Always use the exact conversion given in your relay's own manual or manufacturer documentation rather than assuming a generic formula.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I directly compare an IEC-curve relay and an IEEE-curve relay for coordination?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Only by calculating each relay's actual trip time at the fault currents of interest and comparing those resulting times — you cannot compare TMS and TD values, or k/α and A/B/p constants, directly against each other, since they belong to different formulas with different structures. This calculator's comparison table is built for exactly this purpose: it computes trip time for every standard curve at the same pickup and fault current so IEC- and IEEE-curve devices can be compared on equal footing.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
+<script>
+    // ===== Share / Feedback / Like-Dislike bar =====
+    function setFeedback(val){
+      const fbYes = document.getElementById('fbYes');
+      const fbNo = document.getElementById('fbNo');
+      fbYes.classList.toggle('active-like', val === 'yes');
+      fbNo.classList.toggle('active-dislike', val === 'no');
+      fbYes.setAttribute('aria-pressed', val === 'yes');
+      fbNo.setAttribute('aria-pressed', val === 'no');
+    }
+
+    // Shared trip-time formula, used by the main calculator, the
+    // comparison table, and (indirectly) any future verify-style tool —
+    // one function, one formula, so IEC and IEEE math can never drift
+    // out of sync with each other across the page.
+    function tripTime(family, psm, multiplier, c1, c2, c3){
+      if(family === 'iec'){
+        // c1 = k, c2 = alpha
+        return multiplier * (c1 / (Math.pow(psm, c2) - 1));
+      }
+      // IEEE: c1 = A, c2 = B, c3 = p
+      return multiplier * ((c1 / (Math.pow(psm, c3) - 1)) + c2);
+    }
+
+    const CURVES = [
+      { id:'iec_si',  family:'iec',  label:'IEC Standard Inverse (SI)',            c1:0.140, c2:0.020 },
+      { id:'iec_vi',  family:'iec',  label:'IEC Very Inverse (VI)',                c1:13.5,  c2:1 },
+      { id:'iec_ei',  family:'iec',  label:'IEC Extremely Inverse (EI)',           c1:80,    c2:2 },
+      { id:'iec_lti', family:'iec',  label:'IEC Long-Time Standard Inverse (LTI)', c1:120,   c2:1 },
+      { id:'ieee_mi', family:'ieee', label:'IEEE Moderately Inverse',              c1:0.0515, c2:0.114, c3:0.02 },
+      { id:'ieee_vi', family:'ieee', label:'IEEE Very Inverse',                    c1:19.61,  c2:0.491, c3:2 },
+      { id:'ieee_ei', family:'ieee', label:'IEEE Extremely Inverse',               c1:28.2,   c2:0.1217, c3:2.0 }
+    ];
+
+    // Updates the multiplier field's label and shows/hides the TDM note
+    // when the selected curve's family changes (IEC = TMS, IEEE = TD).
+    function updateMultiplierLabel(){
+      const sel = document.getElementById('curveSelect');
+      const opt = sel.options[sel.selectedIndex];
+      const family = opt.getAttribute('data-family');
+      const label = document.getElementById('multiplierLabel');
+      const tdmNote = document.getElementById('tdmNote');
+      if(family === 'ieee'){
+        label.textContent = 'Time Dial (TD)';
+        tdmNote.classList.remove('hidden');
+      } else {
+        label.textContent = 'Time Multiplier Setting (TMS)';
+        tdmNote.classList.add('hidden');
+      }
+    }
+    document.getElementById('curveSelect').addEventListener('change', updateMultiplierLabel);
+    updateMultiplierLabel();
+
+    // Tracks whether the user has interacted with any main input at all
+    // (fired any input/change event) — not whether the value actually
+    // differs from its pre-filled default (e.g. 1000 -> 900 -> 1000 still
+    // counts as edited). The page runs an initial calculation on load so
+    // the result panel isn't empty, but that first result is computed
+    // from placeholder example values, not real relay data.
+    let mainInputsEdited = false;
+    ['curveSelect','pickupCurrent','faultCurrent','multiplier'].forEach(function(id){
+      const el = document.getElementById(id);
+      if(el) el.addEventListener('input', function(){ mainInputsEdited = true; });
+      if(el) el.addEventListener('change', function(){ mainInputsEdited = true; });
+    });
+
+    function calculateTripTime(){
+      const sel = document.getElementById('curveSelect');
+      const opt = sel.options[sel.selectedIndex];
+      const family = opt.getAttribute('data-family');
+      const curveLabel = opt.textContent;
+      const c1 = parseFloat(opt.getAttribute('data-k') || opt.getAttribute('data-A'));
+      const c2 = parseFloat(opt.getAttribute('data-a') || opt.getAttribute('data-B'));
+      const c3 = family === 'ieee' ? parseFloat(opt.getAttribute('data-p')) : null;
+
+      const pickupCurrent = parseFloat(document.getElementById('pickupCurrent').value);
+      const faultCurrent = parseFloat(document.getElementById('faultCurrent').value);
+      const multiplier = parseFloat(document.getElementById('multiplier').value);
+
+      const validationBox = document.getElementById('validationBox');
+      const errors = [];
+      if(!Number.isFinite(pickupCurrent) || pickupCurrent < 0.1){ errors.push('Enter a pickup current from 0.1 to 50,000 A.'); }
+      else if(pickupCurrent > 50000){ errors.push('Pickup current above 50,000 A is outside this calculator\u2019s intended range.'); }
+      if(!Number.isFinite(faultCurrent) || faultCurrent < 0.1){ errors.push('Enter a fault current from 0.1 to 500,000 A.'); }
+      else if(faultCurrent > 500000){ errors.push('Fault current above 500,000 A is outside this calculator\u2019s intended range.'); }
+      if(!Number.isFinite(multiplier) || multiplier < 0.01){ errors.push('Enter a TMS/TD from 0.01 to 30 (this calculator\u2019s computational range).'); }
+      else if(multiplier > 30){ errors.push('TMS/TD above 30 is outside this calculator\u2019s computational range \u2014 it is not a universal relay limit; check your specific relay\u2019s own valid TMS/TD range.'); }
+
+      const psm = (Number.isFinite(pickupCurrent) && pickupCurrent > 0 && Number.isFinite(faultCurrent)) ? (faultCurrent / pickupCurrent) : NaN;
+      if(Number.isFinite(psm) && psm <= 1){
+        errors.push('Fault current must exceed the pickup current (PSM must be greater than 1) for a valid, finite trip time.');
+      }
+
+      if(errors.length){
+        validationBox.classList.remove('hidden');
+        validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+        document.getElementById('rResult').textContent = '\u2014';
+        document.getElementById('rPSM').textContent = '\u2014';
+        document.getElementById('rConstants').textContent = '\u2014';
+        document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+        return;
+      }
+      validationBox.classList.add('hidden');
+      validationBox.innerHTML = '';
+
+      const t = tripTime(family, psm, multiplier, c1, c2, c3);
+      const constantsLabel = family === 'iec'
+        ? ('k=' + c1 + ', \u03b1=' + c2)
+        : ('A=' + c1 + ', B=' + c2 + ', p=' + c3);
+
+      document.getElementById('rResult').textContent = t.toLocaleString(undefined, {maximumFractionDigits:3}) + ' s';
+      document.getElementById('resultSub').textContent = (mainInputsEdited ? '' : 'Example values \u2014 replace with your actual relay data. ') +
+        curveLabel + ', ' + (family === 'ieee' ? 'TD ' : 'TMS ') + multiplier;
+      document.getElementById('rPSM').textContent = psm.toFixed(2) + '\u00d7';
+      document.getElementById('rConstants').textContent = constantsLabel;
+
+      document.getElementById('breakdownBox').innerHTML = `
+        <table class="breakdown-table">
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>Curve</td><td>${curveLabel}</td></tr>
+                <tr><td>Curve Constants</td><td>${constantsLabel}</td></tr>
+                <tr><td>Pickup Current, Is</td><td>${pickupCurrent} A</td></tr>
+                <tr><td>Fault Current, I</td><td>${faultCurrent} A</td></tr>
+                <tr><td>PSM (I \u00f7 Is)</td><td>${psm.toFixed(2)}</td></tr>
+                <tr><td>${family === 'ieee' ? 'TD' : 'TMS'}</td><td>${multiplier}</td></tr>
+                <tr><td><strong>Trip Time</strong></td><td><strong>${t.toFixed(3)} s</strong></td></tr>
+            </tbody>
+        </table>
+      `;
+
+      // Keep the Compare section's Is/I inputs in sync with this
+      // calculator — only auto-fill a field while it still holds its
+      // untouched default, so a value the user has customized in
+      // Compare is never silently overwritten (same convention used
+      // site-wide, e.g. on earthing-conductor-size.html's Verify section).
+      const cIs = document.getElementById('cIs');
+      const cI = document.getElementById('cI');
+      if(cIs && cIs.dataset.touched !== '1' && cIs.value === '1000') cIs.value = pickupCurrent;
+      if(cI && cI.dataset.touched !== '1' && cI.value === '10000') cI.value = faultCurrent;
+    }
+
+    calculateTripTime();
+
+    // Mark Compare fields as user-touched once edited, so the sync above
+    // stops overwriting them.
+    ['cIs','cI','cMultiplier'].forEach(function(id){
+      const el = document.getElementById(id);
+      if(el) el.addEventListener('input', function(){ el.dataset.touched = '1'; });
+      if(el) el.addEventListener('change', function(){ el.dataset.touched = '1'; });
+    });
+
+    function compareAllCurves(){
+      const is = parseFloat(document.getElementById('cIs').value);
+      const i = parseFloat(document.getElementById('cI').value);
+      const m = parseFloat(document.getElementById('cMultiplier').value);
+
+      const cValidationBox = document.getElementById('cValidationBox');
+      const errors = [];
+      if(!Number.isFinite(is) || is < 0.1){ errors.push('Enter a pickup current from 0.1 to 50,000 A.'); }
+      else if(is > 50000){ errors.push('Pickup current above 50,000 A is outside this calculator\u2019s intended range.'); }
+      if(!Number.isFinite(i) || i < 0.1){ errors.push('Enter a fault current from 0.1 to 500,000 A.'); }
+      else if(i > 500000){ errors.push('Fault current above 500,000 A is outside this calculator\u2019s intended range.'); }
+      if(!Number.isFinite(m) || m < 0.01){ errors.push('Enter a multiplier from 0.01 to 30 (this calculator\u2019s computational range).'); }
+      else if(m > 30){ errors.push('Multiplier above 30 is outside this calculator\u2019s computational range \u2014 not a universal relay limit; check your specific relay\u2019s own valid TMS/TD range.'); }
+
+      const psm = (Number.isFinite(is) && is > 0 && Number.isFinite(i)) ? (i / is) : NaN;
+      if(Number.isFinite(psm) && psm <= 1){
+        errors.push('Fault current must exceed the pickup current (PSM must be greater than 1) to compare trip times.');
+      }
+
+      if(errors.length){
+        cValidationBox.classList.remove('hidden');
+        cValidationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+        document.getElementById('compareResultBox').innerHTML = '<p class="text-xs text-gray-400">Fix the input errors above to see a valid result.</p>';
+        return;
+      }
+      cValidationBox.classList.add('hidden');
+      cValidationBox.innerHTML = '';
+
+      const rows = CURVES.map(function(c){
+        const t = c.family === 'iec'
+          ? tripTime('iec', psm, m, c.c1, c.c2, null)
+          : tripTime('ieee', psm, m, c.c1, c.c2, c.c3);
+        const constants = c.family === 'iec'
+          ? ('k=' + c.c1 + ', \u03b1=' + c.c2)
+          : ('A=' + c.c1 + ', B=' + c.c2 + ', p=' + c.c3);
+        return { label:c.label, family:c.family.toUpperCase(), constants:constants, t:t };
+      });
+
+      document.getElementById('compareResultBox').innerHTML = `
+        <div class="space-y-1 mb-2">
+          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">PSM (I \u00f7 Is)</p>
+          <p class="font-display font-bold text-xl text-brandDark">${psm.toFixed(2)}\u00d7</p>
+        </div>
+        <div class="breakdown-wrap">
+          <table class="breakdown-table">
+            <thead><tr><th>Curve</th><th>Family</th><th>Constants</th><th>Trip Time</th></tr></thead>
+            <tbody>
+              ${rows.map(function(r){ return '<tr><td>' + r.label + '</td><td>' + r.family + '</td><td>' + r.constants + '</td><td><strong>' + r.t.toFixed(3) + ' s</strong></td></tr>'; }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      document.getElementById('compareResultPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+</script>
+
+<script>
+  // ===== Generic Copy Result (added site-wide; does not touch page-specific calc logic) =====
+  function copyResultGeneric(){
+    var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
+    var btn = document.getElementById('copyResultBtn');
+    if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
+    var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
+    function restore(){ btn.textContent = '📋 Copy Result'; }
+    if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = '✅ Copied';
+        setTimeout(restore, 1800);
+      }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+    } else {
+      btn.textContent = '⚠️ Not supported';
+      setTimeout(restore, 1800);
+    }
+  }
+
+  // ===== Generic number-input safety net (added site-wide; purely additive —
+  // runs on blur AFTER the page's own oninput/onchange calc handlers, and only
+  // corrects a value that is non-finite or outside the field's own declared
+  // min/max attributes, then re-fires "input" so the page's existing calc
+  // function recalculates with the corrected value. Never overrides or
+  // replaces any existing calculator logic. =====
+  (function(){
+    function clampNumberInput(el){
+      if (el.type !== 'number' || el.value === '') return;
+      var hasMin = el.hasAttribute('min');
+      var hasMax = el.hasAttribute('max');
+      var min = hasMin ? parseFloat(el.min) : null;
+      var max = hasMax ? parseFloat(el.max) : null;
+      var v = parseFloat(el.value);
+      var corrected = null;
+      if (!isFinite(v)) { corrected = (min !== null ? min : 0); }
+      else if (min !== null && v < min) { corrected = min; }
+      else if (max !== null && v > max) { corrected = max; }
+      if (corrected !== null && corrected !== v) {
+        el.value = corrected;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    document.querySelectorAll('input[type="number"]').forEach(function(el){
+      el.addEventListener('blur', function(){ clampNumberInput(el); });
+    });
+  })();
+</script>
+<script>
+  // ===== Share Result modal loader (lazy-loads /assets/share-modal.js on first click) =====
+  var __shareModalLoading = false;
+  function loadShareModal(){
+    if (typeof openShareModal === 'function'){ openShareModal(); return; }
+    if (__shareModalLoading) return;
+    __shareModalLoading = true;
+    var s = document.createElement('script');
+    s.src = '/assets/share-modal.js';
+    s.onload = function(){ __shareModalLoading = false; openShareModal(); };
+    s.onerror = function(){
+      __shareModalLoading = false;
+      var btn = document.querySelector('.share-result-btn');
+      if (btn) {
+        var original = btn.textContent;
+        btn.textContent = '⚠️ Share unavailable';
+        setTimeout(function(){ btn.textContent = original; }, 2200);
+      }
+    };
+    document.head.appendChild(s);
+  }
+</script>
+<script>
+  // ===== Share/Feedback bar: move above Related Calculators on mobile, restore on desktop =====
+  (function(){
+    function positionShareBar(){
+      var bar = document.getElementById('shareFeedbackBar');
+      var related = document.getElementById('relatedCalculatorsBox');
+      var anchor = document.getElementById('shareFeedbackAnchor');
+      if(!bar || !related || !anchor) return;
+      var isMobile = window.matchMedia('(max-width: 1023px)').matches;
+      if(isMobile){
+        if(bar.nextElementSibling !== related){
+          related.parentElement.insertBefore(bar, related);
+        }
+      } else {
+        if(bar.previousElementSibling !== anchor){
+          anchor.parentElement.insertBefore(bar, anchor.nextSibling);
+        }
+      }
+    }
+    window.addEventListener('resize', positionShareBar);
+    document.addEventListener('DOMContentLoaded', positionShareBar);
+    positionShareBar();
+  })();
+</script>
+
+<script>
+(() => {
+  const el = document.getElementById("heroTypingText");
+  if (!el) return;
+  const words = [
+    "Calculate Smarter. Work Faster.",
+    "Practical Calculators & Maintenance Guides."
+  ];
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+  if (reduceMotion) {
+    el.textContent = words[0];
+    return;
+  }
+  let wordIndex = 0;
+  let charIndex = words[0].length;
+  let deleting = true;
+  const typeSpeed = 90;
+  const deleteSpeed = 55;
+  const pauseAfterTyping = 1800;
+  const pauseAfterDeleting = 500;
+  function animate() {
+    const word = words[wordIndex];
+    if (deleting) {
+      if (charIndex > 0) {
+        charIndex--;
+        el.textContent = word.substring(0, charIndex);
+        setTimeout(animate, deleteSpeed);
+      } else {
+        deleting = false;
+        wordIndex = (wordIndex + 1) % words.length;
+        charIndex = 0;
+        setTimeout(animate, pauseAfterDeleting);
+      }
+    } else {
+      const nextWord = words[wordIndex];
+      if (charIndex < nextWord.length) {
+        charIndex++;
+        el.textContent = nextWord.substring(0, charIndex);
+        setTimeout(animate, typeSpeed);
+      } else {
+        deleting = true;
+        setTimeout(animate, pauseAfterTyping);
+      }
+    }
+  }
+  setTimeout(() => {
+    wordIndex = 0;
+    charIndex = words[0].length;
+    deleting = true;
+    animate();
+  }, 1500);
+})();
+</script>
+</body>
+</html>
