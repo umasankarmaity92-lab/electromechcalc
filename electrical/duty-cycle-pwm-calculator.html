@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
+<title>Duty Cycle &amp; PWM Calculator | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<meta name="description" content="Free duty cycle and PWM calculator: find duty cycle, duty factor, frequency and pulse energy from pulse width, period, frequency, or power inputs.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/duty-cycle-pwm-calculator">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Duty Cycle &amp; PWM Calculator">
+<meta property="og:description" content="Free duty cycle and PWM calculator &mdash; get duty cycle, duty factor, frequency and pulse energy from time or power inputs, plus an estimated PWM average output voltage.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/duty-cycle-pwm-calculator">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Duty Cycle &amp; PWM Calculator">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="en_AU">
+<meta property="og:locale:alternate" content="en_CA">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Duty Cycle &amp; PWM Calculator">
+<meta name="twitter:description" content="Free duty cycle and PWM calculator &mdash; get duty cycle, duty factor, frequency and pulse energy from time or power inputs.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Duty Cycle & PWM Calculator",
+  "url": "https://www.electromechcalc.com/electrical/duty-cycle-pwm-calculator",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "Free duty cycle and PWM calculator. Find duty cycle, duty factor, frequency and pulse energy from pulse width and period, pulse width and frequency, or average and peak power.",
+  "dateModified": "2026-09",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electrical Calculators", "item": "https://www.electromechcalc.com/electrical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "Duty Cycle & PWM Calculator", "item": "https://www.electromechcalc.com/electrical/duty-cycle-pwm-calculator" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is duty cycle, and how is it different from duty factor?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Duty cycle is the fraction of one full period that a repeating signal spends in its \"on\" (active/high) state, expressed as a percentage: D = (PW / T) x 100%, where PW is the pulse width and T is the period. Duty factor is the exact same ratio expressed as a plain decimal fraction instead of a percentage: df = PW / T. A 25% duty cycle and a duty factor of 0.25 describe the identical signal \u2014 only the presentation differs." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the formula for duty cycle from pulse width and period?",
+      "acceptedAnswer": { "@type": "Answer", "text": "D (%) = (PW / T) x 100%, where PW is the pulse width (the on-time within one cycle) and T is the period (the total time of one complete cycle), both measured in the same time unit. The period can also be found from frequency as T = 1 / f, so an equivalent form is D (%) = PW x f x 100%, where f is in hertz and PW is in seconds." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I calculate duty cycle from average and peak power?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For a signal that switches between a peak power level and zero (or a much lower baseline), duty cycle can be estimated from D (%) = (average power / peak power) x 100%. This relationship holds because average power is simply the peak power scaled down by the fraction of time the pulse is actually on \u2014 it is commonly used in pulsed RF, radar and laser systems where average power is measured but the underlying pulse timing may not be directly accessible." }
+    },
+    {
+      "@type": "Question",
+      "name": "How does duty cycle relate to frequency?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Frequency and period are reciprocals: f = 1 / T and T = 1 / f. Duty cycle itself does not change with frequency for a fixed pulse-width-to-period ratio \u2014 doubling the frequency while keeping the same duty cycle simply means the pulse width also halves, since a shorter period at the same duty cycle requires a proportionally shorter on-time. This calculator lets you enter either the period directly or a frequency, and converts internally to a common time base." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is pulse energy, and how is it calculated?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Pulse energy is the energy delivered during a single on-pulse, found from Ep = Pp x PW (peak power multiplied by pulse width) or equivalently Ep = P-bar x T (average power multiplied by the full period) \u2014 both expressions are mathematically identical once duty cycle is factored in. This calculator can compute pulse energy whenever both a power value and a timing value (period, frequency, or pulse width) are available, whichever combination of inputs you provide." }
+    },
+    {
+      "@type": "Question",
+      "name": "How does duty cycle affect the average output voltage in PWM applications like LED dimming or motor speed control?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For an ideal 0-to-Vin PWM waveform, the ideal average voltage is Vavg \u2248 D x Vin, where D is the duty factor (0 to 1). At 30% duty cycle on a 12 V supply, Vavg \u2248 3.6 V. This is the basic principle behind PWM LED dimming, DC motor speed control, and the voltage step-down ratio in a buck converter \u2014 but it describes the ideal switched waveform, not automatically the actual load voltage: real circuits also have switching losses, diode/MOSFET voltage drops, and output ripple, so measured average voltage is typically somewhat different from this ideal figure." }
+    },
+    {
+      "@type": "Question",
+      "name": "What does a 100% duty cycle mean?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A 100% duty cycle means the signal itself is continuously on for the entire period \u2014 effectively a constant (DC) signal rather than a pulsed one, since there is no \"off\" portion left in the cycle. A device\u2019s manufacturer-specified \"100% duty-cycle rating\" is a related but separate concept: it is a specific operating and thermal rating defined by that manufacturer, and shouldn\u2019t automatically be read as unlimited continuous operation under every load or environmental condition \u2014 check the manufacturer\u2019s own duty-cycle specification for the actual limits." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do devices like air compressors, welders, and radar transmitters specify a maximum duty cycle rating?",
+      "acceptedAnswer": { "@type": "Answer", "text": "These devices generate significant heat while active, and a maximum duty cycle rating (for example, \"60% duty cycle\" on a welder) specifies the largest fraction of a defined time window the device can run before it needs an off/cooling period to avoid overheating. Running a device beyond its rated duty cycle for sustained periods can cause thermal damage, trigger thermal protection cutouts, or shorten component life \u2014 always check the manufacturer's rated duty cycle and the time window it applies over (often quoted per 10 minutes) before planning continuous or near-continuous operation." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can duty cycle / PWM be used to approximate a sine wave?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes \u2014 this is the basis of Sinusoidal PWM (SPWM), widely used in VFDs (variable frequency drives) and inverters. By continuously varying the duty cycle of a fast switching signal so that its average value traces out a sine wave over each cycle, an inverter can synthesize an approximately sinusoidal AC output voltage from a DC source. A higher switching frequency relative to the desired output frequency generally produces a smoother approximation with lower unwanted harmonic content, though it also increases switching losses in the power devices." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the actual difference between PWM, SPWM, and duty cycle?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Duty cycle is a single ratio (PW / T) describing how much of one period a pulse is on \u2014 it's a number, not a technique. PWM is a general switching scheme that sets a duty cycle (fixed, or slowly adjusted) to control one steady average output, used for things like motor speed or LED brightness. SPWM is a specific PWM variant that recalculates duty cycle at every switching interval \u2014 typically by comparing a sine reference against a triangular carrier \u2014 so the running average traces a sine wave, which is how inverters and AC motor drives synthesize AC output from a DC source. In short: duty cycle is the parameter, PWM and SPWM are two different strategies for how that parameter is varied over time." }
+    }
+  ]
+}
+</script>
+
+<link rel="preload" as="style" href="/assets/site.min.css?v=1">
+<link rel="stylesheet" href="/assets/site.min.css?v=1" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/site.min.css?v=1"></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{ transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+  .calc-card:hover{ transform:translateY(-3px); box-shadow:0 14px 28px rgba(11,18,32,0.10); border-color:#0ea5e9; }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace; font-size:11px; background:#eaf6fd; color:#0369a1;
+    padding:3px 9px; border-radius:6px; display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+
+  .hero-typing-box{ display:flex; align-items:center; justify-content:center; min-height:2.75em; max-width:640px; margin:0 auto 0.5rem; padding:0.4rem 1rem; box-sizing:border-box; }
+  .hero-typing{ display:inline-flex; color:#d4af37; align-items:center; justify-content:center; text-align:center; white-space:normal; word-break:break-word; line-height:1.3; margin:0; }
+  .hero-cursor{ display:inline-block; width:2px; height:1em; margin-left:4px; flex-shrink:0; background:currentColor; animation:heroCursorBlink 0.8s steps(1) infinite; }
+  @keyframes heroCursorBlink{ 50%{ opacity:0; } }
+  @media (prefers-reduced-motion: reduce){ .hero-cursor{ animation:none; } }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .input-field{
+    width:100%; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;
+    padding:10px 12px; font-size:14px; color:#0B1220; outline:none;
+  }
+  .input-field:focus{ border-color:#0ea5e9; background:#fff; box-shadow:0 0 0 3px rgba(14,165,233,0.12); }
+  .unit-select{ max-width:112px; flex-shrink:0; }
+  .toggle-btn{
+    flex:1; text-align:center; padding:10px 8px; font-size:13px; font-weight:600;
+    border-radius:8px; cursor:pointer; color:#64748b; transition:.15s ease;
+  }
+  .toggle-btn.active{ background:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .toggle-btn:focus-visible, .action-icon-btn:focus-visible{ outline:3px solid #0ea5e9; outline-offset:2px; }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{ max-height:320px; overflow-y:auto; overflow-x:auto; margin-top:4px; border-radius:8px; border:1px solid #e5e7eb; min-width:0; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  .nav-icon-badge{ display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:9999px; flex-shrink:0; box-shadow:0 2px 5px rgba(0,0,0,0.25); }
+  .nav-dropdown-link{ display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220; }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+  .mobile-sublink{ display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85; }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+
+  .action-icon-btn{
+    display:inline-flex; align-items:center; gap:6px; border:1px solid #e2e8f0; border-radius:8px;
+    padding:8px 12px; font-size:13px; color:#334155; background:#fff; cursor:pointer; transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
+  .author-box{ border:2px solid #000000; }
+  body.dark-theme .author-box{ border-color:#ffffff; background:#0B1220; color:#e2e8f0; }
+  .lg\:col-span-2.flex.flex-col.gap-4{ min-width:0; }
+  .lg\:col-span-2.flex.flex-col.gap-4 > div{ min-width:0; }
+
+  body.dark-theme #dc-example-box{ background:rgba(14,165,233,0.07); border-color:#164e63; }
+  body.dark-theme #dc-example-box .text-gray-500{ color:#7dd3fc; }
+  body.dark-theme #dc-example-box .text-gray-600{ color:#cbd5e1; }
+  body.dark-theme #dc-example-box .text-gray-700{ color:#e2e8f0; }
+
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<div id="site-header"></div>
+<div id="breadcrumb"></div>
+
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical &middot; Power Electronics &amp; Signals
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Duty Cycle &amp; <span class="text-sky-400">PWM Calculator</span>
+        </h1>
+        <div class="hero-typing-box">
+          <p class="hero-typing text-[#d4af37] text-sm font-mono font-bold justify-center" aria-label="Calculate Smarter. Work Faster. Practical Calculators & Maintenance Guides.">
+            <span id="heroTypingText">Calculate Smarter. Work Faster.</span><span class="hero-cursor" aria-hidden="true"></span>
+          </p>
+        </div>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Free duty cycle and PWM calculator &mdash; find duty cycle, duty factor, frequency and pulse energy from pulse width &amp; period/frequency, or from average &amp; peak power. Or go the other way: enter a duty cycle percentage to get the average PWM output voltage, period, and ON/OFF time directly.
+        </p>
+      </div>
+
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" aria-hidden="true" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+      <div id="calcHeaderBar">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Duty Cycle Details</h2>
+        <p class="text-xs text-gray-500 mb-6">Find duty cycle from timing or power values &mdash; or enter a duty cycle % directly to get average voltage.</p>
+      </div>
+
+      <div class="mb-5">
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_duty-cycle-pwm-calculator">Calculator Mode</span>
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_duty-cycle-pwm-calculator">
+          <button type="button" id="modeTime" class="toggle-btn active" aria-pressed="true" onclick="setDcMode('time')">Find D% by Time</button>
+          <button type="button" id="modePower" class="toggle-btn" aria-pressed="false" onclick="setDcMode('power')">Find D% by Power</button>
+          <button type="button" id="modeDutyPct" class="toggle-btn" aria-pressed="false" onclick="setDcMode('dutypct')">D% &rarr; Voltage</button>
+        </div>
+      </div>
+
+      <!-- TIME MODE -->
+      <div id="panelTime" class="calc-panel active">
+        <div class="space-y-4 mb-5">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pwValue">Pulse Width (PW)</label>
+            <div class="flex gap-2 mt-2">
+              <input id="pwValue" type="number" value="225" step="0.01" min="0" placeholder="e.g. 225" class="input-field" oninput="calculateDutyCycle()">
+              <select id="pwUnit" class="input-field unit-select" onchange="calculateDutyCycle()">
+                <option value="us">&micro;s</option>
+                <option value="ms" selected>ms</option>
+                <option value="s">s</option>
+                <option value="min">min</option>
+                <option value="h">h</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel2_duty-cycle-pwm-calculator">Enter Period or Frequency</span>
+            <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel2_duty-cycle-pwm-calculator">
+              <button type="button" id="subPeriod" class="toggle-btn active" aria-pressed="true" onclick="setTimingSubMode('period')">Period (T)</button>
+              <button type="button" id="subFreq" class="toggle-btn" aria-pressed="false" onclick="setTimingSubMode('freq')">Frequency (f)</button>
+            </div>
+          </div>
+
+          <div id="periodField">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tValue">Period (T)</label>
+            <div class="flex gap-2 mt-2">
+              <input id="tValue" type="number" value="1" step="0.01" min="0" placeholder="e.g. 1" class="input-field" oninput="calculateDutyCycle()">
+              <select id="tUnit" class="input-field unit-select" onchange="calculateDutyCycle()">
+                <option value="us">&micro;s</option>
+                <option value="ms">ms</option>
+                <option value="s" selected>s</option>
+                <option value="min">min</option>
+                <option value="h">h</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="freqField" class="hidden-field">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="fValue">Frequency (f)</label>
+            <div class="flex gap-2 mt-2">
+              <input id="fValue" type="number" value="1" step="0.01" min="0" placeholder="e.g. 1" class="input-field" oninput="calculateDutyCycle()">
+              <select id="fUnit" class="input-field unit-select" onchange="calculateDutyCycle()">
+                <option value="Hz" selected>Hz</option>
+                <option value="kHz">kHz</option>
+                <option value="MHz">MHz</option>
+                <option value="GHz">GHz</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-gray-100">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="avgPowerValueT">Average Power (optional)</label>
+            <div class="flex gap-2 mt-2">
+              <input id="avgPowerValueT" type="number" step="0.01" min="0" placeholder="e.g. 5" class="input-field" oninput="calculateDutyCycle()">
+              <select id="avgPowerUnitT" class="input-field unit-select" onchange="calculateDutyCycle()">
+                <option value="mW">mW</option>
+                <option value="W" selected>W</option>
+                <option value="kW">kW</option>
+              </select>
+            </div>
+            <p class="text-[11px] text-gray-400 mt-1.5">If known, also gives peak power and pulse energy.</p>
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="supplyVoltageT">Supply Voltage Vin, V (optional)</label>
+            <input id="supplyVoltageT" type="number" step="0.1" min="0" placeholder="e.g. 12" class="input-field mt-2" oninput="calculateDutyCycle()">
+            <p class="text-[11px] text-gray-400 mt-1.5">If known, estimates the average PWM output voltage (LED dimming, motor speed, buck converter).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- POWER MODE -->
+      <div id="panelPower" class="calc-panel">
+        <div class="space-y-4 mb-5">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="avgPowerValueP">Average Power (P&#772;)</label>
+            <div class="flex gap-2 mt-2">
+              <input id="avgPowerValueP" type="number" value="200" step="0.01" placeholder="e.g. 200" class="input-field" oninput="calculateDutyCycle()">
+              <select id="avgPowerUnitP" class="input-field unit-select" onchange="syncPowerUnitField('avgPowerValueP','avgPowerUnitP'); calculateDutyCycle()">
+                <option value="mW">mW</option>
+                <option value="W" selected>W</option>
+                <option value="kW">kW</option>
+                <option value="dBm">dBm</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="peakPowerValueP">Pulse Power, Peak (Pp)</label>
+            <div class="flex gap-2 mt-2">
+              <input id="peakPowerValueP" type="number" value="20" step="0.01" placeholder="e.g. 20" class="input-field" oninput="calculateDutyCycle()">
+              <select id="peakPowerUnitP" class="input-field unit-select" onchange="syncPowerUnitField('peakPowerValueP','peakPowerUnitP'); calculateDutyCycle()">
+                <option value="mW">mW</option>
+                <option value="W">W</option>
+                <option value="kW" selected>kW</option>
+                <option value="dBm">dBm</option>
+              </select>
+            </div>
+            <p class="text-[11px] text-gray-400 mt-1.5">dBm is supported for RF/radar power (referenced to 1 mW) and can be negative &mdash; e.g. &minus;10 dBm &asymp; 0.1 mW.</p>
+          </div>
+
+          <div class="pt-2 border-t border-gray-100">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="fValueP">Frequency (optional)</label>
+            <div class="flex gap-2 mt-2">
+              <input id="fValueP" type="number" step="0.01" min="0" placeholder="e.g. 100" class="input-field" oninput="calculateDutyCycle()">
+              <select id="fUnitP" class="input-field unit-select" onchange="calculateDutyCycle()">
+                <option value="Hz" selected>Hz</option>
+                <option value="kHz">kHz</option>
+                <option value="MHz">MHz</option>
+                <option value="GHz">GHz</option>
+              </select>
+            </div>
+            <p class="text-[11px] text-gray-400 mt-1.5">If known, also gives period, pulse width and pulse energy.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- DUTY % -> VOLTAGE MODE -->
+      <div id="panelDutyPct" class="calc-panel">
+        <div class="space-y-4 mb-5">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="dpDutyValue">Duty Cycle (%)</label>
+            <input id="dpDutyValue" type="number" value="75" step="0.1" min="0" max="100" placeholder="e.g. 75" class="input-field mt-2" oninput="calculateDutyCycle()">
+          </div>
+
+          <div>
+            <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel3_duty-cycle-pwm-calculator">Enter Period or Frequency</span>
+            <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel3_duty-cycle-pwm-calculator">
+              <button type="button" id="dpSubPeriod" class="toggle-btn" aria-pressed="false" onclick="setDpSubMode('period')">Period (T)</button>
+              <button type="button" id="dpSubFreq" class="toggle-btn active" aria-pressed="true" onclick="setDpSubMode('freq')">Frequency (f)</button>
+            </div>
+          </div>
+
+          <div id="dpPeriodField" class="hidden-field">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="dpTValue">Period (T)</label>
+            <div class="flex gap-2 mt-2">
+              <input id="dpTValue" type="number" value="1" step="0.01" min="0" placeholder="e.g. 1" class="input-field" oninput="calculateDutyCycle()">
+              <select id="dpTUnit" class="input-field unit-select" onchange="calculateDutyCycle()">
+                <option value="us">&micro;s</option>
+                <option value="ms" selected>ms</option>
+                <option value="s">s</option>
+                <option value="min">min</option>
+                <option value="h">h</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="dpFreqField">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="dpFValue">Frequency (f)</label>
+            <div class="flex gap-2 mt-2">
+              <input id="dpFValue" type="number" value="1000" step="0.01" min="0" placeholder="e.g. 1000" class="input-field" oninput="calculateDutyCycle()">
+              <select id="dpFUnit" class="input-field unit-select" onchange="calculateDutyCycle()">
+                <option value="Hz" selected>Hz</option>
+                <option value="kHz">kHz</option>
+                <option value="MHz">MHz</option>
+                <option value="GHz">GHz</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-gray-100">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="dpVinValue">Supply Voltage (Vin)</label>
+            <input id="dpVinValue" type="number" value="24" step="0.1" min="0" placeholder="e.g. 24" class="input-field mt-2" oninput="calculateDutyCycle()">
+            <p class="text-[11px] text-gray-400 mt-1.5">Used for the ideal average PWM voltage, Vavg &asymp; (D&divide;100) &times; Vin for an ideal 0-to-Vin waveform &mdash; the direction motor-speed and actuator-PWM setups usually need.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5" role="alert" aria-live="polite"></div>
+
+      <button type="button" onclick="calculateDutyCycle()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip" id="formulaChip">D = PW &divide; T &times; 100%</span>
+      </div>
+      <p class="text-[11px] text-gray-400 mt-3">This calculator treats the signal as an ideal repeating on/off pulse. The optional ideal average PWM voltage (Vavg &asymp; D &times; Vin for an ideal 0-to-Vin waveform) is not a guaranteed actual load voltage &mdash; a lossless switch with no diode drop, dead-time, or ripple is assumed, and real PWM circuits will differ somewhat from this ideal figure.</p>
+      <p class="text-[11px] text-gray-400 mt-2">Note: this computes waveform/periodic duty cycle (PW &divide; T) from timing or power inputs. A manufacturer's equipment duty-cycle rating (e.g. a welder or compressor) is a separate thermal/operating specification and should be checked against the manufacturer's own stated time window rather than read off this calculator.</p>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden" aria-live="polite">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Duty Cycle</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">&mdash;</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Duty Factor</span>
+            <span id="rDf" class="font-display font-semibold text-lg">&mdash;</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Frequency</span>
+            <span id="rFreq" class="font-display font-semibold text-lg">&mdash;</span>
+          </div>
+        </div>
+        <div class="mt-3 pt-3 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Period</span>
+            <span id="rPeriod" class="font-display font-semibold text-lg">&mdash;</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Pulse Width</span>
+            <span id="rPw" class="font-display font-semibold text-lg">&mdash;</span>
+          </div>
+        </div>
+        <div id="rExtraBlock" class="mt-3 pt-3 border-t border-white/10 hidden">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rExtraLabel">Pulse Energy</span>
+          <span id="rExtra" class="font-display font-semibold text-lg">&mdash;</span>
+        </div>
+        <div id="rVavgBlock" class="mt-3 pt-3 border-t border-white/10 hidden">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Ideal Average PWM Voltage</span>
+          <span id="rVavg" class="font-display font-semibold text-lg">&mdash;</span>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-3 pt-3 border-t border-white/10">General reference calculation &mdash; not a substitute for your device's rated duty cycle or a full switching-loss analysis.</p>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<span id="shareFeedbackAnchor"></span>
+<section id="shareFeedbackBar" class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button type="button" class="share-result-btn" onclick="loadShareModal()"><span aria-hidden="true">&#128279;</span> Share Result</button>
+      <button type="button" class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()"><span aria-hidden="true">&#128203;</span> Copy Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button type="button" id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')"><span aria-hidden="true">&#128077;</span> Yes</button>
+      <button type="button" id="fbNo" class="action-icon-btn" onclick="setFeedback('no')"><span aria-hidden="true">&#128078;</span> No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Duty%20Cycle%20%26%20PWM%20Calculator"><span aria-hidden="true">&#9993;&#65039;</span> Feedback</a>
+    </div>
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 mb-6">
+  <div id="relatedCalculatorsBox" class="bg-white rounded-xl border border-gray-100 p-4" data-copy-exclude>
+    <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+    <div class="grid sm:grid-cols-2 gap-1.5">
+      <a href="/electrical/vfd-sizing" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        VFD Sizing Calculator <span class="text-sky-500">&rarr;</span>
+      </a>
+      <a href="/electrical/soft-starter-sizing" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        Soft Starter Sizing Calculator <span class="text-sky-500">&rarr;</span>
+      </a>
+      <a href="/electrical/harmonic-distortion" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        Harmonic Distortion Calculator <span class="text-sky-500">&rarr;</span>
+      </a>
+      <a href="/electrical-calculators" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        Explore All Electrical Calculators <span class="text-sky-500">&rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#duty-cycle-formula" class="hover:underline">2. Duty cycle formula</a></li>
+      <li><a href="#how-it-works" class="hover:underline">3. Understanding duty cycle &amp; PWM</a></li>
+      <li><a href="#second" class="hover:underline">4. PWM in practice</a></li>
+      <li><a href="#pwm-vs-spwm" class="hover:underline">5. PWM vs. SPWM vs. duty cycle</a></li>
+      <li><a href="#mistakes" class="hover:underline">6. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">7. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> &mdash; B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Method: standard duty-cycle/duty-factor definitions used across electronics, PWM and pulsed-power engineering.</p>
+    </div>
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Duty Cycle Is Calculated</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>A periodic signal &mdash; a square wave, a PWM drive signal, a pulsed radar transmission, an intermittently-running compressor &mdash; repeats itself every fixed interval, the period. Within each period, the signal is "on" for some portion of the time and "off" for the rest. Duty cycle simply measures what fraction of that period is spent on, regardless of how intense the "on" state actually is.</p>
+
+      <div class="not-prose my-8" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:20px 12px 14px;">
+        <svg viewBox="0 0 700 260" role="img" aria-label="Waveform diagram showing amplitude, pulse width and period of a periodic on/off signal" style="width:100%;height:auto;display:block;">
+          <!-- amplitude reference lines -->
+          <line x1="55" y1="70" x2="620" y2="70" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <line x1="55" y1="188" x2="620" y2="188" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <!-- amplitude double arrow -->
+          <line x1="30" y1="70" x2="30" y2="188" stroke="#0B1220" stroke-width="1.6"/>
+          <path d="M30 70 l-4 8 h8 z" fill="#0B1220"/>
+          <path d="M30 188 l-4 -8 h8 z" fill="#0B1220"/>
+          <text x="18" y="129" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#0B1220" transform="rotate(-90 18 129)">Amplitude (A)</text>
+
+          <!-- time axis -->
+          <line x1="55" y1="188" x2="660" y2="188" stroke="#334155" stroke-width="1.8"/>
+          <path d="M660 188 l-9 -5 v10 z" fill="#334155"/>
+          <text x="672" y="192" font-family="JetBrains Mono, monospace" font-size="12" fill="#334155">Time</text>
+
+          <!-- waveform: off - ON - off - ON - off -->
+          <path d="M55 188 H140 V70 H290 V188 H375 V70 H525 V188 H600"
+                fill="none" stroke="#0ea5e9" stroke-width="3.5" stroke-linejoin="round"/>
+
+          <!-- ON / OFF labels -->
+          <text x="215" y="55" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="15" fill="#0369a1">ON</text>
+          <text x="332" y="150" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="15" fill="#64748b">OFF</text>
+
+          <!-- pulse width bracket (first ON pulse) -->
+          <line x1="140" y1="205" x2="140" y2="212" stroke="#0369a1" stroke-width="1.5"/>
+          <line x1="290" y1="205" x2="290" y2="212" stroke="#0369a1" stroke-width="1.5"/>
+          <line x1="140" y1="208.5" x2="290" y2="208.5" stroke="#0369a1" stroke-width="1.5"/>
+          <text x="215" y="222" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#0369a1">Pulse Width (PW)</text>
+
+          <!-- period bracket (start of ON to start of next ON) -->
+          <line x1="140" y1="236" x2="140" y2="243" stroke="#f59e0b" stroke-width="1.5"/>
+          <line x1="375" y1="236" x2="375" y2="243" stroke="#f59e0b" stroke-width="1.5"/>
+          <line x1="140" y1="239.5" x2="375" y2="239.5" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="257" y="255" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#b45309">Period (T)</text>
+        </svg>
+        <p class="text-xs text-gray-500 text-center mt-2">One full period T contains one on-time (Pulse Width, PW) and one off-time. Duty cycle is PW divided by T.</p>
+      </div>
+
+      <p><strong>Choosing a PWM switching frequency:</strong> the switching frequency (how fast the on/off cycle repeats) is a separate design decision from duty cycle, and picking it involves real trade-offs. Too low, and an LED driven by PWM can visibly flicker, or a motor can audibly whine or vibrate as it responds to individual pulses rather than a smooth average; many LED dimmers therefore switch well above roughly 200&ndash;500 Hz (often into the low kHz range) specifically to stay above the range of visible flicker and audible motor noise. Too high, and switching losses in the driving transistor rise (each on/off transition itself dissipates a small amount of energy, and more transitions per second means more of this loss), while the drive electronics also need to be fast enough to produce clean edges at that rate. Typical PWM switching frequencies range from a few hundred hertz for basic heater or valve control, through the low kilohertz range for LED dimming and small motor drives, up to tens or hundreds of kilohertz for switch-mode power supplies and motor drives using MOSFETs, where minimizing inductor/capacitor size favors a higher frequency.</p>
+
+      <p><strong>Resolution &mdash; how finely duty cycle can actually be set:</strong> a microcontroller's PWM output isn't continuously variable; it's stepped, because duty cycle is set as a count of timer ticks out of a fixed total (for example, an 8-bit PWM timer can only represent 256 distinct duty-cycle steps, giving roughly 0.39% resolution per step). A higher-resolution timer (10-bit, 16-bit) allows finer duty-cycle steps, which matters for applications like precise motor speed control or smooth LED dimming curves where a visible "stepping" between adjacent brightness or speed levels would otherwise be noticeable. Resolution and maximum achievable switching frequency are often linked for a given timer clock speed &mdash; requesting a higher PWM frequency from the same timer clock typically reduces the number of achievable duty-cycle steps, and vice versa.</p>
+
+      <h3 id="duty-cycle-formula" class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Duty Cycle Formula (From Time)</h3>
+      <p>D (%) = (PW &divide; T) &times; 100%, where PW is the pulse width (on-time within one cycle) and T is the period (total time of one complete cycle). Expressed as a plain ratio rather than a percentage, this same value is the duty factor: df = PW &divide; T. Since period and frequency are reciprocals (T = 1 &divide; f), duty cycle can equally be written as D (%) = PW &times; f &times; 100%, with PW in seconds and f in hertz.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Duty Cycle Formula (From Power)</h3>
+      <p>D (%) = (P&#772; &divide; Pp) &times; 100%, where P&#772; is the average power over a full period and Pp is the peak (pulse) power. This form is especially useful when the underlying pulse timing isn't directly measurable but average and peak power readings are &mdash; a common situation in pulsed RF, radar, and laser systems. It follows directly from the time-based definition, since average power is just the peak power scaled down by the same fraction of time the signal is actually on.</p>
+
+      <p><strong>Pulse energy:</strong> once both a power value and a timing value are known, the energy delivered in a single on-pulse can be found from Ep = Pp &times; PW, or equivalently Ep = P&#772; &times; T &mdash; the two expressions give the same answer because P&#772; = D &times; Pp and T = PW &divide; D cancel out identically.</p>
+
+      <p><strong>Worked example (time-based):</strong> an NE555-style oscillator produces a period of T = 1 s, with the output high for PW = 225 ms = 0.225 s. Duty cycle D = (0.225 &divide; 1) &times; 100% = <strong>22.5%</strong>, duty factor df = <strong>0.225</strong>, and the equivalent frequency is f = 1 &divide; T = <strong>1 Hz</strong>.</p>
+
+      <p><strong>Worked example (power-based):</strong> a pulsed radar transmitter is on for 10 ms out of every 1000 ms (1 s), giving D = 1%. If its peak transmit power is 20 kW, the average power over that period is P&#772; = D &times; Pp = 0.01 &times; 20,000 W = <strong>200 W</strong>, and the energy per pulse is Ep = 20,000 W &times; 0.010 s = <strong>200 J</strong>.</p>
+
+      <p><strong>Solving in reverse &mdash; from a target duty cycle to average voltage:</strong> the most common real-world question isn't always "what's my duty cycle" but the opposite: "I want to run this motor/actuator at a given duty cycle at a given switching frequency &mdash; what average voltage and ON/OFF timing does that actually give me?" This calculator's "D% &rarr; Voltage" mode handles that direction directly: enter the desired duty cycle, the switching frequency (or period), and the supply voltage, and get period, ON time, OFF time and Vavg &asymp; (D&divide;100) &times; Vin back out. Worked example: a 24 V linear actuator driven at 75% duty cycle, 1 kHz switching &mdash; period T = 1&divide;1000 = <strong>1 ms</strong>, ON time = 0.75 &times; 1 ms = <strong>0.75 ms</strong>, OFF time = <strong>0.25 ms</strong>, and Vavg = 0.75 &times; 24 V = <strong>18 V</strong>. Halving the duty cycle to 37.5% would roughly halve the average voltage the actuator sees, which is the basic mechanism behind PWM speed control.</p>
+
+      <p><strong>Why time units matter:</strong> pulse width and period must be converted to the same time base before dividing &mdash; mixing milliseconds with seconds without converting first is one of the most common sources of a wrong duty-cycle result. This calculator converts every time and frequency entry internally to a common base (seconds and hertz) before computing, regardless of which units you type each value in.</p>
+
+      <p><strong>Choosing period vs. frequency as an input:</strong> some datasheets and oscilloscope readouts quote period directly; others quote frequency. Both describe the same underlying timing, so this calculator accepts either &mdash; enter whichever one your source data actually gives you, and the other is derived automatically (T = 1 &divide; f).</p>
+    </div>
+
+    <div id="dc-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">PW = 225 ms, T = 1 s: D = (0.225 &divide; 1) &times; 100% = <strong>22.5%</strong>, duty factor = <strong>0.225</strong>, f = <strong>1 Hz</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator uses the standard idealized duty-cycle definitions above. For devices with a manufacturer-rated maximum duty cycle (welders, compressors, pulsed RF sources), always check the rated value and its stated time window rather than relying on a general-purpose calculation alone.</p>
+  </div>
+</section>
+
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Applications</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">PWM in Practice</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Pulse Width Modulation (PWM) uses a rapidly switching signal, with a controllably varying duty cycle, to deliver a desired average power or voltage to a load far more efficiently than a linear (resistive) control method &mdash; because the switching device itself is either fully on (low loss) or fully off (no current), rather than sitting in a lossy partially-conducting state.</p>
+    <div class="not-prose overflow-x-auto my-4">
+      <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr><th class="text-left px-4 py-2 font-semibold">Application</th><th class="text-left px-4 py-2 font-semibold">Role of Duty Cycle</th></tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr><td class="px-4 py-2">LED dimming</td><td class="px-4 py-2">Higher duty cycle &rarr; brighter perceived output (Vavg &asymp; D &times; Vin)</td></tr>
+          <tr><td class="px-4 py-2">DC motor speed control</td><td class="px-4 py-2">Higher duty cycle generally increases average applied voltage, which can increase speed under comparable load conditions</td></tr>
+          <tr><td class="px-4 py-2">Buck (step-down) converter</td><td class="px-4 py-2">Ideal CCM approximation: Vout &asymp; D &times; Vin (actual output also depends on operating mode, losses and control loop)</td></tr>
+          <tr><td class="px-4 py-2">VFD / inverter (SPWM)</td><td class="px-4 py-2">Duty cycle varied continuously each switching cycle to synthesize an AC sine wave</td></tr>
+          <tr><td class="px-4 py-2">Pulsed radar / RF</td><td class="px-4 py-2">Low duty cycle keeps average transmitted/dissipated power manageable despite high peak power</td></tr>
+          <tr><td class="px-4 py-2">Welders, compressors</td><td class="px-4 py-2">Rated maximum duty cycle limits continuous heat build-up in the device</td></tr>
+          <tr><td class="px-4 py-2">Automotive fuel injectors</td><td class="px-4 py-2">ECU varies injector-open duty cycle each engine cycle to meter fuel quantity</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>PWM to approximate a sine wave:</strong> if the duty cycle of a fast switching signal is varied smoothly, cycle by cycle, so that its average value traces a sinusoid, the result approximates a sine wave using nothing but an on/off switch &mdash; this Sinusoidal PWM (SPWM) technique underlies most modern variable frequency drives and inverters. A shorter switching period (higher switching frequency) relative to the target output frequency generally gives a closer sinusoidal approximation with less unwanted harmonic content, at the cost of higher switching losses in the power devices &mdash; see this site's <a href="/electrical/harmonic-distortion" class="text-sky-600 underline">Harmonic Distortion Calculator</a> and <a href="/electrical/vfd-sizing" class="text-sky-600 underline">VFD Sizing Calculator</a> for related tools.</p>
+
+    <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2" id="pwm-vs-spwm">PWM vs. SPWM vs. Duty Cycle &mdash; How the Three Terms Relate</h3>
+    <p>These three terms get mixed up often because they describe different layers of the same idea rather than three competing techniques. Duty cycle is a single number; PWM and SPWM are two different strategies for deciding how that number changes over time.</p>
+    <div class="not-prose overflow-x-auto my-4">
+      <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-4 py-2 font-semibold">Term</th>
+            <th class="text-left px-4 py-2 font-semibold">What It Actually Is</th>
+            <th class="text-left px-4 py-2 font-semibold">Typical Use</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr>
+            <td class="px-4 py-2 font-medium">Duty Cycle</td>
+            <td class="px-4 py-2">A single ratio &mdash; PW &divide; T &mdash; that describes how much of one period a pulse is on. It's a number, not a technique.</td>
+            <td class="px-4 py-2">The parameter that PWM and SPWM both manipulate to get a result.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-2 font-medium">PWM (general)</td>
+            <td class="px-4 py-2">Controls the average output by varying pulse width (duty cycle) relative to a switching period.</td>
+            <td class="px-4 py-2">DC motor speed control, LED brightness, buck/boost converter output regulation.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-2 font-medium">SPWM</td>
+            <td class="px-4 py-2">A PWM variant that recalculates duty cycle at every switching interval &mdash; usually by comparing a sine reference against a triangular carrier &mdash; so the running average traces a sine wave.</td>
+            <td class="px-4 py-2">Inverters and AC motor drives (VFDs), where a DC bus has to be turned into synthetic AC.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Put another way: a basic PWM dimmer circuit picks one duty cycle (say 60%) and holds it there until the user changes the brightness setting &mdash; the output stays a steady DC-like average. An SPWM-driven inverter, by contrast, is recomputing its duty cycle continuously, often thousands of times per output cycle, deliberately sweeping it up and down so the resulting average traces the shape of a 50 or 60 Hz sine wave. The switching itself still happens exactly the way it does in ordinary PWM &mdash; on, off, on, off &mdash; SPWM is simply a particular pattern of duty-cycle values applied to that same underlying mechanism, not a separate kind of switch.</p>
+
+    <div class="not-prose my-8" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:20px 14px 14px;">
+      <svg viewBox="0 0 700 300" role="img" aria-label="Diagram showing how a sine reference wave compared against a triangular carrier produces a sinusoidal PWM (SPWM) pulse train whose pulse widths grow and shrink to trace the sine wave" style="width:100%;height:auto;display:block;">
+        <text x="60" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#64748b">SINE REFERENCE (amber) vs. TRIANGULAR CARRIER (grey)</text>
+        <path d="M 60.0,80.0 L 68.1,75.5 L 76.1,71.0 L 84.2,66.5 L 92.2,62.2 L 100.3,58.0 L 108.3,54.0 L 116.4,50.2 L 124.4,46.6 L 132.5,43.2 L 140.6,40.2 L 148.6,37.4 L 156.7,35.0 L 164.7,32.9 L 172.8,31.1 L 180.8,29.8 L 188.9,28.8 L 196.9,28.2 L 205.0,28.0 L 213.1,28.2 L 221.1,28.8 L 229.2,29.8 L 237.2,31.1 L 245.3,32.9 L 253.3,35.0 L 261.4,37.4 L 269.4,40.2 L 277.5,43.2 L 285.6,46.6 L 293.6,50.2 L 301.7,54.0 L 309.7,58.0 L 317.8,62.2 L 325.8,66.5 L 333.9,71.0 L 341.9,75.5 L 350.0,80.0 L 358.1,84.5 L 366.1,89.0 L 374.2,93.5 L 382.2,97.8 L 390.3,102.0 L 398.3,106.0 L 406.4,109.8 L 414.4,113.4 L 422.5,116.8 L 430.6,119.8 L 438.6,122.6 L 446.7,125.0 L 454.7,127.1 L 462.8,128.9 L 470.8,130.2 L 478.9,131.2 L 486.9,131.8 L 495.0,132.0 L 503.1,131.8 L 511.1,131.2 L 519.2,130.2 L 527.2,128.9 L 535.3,127.1 L 543.3,125.0 L 551.4,122.6 L 559.4,119.8 L 567.5,116.8 L 575.6,113.4 L 583.6,109.8 L 591.7,106.0 L 599.7,102.0 L 607.8,97.8 L 615.8,93.5 L 623.9,89.0 L 631.9,84.5 L 640.0,80.0"
+              fill="none" stroke="#f59e0b" stroke-width="2.6" stroke-linejoin="round"/>
+        <path d="M 60.0,132.0 L 74.5,28.0 L 89.0,132.0 L 103.5,28.0 L 118.0,132.0 L 132.5,28.0 L 147.0,132.0 L 161.5,28.0 L 176.0,132.0 L 190.5,28.0 L 205.0,132.0 L 219.5,28.0 L 234.0,132.0 L 248.5,28.0 L 263.0,132.0 L 277.5,28.0 L 292.0,132.0 L 306.5,28.0 L 321.0,132.0 L 335.5,28.0 L 350.0,132.0 L 364.5,28.0 L 379.0,132.0 L 393.5,28.0 L 408.0,132.0 L 422.5,28.0 L 437.0,132.0 L 451.5,28.0 L 466.0,132.0 L 480.5,28.0 L 495.0,132.0 L 509.5,28.0 L 524.0,132.0 L 538.5,28.0 L 553.0,132.0 L 567.5,28.0 L 582.0,132.0 L 596.5,28.0 L 611.0,132.0 L 625.5,28.0 L 640.0,132.0"
+              fill="none" stroke="#64748b" stroke-width="1.3" stroke-dasharray="3 2"/>
+
+        <line x1="55" y1="160" x2="655" y2="160" stroke="#e2e8f0" stroke-width="1.5"/>
+
+        <text x="60" y="180" font-family="JetBrains Mono, monospace" font-size="11" fill="#64748b">RESULTING SPWM OUTPUT (pulse width tracks the sine)</text>
+        <line x1="55" y1="258" x2="655" y2="258" stroke="#334155" stroke-width="1.6"/>
+        <path d="M660 258 l-9 -5 v10 z" fill="#334155"/>
+        <text x="670" y="262" font-family="JetBrains Mono, monospace" font-size="11" fill="#334155">Time</text>
+
+        <rect x="67.29" y="192.0" width="14.42" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="94.43" y="192.0" width="18.13" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="121.86" y="192.0" width="21.29" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="149.71" y="192.0" width="23.58" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="178.11" y="192.0" width="24.79" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="207.11" y="192.0" width="24.79" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="236.71" y="192.0" width="23.58" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="266.86" y="192.0" width="21.29" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="297.43" y="192.0" width="18.13" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="328.29" y="192.0" width="14.42" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="359.24" y="192.0" width="10.52" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="390.1" y="192.0" width="6.81" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="420.67" y="192.0" width="3.65" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="450.5" y="192.0" width="2" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="479.5" y="192.0" width="2" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="508.5" y="192.0" width="2" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="537.5" y="192.0" width="2" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="565.67" y="192.0" width="3.65" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="593.1" y="192.0" width="6.81" height="66.0" rx="1.5" fill="#0ea5e9"/>
+        <rect x="620.24" y="192.0" width="10.52" height="66.0" rx="1.5" fill="#0ea5e9"/>
+      </svg>
+      <p class="text-xs text-gray-500 text-center mt-2">Wherever the sine reference sits above the triangular carrier, the output switches on &mdash; so pulses widen near the sine's peak and narrow near its zero-crossing, tracing the sine wave in the pulses' running average.</p>
+    </div>
+    <p><strong>The ideal average PWM voltage, and its limits:</strong> Vavg &asymp; D &times; Vin describes the average value of an ideal 0-to-Vin switched waveform &mdash; it is not automatically the actual voltage a real load sees. It assumes a lossless switch with instant transitions and no forward voltage drop. Real circuits have switching dead-time, diode or MOSFET voltage drops, and output ripple that a simple low-pass filter (or the load's own inertia, for a motor) only partially smooths &mdash; so measured average voltage is typically somewhat below this ideal figure, more noticeably at low duty cycles or high switching frequencies.</p>
+    <p><strong>A non-electrical example &mdash; automotive fuel injectors:</strong> duty cycle isn't limited to voltage/current outputs. In a port-injected engine, the ECU pulses each injector open at a fixed frequency (tied to engine speed) and varies the duty cycle to control injector on-time. A higher injector duty cycle generally means a longer on-time and greater fuel delivery per engine cycle, assuming fuel pressure and injector flow characteristics stay comparable &mdash; but the resulting air-fuel ratio isn't set by duty cycle alone; it also depends on airflow, fuel pressure, injector flow rate, and the ECU's own closed-loop correction. Because the injector needs a minimum open time to fully lift off its seat and a margin below 100% to stay responsive to further demand, a commonly used tuning guideline is to avoid sustained injector duty cycles approaching the upper 80% range &mdash; though the appropriate limit depends on the specific injector, fuel pressure, and control system, rather than being a universal threshold.</p>
+  </div>
+</section>
+
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Working With Duty Cycle</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p><strong>1. Treating duty factor and duty cycle as different quantities.</strong> They are the same ratio &mdash; duty factor is simply duty cycle expressed as a decimal (0 to 1) instead of a percentage. Confusing the two commonly leads to a value that's off by a factor of 100.</p>
+      <p><strong>2. Mixing time units before dividing.</strong> Entering pulse width in milliseconds and period in seconds without converting both to the same base first silently produces a duty cycle that's off by orders of magnitude &mdash; always convert to a common unit (or let the calculator do it) before computing PW &divide; T.</p>
+      <p><strong>3. Entering a pulse width greater than the period.</strong> A valid PWM signal cannot be "on" for longer than one full cycle &mdash; if PW exceeds T, the parameters describe an impossible signal and should be rechecked rather than accepted as a duty cycle above 100%.</p>
+      <p><strong>4. Treating Vavg = D &times; Vin as the actual load voltage rather than an ideal-waveform average.</strong> This formula gives the average of an ideal, lossless 0-to-Vin switched waveform &mdash; actual buck converters, motor drives, and LED dimmers have switching losses, semiconductor voltage drops, and ripple that make the measured average somewhat different from this ideal figure, particularly at low duty cycles.</p>
+      <p><strong>5. Confusing average power with peak power in a pulsed system.</strong> A radar or laser system's headline "power" rating is often peak power, which can be many times the actual average power the system dissipates or radiates continuously &mdash; using peak power where average power is required (for thermal or energy-cost calculations) significantly overstates the real figure.</p>
+      <p><strong>6. Ignoring a device's rated maximum duty cycle.</strong> A welder or compressor rated for, say, 60% duty cycle over a 10-minute window is not rated for continuous 100% operation &mdash; running it beyond that rating for sustained periods risks thermal damage or a protection cutout, even if each individual "on" period seems short.</p>
+      <p><strong>7. Forgetting that pulse energy needs both a power value and a timing value.</strong> Ep = Pp &times; PW (or P&#772; &times; T) cannot be found from power alone, or from timing alone &mdash; at least one power quantity and one timing quantity (period, frequency, or pulse width) must both be known.</p>
+      <p><strong>8. Confusing PWM switching frequency with any other frequency in the same system.</strong> A motor's electrical PWM switching frequency (say 16 kHz) has no direct relationship to its mechanical rotation speed, and an inverter's SPWM carrier frequency is not the same as its synthesized output frequency (typically 50/60 Hz) &mdash; treating these as interchangeable when reading a datasheet or nameplate is a common source of confusion.</p>
+      <p><strong>9. Assuming any duty cycle is achievable on real hardware.</strong> Practical PWM drivers, relays, and gate drivers have minimum pulse-width and minimum dead-time limitations &mdash; a requested duty cycle translating to a pulse width shorter than the hardware can reliably produce (or a gap shorter than a mechanical relay can physically open/close within) may simply not be achieved as calculated, even though the arithmetic itself is valid.</p>
+    </div>
+  </div>
+</section>
+
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is duty cycle, and how is it different from duty factor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Duty cycle is the fraction of one full period that a repeating signal spends in its "on" (active/high) state, expressed as a percentage: D = (PW / T) &times; 100%. Duty factor is the same ratio expressed as a plain decimal fraction: df = PW / T. A 25% duty cycle and a duty factor of 0.25 describe the identical signal &mdash; only the presentation differs.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for duty cycle from pulse width and period?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">D (%) = (PW / T) &times; 100%, where PW is the pulse width and T is the period, both in the same time unit. Since T = 1 / f, an equivalent form is D (%) = PW &times; f &times; 100%, with PW in seconds and f in hertz.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I calculate duty cycle from average and peak power?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">D (%) = (average power &divide; peak power) &times; 100%. This holds because average power is simply the peak power scaled down by the fraction of time the pulse is actually on &mdash; it's commonly used in pulsed RF, radar, and laser systems where average power is measured but pulse timing may not be directly accessible.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How does duty cycle relate to frequency?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Frequency and period are reciprocals: f = 1/T and T = 1/f. Duty cycle itself doesn't change with frequency for a fixed PW/T ratio &mdash; doubling frequency at the same duty cycle means the pulse width also halves, since a shorter period needs a proportionally shorter on-time to keep the same ratio.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is pulse energy, and how is it calculated?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Pulse energy is the energy delivered during one on-pulse: Ep = Pp &times; PW, or equivalently Ep = P&#772; &times; T. This calculator computes it whenever both a power value and a timing value (period, frequency, or pulse width) are available.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How does duty cycle affect average output voltage in PWM applications like LED dimming or motor speed control?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For an ideal 0-to-Vin PWM waveform, the ideal average voltage is Vavg &asymp; D &times; Vin, where D is the duty factor (0 to 1). At 30% duty cycle on a 12 V supply, Vavg &asymp; 3.6 V. This is the basic principle behind PWM LED dimming, DC motor speed control, and the step-down ratio in a buck converter &mdash; but it describes the ideal switched waveform, not automatically the actual load voltage: real circuits read somewhat differently due to switching losses and voltage drops.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What does a 100% duty cycle mean?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A 100% duty cycle means the signal itself is continuously on for the entire period &mdash; effectively constant (DC) rather than pulsed, since no "off" portion remains. A device’s manufacturer-specified "100% duty-cycle rating" is a related but separate concept &mdash; a specific operating/thermal rating set by that manufacturer, not a guarantee of unlimited continuous operation under every load or environmental condition. Always check the manufacturer’s own duty-cycle spec for the actual limits.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why do devices like compressors, welders, and radar transmitters specify a maximum duty cycle rating?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">These devices generate significant heat while active, and a maximum duty cycle rating specifies the largest fraction of a defined time window (often per 10 minutes) they can run before needing an off/cooling period. Exceeding the rated duty cycle for sustained periods risks thermal damage or a protection cutout &mdash; always check the manufacturer's rating and its time window.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can duty cycle / PWM be used to approximate a sine wave?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes &mdash; this is Sinusoidal PWM (SPWM), used in VFDs and inverters. Continuously varying the duty cycle of a fast switching signal so its average traces a sine wave lets an inverter synthesize approximately sinusoidal AC output from a DC source. A higher switching frequency relative to the output frequency generally gives a smoother approximation with lower harmonic content, at the cost of higher switching losses.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the actual difference between PWM, SPWM, and duty cycle?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Duty cycle is a single ratio (PW &divide; T) describing how much of one period a pulse is on &mdash; it's a number, not a technique. PWM is a general switching scheme that sets a duty cycle to control one steady average output (motor speed, LED brightness). SPWM is a PWM variant that recalculates duty cycle at every switching interval, typically against a triangular carrier, so the running average traces a sine wave &mdash; the basis for inverters and AC motor drives. In short: duty cycle is the parameter; PWM and SPWM are two different strategies for varying it over time.</p>
+    </details>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<script>
+  let dcMode = 'time';
+  let timingSubMode = 'period';
+
+  const TIME_UNITS = { us: 1e-6, ms: 1e-3, s: 1, min: 60, h: 3600 };
+  const FREQ_UNITS = { Hz: 1, kHz: 1e3, MHz: 1e6, GHz: 1e9 };
+  const POWER_UNITS = { mW: 1e-3, W: 1, kW: 1e3 };
+
+  // dBm is referenced to 1 mW: P(W) = 10^((dBm-30)/10). Unlike the linear
+  // units above, dBm can legitimately be negative, so it needs its own
+  // conversion path rather than a simple multiplier.
+  function powerToWatts(value, unit){
+    if (unit === 'dBm') return Math.pow(10, (value - 30) / 10);
+    return value * (POWER_UNITS[unit] || 0);
+  }
+
+  // dBm allows negative values, so the shared min="0" clamp (and the
+  // ">0" validation used for every other power unit) would wrongly
+  // reject a legitimate negative dBm reading. Toggle the input's min
+  // attribute whenever the unit selector changes.
+  function syncPowerUnitField(inputId, selectId){
+    const input = document.getElementById(inputId);
+    const unit = document.getElementById(selectId).value;
+    if (unit === 'dBm'){
+      input.removeAttribute('min');
+    } else {
+      input.setAttribute('min', '0');
+    }
+  }
+
+  function setDcMode(mode){
+    dcMode = mode;
+    ['modeTime','modePower','modeDutyPct'].forEach(function(id){
+      const isActive = (id === 'modeTime' && mode === 'time') ||
+                        (id === 'modePower' && mode === 'power') ||
+                        (id === 'modeDutyPct' && mode === 'dutypct');
+      const el = document.getElementById(id);
+      el.classList.toggle('active', isActive);
+      el.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+    document.getElementById('panelTime').classList.toggle('active', mode === 'time');
+    document.getElementById('panelPower').classList.toggle('active', mode === 'power');
+    document.getElementById('panelDutyPct').classList.toggle('active', mode === 'dutypct');
+    document.getElementById('formulaChip').textContent =
+      mode === 'time' ? 'D = PW \u00f7 T \u00d7 100%' :
+      mode === 'power' ? 'D = P\u0304 \u00f7 Pp \u00d7 100%' :
+      'Vavg = Vin \u00d7 (D \u00f7 100)';
+    calculateDutyCycle();
+  }
+
+  function setTimingSubMode(sub){
+    timingSubMode = sub;
+    const isPeriod = sub === 'period';
+    document.getElementById('subPeriod').classList.toggle('active', isPeriod);
+    document.getElementById('subPeriod').setAttribute('aria-pressed', isPeriod ? 'true' : 'false');
+    document.getElementById('subFreq').classList.toggle('active', !isPeriod);
+    document.getElementById('subFreq').setAttribute('aria-pressed', !isPeriod ? 'true' : 'false');
+    document.getElementById('periodField').classList.toggle('hidden-field', sub !== 'period');
+    document.getElementById('freqField').classList.toggle('hidden-field', sub !== 'freq');
+    calculateDutyCycle();
+  }
+
+  let dpSubMode = 'freq';
+  function setDpSubMode(sub){
+    dpSubMode = sub;
+    const isPeriod = sub === 'period';
+    document.getElementById('dpSubPeriod').classList.toggle('active', isPeriod);
+    document.getElementById('dpSubPeriod').setAttribute('aria-pressed', isPeriod ? 'true' : 'false');
+    document.getElementById('dpSubFreq').classList.toggle('active', !isPeriod);
+    document.getElementById('dpSubFreq').setAttribute('aria-pressed', !isPeriod ? 'true' : 'false');
+    document.getElementById('dpPeriodField').classList.toggle('hidden-field', sub !== 'period');
+    document.getElementById('dpFreqField').classList.toggle('hidden-field', sub !== 'freq');
+    calculateDutyCycle();
+  }
+
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+
+  function fmtTime(sec){
+    if (!isFinite(sec) || sec < 0) return '\u2014';
+    if (sec === 0) return '0 s';
+    if (sec < 1e-6) return (sec * 1e9).toFixed(3) + ' ns';
+    if (sec < 1e-3) return (sec * 1e6).toFixed(3) + ' \u00b5s';
+    if (sec < 1) return (sec * 1e3).toFixed(3) + ' ms';
+    if (sec < 60) return sec.toFixed(4) + ' s';
+    if (sec < 3600) return (sec / 60).toFixed(4) + ' min';
+    return (sec / 3600).toFixed(4) + ' h';
+  }
+
+  function fmtFreq(hz){
+    if (!isFinite(hz) || hz <= 0) return '\u2014';
+    if (hz >= 1e9) return (hz / 1e9).toFixed(4) + ' GHz';
+    if (hz >= 1e6) return (hz / 1e6).toFixed(4) + ' MHz';
+    if (hz >= 1e3) return (hz / 1e3).toFixed(4) + ' kHz';
+    return hz.toFixed(4) + ' Hz';
+  }
+
+  function fmtPower(w){
+    if (!isFinite(w) || w < 0) return '\u2014';
+    if (w >= 1e3) return (w / 1e3).toFixed(4) + ' kW';
+    if (w >= 1) return w.toFixed(4) + ' W';
+    return (w * 1e3).toFixed(3) + ' mW';
+  }
+
+  function fmtEnergy(j){
+    if (!isFinite(j) || j < 0) return '\u2014';
+    if (j >= 1) return j.toFixed(4) + ' J';
+    if (j >= 1e-3) return (j * 1e3).toFixed(3) + ' mJ';
+    return (j * 1e6).toFixed(3) + ' \u00b5J';
+  }
+
+  function resetResults(msg){
+    document.getElementById('rResult').textContent = '\u2014';
+    document.getElementById('rDf').textContent = '\u2014';
+    document.getElementById('rFreq').textContent = '\u2014';
+    document.getElementById('rPeriod').textContent = '\u2014';
+    document.getElementById('rPw').textContent = '\u2014';
+    document.getElementById('rExtraBlock').classList.add('hidden');
+    document.getElementById('rVavgBlock').classList.add('hidden');
+    document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">' + msg + '</p>';
+  }
+
+  function calculateDutyCycle(){
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+    let D, df, T_sec, PW_sec, f_hz;
+    let pulseEnergyJ = null, peakPowerW = null, avgPowerW = null;
+    let offSec = null, vavgOut = null;
+    let rows = [];
+
+    if (dcMode === 'time'){
+      const pwVal = parseFloat(document.getElementById('pwValue').value);
+      const pwUnit = document.getElementById('pwUnit').value;
+      if (!isFinite(pwVal) || pwVal <= 0){ errors.push('Enter a valid pulse width greater than 0.'); }
+      PW_sec = pwVal * (TIME_UNITS[pwUnit] || 0);
+
+      if (timingSubMode === 'period'){
+        const tVal = parseFloat(document.getElementById('tValue').value);
+        const tUnit = document.getElementById('tUnit').value;
+        if (!isFinite(tVal) || tVal <= 0){ errors.push('Enter a valid period greater than 0.'); }
+        T_sec = tVal * (TIME_UNITS[tUnit] || 0);
+      } else {
+        const fVal = parseFloat(document.getElementById('fValue').value);
+        const fUnit = document.getElementById('fUnit').value;
+        if (!isFinite(fVal) || fVal <= 0){ errors.push('Enter a valid frequency greater than 0.'); }
+        f_hz = fVal * (FREQ_UNITS[fUnit] || 0);
+        T_sec = f_hz > 0 ? 1 / f_hz : NaN;
+      }
+
+      if (!errors.length && PW_sec > T_sec){
+        errors.push('Pulse width cannot be greater than the period (1 \u00f7 frequency). Check your inputs.');
+      }
+
+      if (errors.length){
+        validationBox.classList.remove('hidden');
+        validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+        resetResults('Fix the input errors above to see a valid result.');
+        return;
+      }
+      validationBox.classList.add('hidden');
+      validationBox.innerHTML = '';
+
+      df = PW_sec / T_sec;
+      D = df * 100;
+      f_hz = 1 / T_sec;
+
+      const avgPVal = parseFloat(document.getElementById('avgPowerValueT').value);
+      const avgPUnit = document.getElementById('avgPowerUnitT').value;
+      if (isFinite(avgPVal) && avgPVal > 0){
+        avgPowerW = avgPVal * (POWER_UNITS[avgPUnit] || 0);
+        peakPowerW = avgPowerW / df;
+        pulseEnergyJ = avgPowerW * T_sec;
+      }
+
+      const vin = parseFloat(document.getElementById('supplyVoltageT').value);
+      const vavgBlock = document.getElementById('rVavgBlock');
+      if (isFinite(vin) && vin > 0){
+        const vavg = df * vin;
+        document.getElementById('rVavg').textContent = vavg.toFixed(3) + ' V';
+        vavgBlock.classList.remove('hidden');
+        rows.push(['Supply Voltage (Vin)', vin + ' V']);
+        rows.push(['Ideal Average PWM Voltage (Vavg)', vavg.toFixed(3) + ' V']);
+      } else {
+        vavgBlock.classList.add('hidden');
+      }
+
+      rows = [
+        ['Pulse Width (PW)', fmtTime(PW_sec)],
+        ['Period (T)', fmtTime(T_sec)],
+        ['Frequency (f)', fmtFreq(f_hz)],
+        ['Duty Cycle (D)', D.toFixed(3) + '%'],
+        ['Duty Factor (df)', df.toFixed(5)]
+      ].concat(rows);
+
+      if (peakPowerW !== null){
+        rows.push(['Average Power (P\u0304)', fmtPower(avgPowerW)]);
+        rows.push(['Peak Power (Pp)', fmtPower(peakPowerW)]);
+        rows.push(['Pulse Energy (Ep)', fmtEnergy(pulseEnergyJ)]);
+      }
+
+    } else if (dcMode === 'power'){
+      const pbarVal = parseFloat(document.getElementById('avgPowerValueP').value);
+      const pbarUnit = document.getElementById('avgPowerUnitP').value;
+      const ppVal = parseFloat(document.getElementById('peakPowerValueP').value);
+      const ppUnit = document.getElementById('peakPowerUnitP').value;
+
+      if (pbarUnit === 'dBm'){
+        if (!isFinite(pbarVal)){ errors.push('Enter a valid average power (dBm can be negative).'); }
+      } else if (!isFinite(pbarVal) || pbarVal < 0){ errors.push('Enter a valid average power (0 or greater).'); }
+
+      if (ppUnit === 'dBm'){
+        if (!isFinite(ppVal)){ errors.push('Enter a valid peak power (dBm can be negative).'); }
+      } else if (!isFinite(ppVal) || ppVal <= 0){ errors.push('Enter a valid peak power greater than 0.'); }
+
+      const pbarW = powerToWatts(pbarVal, pbarUnit);
+      const ppW = powerToWatts(ppVal, ppUnit);
+
+      if (!errors.length && pbarW > ppW){
+        errors.push('Average power cannot be greater than peak power. Check your inputs.');
+      }
+
+      if (errors.length){
+        validationBox.classList.remove('hidden');
+        validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+        resetResults('Fix the input errors above to see a valid result.');
+        return;
+      }
+      validationBox.classList.add('hidden');
+      validationBox.innerHTML = '';
+
+      df = pbarW / ppW;
+      D = df * 100;
+
+      rows = [
+        ['Average Power (P\u0304)', fmtPower(pbarW)],
+        ['Peak Power (Pp)', fmtPower(ppW)],
+        ['Duty Cycle (D)', D.toFixed(3) + '%'],
+        ['Duty Factor (df)', df.toFixed(5)]
+      ];
+
+      const fVal = parseFloat(document.getElementById('fValueP').value);
+      const fUnit = document.getElementById('fUnitP').value;
+      document.getElementById('rVavgBlock').classList.add('hidden');
+
+      if (isFinite(fVal) && fVal > 0){
+        f_hz = fVal * (FREQ_UNITS[fUnit] || 0);
+        T_sec = 1 / f_hz;
+        PW_sec = df * T_sec;
+        pulseEnergyJ = pbarW * T_sec;
+        rows.push(['Frequency (f)', fmtFreq(f_hz)]);
+        rows.push(['Period (T)', fmtTime(T_sec)]);
+        rows.push(['Pulse Width (PW)', fmtTime(PW_sec)]);
+        rows.push(['Pulse Energy (Ep)', fmtEnergy(pulseEnergyJ)]);
+      } else {
+        f_hz = NaN; T_sec = NaN; PW_sec = NaN;
+      }
+
+    } else {
+      // dcMode === 'dutypct': duty cycle is a direct input, solving for
+      // average output voltage, period, ON time (pulse width) and OFF time.
+      const dVal = parseFloat(document.getElementById('dpDutyValue').value);
+      if (!isFinite(dVal) || dVal < 0 || dVal > 100){ errors.push('Enter a duty cycle between 0 and 100%.'); }
+
+      if (dpSubMode === 'period'){
+        const tVal = parseFloat(document.getElementById('dpTValue').value);
+        const tUnit = document.getElementById('dpTUnit').value;
+        if (!isFinite(tVal) || tVal <= 0){ errors.push('Enter a valid period greater than 0.'); }
+        T_sec = tVal * (TIME_UNITS[tUnit] || 0);
+      } else {
+        const fVal = parseFloat(document.getElementById('dpFValue').value);
+        const fUnit = document.getElementById('dpFUnit').value;
+        if (!isFinite(fVal) || fVal <= 0){ errors.push('Enter a valid frequency greater than 0.'); }
+        f_hz = fVal * (FREQ_UNITS[fUnit] || 0);
+        T_sec = f_hz > 0 ? 1 / f_hz : NaN;
+      }
+
+      const vin = parseFloat(document.getElementById('dpVinValue').value);
+      if (!isFinite(vin) || vin < 0){ errors.push('Enter a valid supply voltage (0 or greater).'); }
+
+      if (errors.length){
+        validationBox.classList.remove('hidden');
+        validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+        resetResults('Fix the input errors above to see a valid result.');
+        return;
+      }
+      validationBox.classList.add('hidden');
+      validationBox.innerHTML = '';
+
+      df = dVal / 100;
+      D = dVal;
+      f_hz = 1 / T_sec;
+      PW_sec = df * T_sec;
+      offSec = T_sec - PW_sec;
+      vavgOut = df * vin;
+
+      document.getElementById('rVavgBlock').classList.add('hidden');
+
+      rows = [
+        ['Duty Cycle (D, entered)', D.toFixed(3) + '%'],
+        ['Period (T)', fmtTime(T_sec)],
+        ['Frequency (f)', fmtFreq(f_hz)],
+        ['ON Time (Pulse Width)', fmtTime(PW_sec)],
+        ['OFF Time', fmtTime(offSec)],
+        ['Supply Voltage (Vin)', vin + ' V'],
+        ['Ideal Average PWM Voltage (Vavg)', vavgOut.toFixed(3) + ' V']
+      ];
+    }
+
+    const resultLabelEl = document.getElementById('resultLabel');
+    if (dcMode === 'dutypct'){
+      resultLabelEl.textContent = 'Ideal Average PWM Voltage';
+      document.getElementById('rResult').textContent = vavgOut.toFixed(3) + ' V';
+      document.getElementById('resultSub').textContent = D.toFixed(3) + '% duty cycle, ' + fmtFreq(f_hz);
+    } else {
+      resultLabelEl.textContent = 'Duty Cycle';
+      document.getElementById('rResult').textContent = D.toFixed(3) + '%';
+      document.getElementById('resultSub').textContent = dcMode === 'time' ? 'From pulse width & timing' : 'From average & peak power';
+    }
+    document.getElementById('rDf').textContent = df.toFixed(5);
+    document.getElementById('rFreq').textContent = isFinite(f_hz) ? fmtFreq(f_hz) : '\u2014';
+    document.getElementById('rPeriod').textContent = isFinite(T_sec) ? fmtTime(T_sec) : '\u2014';
+    document.getElementById('rPw').textContent = isFinite(PW_sec) ? fmtTime(PW_sec) : '\u2014';
+
+    const extraBlock = document.getElementById('rExtraBlock');
+    if (dcMode === 'dutypct' && offSec !== null && isFinite(offSec)){
+      document.getElementById('rExtraLabel').textContent = 'OFF Time';
+      document.getElementById('rExtra').textContent = fmtTime(offSec);
+      extraBlock.classList.remove('hidden');
+    } else if (pulseEnergyJ !== null && isFinite(pulseEnergyJ)){
+      document.getElementById('rExtraLabel').textContent = 'Pulse Energy';
+      document.getElementById('rExtra').textContent = fmtEnergy(pulseEnergyJ);
+      extraBlock.classList.remove('hidden');
+    } else {
+      extraBlock.classList.add('hidden');
+    }
+
+    let tableHtml = '<table class="breakdown-table"><thead><tr><th>Quantity</th><th>Value</th></tr></thead><tbody>';
+    rows.forEach(function(r){ tableHtml += '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>'; });
+    tableHtml += '</tbody></table>';
+    document.getElementById('breakdownBox').innerHTML = tableHtml;
+  }
+  // dBm-capable power fields start with no min attribute in the HTML
+  // (dBm can be negative); set the correct min for the current default
+  // unit (W / kW) on load, same as syncPowerUnitField does on change.
+  syncPowerUnitField('avgPowerValueP', 'avgPowerUnitP');
+  syncPowerUnitField('peakPowerValueP', 'peakPowerUnitP');
+  calculateDutyCycle();
+</script>
+
+<script>
+  function copyResultGeneric(){
+    var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
+    var btn = document.getElementById('copyResultBtn');
+    if (!panel || !btn) return;
+
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    excluded.forEach(function(el){ prevDisplay.push(el.style.display); el.style.display = 'none'; });
+    var text = panel.innerText.trim();
+    excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
+    function restore(){ btn.textContent = '\ud83d\udccb Copy Result'; }
+    if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = '\u2705 Copied';
+        setTimeout(restore, 1800);
+      }).catch(function(){ btn.textContent = '\u26a0\ufe0f Copy failed'; setTimeout(restore, 1800); });
+    } else {
+      btn.textContent = '\u26a0\ufe0f Not supported';
+      setTimeout(restore, 1800);
+    }
+  }
+
+  (function(){
+    function clampNumberInput(el){
+      if (el.type !== 'number' || el.value === '') return;
+      var hasMin = el.hasAttribute('min');
+      var hasMax = el.hasAttribute('max');
+      var min = hasMin ? parseFloat(el.min) : null;
+      var max = hasMax ? parseFloat(el.max) : null;
+      var v = parseFloat(el.value);
+      var corrected = null;
+      if (!isFinite(v)) { corrected = (min !== null ? min : 0); }
+      else if (min !== null && v < min) { corrected = min; }
+      else if (max !== null && v > max) { corrected = max; }
+      if (corrected !== null && corrected !== v) {
+        el.value = corrected;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    document.querySelectorAll('input[type="number"]').forEach(function(el){
+      el.addEventListener('blur', function(){ clampNumberInput(el); calculateDutyCycle(); });
+    });
+  })();
+</script>
+
+<script>
+  var __shareModalLoading = false;
+  function loadShareModal(){
+    if (typeof openShareModal === 'function'){ openShareModal(); return; }
+    if (__shareModalLoading) return;
+    __shareModalLoading = true;
+    var s = document.createElement('script');
+    s.src = '/assets/share-modal.js';
+    s.onload = function(){ __shareModalLoading = false; openShareModal(); };
+    s.onerror = function(){ __shareModalLoading = false; };
+    document.head.appendChild(s);
+  }
+</script>
+<script>
+  (function(){
+    function positionShareBar(){
+      var bar = document.getElementById('shareFeedbackBar');
+      var related = document.getElementById('relatedCalculatorsBox');
+      var anchor = document.getElementById('shareFeedbackAnchor');
+      if(!bar || !related || !anchor) return;
+      var isMobile = window.matchMedia('(max-width: 1023px)').matches;
+      if(isMobile){
+        if(bar.nextElementSibling !== related){
+          related.parentElement.insertBefore(bar, related);
+        }
+      } else {
+        if(bar.previousElementSibling !== anchor){
+          anchor.parentElement.insertBefore(bar, anchor.nextSibling);
+        }
+      }
+    }
+    window.addEventListener('resize', positionShareBar);
+    document.addEventListener('DOMContentLoaded', positionShareBar);
+    positionShareBar();
+  })();
+</script>
+
+<script>
+(() => {
+  const el = document.getElementById("heroTypingText");
+  if (!el) return;
+  const words = [
+    "Calculate Smarter. Work Faster.",
+    "Practical Calculators & Maintenance Guides."
+  ];
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion) { el.textContent = words[0]; return; }
+  let wordIndex = 0;
+  let charIndex = words[0].length;
+  let deleting = true;
+  const typeSpeed = 90;
+  const deleteSpeed = 55;
+  const pauseAfterTyping = 1800;
+  const pauseAfterDeleting = 500;
+  function animate() {
+    const word = words[wordIndex];
+    if (deleting) {
+      if (charIndex > 0) {
+        charIndex--;
+        el.textContent = word.substring(0, charIndex);
+        setTimeout(animate, deleteSpeed);
+      } else {
+        deleting = false;
+        wordIndex = (wordIndex + 1) % words.length;
+        charIndex = 0;
+        setTimeout(animate, pauseAfterDeleting);
+      }
+    } else {
+      const nextWord = words[wordIndex];
+      if (charIndex < nextWord.length) {
+        charIndex++;
+        el.textContent = nextWord.substring(0, charIndex);
+        setTimeout(animate, typeSpeed);
+      } else {
+        deleting = true;
+        setTimeout(animate, pauseAfterTyping);
+      }
+    }
+  }
+  setTimeout(() => {
+    wordIndex = 0;
+    charIndex = words[0].length;
+    deleting = true;
+    animate();
+  }, 1500);
+})();
+</script>
+</body>
+</html>
