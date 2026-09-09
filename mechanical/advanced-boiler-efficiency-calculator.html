@@ -16,12 +16,12 @@
   } catch(e) {}
 })();
 </script>
-<title>Advanced Boiler Efficiency Calculator | Direct &amp; Indirect (Loss) Method</title>
+<title>Boiler Efficiency Calculator | Direct &amp; Indirect Method</title>
 
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
      crossorigin="anonymous"></script>
 
-<meta name="description" content="Free Advanced Boiler Efficiency Calculator — find boiler efficiency by the Direct Method (heat output ÷ heat input) and the Indirect / Heat Loss Method (100 − total losses: dry flue gas, hydrogen in fuel, moisture in fuel, moisture in air, CO, radiation, unburnt). Instant results with BEE/IS 8753-referenced formulas.">
+<meta name="description" content="Free Boiler Efficiency Calculator — Direct &amp; Indirect (Heat Loss) Method. Flue gas, H2, moisture, CO, radiation losses. BEE/IS 8753 formulas.">
 <meta name="keywords" content="boiler efficiency calculator, direct method boiler efficiency, indirect method boiler efficiency, heat loss method boiler, dry flue gas loss calculator, boiler heat balance calculator, BEE boiler efficiency, IS 8753 boiler efficiency">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.electromechcalc.com/mechanical/advanced-boiler-efficiency-calculator">
@@ -30,7 +30,7 @@
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ElectroMechCalc">
-<meta property="og:title" content="Advanced Boiler Efficiency Calculator | Direct &amp; Indirect (Loss) Method">
+<meta property="og:title" content="Boiler Efficiency Calculator | Direct &amp; Indirect Method">
 <meta property="og:description" content="Free boiler efficiency calculator covering both the Direct Method and the Indirect (Heat Loss) Method — dry flue gas loss, H2 in fuel, moisture in fuel, moisture in air, CO, radiation and unburnt losses.">
 <meta property="og:url" content="https://www.electromechcalc.com/mechanical/advanced-boiler-efficiency-calculator">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
@@ -38,7 +38,7 @@
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Advanced Boiler Efficiency Calculator | Direct &amp; Indirect (Loss) Method">
+<meta name="twitter:title" content="Boiler Efficiency Calculator | Direct &amp; Indirect Method">
 <meta name="twitter:description" content="Free calculator for boiler efficiency by Direct Method and Indirect (Heat Loss) Method, with a full L1-L7 loss breakdown.">
 <meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
 
@@ -488,7 +488,7 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IS 8753, BEE (Bureau of Energy Efficiency) energy audit guidelines, ASME PTC 4.1</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Standards referenced: IS 8753, BEE (Bureau of Energy Efficiency) energy audit guidelines, ASME PTC 4.1</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Direct Method vs Indirect (Heat Loss) Method</h2>
@@ -648,12 +648,16 @@
     const fuelS = sanitize(parseFloat(document.getElementById('d_fuel').value), 0.0001, undefined, 'Fuel Consumption');
     const gcvS = sanitize(parseFloat(document.getElementById('d_gcv').value), 0.0001, undefined, 'Fuel GCV');
 
-    showErrors([steamS.msg, hgS.msg, tfwS.msg, fuelS.msg, gcvS.msg].filter(Boolean));
-
     const Q = steamS.v, hg = hgS.v, hf = tfwS.v, q = fuelS.v, gcv = gcvS.v;
     const heatOutput = Q * (hg - hf);       // kcal/hr
     const heatInput = q * gcv;              // kcal/hr
     const efficiency = heatInput > 0 ? (heatOutput / heatInput) * 100 : 0;
+
+    const rangeMsgs = [];
+    if (efficiency > 100) rangeMsgs.push('Result exceeds 100% — check fuel consumption / steam rate values (a real boiler cannot exceed 100% efficiency).');
+    else if (efficiency < 0) rangeMsgs.push('Result is negative — check that Enthalpy of Steam is greater than Feed Water Temp, and inputs are realistic.');
+
+    showErrors([steamS.msg, hgS.msg, tfwS.msg, fuelS.msg, gcvS.msg, ...rangeMsgs].filter(Boolean));
 
     document.getElementById('rLabel').textContent = 'Boiler Efficiency (Direct Method)';
     document.getElementById('rResult').textContent = formatNum(efficiency) + ' %';
@@ -683,8 +687,6 @@
     const l6S = sanitize(parseFloat(document.getElementById('i_l6').value), 0, 100, 'L6 Radiation Loss');
     const l7S = sanitize(parseFloat(document.getElementById('i_l7').value), 0, 100, 'L7 Unburnt Loss');
 
-    showErrors([gcvS.msg, tfS.msg, taS.msg, mfgS.msg, h2S.msg, mS.msg, l4S.msg, l5S.msg, l6S.msg, l7S.msg].filter(Boolean));
-
     const gcv = gcvS.v, tf = tfS.v, ta = taS.v, mfg = mfgS.v, h2 = h2S.v, m = mS.v;
     const dT = tf - ta;
 
@@ -695,6 +697,12 @@
 
     const totalLoss = L1 + L2 + L3 + L4 + L5 + L6 + L7;
     const efficiency = 100 - totalLoss;
+
+    const rangeMsgs = [];
+    if (efficiency < 0) rangeMsgs.push('Total losses exceed 100% — check flue gas temp, mass of dry flue gas and other loss inputs.');
+    else if (efficiency > 100) rangeMsgs.push('Result exceeds 100% — check input values.');
+
+    showErrors([gcvS.msg, tfS.msg, taS.msg, mfgS.msg, h2S.msg, mS.msg, l4S.msg, l5S.msg, l6S.msg, l7S.msg, ...rangeMsgs].filter(Boolean));
 
     document.getElementById('rLabel').textContent = 'Boiler Efficiency (Indirect Method)';
     document.getElementById('rResult').textContent = formatNum(efficiency) + ' %';

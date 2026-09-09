@@ -1,0 +1,2383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
+<title>555 Timer Calculator | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<meta name="description" content="Free 555 timer calculator for monostable, astable and bistable modes: find pulse width, frequency, time high/low and duty cycle from R1, R2 and C1.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/555-timer-calculator">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="555 Timer Calculator">
+<meta property="og:description" content="Free 555 timer calculator &mdash; get pulse width, frequency, time high/low and duty cycle for monostable and astable circuits, plus bistable mode explained.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/555-timer-calculator">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="555 Timer Calculator">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="en_AU">
+<meta property="og:locale:alternate" content="en_CA">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="555 Timer Calculator">
+<meta name="twitter:description" content="Free 555 timer calculator &mdash; pulse width, frequency, time high/low and duty cycle for monostable and astable 555 circuits.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "555 Timer Calculator",
+  "url": "https://www.electromechcalc.com/electrical/555-timer-calculator",
+  "applicationCategory": "UtilitiesApplication",
+  "applicationSubCategory": "Electrical Engineering Calculator",
+  "operatingSystem": "Any",
+  "inLanguage": "en",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "Free 555 timer calculator for monostable, astable and bistable modes. Find pulse width, frequency, time high/low and duty cycle from resistor and capacitor values.",
+  "dateModified": "2026-09-08",
+  "author": { "@type": "Person", "name": "Umasankar Maity" },
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electrical Calculators", "item": "https://www.electromechcalc.com/electrical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "555 Timer Calculator", "item": "https://www.electromechcalc.com/electrical/555-timer-calculator" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What are the common operating configurations of a 555 timer?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Monostable (one-shot): a trigger produces a single output pulse of a fixed width set by R1 and C1, then the output returns low until the next trigger. Astable (free-running): the timer continuously oscillates between high and low with no external trigger needed, producing a repeating square-wave-like output whose frequency and duty cycle are set by R1, R2 and C1. Bistable: with the timing resistor and capacitor removed, the 555 behaves as a simple set-reset (SR) latch — the output holds whichever state (high or low) it was last driven to by the trigger or reset pins. External pull-up resistors may still be used on those input pins, but no timing components are involved." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the formula for 555 timer monostable pulse width?",
+      "acceptedAnswer": { "@type": "Answer", "text": "T = 1.1 x R1 x C1, where T is the output pulse width in seconds, R1 is in ohms, and C1 is in farads. The constant 1.1 comes from the RC charging time needed for the capacitor voltage to reach 2/3 of the supply voltage, which is the internal threshold that ends the pulse." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the formula for 555 timer astable frequency and duty cycle?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Time high: Th = 0.693 x (R1 + R2) x C1. Time low: Tl = 0.693 x R2 x C1. Frequency: f = 1.44 / ((R1 + 2 x R2) x C1). Duty cycle: D = (R1 + R2) / (R1 + 2 x R2) x 100%. All resistances in ohms and capacitance in farads give the times in seconds and frequency in hertz." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is the duty cycle of a standard 555 astable circuit always above 50%?",
+      "acceptedAnswer": { "@type": "Answer", "text": "In the standard two-resistor astable topology, the capacitor charges through R1 + R2 (giving Th) but discharges through only R2 (giving Tl), and since R1 is always a positive value, Th is always greater than Tl — pushing duty cycle above 50% no matter how R1 and R2 are chosen. Getting a duty cycle at or below 50% requires a diode placed across R2 to give the charge and discharge paths separate resistances, a common circuit modification for applications needing a genuinely variable or sub-50% duty cycle." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is 555 timer bistable mode, and why doesn't it need a timing resistor or capacitor?",
+      "acceptedAnswer": { "@type": "Answer", "text": "In bistable mode, the timing resistor and capacitor are removed entirely and the 555 is wired as a simple SR (set-reset) latch: pulling the trigger pin (pin 2) low sets the output high, and pulling the reset pin (pin 4) low resets the output low. External pull-up resistors on the trigger and reset pins are common in this configuration, but they play no role in timing — the output simply holds its state indefinitely until the opposite input is pulsed, with no RC timing network involved and no pulse width or frequency to calculate." }
+    },
+    {
+      "@type": "Question",
+      "name": "What resistor and capacitor value ranges give the most accurate 555 timing?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Most 555 datasheets recommend keeping timing resistors roughly between 1 k\u03a9 and 1 M\u03a9. For practical timing designs, many engineers also avoid very small timing capacitors (for example, below roughly 100 pF), since stray capacitance becomes significant relative to them; check the specific device datasheet for recommended ranges. Resistors much below 1 k\u03a9 can push the IC's internal discharge transistor and output stage beyond their comfortable current range, while very high resistances make the timing more sensitive to the chip's own leakage currents and to circuit-board leakage/humidity effects \u2014 both of which degrade timing accuracy from the ideal formula." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why doesn't my built 555 timer circuit match the calculated pulse width or frequency exactly?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The formulas assume ideal, exact resistor and capacitor values, but real components have tolerance \u2014 a common electrolytic capacitor can be off by \u00b120% or more from its printed value, and standard resistors are typically \u00b15%. Supply voltage variation and the specific 555 variant (bipolar NE555 vs. CMOS versions like the TLC555) also shift threshold voltages slightly. For timing-critical designs, use tighter-tolerance components (film capacitors, 1% resistors) and verify the actual output on an oscilloscope rather than relying on the formula alone." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can a 555 timer's astable output be used as a PWM signal?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The basic astable circuit only gives a fixed duty cycle set by the resistor ratio, not a continuously adjustable one, so it isn't inherently a PWM generator in the usual sense. With the diode-across-R2 modification (or by replacing one resistor with a potentiometer), the duty cycle becomes adjustable, letting the 555 serve as a simple PWM source for tasks like LED dimming or basic DC motor speed control \u2014 see this site's Duty Cycle &amp; PWM Calculator for the duty-cycle math once you have a target Th/Tl in mind." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between a retriggerable and non-retriggerable monostable?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Retriggering behavior depends on the specific 555 device and circuit configuration, so it isn't safe to call the standard monostable universally non-retriggerable. In many basic NE555 monostable circuits, a suitable trigger applied during the timing interval can extend or reinitiate the cycle, and the sequence only ends once the trigger pin has been held high for a short period before the interval expires \u2014 consult the specific device datasheet for exact behavior. Some ICs and configurations are explicitly designed as retriggerable, where a new trigger restarts the timing period from zero \u2014 useful for applications like a watchdog or motion-sensor light that should stay on continuously as long as retriggering pulses keep arriving." }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I pick a larger resistor or a larger capacitor to hit a target 555 timing value?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The same T, frequency, or Th/Tl value can come from many different R and C combinations, so favor a resistor in the low-to-mid range (roughly a few k\u03a9 to a few hundred k\u03a9) and let the capacitor value fall out of the formula, rather than the reverse. As a practical guideline, many engineers avoid very small capacitors (under about 100 pF) since they become sensitive to the circuit's own stray capacitance; check the specific datasheet for recommended ranges. Very large electrolytic capacitors bring wide tolerance and leakage current \u2014 both degrade timing accuracy. For timing-critical work, choose a capacitor with suitable tolerance and temperature/voltage stability: C0G/NP0 ceramic or film capacitors are often preferable to general-purpose electrolytics where their capacitance range is practical, while other ceramic dielectrics such as X7R or Y5V can vary significantly with applied voltage and temperature." }
+    }
+  ]
+}
+</script>
+
+<link rel="preload" as="style" href="/assets/site.min.css?v=1">
+<link rel="stylesheet" href="/assets/site.min.css?v=1" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/site.min.css?v=1"></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet"></noscript>
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{ transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+  .calc-card:hover{ transform:translateY(-3px); box-shadow:0 14px 28px rgba(11,18,32,0.10); border-color:#0ea5e9; }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace; font-size:11px; background:#eaf6fd; color:#0369a1;
+    padding:3px 9px; border-radius:6px; display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+
+  .hero-typing-box{ display:flex; align-items:center; justify-content:center; min-height:2.75em; max-width:640px; margin:0 auto 0.5rem; padding:0.4rem 1rem; box-sizing:border-box; }
+  .hero-typing{ display:inline-flex; color:#d4af37; align-items:center; justify-content:center; text-align:center; white-space:normal; word-break:break-word; line-height:1.3; margin:0; }
+  .hero-cursor{ display:inline-block; width:2px; height:1em; margin-left:4px; flex-shrink:0; background:currentColor; animation:heroCursorBlink 0.8s steps(1) infinite; }
+  @keyframes heroCursorBlink{ 50%{ opacity:0; } }
+  @media (prefers-reduced-motion: reduce){ .hero-cursor{ animation:none; } }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .input-field{
+    width:100%; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;
+    padding:10px 12px; font-size:14px; color:#0B1220; outline:none;
+  }
+  .input-field:focus{ border-color:#0ea5e9; background:#fff; box-shadow:0 0 0 3px rgba(14,165,233,0.12); }
+  .unit-select{ max-width:96px; flex-shrink:0; }
+  .toggle-btn{
+    flex:1; text-align:center; padding:10px 8px; font-size:13px; font-weight:600;
+    border-radius:8px; cursor:pointer; color:#64748b; transition:.15s ease;
+  }
+  .toggle-btn.active{ background:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .toggle-btn:focus-visible, .action-icon-btn:focus-visible{ outline:3px solid #0ea5e9; outline-offset:2px; }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{ max-height:320px; overflow-y:auto; overflow-x:auto; margin-top:4px; border-radius:8px; border:1px solid #e5e7eb; min-width:0; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  .nav-icon-badge{ display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:9999px; flex-shrink:0; box-shadow:0 2px 5px rgba(0,0,0,0.25); }
+  .nav-dropdown-link{ display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220; }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+  .mobile-sublink{ display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85; }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+
+  .action-icon-btn{
+    display:inline-flex; align-items:center; gap:6px; border:1px solid #e2e8f0; border-radius:8px;
+    padding:8px 12px; font-size:13px; color:#334155; background:#fff; cursor:pointer; transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
+  .author-box{ border:2px solid #000000; }
+  body.dark-theme .author-box{ border-color:#ffffff; background:#0B1220; color:#e2e8f0; }
+  .lg\:col-span-2.flex.flex-col.gap-4{ min-width:0; }
+  .lg\:col-span-2.flex.flex-col.gap-4 > div{ min-width:0; }
+
+  body.dark-theme #cs-example-box{ background:rgba(14,165,233,0.07); border-color:#164e63; }
+  body.dark-theme #cs-example-box .text-gray-500{ color:#7dd3fc; }
+  body.dark-theme #cs-example-box .text-gray-600{ color:#cbd5e1; }
+  body.dark-theme #cs-example-box .text-gray-700{ color:#e2e8f0; }
+
+  /* Info icon — small green "i" button; hint text hidden and only shown
+     as a tooltip on hover/focus (keyboard-accessible). Matches the
+     shared pattern used across the site (e.g. transformer-size.html). */
+  .info-icon{
+    position:relative; display:inline-flex; align-items:center; justify-content:center;
+    width:15px; height:15px; border-radius:50%; background:#16a34a; color:#fff;
+    font-size:10px; font-weight:700; font-style:italic; line-height:1; cursor:pointer; flex-shrink:0;
+  }
+  .info-icon .info-tooltip{
+    display:none; position:absolute; left:0; top:135%; z-index:30; width:230px; max-width:60vw;
+    background:#111827; color:#fff; font-size:11px; font-weight:400; font-style:normal;
+    text-transform:none; letter-spacing:normal; line-height:1.45; padding:8px 10px; border-radius:6px;
+    box-shadow:0 6px 16px rgba(0,0,0,.2);
+  }
+  .info-icon:hover .info-tooltip, .info-icon:focus .info-tooltip, .info-icon:focus-visible .info-tooltip{ display:block; }
+
+  .bistable-truth-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  .bistable-truth-table th, .bistable-truth-table td{ padding:8px 10px; text-align:center; border:1px solid #e5e7eb; }
+  .bistable-truth-table th{ background:#f8fafc; color:#475569; font-weight:600; }
+  body.dark-theme .bistable-truth-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .bistable-truth-table td{ border-color:#1f2f47; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<div id="site-header"></div>
+<div id="breadcrumb"></div>
+
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical &middot; Power Electronics &amp; Signals
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          555 Timer <span class="text-sky-400">Calculator</span>
+        </h1>
+        <div class="hero-typing-box">
+          <p class="hero-typing text-[#d4af37] text-sm font-mono font-bold justify-center" aria-label="Calculate Smarter. Work Faster. Practical Calculators & Maintenance Guides.">
+            <span id="heroTypingText">Calculate Smarter. Work Faster.</span><span class="hero-cursor" aria-hidden="true"></span>
+          </p>
+        </div>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Astable, Monostable &amp; Bistable calculator &mdash; find 555 timer pulse width, frequency, time high/low and duty cycle from R1, R2 and C1, or see how bistable (flip-flop) mode works.
+        </p>
+      </div>
+
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" aria-hidden="true" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+      <div id="calcHeaderBar">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">555 Timer Configuration</h2>
+        <p class="text-xs text-gray-500 mb-6">Choose the operating mode, then enter the resistor and capacitor values.</p>
+      </div>
+
+      <div class="mb-5">
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_555-timer-calculator">Choose Configuration</span>
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_555-timer-calculator">
+          <button type="button" id="modeMono" class="toggle-btn active" aria-pressed="true" onclick="setTimerMode('mono')">Monostable</button>
+          <button type="button" id="modeAstable" class="toggle-btn" aria-pressed="false" onclick="setTimerMode('astable')">Astable</button>
+          <button type="button" id="modeBistable" class="toggle-btn" aria-pressed="false" onclick="setTimerMode('bistable')">Bistable</button>
+        </div>
+      </div>
+
+      <!-- MONOSTABLE -->
+      <div id="panelMono" class="calc-panel active">
+        <div class="space-y-4 mb-5">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="monoR1">R1 Resistor Value</label>
+            <div class="flex gap-2 mt-2">
+              <input id="monoR1" type="number" value="100" step="0.01" min="0" placeholder="e.g. 100" class="input-field" oninput="calculate555()">
+              <select id="monoR1Unit" class="input-field unit-select" onchange="calculate555()" aria-label="R1 unit">
+                <option value="ohm">&Omega;</option>
+                <option value="kohm" selected>k&Omega;</option>
+                <option value="Mohm">M&Omega;</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="monoC1">C1 Capacitance Value</label>
+            <div class="flex gap-2 mt-2">
+              <input id="monoC1" type="number" value="10" step="0.01" min="0" placeholder="e.g. 10" class="input-field" oninput="calculate555()">
+              <select id="monoC1Unit" class="input-field unit-select" onchange="calculate555()" aria-label="C1 unit">
+                <option value="pF">pF</option>
+                <option value="nF">nF</option>
+                <option value="uF" selected>&micro;F</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ASTABLE -->
+      <div id="panelAstable" class="calc-panel">
+        <div class="space-y-4 mb-5">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="asR1">R1 Resistor Value</label>
+            <div class="flex gap-2 mt-2">
+              <input id="asR1" type="number" value="1" step="0.01" min="0" placeholder="e.g. 1" class="input-field" oninput="calculate555()">
+              <select id="asR1Unit" class="input-field unit-select" onchange="calculate555()" aria-label="R1 unit">
+                <option value="ohm">&Omega;</option>
+                <option value="kohm" selected>k&Omega;</option>
+                <option value="Mohm">M&Omega;</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="asR2">R2 Resistor Value</label>
+            <div class="flex gap-2 mt-2">
+              <input id="asR2" type="number" value="10" step="0.01" min="0" placeholder="e.g. 10" class="input-field" oninput="calculate555()">
+              <select id="asR2Unit" class="input-field unit-select" onchange="calculate555()" aria-label="R2 unit">
+                <option value="ohm">&Omega;</option>
+                <option value="kohm" selected>k&Omega;</option>
+                <option value="Mohm">M&Omega;</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="asC1">C1 Capacitance Value</label>
+            <div class="flex gap-2 mt-2">
+              <input id="asC1" type="number" value="0.1" step="0.001" min="0" placeholder="e.g. 0.1" class="input-field" oninput="calculate555()">
+              <select id="asC1Unit" class="input-field unit-select" onchange="calculate555()" aria-label="C1 unit">
+                <option value="pF">pF</option>
+                <option value="nF">nF</option>
+                <option value="uF" selected>&micro;F</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BISTABLE -->
+      <div id="panelBistable" class="calc-panel">
+        <div class="bg-sky-50/60 border border-sky-100 rounded-xl p-4 mb-5">
+          <p class="text-sm text-brandDark font-semibold mb-1.5">No timing resistor or capacitor needed</p>
+          <p class="text-xs text-gray-600 leading-relaxed">In bistable mode the 555 is wired as a simple set-reset (SR) latch, with the timing resistor and capacitor removed entirely. External pull-up resistors (R<sub>SET</sub>, R<sub>RESET</sub>) may be used on the trigger and reset inputs. Pull <strong>Trigger (pin 2)</strong> low to set the output high; pull <strong>Reset (pin 4)</strong> low to reset the output low. The output then simply holds that state until the opposite pin is pulsed &mdash; there's no pulse width or frequency to calculate.</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="bistable-truth-table">
+            <thead><tr><th>Trigger (pin 2)</th><th>Reset (pin 4)</th><th>Output (pin 3)</th></tr></thead>
+            <tbody>
+              <tr><td>Pulsed LOW</td><td>HIGH</td><td>Sets HIGH</td></tr>
+              <tr><td>HIGH</td><td>Pulsed LOW</td><td>Resets LOW</td></tr>
+              <tr><td>HIGH</td><td>HIGH</td><td>Holds last state</td></tr>
+              <tr><td>Pulsed LOW</td><td>Pulsed LOW</td><td>Resets LOW &mdash; RESET dominates</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden text-xs rounded-lg px-4 py-3 mb-5" role="alert" aria-live="polite"></div>
+
+      <button type="button" id="calcBtn" onclick="calculate555()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip" id="formulaChip">T = 1.1 &times; R1 &times; C1</span>
+      </div>
+      <p class="text-[11px] text-gray-400 mt-3" id="calcDisclaimer">Formula-based ideal timing. Real components have tolerance (some general-purpose electrolytic capacitors are specified at &plusmn;20% or worse), and supply voltage or 555 variant (bipolar vs. CMOS) can shift results slightly from this calculation.</p>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden" role="status" aria-live="polite" aria-atomic="true">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Pulse Width (T)</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">&mdash;</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div id="rGridBlock" class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rGrid1Label">R1</span>
+            <span id="rGrid1" class="font-display font-semibold text-lg">&mdash;</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rGrid2Label">C1</span>
+            <span id="rGrid2" class="font-display font-semibold text-lg">&mdash;</span>
+          </div>
+        </div>
+        <div id="rExtraBlock" class="mt-3 pt-3 border-t border-white/10 hidden">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rExtraLabel">Duty Cycle</span>
+          <span id="rExtra" class="font-display font-semibold text-lg">&mdash;</span>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-3 pt-3 border-t border-white/10">Ideal-component reference calculation &mdash; verify on an oscilloscope for timing-critical designs.</p>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<span id="shareFeedbackAnchor"></span>
+<section id="shareFeedbackBar" class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button type="button" class="share-result-btn" onclick="loadShareModal()"><span aria-hidden="true">&#128279;</span> Share Result</button>
+      <button type="button" class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()"><span aria-hidden="true">&#128203;</span> Copy Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button type="button" id="fbYes" class="action-icon-btn" aria-pressed="false" onclick="setFeedback('yes')"><span aria-hidden="true">&#128077;</span> Yes</button>
+      <button type="button" id="fbNo" class="action-icon-btn" aria-pressed="false" onclick="setFeedback('no')"><span aria-hidden="true">&#128078;</span> No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20555%20Timer%20Calculator"><span aria-hidden="true">&#9993;&#65039;</span> Feedback</a>
+    </div>
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 mb-6">
+  <div id="relatedCalculatorsBox" class="bg-white rounded-xl border border-gray-100 p-4" data-copy-exclude>
+    <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+    <div class="grid sm:grid-cols-2 gap-1.5">
+      <a href="/electrical/duty-cycle-pwm-calculator" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        Duty Cycle &amp; PWM Calculator <span class="text-sky-500">&rarr;</span>
+      </a>
+      <a href="/electrical/harmonic-distortion" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        Harmonic Distortion Calculator <span class="text-sky-500">&rarr;</span>
+      </a>
+      <a href="/electrical/vfd-sizing" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        VFD Sizing Calculator <span class="text-sky-500">&rarr;</span>
+      </a>
+      <a href="/electrical-calculators" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        Explore All Electrical Calculators <span class="text-sky-500">&rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Monostable &amp; astable formulas</a></li>
+      <li><a href="#second" class="hover:underline">3. Bistable mode &amp; applications</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> &mdash; B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Method: standard 555 timer IC design equations (monostable and astable RC timing).</p>
+    </div>
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">555 Timer Formulas Explained</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>The 555 is one of the most widely produced integrated circuits ever made, used for clock generation, delay timing, pulse generation, and signal oscillation. Internally, it's built around two comparators referenced to 1/3 and 2/3 of the supply voltage, an SR flip-flop, and a discharge transistor &mdash; that internal structure is what gives rise to the three external wiring configurations below, each with different timing behavior. The "555" name is historically associated with the classic bipolar 555's internal three-resistor reference divider &mdash; three 5 k&Omega; resistors connected in series between the supply and ground, forming the voltage divider that sets those 1/3-Vcc and 2/3-Vcc comparator thresholds. Modern CMOS 555 variants don't necessarily share this exact internal implementation, though they replicate the same external timing behavior.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Choosing R and C Values in Practice</h3>
+      <p>For a given target time or frequency, the same result can come from many different R/C combinations &mdash; a large resistor with a small capacitor, or a small resistor with a large capacitor. In practice, favor a mid-range resistor (a few k&Omega; to a few hundred k&Omega;) and pick the capacitor to hit the target time, rather than the reverse: for practical timing designs, many engineers avoid very small capacitors (for example, below roughly 100 pF) because stray/parasitic capacitance becomes significant relative to them &mdash; check the specific device datasheet for recommended ranges &mdash; while very large electrolytic capacitors bring both wide tolerance and noticeable leakage current, both of which erode timing accuracy. For timing-critical work, choose a capacitor with suitable tolerance and temperature/voltage stability: C0G/NP0 ceramic or film capacitors are often preferable to general-purpose electrolytics where their capacitance range is practical, while other ceramic dielectrics such as X7R or Y5V can vary significantly with applied voltage and temperature.</p>
+
+      <div class="not-prose my-8" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:20px 12px 14px;">
+        <svg viewBox="0 0 1200 520" role="img" aria-labelledby="monoTitle monoDesc" style="width:100%;height:auto;display:block;">
+  <title id="monoTitle">555 Timer Monostable Mode</title>
+  <desc id="monoDesc">
+    555 timer monostable one-shot circuit with R1 timing resistor,
+    C1 timing capacitor, active-low trigger input and output pulse.
+  </desc>
+
+  <defs>
+    <style>
+      .mono-w{fill:none;stroke:#263238;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+      .mono-s{fill:none;stroke:#1565c0;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+      .mono-c{fill:#fff;stroke:#263238;stroke-width:2.5}
+      .mono-ic{fill:#263238;stroke:#111827;stroke-width:2.5}
+      .mono-t{font-family:Arial,sans-serif;font-size:22px;font-weight:700;fill:#fff}
+      .mono-l{font-family:Arial,sans-serif;font-size:17px;font-weight:700;fill:#263238}
+      .mono-sm{font-family:Arial,sans-serif;font-size:14px;fill:#607d8b}
+      .mono-p{font-family:Arial,sans-serif;font-size:15px;font-weight:700;fill:#455a64}
+      .mono-b{font-family:Arial,sans-serif;font-size:17px;font-weight:700;fill:#1565c0}
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect x="10" y="10" width="1180" height="500"
+        rx="18" fill="#fff" stroke="#90caf9" stroke-width="2"/>
+
+  <!-- Title -->
+  <rect x="30" y="25" width="350" height="48"
+        rx="10" fill="#1565c0"/>
+  <text x="205" y="57" text-anchor="middle" class="mono-t">
+    MONOSTABLE MODE
+  </text>
+
+  <!-- INPUT -->
+  <rect x="40" y="115" width="245" height="165"
+        rx="12" fill="#fff" stroke="#1565c0"
+        stroke-width="2" stroke-dasharray="7 6"/>
+
+  <text x="65" y="145" class="mono-b">INPUT TRIGGER</text>
+  <text x="65" y="168" class="mono-sm">Active LOW pulse</text>
+
+  <path class="mono-s"
+        d="M65 215 H115 V255 H155 V215 H235"/>
+
+  <path class="mono-s" d="M115 270 H155"/>
+  <path class="mono-s"
+        d="M115 270 l8 -5 M115 270 l8 5
+           M155 270 l-8 -5 M155 270 l-8 5"/>
+
+  <text x="135" y="265" text-anchor="middle" class="mono-sm">tp</text>
+
+  <!-- VCC -->
+  <path class="mono-w" d="M390 95 H750"/>
+  <circle cx="390" cy="95" r="5" fill="#1565c0"/>
+
+  <text x="390" y="75" class="mono-b">+VCC</text>
+
+  <!-- R1 -->
+  <path class="mono-w" d="M455 95 V125"/>
+
+  <rect x="440" y="125" width="30" height="70"
+        rx="4" class="mono-c"/>
+
+  <path class="mono-w" d="M455 195 V225"/>
+
+  <!-- R1 LABEL LEFT -->
+  <text x="425" y="150" text-anchor="end" class="mono-l">R1</text>
+  <text x="425" y="172" text-anchor="end" class="mono-sm">
+    Timing resistor
+  </text>
+
+  <!-- Timing node -->
+  <circle cx="455" cy="225" r="5" fill="#263238"/>
+
+  <!-- Pin 7 (shared trunk from the timing node) -->
+  <path class="mono-w" d="M455 225 H610"/>
+  <text x="598" y="220" text-anchor="end" class="mono-p">7</text>
+
+  <!-- Pin 6 (branches off the pin 7 trunk) -->
+  <path class="mono-w" d="M575 225 V260 H610"/>
+  <text x="598" y="255" text-anchor="end" class="mono-p">6</text>
+
+  <!-- C1 -->
+  <path class="mono-w" d="M455 225 V320"/>
+
+  <line x1="425" y1="320" x2="485" y2="320"
+        stroke="#263238" stroke-width="3"/>
+  <line x1="425" y1="335" x2="485" y2="335"
+        stroke="#263238" stroke-width="3"/>
+
+  <path class="mono-w" d="M455 335 V385"/>
+
+  <!-- C1 LABEL LEFT -->
+  <text x="415" y="320" text-anchor="end" class="mono-l">C1</text>
+  <text x="415" y="342" text-anchor="end" class="mono-sm">
+    Timing capacitor
+  </text>
+
+  <!-- C1 ground -->
+  <path class="mono-w" d="M455 385 V405"/>
+  <path class="mono-w" d="M425 405 H485"/>
+  <path class="mono-w" d="M433 413 H477"/>
+  <path class="mono-w" d="M443 421 H467"/>
+
+  <text x="455" y="445" text-anchor="middle" class="mono-sm">GND</text>
+
+  <!-- 555 -->
+  <rect x="610" y="135" width="150" height="230"
+        rx="12" class="mono-ic"/>
+
+  <text x="685" y="265"
+        text-anchor="middle"
+        font-family="Arial"
+        font-size="36"
+        font-weight="700"
+        fill="#fff">555</text>
+
+  <!-- Pin 8 -->
+  <path class="mono-w" d="M655 135 V95"/>
+  <circle cx="655" cy="95" r="4" fill="#1565c0"/>
+  <text x="640" y="125" text-anchor="end" class="mono-p">8</text>
+
+  <!-- Pin 4 -->
+  <path class="mono-w" d="M715 135 V95"/>
+  <circle cx="715" cy="95" r="4" fill="#1565c0"/>
+  <text x="730" y="125" class="mono-p">4</text>
+
+  <!-- Pin 2 -->
+  <path class="mono-s" d="M610 300 H520"/>
+  <text x="598" y="295" text-anchor="end" class="mono-p">2</text>
+
+  <circle cx="520" cy="300" r="5" fill="#1565c0"/>
+
+  <!-- Trigger label (nudged right, toward the IC/pin side) -->
+  <text x="545" y="325"
+        text-anchor="middle"
+        class="mono-b">TRIGGER</text>
+
+  <!-- Pin 3 -->
+  <path class="mono-s" d="M760 245 H850"/>
+  <circle cx="850" cy="245" r="5" fill="#1565c0"/>
+  <text x="770" y="238" class="mono-p">3</text>
+
+  <!-- Output label (nudged left, toward the IC/pin side) -->
+  <text x="825" y="220"
+        text-anchor="middle"
+        class="mono-b">OUTPUT</text>
+
+  <!-- Pin 1 -->
+  <path class="mono-w" d="M685 365 V405"/>
+  <path class="mono-w" d="M655 405 H715"/>
+  <path class="mono-w" d="M663 413 H707"/>
+  <path class="mono-w" d="M673 421 H697"/>
+  <text x="685" y="358" text-anchor="middle" class="mono-p">1</text>
+
+  <text x="685" y="445" text-anchor="middle" class="mono-sm">GND</text>
+
+  <!-- OUTPUT PULSE -->
+  <rect x="875" y="115" width="275" height="165"
+        rx="12" fill="#fff" stroke="#1565c0"
+        stroke-width="2" stroke-dasharray="7 6"/>
+
+  <text x="900" y="145" class="mono-b">OUTPUT PULSE</text>
+
+  <path class="mono-s"
+        d="M900 220
+           H950
+           V175
+           H1025
+           V220
+           H1125"/>
+
+  <path class="mono-s" d="M950 245 H1025"/>
+
+  <path class="mono-s"
+        d="M950 245 l8 -5 M950 245 l8 5
+           M1025 245 l-8 -5 M1025 245 l-8 5"/>
+
+  <text x="987" y="240"
+        text-anchor="middle"
+        class="mono-sm">T</text>
+
+  <text x="900" y="265" class="mono-sm">
+    One-shot output pulse
+  </text>
+
+  <!-- Formula -->
+  <rect x="875" y="315" width="275" height="85"
+        rx="12" fill="#fff" stroke="#90caf9"
+        stroke-width="2"/>
+
+  <text x="1012" y="350"
+        text-anchor="middle"
+        class="mono-b">
+    T = 1.1 &times; R1 &times; C1
+  </text>
+
+  <text x="1012" y="378"
+        text-anchor="middle"
+        class="mono-sm">
+    Pulse width
+  </text>
+
+</svg>
+        <p class="text-xs text-gray-500 text-center mt-2">Monostable wiring: R1 charges C1 from VCC toward the discharge/threshold node; a trigger pulse on pin 2 starts one output pulse of fixed width T = 1.1 &times; R1 &times; C1, then the output returns low. Simplified timing schematic &mdash; the control-voltage bypass capacitor on pin 5 is omitted here for clarity (see the Common Mistakes section below).</p>
+      </div>
+
+      <h3 id="monostable-formula" class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Monostable (One-Shot) Formula</h3>
+      <p>T = 1.1 &times; R1 &times; C1, where T is the output pulse width in seconds, R1 is in ohms, and C1 is in farads. Every time the trigger pin is pulsed low, C1 charges through R1 from its initial voltage toward the supply voltage; when it crosses 2/3 Vcc, the internal comparator ends the pulse and discharges the capacitor, resetting the timer for the next trigger. The constant 1.1 comes directly from the RC charging math to reach that 2/3 Vcc threshold, assuming the capacitor starts each cycle fully discharged near 0V, which the discharge transistor ensures in normal operation.</p>
+
+      <p><strong>Worked example:</strong> R1 = 100 k&Omega;, C1 = 10 &micro;F. T = 1.1 &times; 100,000 &times; 0.00001 = <strong>1.1 seconds</strong>. Doubling either R1 or C1 doubles the pulse width, since the formula is a simple product of the two.</p>
+
+      <h3 id="astable-formula" class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Astable (Free-Running) Formula</h3>
+      <p>In astable mode the 555 continuously switches between its threshold states, producing a free-running oscillation between high and low with no external trigger needed. The capacitor charges through R1 + R2 (giving the high time) and discharges through R2 alone (giving the low time):</p>
+      <p>Time High: Th = 0.693 &times; (R1 + R2) &times; C1<br>
+      Time Low: Tl = 0.693 &times; R2 &times; C1<br>
+      Frequency: f = 1.44 &divide; ((R1 + 2R2) &times; C1)<br>
+      Duty Cycle: D = (R1 + R2) &divide; (R1 + 2R2) &times; 100%</p>
+
+      <div class="not-prose my-8" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:20px 12px 14px;">
+        <svg viewBox="0 0 1200 520" role="img" aria-labelledby="astTitle astDesc" style="width:100%;height:auto;display:block;">
+  <title id="astTitle">555 Timer Astable Mode</title>
+  <desc id="astDesc">
+    555 timer astable oscillator using R1, R2 and C1
+    with continuous square-wave output.
+  </desc>
+
+  <defs>
+    <style>
+      .ast-w{fill:none;stroke:#263238;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+      .ast-s{fill:none;stroke:#00897b;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+      .ast-c{fill:#fff;stroke:#263238;stroke-width:2.5}
+      .ast-ic{fill:#263238;stroke:#111827;stroke-width:2.5}
+      .ast-t{font-family:Arial,sans-serif;font-size:22px;font-weight:700;fill:#fff}
+      .ast-l{font-family:Arial,sans-serif;font-size:17px;font-weight:700;fill:#263238}
+      .ast-sm{font-family:Arial,sans-serif;font-size:14px;fill:#607d8b}
+      .ast-p{font-family:Arial,sans-serif;font-size:15px;font-weight:700;fill:#455a64}
+      .ast-g{font-family:Arial,sans-serif;font-size:17px;font-weight:700;fill:#00897b}
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect x="10" y="10" width="1180" height="500"
+        rx="18" fill="#fff" stroke="#80cbc4" stroke-width="2"/>
+
+  <!-- Title -->
+  <rect x="30" y="25" width="410" height="48"
+        rx="10" fill="#00897b"/>
+
+  <text x="235" y="57"
+        text-anchor="middle" class="ast-t">
+    ASTABLE MODE
+  </text>
+
+  <!-- LEFT INFO -->
+  <rect x="40" y="125" width="245" height="150"
+        rx="12" fill="#fff"
+        stroke="#00897b"
+        stroke-width="2"
+        stroke-dasharray="7 6"/>
+
+  <text x="65" y="158" class="ast-g">
+    FREE-RUNNING OSCILLATOR
+  </text>
+
+  <text x="65" y="190" class="ast-sm">
+    No external input pulse
+  </text>
+
+  <text x="65" y="212" class="ast-sm">
+    is required.
+  </text>
+
+  <text x="65" y="245" class="ast-sm">
+    R1, R2 and C1 set
+  </text>
+
+  <text x="65" y="267" class="ast-sm">
+    the oscillation timing.
+  </text>
+
+  <!-- VCC -->
+  <path class="ast-w" d="M390 95 H750"/>
+  <circle cx="390" cy="95" r="5" fill="#00897b"/>
+
+  <!-- +VCC label (nudged further right along the supply rail) -->
+  <text x="480" y="75" class="ast-g">+VCC</text>
+
+  <!-- R1 -->
+  <path class="ast-w" d="M455 95 V125"/>
+
+  <rect x="440" y="125" width="30" height="65"
+        rx="4" class="ast-c"/>
+
+  <path class="ast-w" d="M455 190 V220"/>
+
+  <!-- R1 LEFT LABEL -->
+  <text x="425" y="150"
+        text-anchor="end"
+        class="ast-l">R1</text>
+
+  <text x="425" y="172"
+        text-anchor="end"
+        class="ast-sm">Charge path</text>
+
+  <!-- Node / Pin 7 -->
+  <circle cx="455" cy="220" r="5" fill="#263238"/>
+
+  <path class="ast-w" d="M455 220 H610"/>
+
+  <text x="598" y="215"
+        text-anchor="end" class="ast-p">7</text>
+
+  <!-- R2 -->
+  <path class="ast-w" d="M455 220 V250"/>
+
+  <rect x="440" y="250" width="30" height="70"
+        rx="4" class="ast-c"/>
+
+  <path class="ast-w" d="M455 320 V350"/>
+
+  <!-- R2 LEFT LABEL -->
+  <text x="425" y="275"
+        text-anchor="end"
+        class="ast-l">R2</text>
+
+  <text x="425" y="297"
+        text-anchor="end"
+        class="ast-sm">Charge / discharge</text>
+
+  <!-- Timing node -->
+  <circle cx="455" cy="350" r="5" fill="#263238"/>
+
+  <!-- Pin 6 -->
+  <path class="ast-w" d="M455 350 H575 V260 H610"/>
+
+  <text x="598" y="255"
+        text-anchor="end" class="ast-p">6</text>
+
+  <!-- Pin 2 -->
+  <path class="ast-w" d="M575 350 V300 H610"/>
+
+  <text x="598" y="295"
+        text-anchor="end" class="ast-p">2</text>
+
+  <!-- C1 -->
+  <path class="ast-w" d="M455 350 V385"/>
+
+  <line x1="425" y1="385" x2="485" y2="385"
+        stroke="#263238" stroke-width="3"/>
+
+  <line x1="425" y1="400" x2="485" y2="400"
+        stroke="#263238" stroke-width="3"/>
+
+  <path class="ast-w" d="M455 400 V430"/>
+
+  <!-- C1 LEFT LABEL -->
+  <text x="415" y="392"
+        text-anchor="end"
+        class="ast-l">C1</text>
+
+  <text x="415" y="414"
+        text-anchor="end"
+        class="ast-sm">Timing capacitor</text>
+
+  <!-- Ground -->
+  <path class="ast-w" d="M455 430 V450"/>
+  <path class="ast-w" d="M425 450 H485"/>
+  <path class="ast-w" d="M433 458 H477"/>
+  <path class="ast-w" d="M443 466 H467"/>
+
+  <text x="455" y="490"
+        text-anchor="middle" class="ast-sm">GND</text>
+
+  <!-- 555 -->
+  <rect x="610" y="135" width="150" height="230"
+        rx="12" class="ast-ic"/>
+
+  <text x="685" y="265"
+        text-anchor="middle"
+        font-family="Arial"
+        font-size="36"
+        font-weight="700"
+        fill="#fff">555</text>
+
+  <!-- Pin 8 -->
+  <path class="ast-w" d="M655 135 V95"/>
+  <circle cx="655" cy="95" r="4" fill="#00897b"/>
+  <text x="640" y="125"
+        text-anchor="end" class="ast-p">8</text>
+
+  <!-- Pin 4 -->
+  <path class="ast-w" d="M715 135 V95"/>
+  <circle cx="715" cy="95" r="4" fill="#00897b"/>
+  <text x="730" y="125" class="ast-p">4</text>
+
+  <!-- Output (Pin 3) -->
+  <path class="ast-s" d="M760 245 H850"/>
+  <circle cx="850" cy="245" r="5" fill="#00897b"/>
+  <text x="770" y="238" class="ast-p">3</text>
+
+  <!-- Output label (nudged left, toward the IC/pin side) -->
+  <text x="825" y="220"
+        text-anchor="middle" class="ast-g">OUTPUT</text>
+
+  <!-- GND (Pin 1) -->
+  <path class="ast-w" d="M685 365 V405"/>
+  <path class="ast-w" d="M655 405 H715"/>
+  <path class="ast-w" d="M663 413 H707"/>
+  <path class="ast-w" d="M673 421 H697"/>
+  <text x="685" y="358" text-anchor="middle" class="ast-p">1</text>
+
+  <text x="685" y="445"
+        text-anchor="middle" class="ast-sm">GND</text>
+
+  <!-- OUTPUT WAVE -->
+  <rect x="875" y="115" width="275" height="220"
+        rx="12" fill="#fff"
+        stroke="#00897b"
+        stroke-width="2"
+        stroke-dasharray="7 6"/>
+
+  <text x="900" y="145" class="ast-g">
+    CONTINUOUS OUTPUT
+  </text>
+
+  <path class="ast-s"
+        d="M900 220
+           H925 V175 H965 V220
+           H1005 V175 H1045 V220
+           H1085 V175 H1125 V220"/>
+
+  <text x="900" y="270" class="ast-g">
+    f = 1.44 / ((R1 + 2R2) &times; C1)
+  </text>
+
+  <text x="900" y="300" class="ast-sm">
+    Duty cycle
+  </text>
+
+  <text x="900" y="322" class="ast-sm">
+    = (R1 + R2) / (R1 + 2R2)
+  </text>
+
+</svg>
+        <p class="text-xs text-gray-500 text-center mt-2">Astable wiring: R1 and R2 together charge C1 through the timing node (giving Th), while R2 alone discharges it back down (giving Tl) &mdash; because the charge path always includes the extra R1, Th is always longer than Tl in this basic topology, producing a continuous square-wave output. Simplified timing schematic &mdash; the control-voltage bypass capacitor on pin 5 is omitted here for clarity (see the Common Mistakes section below).</p>
+      </div>
+
+      <p><strong>Worked example:</strong> R1 = 1 k&Omega;, R2 = 10 k&Omega;, C1 = 0.1 &micro;F. Th = 0.693 &times; 11,000 &times; 0.0000001 = <strong>0.762 ms</strong>. Tl = 0.693 &times; 10,000 &times; 0.0000001 = <strong>0.693 ms</strong>. f = 1.44 &divide; (21,000 &times; 0.0000001) = <strong>685.7 Hz</strong>. Duty Cycle = 11,000 &divide; 21,000 &times; 100% = <strong>52.4%</strong>.</p>
+
+      <p><strong>Why duty cycle can't go below 50% in this basic circuit:</strong> since Th always includes the extra R1 term that Tl doesn't, Th &gt; Tl for any circuit with R1 &gt; 0 &mdash; pushing duty cycle above 50% no matter how small R1 is made relative to R2. Getting a duty cycle at or below 50% needs a diode placed across R2 to give the charge and discharge paths independent resistances; that modified circuit's duty-cycle math then matches the general-purpose <a href="/electrical/duty-cycle-pwm-calculator" class="text-sky-600 underline">Duty Cycle &amp; PWM Calculator</a> on this site.</p>
+    </div>
+
+    <div id="cs-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Monostable: R1 = 100 k&Omega;, C1 = 10 &micro;F &rarr; T = 1.1 &times; 100,000 &times; 0.00001 = <strong>1.1 s</strong>.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">This calculator uses the standard 555 timing equations for the classic astable/monostable topologies above, assuming ideal resistor and capacitor values. Component tolerance, supply voltage, and the specific 555 variant (e.g. CMOS TLC555 vs. bipolar NE555) can shift real-world timing slightly from these formulas &mdash; verify on an oscilloscope for anything timing-critical.</p>
+  </div>
+</section>
+
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Bistable Mode &amp; Applications</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Bistable Mode, and Where Each Configuration Is Used</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Bistable mode is the simplest of the three: remove the timing capacitor entirely, tie the threshold pin (6) directly to ground so that its input stays held below the 2/3-Vcc threshold and never trips the threshold comparator, and hold the trigger (pin 2) and reset (pin 4) pins normally high through pull-up resistors R<sub>SET</sub> and R<sub>RESET</sub>. Momentarily grounding pin 2 (SET) sets the output high; momentarily grounding pin 4 (RESET) resets the output low. With no capacitor to charge or discharge, there's no timing at all &mdash; the output simply holds whichever state it was last driven to, exactly like a manual push-button latch or a basic memory element. Note that this describes steady-state behavior only: at power-up, before either input has been pulsed, the initial output state isn't guaranteed and may come up either high or low unless the circuit includes a deliberate startup SET or RESET condition.</p>
+
+    <div class="not-prose my-8" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:20px 12px 14px;">
+        <svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1200 650"
+     width="100%"
+     role="img"
+     aria-labelledby="bistableTitle bistableDesc"
+     style="display:block;">
+
+  <title id="bistableTitle">
+    555 Timer Bistable Mode — Set / Reset
+  </title>
+
+  <desc id="bistableDesc">
+    Professional 555 timer bistable-mode schematic showing
+    active-low SET and RESET inputs, pull-up resistors,
+    control-voltage bypass capacitor on pin 5, grounded
+    threshold pin 6, unused discharge pin 7, VCC on pin 8,
+    grounded pin 1, output on pin 3, and the latched output
+    waveform. Note: If SET and RESET are LOW simultaneously,
+    RESET takes priority.
+  </desc>
+
+  <defs>
+
+    <style>
+
+      .bistable-wire{
+        fill:none;
+        stroke:#263238;
+        stroke-width:3;
+        stroke-linecap:round;
+        stroke-linejoin:round;
+      }
+
+      .bistable-signal{
+        fill:none;
+        stroke:#5e35b1;
+        stroke-width:3;
+        stroke-linecap:round;
+        stroke-linejoin:round;
+      }
+
+      .bistable-component{
+        fill:#ffffff;
+        stroke:#263238;
+        stroke-width:2.5;
+      }
+
+      .bistable-ic{
+        fill:#263238;
+        stroke:#111827;
+        stroke-width:2.5;
+      }
+
+      .bistable-panel{
+        fill:#ffffff;
+        stroke:#5e35b1;
+        stroke-width:2;
+        stroke-dasharray:7 6;
+      }
+
+      .bistable-title{
+        font-family:Arial,Helvetica,sans-serif;
+        font-size:22px;
+        font-weight:700;
+        fill:#ffffff;
+      }
+
+      .bistable-label{
+        font-family:Arial,Helvetica,sans-serif;
+        font-size:16px;
+        font-weight:700;
+        fill:#263238;
+      }
+
+      .bistable-purple{
+        font-family:Arial,Helvetica,sans-serif;
+        font-size:16px;
+        font-weight:700;
+        fill:#5e35b1;
+      }
+
+      .bistable-small{
+        font-family:Arial,Helvetica,sans-serif;
+        font-size:13px;
+        fill:#607d8b;
+      }
+
+      .bistable-pin{
+        font-family:Arial,Helvetica,sans-serif;
+        font-size:14px;
+        font-weight:700;
+        fill:#455a64;
+      }
+
+      .bistable-ictext{
+        font-family:Arial,Helvetica,sans-serif;
+        font-size:36px;
+        font-weight:700;
+        fill:#ffffff;
+      }
+
+      .bistable-footnote{
+        font-family:Arial,Helvetica,sans-serif;
+        font-size:12px;
+        font-style:italic;
+        fill:#78909c;
+      }
+
+    </style>
+
+  </defs>
+
+
+  <!-- =====================================================
+       OUTER FRAME
+       ===================================================== -->
+
+  <rect x="12"
+        y="12"
+        width="1176"
+        height="626"
+        rx="18"
+        fill="#ffffff"
+        stroke="#b39ddb"
+        stroke-width="2"/>
+
+
+  <!-- =====================================================
+       TITLE
+       ===================================================== -->
+
+  <rect x="30"
+        y="28"
+        width="560"
+        height="48"
+        rx="10"
+        fill="#5e35b1"/>
+
+  <text x="310"
+        y="60"
+        text-anchor="middle"
+        class="bistable-title">
+    3. BISTABLE MODE (Set / Reset)
+  </text>
+
+
+  <!-- =====================================================
+       COMMON VCC BUS
+       ===================================================== -->
+
+  <path class="bistable-wire"
+        d="M315 105 H885"/>
+
+  <text x="720"
+        y="84"
+        text-anchor="middle"
+        class="bistable-purple">
+    +VCC
+  </text>
+
+
+  <!-- =====================================================
+       LEFT INPUT PULSE PANEL — SET (conceptual/external)
+       ===================================================== -->
+
+  <rect x="35"
+        y="135"
+        width="235"
+        height="180"
+        rx="12"
+        class="bistable-panel"/>
+
+  <text x="58"
+        y="168"
+        class="bistable-purple">
+    SET INPUT PULSE
+  </text>
+
+  <text x="58"
+        y="191"
+        class="bistable-small">
+    External active-low SET input
+  </text>
+
+
+  <!-- SET waveform -->
+
+  <path class="bistable-signal"
+        d="M58 240
+           H103
+           V282
+           H143
+           V240
+           H245"/>
+
+
+  <!-- SET pulse width -->
+
+  <line x1="103"
+        y1="296"
+        x2="143"
+        y2="296"
+        stroke="#5e35b1"
+        stroke-width="2"/>
+
+  <path d="M103 296 l7 -4 v8 z"
+        fill="#5e35b1"/>
+
+  <path d="M143 296 l-7 -4 v8 z"
+        fill="#5e35b1"/>
+
+  <text x="123"
+        y="309"
+        text-anchor="middle"
+        class="bistable-small">
+    tS
+  </text>
+
+
+  <!-- =====================================================
+       RIGHT INPUT PULSE PANEL — RESET (conceptual/external)
+       ===================================================== -->
+
+  <rect x="930"
+        y="135"
+        width="235"
+        height="180"
+        rx="12"
+        class="bistable-panel"/>
+
+  <text x="953"
+        y="168"
+        class="bistable-purple">
+    RESET INPUT PULSE
+  </text>
+
+  <text x="953"
+        y="191"
+        class="bistable-small">
+    External active-low RESET input
+  </text>
+
+
+  <!-- RESET waveform -->
+
+  <path class="bistable-signal"
+        d="M953 240
+           H998
+           V282
+           H1038
+           V240
+           H1140"/>
+
+
+  <!-- RESET pulse width -->
+
+  <line x1="998"
+        y1="296"
+        x2="1038"
+        y2="296"
+        stroke="#5e35b1"
+        stroke-width="2"/>
+
+  <path d="M998 296 l7 -4 v8 z"
+        fill="#5e35b1"/>
+
+  <path d="M1038 296 l-7 -4 v8 z"
+        fill="#5e35b1"/>
+
+  <text x="1018"
+        y="309"
+        text-anchor="middle"
+        class="bistable-small">
+    tR
+  </text>
+
+
+  <!-- =====================================================
+       RSET PULL-UP
+       ===================================================== -->
+
+  <path class="bistable-wire"
+        d="M360 105 V130"/>
+
+  <rect x="345"
+        y="130"
+        width="30"
+        height="65"
+        rx="4"
+        class="bistable-component"/>
+
+  <path class="bistable-wire"
+        d="M360 195 V225"/>
+
+  <text x="325"
+        y="150"
+        text-anchor="end"
+        class="bistable-label">
+    RSET
+  </text>
+
+  <text x="325"
+        y="170"
+        text-anchor="end"
+        class="bistable-small">
+    Pull-up
+  </text>
+
+
+  <!-- SET NODE -->
+
+  <circle cx="360"
+          cy="225"
+          r="5"
+          fill="#263238"/>
+
+
+  <!-- SET INPUT TO SET NODE -->
+
+  <path class="bistable-signal"
+        d="M270 225 H360"/>
+
+
+
+  <!-- SET SWITCH — normally open, gap between lever tip and lower contact -->
+
+<path class="bistable-wire"
+      d="M360 225 V255"/>
+
+<circle cx="360"
+        cy="255"
+        r="5"
+        fill="#ffffff"
+        stroke="#5e35b1"
+        stroke-width="2.5"/>
+
+<line x1="360"
+      y1="255"
+      x2="382"
+      y2="273"
+      stroke="#5e35b1"
+      stroke-width="3"
+      stroke-linecap="round"/>
+
+<circle cx="390"
+        cy="280"
+        r="5"
+        fill="#ffffff"
+        stroke="#5e35b1"
+        stroke-width="2.5"/>
+
+<path class="bistable-wire"
+      d="M390 280 V330"/>
+
+
+<!-- SET LABEL -->
+
+<text x="400"
+      y="256"
+      class="bistable-purple">
+    SET
+</text>
+
+<text x="400"
+      y="277"
+      class="bistable-small">
+    Pulls pin 2 LOW
+</text>
+
+
+<!-- SET GND -->
+
+<path class="bistable-wire"
+      d="M360 330 H420"/>
+
+<path class="bistable-wire"
+      d="M368 338 H412"/>
+
+<path class="bistable-wire"
+      d="M378 346 H402"/>
+
+<text x="390"
+      y="368"
+      text-anchor="middle"
+      class="bistable-small">
+    GND
+</text>
+
+
+  <!-- =====================================================
+       RRESET PULL-UP
+       ===================================================== -->
+
+  <path class="bistable-wire"
+        d="M840 105 V130"/>
+
+  <rect x="825"
+        y="130"
+        width="30"
+        height="65"
+        rx="4"
+        class="bistable-component"/>
+
+  <path class="bistable-wire"
+        d="M840 195 V225"/>
+
+  <text x="870"
+        y="150"
+        class="bistable-label">
+    RRESET
+  </text>
+
+  <text x="870"
+        y="170"
+        class="bistable-small">
+    Pull-up
+  </text>
+
+
+  <!-- RESET NODE -->
+
+  <circle cx="840"
+          cy="225"
+          r="5"
+          fill="#263238"/>
+
+
+  <!-- RESET INPUT TO NODE -->
+
+  <path class="bistable-signal"
+        d="M840 225 H930"/>
+
+<!-- RESET SWITCH — normally open, gap between lever tip and lower contact -->
+
+<path class="bistable-wire"
+      d="M840 225 V255"/>
+
+<circle cx="840"
+        cy="255"
+        r="5"
+        fill="#ffffff"
+        stroke="#5e35b1"
+        stroke-width="2.5"/>
+
+<line x1="840"
+      y1="255"
+      x2="862"
+      y2="273"
+      stroke="#5e35b1"
+      stroke-width="3"
+      stroke-linecap="round"/>
+
+<circle cx="870"
+        cy="280"
+        r="5"
+        fill="#ffffff"
+        stroke="#5e35b1"
+        stroke-width="2.5"/>
+
+<path class="bistable-wire"
+      d="M870 280 V330"/>
+
+
+<!-- RESET LABEL -->
+
+<text x="880"
+      y="256"
+      class="bistable-purple">
+    RESET
+</text>
+
+<text x="880"
+      y="277"
+      class="bistable-small">
+    Pulls pin 4 LOW
+</text>
+
+
+<!-- RESET GND -->
+
+<path class="bistable-wire"
+      d="M840 330 H900"/>
+
+<path class="bistable-wire"
+      d="M848 338 H892"/>
+
+<path class="bistable-wire"
+      d="M858 346 H882"/>
+
+<text x="870"
+      y="368"
+      text-anchor="middle"
+      class="bistable-small">
+    GND
+  </text>
+
+
+  <!-- =====================================================
+       555 TIMER IC
+       ===================================================== -->
+
+  <rect x="555"
+        y="125"
+        width="170"
+        height="265"
+        rx="12"
+        class="bistable-ic"/>
+
+  <text x="640"
+        y="278"
+        text-anchor="middle"
+        class="bistable-ictext">
+    555
+  </text>
+
+
+  <!-- =====================================================
+       PIN 8 — VCC
+       ===================================================== -->
+
+  <path class="bistable-wire"
+        d="M595 125 V105"/>
+
+  <text x="580"
+        y="119"
+        text-anchor="end"
+        class="bistable-pin">
+    8
+  </text>
+
+
+  <!-- =====================================================
+       PIN 4 — RESET
+       ===================================================== -->
+
+<path class="bistable-signal"
+      d="M685 125
+         H745
+         V225
+         H840"/>
+
+<text x="700"
+      y="119"
+      class="bistable-pin">
+    4
+</text>
+
+
+  <!-- =====================================================
+       PIN 2 — TRIGGER / SET
+       ===================================================== -->
+
+  <path class="bistable-signal"
+        d="M555 290 H505 V225 H360"/>
+
+  <text x="540"
+        y="284"
+        text-anchor="end"
+        class="bistable-pin">
+    2
+  </text>
+
+
+  <!-- =====================================================
+       PIN 7 — DISCHARGE / N.C.
+       ===================================================== -->
+
+  <path d="M555 185 H500"
+        fill="none"
+        stroke="#78909c"
+        stroke-width="2"
+        stroke-dasharray="7 6"/>
+
+  <text x="540"
+        y="163"
+        text-anchor="end"
+        class="bistable-pin">
+    7 — DISCHARGE
+  </text>
+
+  <text x="540"
+        y="179"
+        text-anchor="end"
+        class="bistable-small">
+    N.C.
+  </text>
+
+
+  <!-- =====================================================
+       PIN 6 — THRESHOLD TO GND
+       ===================================================== -->
+
+  <path class="bistable-wire"
+        d="M555 335
+           H515
+           V410"/>
+
+  <text x="540"
+        y="329"
+        text-anchor="end"
+        class="bistable-pin">
+    6
+  </text>
+
+
+  <!-- Threshold GND -->
+
+  <path class="bistable-wire"
+        d="M485 410 H545"/>
+  <path class="bistable-wire"
+        d="M493 418 H537"/>
+  <path class="bistable-wire"
+        d="M503 426 H527"/>
+
+  <text x="515"
+        y="449"
+        text-anchor="middle"
+        class="bistable-small">
+    GND
+  </text>
+
+
+  <!-- =====================================================
+       PIN 1 — GND
+       ===================================================== -->
+
+  <path class="bistable-wire"
+        d="M640 390 V410"/>
+
+  <path class="bistable-wire"
+        d="M610 410 H670"/>
+  <path class="bistable-wire"
+        d="M618 418 H662"/>
+  <path class="bistable-wire"
+        d="M628 426 H652"/>
+
+  <text x="640"
+        y="449"
+        text-anchor="middle"
+        class="bistable-small">
+    GND
+  </text>
+
+  <text x="640"
+        y="382"
+        text-anchor="middle"
+        class="bistable-pin">
+    1
+  </text>
+
+
+  <!-- =====================================================
+       PIN 5 — CONTROL VOLTAGE
+       0.01 µF CAPACITOR TO GND (noise bypass only — not a
+       timing component; bistable mode still has no timing
+       resistor/capacitor)
+       ===================================================== -->
+
+  <path class="bistable-wire"
+        d="M725 320 H760"/>
+
+  <text x="738"
+        y="314"
+        class="bistable-pin">
+    5
+  </text>
+
+
+  <path class="bistable-wire"
+        d="M760 320 V360"/>
+
+
+  <line x1="742"
+        y1="360"
+        x2="778"
+        y2="360"
+        stroke="#263238"
+        stroke-width="3"/>
+
+  <line x1="742"
+        y1="372"
+        x2="778"
+        y2="372"
+        stroke="#263238"
+        stroke-width="3"/>
+
+
+  <path class="bistable-wire"
+        d="M760 372 V410"/>
+
+  <path class="bistable-wire"
+        d="M730 410 H790"/>
+  <path class="bistable-wire"
+        d="M738 418 H782"/>
+  <path class="bistable-wire"
+        d="M748 426 H772"/>
+
+
+  <text x="790"
+        y="355"
+        class="bistable-label">
+    C5
+  </text>
+
+  <text x="790"
+        y="375"
+        class="bistable-small">
+    0.01 µF (bypass, not timing)
+  </text>
+
+  <text x="760"
+        y="449"
+        text-anchor="middle"
+        class="bistable-small">
+    GND
+  </text>
+
+
+  <!-- =====================================================
+       PIN 3 — OUTPUT
+       ===================================================== -->
+
+  <path class="bistable-signal"
+        d="M725 245 H790"/>
+
+  <circle cx="790"
+          cy="245"
+          r="5"
+          fill="#5e35b1"/>
+
+  <text x="760"
+        y="238"
+        class="bistable-pin">
+    3
+  </text>
+
+  <text x="790"
+        y="270"
+        text-anchor="middle"
+        class="bistable-purple">
+    OUTPUT
+  </text>
+
+
+  <!-- =====================================================
+     LATCHED OUTPUT — CLEAN BISTABLE WAVEFORM
+     ===================================================== -->
+
+<rect x="330"
+      y="500"
+      width="540"
+      height="105"
+      rx="12"
+      class="bistable-panel"/>
+
+
+<text x="355"
+      y="529"
+      class="bistable-purple">
+  LATCHED OUTPUT
+</text>
+
+
+<path class="bistable-signal"
+      d="M355 570
+         H410
+         V535
+         H610
+         V570
+         H825"/>
+
+
+<line x1="410"
+      y1="535"
+      x2="410"
+      y2="548"
+      stroke="#5e35b1"
+      stroke-width="2"/>
+
+<text x="410"
+      y="592"
+      text-anchor="middle"
+      class="bistable-small">
+  SET → HIGH
+</text>
+
+
+<line x1="610"
+      y1="535"
+      x2="610"
+      y2="548"
+      stroke="#5e35b1"
+      stroke-width="2"/>
+
+<text x="610"
+      y="592"
+      text-anchor="middle"
+      class="bistable-small">
+  RESET → LOW
+</text>
+
+
+<text x="505"
+      y="523"
+      text-anchor="middle"
+      class="bistable-small">
+  HIGH LATCH
+</text>
+
+<text x="720"
+      y="585"
+      text-anchor="middle"
+      class="bistable-small">
+  LOW LATCH
+</text>
+
+
+  <!-- =====================================================
+       FOOTNOTE — SET/RESET priority note
+       ===================================================== -->
+
+  <text x="600"
+        y="623"
+        text-anchor="middle"
+        class="bistable-footnote">
+    Note: If SET and RESET are LOW simultaneously, RESET takes priority.
+  </text>
+
+</svg>
+      <p class="text-xs text-gray-500 text-center mt-2">Bistable wiring: pull-up resistor R<sub>SET</sub> with an active-low switch sets the output high via the trigger pin; pull-up resistor R<sub>RESET</sub> with an active-low switch resets it low via the reset pin; the threshold pin (6) is tied straight to ground and the discharge pin (7) is unused. No timing resistor or capacitor is used &mdash; the small 0.01 &micro;F capacitor shown on pin 5 is an optional control-voltage noise bypass only, not a timing component.</p>
+    </div>
+    <p class="text-xs text-gray-400 mb-4">On the 555, the reset input is documented as dominant over the trigger input: if trigger and reset are pulled low at the same time, the output is forced &mdash; and held &mdash; LOW regardless of the trigger state. It's still good practice not to deliberately drive both at once in a real design, but the output behavior itself is well-defined, not a race condition.</p>
+    <div class="not-prose overflow-x-auto my-4">
+      <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr><th class="text-left px-4 py-2 font-semibold">Mode</th><th class="text-left px-4 py-2 font-semibold">Typical Application</th></tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr><td class="px-4 py-2">Monostable</td><td class="px-4 py-2">Fixed-length delay timers, switch debounce, single-pulse generation from a noisy or bouncy input signal</td></tr>
+          <tr><td class="px-4 py-2">Astable</td><td class="px-4 py-2">Clock signal generation, LED flashers, tone/beeper generation, basic square-wave oscillators</td></tr>
+          <tr><td class="px-4 py-2">Bistable</td><td class="px-4 py-2">Simple flip-flop / latch, toggle switches, basic memory element, manual set-reset control</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Retriggerable vs. non-retriggerable monostable:</strong> retriggering behavior depends on the specific 555 device and circuit configuration, so it isn't accurate to call the standard monostable universally non-retriggerable. In many basic NE555 monostable circuits, a suitable trigger applied during the timing interval can extend or reinitiate the cycle, and the sequence only ends once the trigger pin has been held high for a short period before the interval expires &mdash; consult the specific device datasheet for exact behavior. Some applications (a motion-sensor light that should stay on continuously as long as motion keeps being detected) specifically want this retriggerable behavior, where each new trigger restarts the timing period from zero; if your device or design doesn't retrigger as needed, a different IC or additional external logic may be required.</p>
+    <p><strong>Using astable output as PWM:</strong> the basic two-resistor astable circuit gives a fixed duty cycle set by the R1:R2 ratio, not a continuously adjustable one. Simply replacing R2 with a potentiometer does make the duty cycle adjustable, but it changes both duty cycle and frequency together, since R2 appears in both the Th and Tl terms &mdash; a diode-separated charge/discharge path (a diode across R2, as described above) combined with a potentiometer is the more standard approach, since it lets duty cycle be adjusted with less coupled effect on frequency. Once you have a target Th and Tl in mind, the <a href="/electrical/duty-cycle-pwm-calculator" class="text-sky-600 underline">Duty Cycle &amp; PWM Calculator</a> on this site handles the resulting duty-cycle and average-voltage math.</p>
+  </div>
+</section>
+
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Designing 555 Timer Circuits</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p><strong>1. Using resistor values far outside the recommended range.</strong> Most 555 datasheets suggest keeping timing resistors roughly between 1 k&Omega; and 1 M&Omega; &mdash; values much lower can push the discharge transistor beyond its comfortable current range, while very high values make timing more sensitive to the chip's own leakage current and PCB leakage effects.</p>
+      <p><strong>2. Forgetting that real capacitors, especially electrolytics, have wide tolerance.</strong> A common electrolytic capacitor can be off by &plusmn;20% or more from its printed value &mdash; for timing-critical designs, use film or ceramic capacitors with tighter tolerance, or measure the actual capacitance before finalizing component values.</p>
+      <p><strong>3. Expecting a standard astable circuit to hit exactly 50% duty cycle.</strong> The basic two-resistor topology always gives duty cycle above 50% because the charge path (R1+R2) is always longer than the discharge path (R2 alone) &mdash; a diode across R2 is needed to get duty cycle at or below 50%.</p>
+      <p><strong>4. Mixing up which resistor sets which timing interval in astable mode.</strong> R1 appears only in the charge/high-time term (through the R1+R2 charge path), but changing R1 still changes the overall period and frequency, not just the high time; R2 affects both the high time and the low time. Increasing R2 alone lengthens both Th and Tl (lowering frequency while keeping duty cycle closer to 50%); increasing R1 alone lengthens only Th (raising duty cycle) while also lowering frequency, since the period Th+Tl grows too.</p>
+      <p><strong>5. Omitting the control voltage pin (pin 5) bypass capacitor.</strong> A small capacitor (commonly 0.01 &micro;F) from pin 5 to ground is standard practice to filter noise on the internal 2/3-Vcc reference &mdash; skipping it can make the circuit more susceptible to false triggering or jitter, especially in electrically noisy environments.</p>
+      <p><strong>6. Assuming every 555 monostable behaves the same way on a second trigger.</strong> Retriggering depends on the specific 555 device and circuit configuration &mdash; some basic wirings can extend or reinitiate the timing cycle on a mid-pulse trigger, while others effectively ignore it. Check the specific datasheet, and if your application needs guaranteed retriggerable behavior (or guaranteed non-retriggerable behavior), verify it rather than assuming.</p>
+      <p><strong>7. Not accounting for supply voltage or 555 variant differences.</strong> The classic bipolar NE555 and newer CMOS variants (like the TLC555 or ICM7555) can have slightly different threshold behavior and drastically different supply current and minimum operating voltage &mdash; check the specific datasheet rather than assuming universal NE555 figures for every 555-family part.</p>
+      <p><strong>8. Ignoring capacitor discharge path resistance in bistable mode circuits that still have a capacitor present.</strong> If a capacitor is left connected from a previous astable or monostable design when converting a circuit to bistable operation, stray charge on it can cause an unexpected initial output state at power-up &mdash; remove or fully account for any timing capacitor when wiring a genuine bistable (latch) configuration.</p>
+    </div>
+  </div>
+</section>
+
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What are the common operating configurations of a 555 timer?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Monostable (one-shot): a trigger produces a single output pulse of fixed width set by R1 and C1. Astable (free-running): the timer continuously oscillates with no external trigger, at a frequency and duty cycle set by R1, R2 and C1. Bistable: with the timing resistor and capacitor removed, the 555 acts as a simple set-reset latch, holding whichever state the trigger or reset pin last drove it to. External pull-up resistors may still be used on those pins, but no timing components are involved.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for 555 timer monostable pulse width?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">T = 1.1 &times; R1 &times; C1, with R1 in ohms and C1 in farads giving T in seconds. The constant 1.1 comes from the RC charging time needed to reach the 2/3-Vcc internal threshold that ends the pulse.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the formula for 555 timer astable frequency and duty cycle?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Th = 0.693 &times; (R1+R2) &times; C1. Tl = 0.693 &times; R2 &times; C1. f = 1.44 &divide; ((R1+2R2) &times; C1). Duty Cycle = (R1+R2) &divide; (R1+2R2) &times; 100%. All resistances in ohms and capacitance in farads.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is the duty cycle of a standard 555 astable circuit always above 50%?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The capacitor charges through R1+R2 (giving Th) but discharges through only R2 (giving Tl), and since R1 is always positive, Th is always greater than Tl. Getting duty cycle at or below 50% needs a diode across R2 to give the charge and discharge paths separate resistances.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is 555 timer bistable mode, and why doesn't it need a timing resistor or capacitor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">In bistable mode, the 555 is wired as a simple SR latch: pulling trigger (pin 2) low sets the output high, and pulling reset (pin 4) low resets it low. External pull-up resistors on those pins are common but play no role in timing. The output then holds that state indefinitely until the opposite pin is pulsed &mdash; there's no RC timing network, so there's no pulse width or frequency to calculate.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What resistor and capacitor value ranges give the most accurate 555 timing?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Most datasheets recommend timing resistors roughly between 1 k&Omega; and 1 M&Omega;. For practical designs, many engineers also avoid very small timing capacitors (for example, below roughly 100 pF), since stray capacitance becomes significant relative to them &mdash; check the specific datasheet for recommended ranges. Values outside these ranges can push the IC's discharge stage beyond a comfortable current range or make timing overly sensitive to leakage effects, degrading accuracy from the ideal formula.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why doesn't my built 555 timer circuit match the calculated pulse width or frequency exactly?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The formulas assume exact component values, but real capacitors (especially electrolytics) can be off by &plusmn;20% or more, and resistors are typically &plusmn;5%. Supply voltage and the specific 555 variant also shift thresholds slightly. Use tighter-tolerance components for critical designs, and verify actual output on an oscilloscope.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can a 555 timer's astable output be used as a PWM signal?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The basic astable circuit gives only a fixed duty cycle set by the resistor ratio, not a continuously adjustable one. With a diode across R2 (or a potentiometer in place of a resistor), the duty cycle becomes adjustable, letting the 555 serve as a simple PWM source for LED dimming or basic motor speed control.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the difference between a retriggerable and non-retriggerable monostable?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Retriggering depends on the specific 555 device and circuit configuration. In many standard NE555 monostable circuits, a suitable trigger applied during the timing interval can extend or reinitiate the cycle, ending only once the trigger pin has been held high briefly before the interval expires &mdash; consult the specific datasheet for exact behavior. Devices or configurations explicitly built as retriggerable restart the timing period from zero on every new trigger &mdash; useful for something like a motion-sensor light that should stay on as long as retriggering pulses keep arriving.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I pick a larger resistor or a larger capacitor to hit a target 555 timing value?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The same T, frequency, or Th/Tl value can come from many R and C combinations, so favor a resistor in the low-to-mid range (roughly a few k&Omega; to a few hundred k&Omega;) and let the capacitor value fall out of the formula, rather than the reverse. As a practical guideline, many engineers avoid very small capacitors (under about 100 pF) since they become sensitive to the circuit's own stray capacitance; check the specific datasheet for recommended ranges. Very large electrolytics bring wide tolerance and leakage current &mdash; both degrade timing accuracy. C0G/NP0 ceramic or film capacitors are often preferable to general-purpose electrolytics where their capacitance range is practical, since other ceramic dielectrics (X7R, Y5V) can vary significantly with voltage and temperature.</p>
+    </details>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<script>
+  let timerMode = 'mono';
+
+  const R_UNITS = { ohm: 1, kohm: 1e3, Mohm: 1e6 };
+  const C_UNITS = { pF: 1e-12, nF: 1e-9, uF: 1e-6 };
+  const R_LABELS = { ohm: '\u03a9', kohm: 'k\u03a9', Mohm: 'M\u03a9' };
+  const C_LABELS = { pF: 'pF', nF: 'nF', uF: '\u00b5F' };
+  const R_MIN_RECOMMENDED = 1e3, R_MAX_RECOMMENDED = 1e6, C_MIN_RECOMMENDED = 100e-12;
+
+  function setTimerMode(mode){
+    timerMode = mode;
+    ['modeMono','modeAstable','modeBistable'].forEach(function(id){
+      const isActive = (id === 'modeMono' && mode === 'mono') ||
+                        (id === 'modeAstable' && mode === 'astable') ||
+                        (id === 'modeBistable' && mode === 'bistable');
+      const el = document.getElementById(id);
+      el.classList.toggle('active', isActive);
+      el.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+    document.getElementById('panelMono').classList.toggle('active', mode === 'mono');
+    document.getElementById('panelAstable').classList.toggle('active', mode === 'astable');
+    document.getElementById('panelBistable').classList.toggle('active', mode === 'bistable');
+
+    const calcBtn = document.getElementById('calcBtn');
+    const disclaimer = document.getElementById('calcDisclaimer');
+    const formulaChip = document.getElementById('formulaChip');
+    const validationBox = document.getElementById('validationBox');
+    showValidationBox(validationBox, [], null);
+    resetResultUI('Calculating\u2026');
+
+    if (mode === 'bistable'){
+      calcBtn.classList.add('hidden');
+      formulaChip.textContent = 'No R/C formula \u2014 output is a latched state';
+      disclaimer.textContent = 'Bistable mode has no timing formula: the output simply holds whichever state the trigger or reset pin last set it to.';
+      document.getElementById('resultLabel').textContent = 'Output State';
+      document.getElementById('rResult').textContent = 'Latched (no timing)';
+      document.getElementById('resultSub').textContent = 'Set by trigger/reset pins, not by calculation';
+      document.getElementById('rGridBlock').classList.add('hidden');
+      document.getElementById('rExtraBlock').classList.add('hidden');
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Bistable mode uses no timing resistor or capacitor \u2014 see the truth table above for how the output behaves.</p>';
+    } else {
+      calcBtn.classList.remove('hidden');
+      document.getElementById('rGridBlock').classList.remove('hidden');
+      formulaChip.textContent = mode === 'mono'
+        ? 'T = 1.1 \u00d7 R1 \u00d7 C1'
+        : 'f = 1.44 \u00f7 ((R1+2R2) \u00d7 C1)';
+      disclaimer.textContent = 'Formula-based ideal timing. Real components have tolerance (some general-purpose electrolytic capacitors are specified at \u00b120% or worse), and supply voltage or 555 variant (bipolar vs. CMOS) can shift results slightly from this calculation.';
+      calculate555();
+    }
+  }
+
+  function setFeedback(val){
+    const fbYes = document.getElementById('fbYes');
+    const fbNo = document.getElementById('fbNo');
+    fbYes.classList.toggle('active-like', val === 'yes');
+    fbNo.classList.toggle('active-dislike', val === 'no');
+    fbYes.setAttribute('aria-pressed', val === 'yes' ? 'true' : 'false');
+    fbNo.setAttribute('aria-pressed', val === 'no' ? 'true' : 'false');
+  }
+
+  function fmtTime(sec){
+    if (!isFinite(sec) || sec < 0) return '\u2014';
+    if (sec === 0) return '0 s';
+    if (sec < 1e-6) return (sec * 1e9).toFixed(3) + ' ns';
+    if (sec < 1e-3) return (sec * 1e6).toFixed(3) + ' \u00b5s';
+    if (sec < 1) return (sec * 1e3).toFixed(3) + ' ms';
+    if (sec < 60) return sec.toFixed(4) + ' s';
+    if (sec < 3600) return (sec / 60).toFixed(4) + ' min';
+    return (sec / 3600).toFixed(4) + ' h';
+  }
+
+  function fmtFreq(hz){
+    if (!isFinite(hz) || hz <= 0) return '\u2014';
+    if (hz >= 1e6) return (hz / 1e6).toFixed(4) + ' MHz';
+    if (hz >= 1e3) return (hz / 1e3).toFixed(4) + ' kHz';
+    return hz.toFixed(4) + ' Hz';
+  }
+
+  function showValidationBox(box, messages, severity){
+    box.classList.remove('hidden','bg-red-50','border','border-red-200','text-red-600','bg-amber-50','border-amber-200','text-amber-700');
+    if (!messages.length){ box.classList.add('hidden'); box.innerHTML = ''; return; }
+    if (severity === 'error'){ box.classList.add('bg-red-50','border','border-red-200','text-red-600'); }
+    else { box.classList.add('bg-amber-50','border','border-amber-200','text-amber-700'); }
+    box.innerHTML = messages.map(function(m){ return '\u2022 ' + m; }).join('<br>');
+  }
+
+  function rangeWarning(rOhms, label){
+    if (!Number.isFinite(rOhms)) return null;
+    if (rOhms < R_MIN_RECOMMENDED) return label + ' is below the commonly recommended ~1 k\u03a9 minimum for 555 timing; check the specific IC datasheet.';
+    if (rOhms > R_MAX_RECOMMENDED) return label + ' is above the commonly recommended ~1 M\u03a9 maximum for 555 timing; check the specific IC datasheet.';
+    return null;
+  }
+
+  function capWarning(cFarads, label){
+    if (!Number.isFinite(cFarads)) return null;
+    if (cFarads < C_MIN_RECOMMENDED) return label + ' is below the commonly recommended ~100 pF minimum; stray capacitance may affect accuracy. Check the specific IC datasheet.';
+    return null;
+  }
+
+  function resetResultUI(errorMessage){
+    document.getElementById('rResult').textContent = '\u2014';
+    document.getElementById('rGrid1').textContent = '\u2014';
+    document.getElementById('rGrid2').textContent = '\u2014';
+    document.getElementById('rExtra').textContent = '\u2014';
+    document.getElementById('rExtraBlock').classList.add('hidden');
+    document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">' + (errorMessage || 'Fix the input errors above to see a valid result.') + '</p>';
+  }
+
+  function calculate555(){
+    if (timerMode === 'bistable') return;
+
+    const validationBox = document.getElementById('validationBox');
+    const errors = [];
+
+    if (timerMode === 'mono'){
+      const r1Val = parseFloat(document.getElementById('monoR1').value);
+      const r1Unit = document.getElementById('monoR1Unit').value;
+      const c1Val = parseFloat(document.getElementById('monoC1').value);
+      const c1Unit = document.getElementById('monoC1Unit').value;
+
+      if (!isFinite(r1Val) || r1Val <= 0){ errors.push('Enter a valid R1 value greater than 0.'); }
+      if (!isFinite(c1Val) || c1Val <= 0){ errors.push('Enter a valid C1 value greater than 0.'); }
+
+      if (errors.length){
+        showValidationBox(validationBox, errors, 'error');
+        resetResultUI();
+        return;
+      }
+
+      const r1 = r1Val * R_UNITS[r1Unit];
+      const c1 = c1Val * C_UNITS[c1Unit];
+
+      if (!Number.isFinite(r1) || !Number.isFinite(c1)){
+        showValidationBox(validationBox, ['Values are too large or too small to calculate. Enter smaller magnitudes.'], 'error');
+        resetResultUI();
+        return;
+      }
+
+      const warnings = [rangeWarning(r1, 'R1'), capWarning(c1, 'C1')].filter(Boolean);
+      showValidationBox(validationBox, warnings, 'warning');
+
+      const T = 1.1 * r1 * c1;
+
+      document.getElementById('resultLabel').textContent = 'Pulse Width (T)';
+      document.getElementById('rResult').textContent = fmtTime(T);
+      document.getElementById('resultSub').textContent = 'Monostable one-shot output duration';
+      document.getElementById('rGrid1Label').textContent = 'R1';
+      document.getElementById('rGrid1').textContent = r1Val + ' ' + R_LABELS[r1Unit];
+      document.getElementById('rGrid2Label').textContent = 'C1';
+      document.getElementById('rGrid2').textContent = c1Val + ' ' + C_LABELS[c1Unit];
+      document.getElementById('rExtraBlock').classList.add('hidden');
+
+      const rows = [
+        ['R1', r1Val + ' ' + R_LABELS[r1Unit] + ' (' + r1.toExponential(3) + ' \u03a9)'],
+        ['C1', c1Val + ' ' + C_LABELS[c1Unit] + ' (' + c1.toExponential(3) + ' F)'],
+        ['Pulse Width (T)', fmtTime(T)]
+      ];
+      let tableHtml = '<table class="breakdown-table"><thead><tr><th>Quantity</th><th>Value</th></tr></thead><tbody>';
+      rows.forEach(function(r){ tableHtml += '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>'; });
+      tableHtml += '</tbody></table>';
+      document.getElementById('breakdownBox').innerHTML = tableHtml;
+
+    } else {
+      const r1Val = parseFloat(document.getElementById('asR1').value);
+      const r1Unit = document.getElementById('asR1Unit').value;
+      const r2Val = parseFloat(document.getElementById('asR2').value);
+      const r2Unit = document.getElementById('asR2Unit').value;
+      const c1Val = parseFloat(document.getElementById('asC1').value);
+      const c1Unit = document.getElementById('asC1Unit').value;
+
+      if (!isFinite(r1Val) || r1Val <= 0){ errors.push('Enter a valid R1 value greater than 0.'); }
+      if (!isFinite(r2Val) || r2Val <= 0){ errors.push('Enter a valid R2 value greater than 0.'); }
+      if (!isFinite(c1Val) || c1Val <= 0){ errors.push('Enter a valid C1 value greater than 0.'); }
+
+      if (errors.length){
+        showValidationBox(validationBox, errors, 'error');
+        resetResultUI();
+        return;
+      }
+
+      const r1 = r1Val * R_UNITS[r1Unit];
+      const r2 = r2Val * R_UNITS[r2Unit];
+      const c1 = c1Val * C_UNITS[c1Unit];
+
+      if (!Number.isFinite(r1) || !Number.isFinite(r2) || !Number.isFinite(c1)){
+        showValidationBox(validationBox, ['Values are too large or too small to calculate. Enter smaller magnitudes.'], 'error');
+        resetResultUI();
+        return;
+      }
+
+      const warnings = [rangeWarning(r1, 'R1'), rangeWarning(r2, 'R2'), capWarning(c1, 'C1')].filter(Boolean);
+      showValidationBox(validationBox, warnings, 'warning');
+
+      const Th = 0.693 * (r1 + r2) * c1;
+      const Tl = 0.693 * r2 * c1;
+      const T = Th + Tl;
+      const f = 1 / T;
+      const duty = ((r1 + r2) / (r1 + 2 * r2)) * 100;
+
+      document.getElementById('resultLabel').textContent = 'Frequency (f)';
+      document.getElementById('rResult').textContent = fmtFreq(f);
+      document.getElementById('resultSub').textContent = 'Astable free-running output';
+      document.getElementById('rGrid1Label').textContent = 'Time High (Th)';
+      document.getElementById('rGrid1').textContent = fmtTime(Th);
+      document.getElementById('rGrid2Label').textContent = 'Time Low (Tl)';
+      document.getElementById('rGrid2').textContent = fmtTime(Tl);
+      document.getElementById('rExtraLabel').textContent = 'Duty Cycle';
+      document.getElementById('rExtra').textContent = duty.toFixed(2) + '%';
+      document.getElementById('rExtraBlock').classList.remove('hidden');
+
+      const rows = [
+        ['R1', r1Val + ' ' + R_LABELS[r1Unit]],
+        ['R2', r2Val + ' ' + R_LABELS[r2Unit]],
+        ['C1', c1Val + ' ' + C_LABELS[c1Unit]],
+        ['Time High (Th)', fmtTime(Th)],
+        ['Time Low (Tl)', fmtTime(Tl)],
+        ['Period (T)', fmtTime(T)],
+        ['Frequency (f)', fmtFreq(f)],
+        ['Duty Cycle (D)', duty.toFixed(2) + '%']
+      ];
+      let tableHtml = '<table class="breakdown-table"><thead><tr><th>Quantity</th><th>Value</th></tr></thead><tbody>';
+      rows.forEach(function(r){ tableHtml += '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>'; });
+      tableHtml += '</tbody></table>';
+      document.getElementById('breakdownBox').innerHTML = tableHtml;
+    }
+  }
+
+  calculate555();
+</script>
+
+<script>
+  function copyResultGeneric(){
+    var btn = document.getElementById('copyResultBtn');
+    if (!btn) return;
+    function restore(){ btn.textContent = '\ud83d\udccb Copy Result'; }
+
+    var currentResult = document.getElementById('rResult').textContent.trim();
+    if (currentResult === '' || currentResult === '\u2014'){
+      btn.textContent = 'Nothing to copy \u2014 calculate a result first';
+      setTimeout(restore, 2000);
+      return;
+    }
+
+    var modeLabel = timerMode === 'mono' ? 'Monostable' : (timerMode === 'astable' ? 'Astable' : 'Bistable');
+    var lines = ['555 Timer Calculator Result', '', 'Mode: ' + modeLabel];
+
+    if (timerMode === 'bistable'){
+      lines.push('Output: ' + document.getElementById('rResult').textContent.trim());
+      lines.push('Note: bistable mode is a set-reset latch \u2014 there are no timing values to report.');
+    } else {
+      var g1Label = document.getElementById('rGrid1Label').textContent.trim();
+      var g1Val = document.getElementById('rGrid1').textContent.trim();
+      var g2Label = document.getElementById('rGrid2Label').textContent.trim();
+      var g2Val = document.getElementById('rGrid2').textContent.trim();
+      lines.push(g1Label + ': ' + g1Val);
+      lines.push(g2Label + ': ' + g2Val);
+      lines.push('');
+      var resultLabel = document.getElementById('resultLabel').textContent.trim();
+      var resultVal = document.getElementById('rResult').textContent.trim();
+      lines.push(resultLabel + ': ' + resultVal);
+      if (timerMode === 'astable'){
+        var extraLabel = document.getElementById('rExtraLabel').textContent.trim();
+        var extraVal = document.getElementById('rExtra').textContent.trim();
+        lines.push(extraLabel + ': ' + extraVal);
+      }
+    }
+
+    lines.push('', 'Source: electromechcalc.com/electrical/555-timer-calculator');
+    var text = lines.join('\n');
+
+    if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = '\u2705 Copied';
+        setTimeout(restore, 1800);
+      }).catch(function(){ btn.textContent = '\u26a0\ufe0f Copy failed'; setTimeout(restore, 1800); });
+    } else {
+      var ok = false;
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch (e) { ok = false; }
+      btn.textContent = ok ? '\u2705 Copied' : '\u26a0\ufe0f Not supported';
+      setTimeout(restore, 1800);
+    }
+  }
+
+  (function(){
+    function clampNumberInput(el){
+      if (el.type !== 'number' || el.value === '') return;
+      var hasMin = el.hasAttribute('min');
+      var hasMax = el.hasAttribute('max');
+      var min = hasMin ? parseFloat(el.min) : null;
+      var max = hasMax ? parseFloat(el.max) : null;
+      var v = parseFloat(el.value);
+      var corrected = null;
+      if (!isFinite(v)) { corrected = (min !== null ? min : 0); }
+      else if (min !== null && v < min) { corrected = min; }
+      else if (max !== null && v > max) { corrected = max; }
+      if (corrected !== null && corrected !== v) {
+        el.value = corrected;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    document.querySelectorAll('input[type="number"]').forEach(function(el){
+      el.addEventListener('blur', function(){ clampNumberInput(el); calculate555(); });
+    });
+  })();
+</script>
+
+<script>
+  var __shareModalLoading = false;
+  function loadShareModal(){
+    if (typeof openShareModal === 'function'){ openShareModal(); return; }
+    if (__shareModalLoading) return;
+    __shareModalLoading = true;
+    var shareBtn = document.querySelector('.share-result-btn');
+    var prevLabel = shareBtn ? shareBtn.innerHTML : null;
+    var s = document.createElement('script');
+    s.src = '/assets/share-modal.js';
+    s.onload = function(){ __shareModalLoading = false; openShareModal(); };
+    s.onerror = function(){
+      __shareModalLoading = false;
+      if (shareBtn){
+        shareBtn.innerHTML = '<span aria-hidden="true">\u26a0\ufe0f</span> Unable to load \u2014 try again';
+        setTimeout(function(){ if (prevLabel !== null) shareBtn.innerHTML = prevLabel; }, 2500);
+      }
+    };
+    document.head.appendChild(s);
+  }
+</script>
+<script>
+  (function(){
+    function positionShareBar(){
+      var bar = document.getElementById('shareFeedbackBar');
+      var related = document.getElementById('relatedCalculatorsBox');
+      var anchor = document.getElementById('shareFeedbackAnchor');
+      if(!bar || !related || !anchor) return;
+      var isMobile = window.matchMedia('(max-width: 1023px)').matches;
+      if(isMobile){
+        if(bar.nextElementSibling !== related){
+          related.parentElement.insertBefore(bar, related);
+        }
+      } else {
+        if(bar.previousElementSibling !== anchor){
+          anchor.parentElement.insertBefore(bar, anchor.nextSibling);
+        }
+      }
+    }
+    window.addEventListener('resize', positionShareBar);
+    document.addEventListener('DOMContentLoaded', positionShareBar);
+    positionShareBar();
+  })();
+</script>
+
+<script>
+(() => {
+  const el = document.getElementById("heroTypingText");
+  if (!el) return;
+  const words = [
+    "Calculate Smarter. Work Faster.",
+    "Practical Calculators & Maintenance Guides."
+  ];
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion) { el.textContent = words[0]; return; }
+  let wordIndex = 0;
+  let charIndex = words[0].length;
+  let deleting = true;
+  const typeSpeed = 90;
+  const deleteSpeed = 55;
+  const pauseAfterTyping = 1800;
+  const pauseAfterDeleting = 500;
+  function animate() {
+    const word = words[wordIndex];
+    if (deleting) {
+      if (charIndex > 0) {
+        charIndex--;
+        el.textContent = word.substring(0, charIndex);
+        setTimeout(animate, deleteSpeed);
+      } else {
+        deleting = false;
+        wordIndex = (wordIndex + 1) % words.length;
+        charIndex = 0;
+        setTimeout(animate, pauseAfterDeleting);
+      }
+    } else {
+      const nextWord = words[wordIndex];
+      if (charIndex < nextWord.length) {
+        charIndex++;
+        el.textContent = nextWord.substring(0, charIndex);
+        setTimeout(animate, typeSpeed);
+      } else {
+        deleting = true;
+        setTimeout(animate, pauseAfterTyping);
+      }
+    }
+  }
+  setTimeout(() => {
+    wordIndex = 0;
+    charIndex = words[0].length;
+    deleting = true;
+    animate();
+  }, 1500);
+})();
+</script>
+</body>
+</html>
