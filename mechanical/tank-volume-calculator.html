@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- meta: {"category":"Mechanical"} -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
+<title>Tank Volume Calculator (10 Shapes) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<meta name="description" content="Free tank volume calculator for 10 tank shapes — cylinders, rectangles, ovals, capsules, 2:1 elliptical and dished heads — with optional fill depth, in US gallons, liters, m³, ft³, quarts and imperial gallons.">
+<meta name="keywords" content="tank volume calculator, tank capacity calculator, horizontal cylinder tank volume, capsule tank volume, dished head tank volume, oval tank volume, fill depth calculator">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/mechanical/tank-volume-calculator">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Tank Volume Calculator">
+<meta property="og:description" content="Calculate total and filled tank volume for 10 shapes — cylinders, ovals, capsules, elliptical and dished heads — in six units at once.">
+<meta property="og:url" content="https://www.electromechcalc.com/mechanical/tank-volume-calculator">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tank Volume Calculator">
+<meta name="twitter:description" content="Calculate total and filled tank volume for 10 shapes — cylinders, ovals, capsules, elliptical and dished heads — in six units at once.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Tank Volume Calculator",
+  "url": "https://www.electromechcalc.com/mechanical/tank-volume-calculator",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "Free online calculator for total and partially-filled tank volume across 10 shapes, including cylinders, rectangles, ovals, capsules, 2:1 elliptical heads and dished (F&D) heads, with results in six volume units.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Mechanical Calculators", "item": "https://www.electromechcalc.com/mechanical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "Tank Volume Calculator", "item": "https://www.electromechcalc.com/mechanical/tank-volume-calculator" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What tank shapes does this calculator support?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Ten shapes: Horizontal and Vertical Cylinder, Rectangle, Horizontal and Vertical Oval, Horizontal and Vertical Capsule, Horizontal 2:1 Elliptical, Horizontal Dish Ends, and Horizontal Ellipse. Each uses its own geometric calculation for total capacity and, optionally, the volume at a given filled depth. The Horizontal Dish Ends result uses a standard flanged-and-dished (F&D) approximation rather than exact torispherical geometry." }
+    },
+    {
+      "@type": "Question",
+      "name": "How is filled volume calculated for a partially full tank?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For shapes with a constant cross-section along the tank length (Horizontal Cylinder, Rectangle, Horizontal Oval, Horizontal Ellipse) the filled volume is the cross-sectional area below the liquid level, multiplied by the tank's length. For domed-end shapes (capsule, 2:1 elliptical, dish ends) the two end caps are combined into an equivalent single solid (a sphere, an oblate spheroid, or a shallow spherical segment respectively) and sliced at the same liquid height — a standard method used for horizontal tank strapping charts." }
+    },
+    {
+      "@type": "Question",
+      "name": "What's the difference between a capsule, a 2:1 elliptical head, and a dished (F&D) head tank?",
+      "acceptedAnswer": { "@type": "Answer", "text": "They differ only in how deep the rounded ends bulge relative to the tank diameter (D). A capsule has fully hemispherical ends (depth = D/2). A 2:1 semi-elliptical head is shallower (depth = D/4), the standard ASME ellipsoidal head ratio. A dished (flanged and dished, F&D) end is shallower still (depth ≈ 0.169×D for the common crown radius = D, knuckle radius = 0.06×D proportions) and blends into the shell through a small toroidal knuckle rather than a smooth curve all the way to the edge." }
+    },
+    {
+      "@type": "Question",
+      "name": "Are these calculations based on inside or outside dimensions?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Inside (internal) dimensions, matching how tank capacity is normally specified. If you only have outside dimensions and a known wall thickness, subtract twice the wall thickness from each diameter/width/height before entering values here." }
+    },
+    {
+      "@type": "Question",
+      "name": "Which units can I use for input and output?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Enter all dimensions in millimeters, centimeters, meters, inches, or feet using the unit selector — the same unit applies to every field including Filled Depth. Results are always shown in six common units at once: US gallons, US quarts, imperial gallons, liters, cubic meters, and cubic feet." }
+    },
+    {
+      "@type": "Question",
+      "name": "How accurate is the Horizontal Dish Ends result?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The dish-ends volume uses a standard ASME F&D approximation (crown radius = diameter, knuckle radius = 6% of diameter, giving an effective dish depth z of about 0.169×D), modeled as a shallow spherical segment rather than the full torispherical (sphere + toroidal knuckle) geometry. This is accurate to within a small percentage for standard proportions and is a common engineering approximation, but if your vessel uses a non-standard knuckle radius, treat the result as a close estimate and confirm against the actual head datasheet for fabrication or precise inventory purposes." }
+    },
+    {
+      "@type": "Question",
+      "name": "What if my tank has a torispherical head with a different knuckle radius than standard?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A larger knuckle radius makes the head shallower (closer to a flat plate) and a smaller knuckle radius makes it closer to a full hemisphere — the standard 6%-of-diameter knuckle used here sits at the common end of that range. If your head's actual depth is known from a datasheet, you can approximate its volume by treating it as a Horizontal Capsule (if it's close to hemispherical) or by scaling between the Dish Ends and 2:1 Elliptical results here as a bracket." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use this for a partially-filled vertical tank?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Vertical Cylinder uses a simple constant cross-sectional area times liquid height, so any depth works directly. Vertical Oval and Vertical Capsule both use a three-zone method instead, since they have curved caps at the bottom and top — a circular-segment calculation for Vertical Oval's 2D rounded ends, or a spherical-cap calculation for Vertical Capsule's 3D hemispherical ends, for whichever zone the liquid level falls in." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why doesn't my dipstick reading match the percentage full on a horizontal tank?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Because a horizontal cylinder is widest at its centreline and narrows to nothing at the top and bottom, so equal steps of depth are not equal steps of volume. Below half depth a straight-line estimate always overstates the contents and above half depth it always understates them, by as much as about 5.8 percentage points around the 20% and 80% depth marks. The only depth where a proportional guess is exactly right is 50%. Enter the measured depth in the Filled Depth field above to get the actual figure instead of estimating." }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does my calculated volume differ from the tank's official capacity table?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A geometric calculation models an ideal tank built exactly to its nominal dimensions. A calibrated tank table is built from the real vessel and includes corrections a calculation cannot know about: deadwood (internal coils, agitators, baffles, supports that displace liquid, and sumps or large nozzles that add space), actual measured shell dimensions rather than drawing figures, shell deformation on older tanks, and any tilt or settlement. Small differences are common; a larger gap often points to significant deadwood, shell deformation, tilt, or a difference between nominal and measured dimensions." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a tank being slightly out of level affect the reading?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, and horizontal tanks are especially sensitive. Many are installed with a deliberate fall toward a drain or sump, and foundations settle over time. When the tank is tilted the liquid surface is no longer parallel to the tank axis, so the depth at the dip point is not the average depth along the tank. The effect is most pronounced near empty, where product pools at the low end and a stick at the high end can read almost nothing while usable liquid remains in the tank." }
+    },
+    {
+      "@type": "Question",
+      "name": "Where on the tank is a gauging error most costly?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Around the middle. Because the tank is widest at its centreline, each unit of depth represents far more volume there than near the top or bottom — on a typical 8 ft diameter horizontal tank, roughly twice as much volume per inch at mid-level as near either extreme. A stick misread by one inch therefore costs about double the accuracy at half full compared with nearly empty or nearly full, which is where careful reading and a properly fixed dip point matter most." }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I use this calculator for custody transfer or regulatory reporting?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. For any figure carrying commercial or regulatory weight, use the vessel's own calibrated tank table, produced for that specific tank and revalidated at the required interval. This calculator is intended for design and planning work — sizing a new vessel, checking a tank fits a duty, estimating containment requirements, sanity-checking a quoted capacity, or gauging roughly how much a partly full tank holds. Note also that reported volumes are normally corrected to a standard reference temperature (60 °F in US practice, 15 °C in most international practice), which this calculator does not apply." }
+    }
+  ]
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+
+<link rel="preload" as="style" href="/assets/site.min.css?v=1">
+<link rel="stylesheet" href="/assets/site.min.css?v=1" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="/assets/site.min.css?v=1"></noscript>
+
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{ transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+  .calc-card:hover{ transform:translateY(-3px); box-shadow:0 14px 28px rgba(11,18,32,0.10); border-color:#0ea5e9; }
+
+  .formula-chip{ font-family:'JetBrains Mono',monospace; font-size:11px; background:#eaf6fd; color:#0369a1; padding:3px 9px; border-radius:6px; display:inline-block; }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .input-field{ width:100%; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px; font-size:14px; color:#0B1220; outline:none; }
+  .input-field:focus{ border-color:#0ea5e9; background:#fff; box-shadow:0 0 0 3px rgba(14,165,233,0.12); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{ padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap; }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{ color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px; letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0; }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{ max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px; border-radius:8px; border:1px solid #e5e7eb; }
+
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .hidden-field{ display:none !important; }
+
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+
+  .action-icon-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px;
+    font-size:13px; color:#334155; background:#fff; cursor:pointer; transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
+  .author-box{ border:2px solid #000000; }
+  body.dark-theme .author-box{ border-color:#ffffff; background:#0B1220; color:#e2e8f0; }
+
+  /* Prevents wide nowrap breakdown tables (and any other wide content in
+     the result column) from forcing flex/grid ancestors to expand past
+     the viewport on mobile — without this, overflow-x:auto on
+     .breakdown-wrap never gets a chance to kick in. */
+  .lg\:col-span-2.flex.flex-col.gap-4{ min-width:0; }
+  .lg\:col-span-2.flex.flex-col.gap-4 > div{ min-width:0; }
+  .breakdown-wrap{ min-width:0; }
+
+  /* ===== Tank shape SVG diagrams ===== */
+  .tank-svg-shape{ fill:#e0f2fe; stroke:none; }
+  .tank-svg-shape-solid{ fill:#e0f2fe; stroke:none; }
+  .tank-svg-shape-alt{ fill:#bae6fd; stroke:none; }
+  .tank-svg-liquid{ fill:#38bdf8; opacity:.75; }
+  .tank-svg-liquid-line{ stroke:#0284c7; stroke-width:1.5; fill:none; }
+  .tank-svg-liquid-top{ fill:#7dd3fc; stroke:#0284c7; stroke-width:1; }
+  .tank-svg-outline{ fill:none; stroke:#0369a1; stroke-width:2.4; stroke-linejoin:round; }
+  .tank-svg-outline-thin{ fill:none; stroke:#0369a1; stroke-width:1.6; }
+  .tank-svg-seam{ fill:none; stroke:#0369a1; stroke-width:1.5; }
+  .tank-svg-dim{ stroke:#475569; stroke-width:1.3; }
+  .tank-svg-dim-fill{ fill:#475569; }
+  .tank-svg-tick{ stroke:#94a3b8; stroke-width:.9; }
+  .tank-svg-text{ fill:#0f172a; font-size:16px; font-weight:700; font-family:'JetBrains Mono',monospace; }
+  body.dark-theme .tank-svg-shape,
+  body.dark-theme .tank-svg-shape-solid{ fill:#12304a; }
+  body.dark-theme .tank-svg-shape-alt{ fill:#1a4467; }
+  body.dark-theme .tank-svg-liquid{ fill:#0ea5e9; opacity:.65; }
+  body.dark-theme .tank-svg-liquid-line{ stroke:#7dd3fc; }
+  body.dark-theme .tank-svg-liquid-top{ fill:#0284c7; stroke:#7dd3fc; }
+  body.dark-theme .tank-svg-outline,
+  body.dark-theme .tank-svg-outline-thin,
+  body.dark-theme .tank-svg-seam{ stroke:#7dd3fc; }
+  body.dark-theme .tank-svg-dim{ stroke:#cbd5e1; }
+  body.dark-theme .tank-svg-dim-fill{ fill:#cbd5e1; }
+  body.dark-theme .tank-svg-tick{ stroke:#64748b; }
+  body.dark-theme .tank-svg-text{ fill:#f1f5f9; }
+  .tank-svg-frame{ border:1px solid #e5e7eb; border-radius:10px; padding:14px; background:#fbfdff; }
+  body.dark-theme .tank-svg-frame{ border-color:#1f2f47; background:#0d1a2b; }
+
+  .tv-type-select{ width:100%; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px; font-size:14px; color:#0B1220; outline:none; }
+  body.dark-theme .tv-type-select{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
+  body.dark-theme #tv-example-box{ background:rgba(14,165,233,0.07); border-color:#164e63; }
+  body.dark-theme #tv-example-box .text-gray-600{ color:#cbd5e1; }
+  body.dark-theme #tv-example-box .text-gray-400{ color:#64748b; }
+
+  .hero-typing-box{ display:flex; align-items:center; justify-content:center; min-height:2.75em; max-width:640px; margin:0 auto 0.5rem; padding:0.4rem 1rem; box-sizing:border-box; }
+  .hero-typing{ display:inline-flex; color:#d4af37; align-items:center; justify-content:center; text-align:center; white-space:normal; word-break:break-word; line-height:1.3; margin:0; }
+  .hero-cursor{ display:inline-block; width:2px; height:1em; margin-left:4px; flex-shrink:0; background:currentColor; animation:heroCursorBlink 0.8s steps(1) infinite; }
+  @keyframes heroCursorBlink{ 50%{ opacity:0; } }
+  @media (prefers-reduced-motion: reduce){ .hero-cursor{ animation:none; } }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<div id="site-header"></div>
+<div id="breadcrumb"></div>
+
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <!-- Text column -->
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Mechanical &middot; Free &middot; 10 Tank Shapes
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Tank Volume <span class="text-sky-400">Calculator</span>
+        </h1>
+    <div class="hero-typing-box">
+      <p class="hero-typing text-[#d4af37] text-sm font-mono font-bold justify-center" aria-label="Calculate Smarter. Work Faster. Practical Calculators & Maintenance Guides.">
+        <span id="heroTypingText">Calculate Smarter. Work Faster.</span><span class="hero-cursor" aria-hidden="true"></span>
+      </p>
+    </div>
+
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Total and filled capacity for 10 tank shapes — cylinders, rectangles, ovals, capsules, 2:1 elliptical and dished heads — in US gallons, liters, m³, ft³, quarts and imperial gallons.
+        </p>
+      </div>
+
+      <!-- Animation column -->
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+      <div id="calcHeaderBar">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-5">Tank Type &amp; Dimensions</h2>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tvTankType">Tank Type</label>
+        <select id="tvTankType" class="tv-type-select mt-2" onchange="tvSetType(this.value)">
+          <option value="h-cyl" selected>Horizontal Cylinder</option>
+          <option value="v-cyl">Vertical Cylinder</option>
+          <option value="rect">Rectangle</option>
+          <option value="h-oval">Horizontal Oval</option>
+          <option value="v-oval">Vertical Oval</option>
+          <option value="h-cap">Horizontal Capsule</option>
+          <option value="v-cap">Vertical Capsule</option>
+          <option value="h-21e">Horizontal 2:1 Elliptical</option>
+          <option value="h-dish">Horizontal Dish Ends</option>
+          <option value="h-ellipse">Horizontal Ellipse</option>
+        </select>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tvUnit">Dimension Unit</label>
+        <select id="tvUnit" class="tv-type-select mt-2" onchange="tvCalculate()">
+          <option value="mm">Millimeters (mm)</option>
+          <option value="cm">Centimeters (cm)</option>
+          <option value="m" selected>Meters (m)</option>
+          <option value="in">Inches (in)</option>
+          <option value="ft">Feet (ft)</option>
+        </select>
+        <p class="text-xs text-gray-400 mt-1">Applies to every dimension field below, including Filled Depth.</p>
+      </div>
+
+      <div id="fields-h-cyl" class="tv-field-group">
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_h-cyl_d">Diameter (d)</label>
+          <input id="tv_h-cyl_d" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_h-cyl_l">Length (l)</label>
+          <input id="tv_h-cyl_l" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+      </div>
+      <div id="fields-v-cyl" class="tv-field-group hidden">
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_v-cyl_d">Diameter (d)</label>
+          <input id="tv_v-cyl_d" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_v-cyl_h">Height (h)</label>
+          <input id="tv_v-cyl_h" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+      </div>
+      <div id="fields-rect" class="tv-field-group hidden">
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_rect_w">Width (w)</label>
+          <input id="tv_rect_w" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_rect_h">Height (h)</label>
+          <input id="tv_rect_h" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_rect_l">Length (l)</label>
+          <input id="tv_rect_l" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+      </div>
+      <div id="fields-h-oval" class="tv-field-group hidden">
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_h-oval_h">Height (h)</label>
+          <input id="tv_h-oval_h" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_h-oval_w">Width (w)</label>
+          <input id="tv_h-oval_w" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_h-oval_l">Length (l)</label>
+          <input id="tv_h-oval_l" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+      </div>
+      <div id="fields-v-oval" class="tv-field-group hidden">
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_v-oval_w">Width (w)</label>
+          <input id="tv_v-oval_w" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_v-oval_h">Height (h)</label>
+          <input id="tv_v-oval_h" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_v-oval_l">Length (l)</label>
+          <input id="tv_v-oval_l" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+      </div>
+      <div id="fields-h-cap" class="tv-field-group hidden">
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_h-cap_d">Diameter (d)</label>
+          <input id="tv_h-cap_d" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_h-cap_a">Straight Length (a)</label>
+          <input id="tv_h-cap_a" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+      </div>
+      <div id="fields-v-cap" class="tv-field-group hidden">
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_v-cap_d">Diameter (d)</label>
+          <input id="tv_v-cap_d" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_v-cap_a">Straight Length (a)</label>
+          <input id="tv_v-cap_a" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+      </div>
+      <div id="fields-h-21e" class="tv-field-group hidden">
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_h-21e_d">Diameter (d)</label>
+          <input id="tv_h-21e_d" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_h-21e_a">Straight Length (a)</label>
+          <input id="tv_h-21e_a" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+      </div>
+      <div id="fields-h-dish" class="tv-field-group hidden">
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_h-dish_d">Diameter (d)</label>
+          <input id="tv_h-dish_d" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_h-dish_a">Straight Length (a)</label>
+          <input id="tv_h-dish_a" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+      </div>
+      <div id="fields-h-ellipse" class="tv-field-group hidden">
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_h-ellipse_w">Width (w)</label>
+          <input id="tv_h-ellipse_w" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_h-ellipse_h">Height (h)</label>
+          <input id="tv_h-ellipse_h" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tv_h-ellipse_l">Length (l)</label>
+          <input id="tv_h-ellipse_l" type="number" step="0.01" min="0" class="input-field mt-2">
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tvFillDepth">Filled Depth (optional)</label>
+        <input id="tvFillDepth" type="number" step="0.01" min="0" class="input-field mt-2" placeholder="Leave blank for total capacity only">
+        <p class="text-xs text-gray-400 mt-1">Measured vertically from the bottom of the tank. Leave blank to see total capacity only.</p>
+      </div>
+
+      <button onclick="tvCalculate()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold py-3 rounded-lg shadow transition">Calculate Volume</button>
+
+      <div id="tvValidationBox" class="hidden mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3"></div>
+    </div>
+
+    <!-- RIGHT COLUMN: DIAGRAM + RESULT -->
+    <div class="lg:col-span-2 flex flex-col gap-4">
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Shape Diagram</span>
+<div class="tank-svg-frame">
+<div id="svg-h-cyl" class="tank-svg">
+<svg viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" class="w-full" role="img" aria-label="Horizontal cylinder tank showing diameter d, length l and filled depth f">
+<defs><marker id="tvAhcyl" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="tank-svg-dim-fill"/></marker></defs>
+<clipPath id="cliphcyl"><path d="M 112.0 66.0 L 268.0 66.0 A 16.0 52.0 0 0 1 268.0 170.0 L 112.0 170.0 A 16.0 52.0 0 0 1 112.0 66.0 Z"/></clipPath>
+<path d="M 112.0 66.0 L 268.0 66.0 A 16.0 52.0 0 0 1 268.0 170.0 L 112.0 170.0 A 16.0 52.0 0 0 1 112.0 66.0 Z" class="tank-svg-shape"/>
+<rect x="94.0" y="126.3" width="192.0" height="45.7" class="tank-svg-liquid" clip-path="url(#cliphcyl)"/>
+<path d="M 96.0 126.3 L 268.0 126.3" class="tank-svg-liquid-line"/>
+<path d="M 112.0 66.0 L 268.0 66.0 A 16.0 52.0 0 0 1 268.0 170.0 L 112.0 170.0 A 16.0 52.0 0 0 1 112.0 66.0 Z" class="tank-svg-outline"/>
+<ellipse cx="112.0" cy="118.0" rx="16.0" ry="52.0" class="tank-svg-seam"/>
+<path d="M 268.0 66.0 A 16.0 52.0 0 0 0 268.0 170.0" class="tank-svg-seam"/>
+
+<line x1="112.0" y1="66.0" x2="112.0" y2="46.0" class="tank-svg-tick"/>
+<line x1="284.0" y1="52.0" x2="284.0" y2="46.0" class="tank-svg-tick"/>
+<line x1="112.0" y1="52.0" x2="284.0" y2="52.0" class="tank-svg-dim" marker-start="url(#tvAhcyl)" marker-end="url(#tvAhcyl)"/><text x="198.0" y="43.0" text-anchor="middle" class="tank-svg-text">l</text>
+<line x1="84.0" y1="66.0" x2="74.0" y2="66.0" class="tank-svg-tick"/>
+<line x1="84.0" y1="170.0" x2="74.0" y2="170.0" class="tank-svg-tick"/>
+<line x1="78.0" y1="66.0" x2="78.0" y2="170.0" class="tank-svg-dim" marker-start="url(#tvAhcyl)" marker-end="url(#tvAhcyl)"/><text x="69.0" y="122.5" text-anchor="end" class="tank-svg-text">d</text>
+<line x1="84.0" y1="126.3" x2="44.0" y2="126.3" class="tank-svg-tick"/>
+<line x1="48.0" y1="126.3" x2="48.0" y2="170.0" class="tank-svg-dim" marker-start="url(#tvAhcyl)" marker-end="url(#tvAhcyl)"/><text x="39.0" y="152.7" text-anchor="end" class="tank-svg-text">f</text>
+</svg>
+<p class="text-center text-sm font-bold text-brandDark mt-3">Horizontal Cylinder</p>
+</div>
+
+<div id="svg-v-cyl" class="tank-svg hidden">
+<svg viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" class="w-full" role="img" aria-label="Vertical cylinder tank showing diameter d, height h and filled depth f">
+<defs><marker id="tvAvcyl" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="tank-svg-dim-fill"/></marker></defs>
+<clipPath id="clipvcyl"><path d="M 126.0 66.0 A 52.0 15.0 0 0 1 230.0 66.0 L 230.0 186.0 A 52.0 15.0 0 0 1 126.0 186.0 Z"/></clipPath>
+<path d="M 126.0 66.0 A 52.0 15.0 0 0 1 230.0 66.0 L 230.0 186.0 A 52.0 15.0 0 0 1 126.0 186.0 Z" class="tank-svg-shape"/>
+<rect x="124.0" y="138.0" width="108.0" height="65.0" class="tank-svg-liquid" clip-path="url(#clipvcyl)"/>
+<ellipse cx="178.0" cy="138.0" rx="52.0" ry="9.0" class="tank-svg-liquid-top"/>
+<path d="M 126.0 66.0 A 52.0 15.0 0 0 1 230.0 66.0 L 230.0 186.0 A 52.0 15.0 0 0 1 126.0 186.0 Z" class="tank-svg-outline"/>
+<ellipse cx="178.0" cy="66.0" rx="52.0" ry="15.0" class="tank-svg-seam"/>
+
+
+<line x1="126.0" y1="51.0" x2="126.0" y2="42.0" class="tank-svg-tick"/>
+<line x1="230.0" y1="51.0" x2="230.0" y2="42.0" class="tank-svg-tick"/>
+<line x1="126.0" y1="48.0" x2="230.0" y2="48.0" class="tank-svg-dim" marker-start="url(#tvAvcyl)" marker-end="url(#tvAvcyl)"/><text x="178.0" y="39.0" text-anchor="middle" class="tank-svg-text">d</text>
+<line x1="230.0" y1="66.0" x2="264.0" y2="66.0" class="tank-svg-tick"/>
+<line x1="230.0" y1="201.0" x2="264.0" y2="201.0" class="tank-svg-tick"/>
+<line x1="260.0" y1="66.0" x2="260.0" y2="201.0" class="tank-svg-dim" marker-start="url(#tvAvcyl)" marker-end="url(#tvAvcyl)"/><text x="269.0" y="138.0" text-anchor="start" class="tank-svg-text">h</text>
+<line x1="0.0" y1="201.0" x2="0.0" y2="201.0" class="tank-svg-tick"/>
+<line x1="92.0" y1="138.0" x2="126.0" y2="138.0" class="tank-svg-tick"/>
+<line x1="92.0" y1="201.0" x2="126.0" y2="201.0" class="tank-svg-tick"/>
+<line x1="96.0" y1="138.0" x2="96.0" y2="201.0" class="tank-svg-dim" marker-start="url(#tvAvcyl)" marker-end="url(#tvAvcyl)"/><text x="87.0" y="174.0" text-anchor="end" class="tank-svg-text">f</text>
+</svg>
+<p class="text-center text-sm font-bold text-brandDark mt-3">Vertical Cylinder</p>
+</div>
+
+<div id="svg-rect" class="tank-svg hidden">
+<svg viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" class="w-full" role="img" aria-label="Rectangular tank showing width w, height h, length l and filled depth f">
+<defs><marker id="tvArect" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="tank-svg-dim-fill"/></marker></defs>
+<clipPath id="cliprect"><path d="M 96.0 92.0 L 246.0 92.0 L 246.0 184.0 L 96.0 184.0 Z"/></clipPath>
+<path d="M 142.0 58.0 L 292.0 58.0 L 292.0 150.0 L 142.0 150.0 Z" class="tank-svg-shape-alt"/>
+<line x1="96.0" y1="92.0" x2="142.0" y2="58.0" class="tank-svg-outline-thin"/>
+<line x1="246.0" y1="92.0" x2="292.0" y2="58.0" class="tank-svg-outline-thin"/>
+<line x1="246.0" y1="184.0" x2="292.0" y2="150.0" class="tank-svg-outline-thin"/>
+<path d="M 142.0 58.0 L 292.0 58.0 L 292.0 150.0 L 142.0 150.0 Z" class="tank-svg-outline-thin"/>
+<path d="M 96.0 92.0 L 246.0 92.0 L 246.0 184.0 L 96.0 184.0 Z" class="tank-svg-shape-solid"/>
+<rect x="-20" y="145.4" width="420.0" height="42.6" class="tank-svg-liquid" clip-path="url(#cliprect)"/>
+<path d="M 96.0 92.0 L 246.0 92.0 L 246.0 184.0 L 96.0 184.0 Z" class="tank-svg-outline"/>
+
+<line x1="56.0" y1="92.0" x2="96.0" y2="92.0" class="tank-svg-tick"/>
+<line x1="56.0" y1="184.0" x2="96.0" y2="184.0" class="tank-svg-tick"/>
+<line x1="60.0" y1="92.0" x2="60.0" y2="184.0" class="tank-svg-dim" marker-start="url(#tvArect)" marker-end="url(#tvArect)"/><text x="51.0" y="142.5" text-anchor="end" class="tank-svg-text">h</text>
+<line x1="80.0" y1="145.4" x2="96.0" y2="145.4" class="tank-svg-tick"/>
+<line x1="82.0" y1="145.4" x2="82.0" y2="184.0" class="tank-svg-dim" marker-start="url(#tvArect)" marker-end="url(#tvArect)"/><text x="73.0" y="169.2" text-anchor="end" class="tank-svg-text">f</text>
+<line x1="96.0" y1="184.0" x2="96.0" y2="218.0" class="tank-svg-tick"/>
+<line x1="246.0" y1="184.0" x2="246.0" y2="218.0" class="tank-svg-tick"/>
+<line x1="96.0" y1="214.0" x2="246.0" y2="214.0" class="tank-svg-dim" marker-start="url(#tvArect)" marker-end="url(#tvArect)"/><text x="171.0" y="233.0" text-anchor="middle" class="tank-svg-text">l</text>
+<line x1="252.0" y1="192.0" x2="298.0" y2="158.0" class="tank-svg-dim" marker-start="url(#tvArect)" marker-end="url(#tvArect)"/><text x="306.0" y="164.0" class="tank-svg-text">w</text>
+</svg>
+<p class="text-center text-sm font-bold text-brandDark mt-3">Rectangle</p>
+</div>
+
+<div id="svg-h-oval" class="tank-svg hidden">
+<svg viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" class="w-full" role="img" aria-label="Horizontal oval tank showing width w, height h, length l and filled depth f">
+<defs><marker id="tvAhoval" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="tank-svg-dim-fill"/></marker></defs>
+<clipPath id="cliphoval"><path d="M 127.0 86.0 L 209.0 86.0 A 43.0 43.0 0 0 1 209.0 172.0 L 127.0 172.0 A 43.0 43.0 0 0 1 127.0 86.0 Z"/></clipPath>
+<path d="M 167.0 56.0 L 249.0 56.0 A 43.0 43.0 0 0 1 249.0 142.0 L 167.0 142.0 A 43.0 43.0 0 0 1 167.0 56.0 Z" class="tank-svg-shape-alt"/>
+<line x1="127.0" y1="86.0" x2="167.0" y2="56.0" class="tank-svg-outline-thin"/>
+<line x1="209.0" y1="86.0" x2="249.0" y2="56.0" class="tank-svg-outline-thin"/>
+<line x1="252.0" y1="129.0" x2="292.0" y2="99.0" class="tank-svg-outline-thin"/>
+<path d="M 167.0 56.0 L 249.0 56.0 A 43.0 43.0 0 0 1 249.0 142.0 L 167.0 142.0 A 43.0 43.0 0 0 1 167.0 56.0 Z" class="tank-svg-outline-thin"/>
+<path d="M 127.0 86.0 L 209.0 86.0 A 43.0 43.0 0 0 1 209.0 172.0 L 127.0 172.0 A 43.0 43.0 0 0 1 127.0 86.0 Z" class="tank-svg-shape-solid"/>
+<rect x="-20" y="135.9" width="420.0" height="40.1" class="tank-svg-liquid" clip-path="url(#cliphoval)"/>
+<path d="M 127.0 86.0 L 209.0 86.0 A 43.0 43.0 0 0 1 209.0 172.0 L 127.0 172.0 A 43.0 43.0 0 0 1 127.0 86.0 Z" class="tank-svg-outline"/>
+
+<line x1="44.0" y1="86.0" x2="127.0" y2="86.0" class="tank-svg-tick"/>
+<line x1="44.0" y1="172.0" x2="127.0" y2="172.0" class="tank-svg-tick"/>
+<line x1="48.0" y1="86.0" x2="48.0" y2="172.0" class="tank-svg-dim" marker-start="url(#tvAhoval)" marker-end="url(#tvAhoval)"/><text x="39.0" y="133.5" text-anchor="end" class="tank-svg-text">h</text>
+<line x1="68.0" y1="135.9" x2="92.0" y2="135.9" class="tank-svg-tick"/>
+<line x1="72.0" y1="135.9" x2="72.0" y2="172.0" class="tank-svg-dim" marker-start="url(#tvAhoval)" marker-end="url(#tvAhoval)"/><text x="63.0" y="158.4" text-anchor="end" class="tank-svg-text">f</text>
+<line x1="84.0" y1="172.0" x2="84.0" y2="206.0" class="tank-svg-tick"/>
+<line x1="252.0" y1="172.0" x2="252.0" y2="206.0" class="tank-svg-tick"/>
+<line x1="84.0" y1="202.0" x2="252.0" y2="202.0" class="tank-svg-dim" marker-start="url(#tvAhoval)" marker-end="url(#tvAhoval)"/><text x="168.0" y="221.0" text-anchor="middle" class="tank-svg-text">w</text>
+<line x1="260.0" y1="135.0" x2="300.0" y2="105.0" class="tank-svg-dim" marker-start="url(#tvAhoval)" marker-end="url(#tvAhoval)"/><text x="308.0" y="109.0" class="tank-svg-text">l</text>
+</svg>
+<p class="text-center text-sm font-bold text-brandDark mt-3">Horizontal Oval</p>
+</div>
+
+<div id="svg-v-oval" class="tank-svg hidden">
+<svg viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" class="w-full" role="img" aria-label="Vertical oval tank showing width w, height h, length l and filled depth f">
+<defs><marker id="tvAvoval" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="tank-svg-dim-fill"/></marker></defs>
+<clipPath id="clipvoval"><path d="M 122.0 86.0 A 42.0 42.0 0 0 1 206.0 86.0 L 206.0 148.0 A 42.0 42.0 0 0 1 122.0 148.0 Z"/></clipPath>
+<path d="M 158.0 60.0 A 42.0 42.0 0 0 1 242.0 60.0 L 242.0 122.0 A 42.0 42.0 0 0 1 158.0 122.0 Z" class="tank-svg-shape-alt"/>
+<line x1="164.0" y1="44.0" x2="200.0" y2="18.0" class="tank-svg-outline-thin"/>
+<line x1="206.0" y1="86.0" x2="242.0" y2="60.0" class="tank-svg-outline-thin"/>
+<line x1="206.0" y1="148.0" x2="242.0" y2="122.0" class="tank-svg-outline-thin"/>
+<path d="M 158.0 60.0 A 42.0 42.0 0 0 1 242.0 60.0 L 242.0 122.0 A 42.0 42.0 0 0 1 158.0 122.0 Z" class="tank-svg-outline-thin"/>
+<path d="M 122.0 86.0 A 42.0 42.0 0 0 1 206.0 86.0 L 206.0 148.0 A 42.0 42.0 0 0 1 122.0 148.0 Z" class="tank-svg-shape-solid"/>
+<rect x="-20" y="128.7" width="420.0" height="65.3" class="tank-svg-liquid" clip-path="url(#clipvoval)"/>
+<path d="M 122.0 86.0 A 42.0 42.0 0 0 1 206.0 86.0 L 206.0 148.0 A 42.0 42.0 0 0 1 122.0 148.0 Z" class="tank-svg-outline"/>
+
+<line x1="122.0" y1="190.0" x2="122.0" y2="224.0" class="tank-svg-tick"/>
+<line x1="206.0" y1="190.0" x2="206.0" y2="224.0" class="tank-svg-tick"/>
+<line x1="122.0" y1="220.0" x2="206.0" y2="220.0" class="tank-svg-dim" marker-start="url(#tvAvoval)" marker-end="url(#tvAvoval)"/><text x="164.0" y="239.0" text-anchor="middle" class="tank-svg-text">w</text>
+<line x1="76.0" y1="44.0" x2="164.0" y2="44.0" class="tank-svg-tick"/>
+<line x1="76.0" y1="190.0" x2="164.0" y2="190.0" class="tank-svg-tick"/>
+<line x1="80.0" y1="44.0" x2="80.0" y2="190.0" class="tank-svg-dim" marker-start="url(#tvAvoval)" marker-end="url(#tvAvoval)"/><text x="71.0" y="121.5" text-anchor="end" class="tank-svg-text">h</text>
+<line x1="104.0" y1="128.7" x2="128.0" y2="128.7" class="tank-svg-tick"/>
+<line x1="108.0" y1="128.7" x2="108.0" y2="190.0" class="tank-svg-dim" marker-start="url(#tvAvoval)" marker-end="url(#tvAvoval)"/><text x="99.0" y="163.8" text-anchor="end" class="tank-svg-text">f</text>
+<line x1="212.0" y1="88.0" x2="248.0" y2="62.0" class="tank-svg-dim" marker-start="url(#tvAvoval)" marker-end="url(#tvAvoval)"/><text x="256.0" y="66.0" class="tank-svg-text">l</text>
+</svg>
+<p class="text-center text-sm font-bold text-brandDark mt-3">Vertical Oval</p>
+</div>
+
+<div id="svg-h-cap" class="tank-svg hidden">
+<svg viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" class="w-full" role="img" aria-label="Horizontal Capsule tank showing diameter d, straight length a and filled depth f">
+<defs><marker id="tvAhcap" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="tank-svg-dim-fill"/></marker></defs>
+<clipPath id="cliphcap"><path d="M 108.0 68.0 L 252.0 68.0 A 50.0 50.0 0 0 1 252.0 168.0 L 108.0 168.0 A 50.0 50.0 0 0 1 108.0 68.0 Z"/></clipPath>
+<path d="M 108.0 68.0 L 252.0 68.0 A 50.0 50.0 0 0 1 252.0 168.0 L 108.0 168.0 A 50.0 50.0 0 0 1 108.0 68.0 Z" class="tank-svg-shape"/>
+<rect x="56.0" y="126.0" width="248.0" height="44.0" class="tank-svg-liquid" clip-path="url(#cliphcap)"/>
+<path d="M 58.0 126.0 L 252.0 126.0" class="tank-svg-liquid-line"/>
+<path d="M 108.0 68.0 L 252.0 68.0 A 50.0 50.0 0 0 1 252.0 168.0 L 108.0 168.0 A 50.0 50.0 0 0 1 108.0 68.0 Z" class="tank-svg-outline"/>
+<ellipse cx="108.0" cy="118.0" rx="15.0" ry="50.0" class="tank-svg-seam"/>
+<path d="M 252.0 68.0 A 15.0 50.0 0 0 0 252.0 168.0" class="tank-svg-seam"/>
+
+<line x1="108.0" y1="68.0" x2="108.0" y2="46.0" class="tank-svg-tick"/>
+<line x1="252.0" y1="68.0" x2="252.0" y2="46.0" class="tank-svg-tick"/>
+<line x1="108.0" y1="52.0" x2="252.0" y2="52.0" class="tank-svg-dim" marker-start="url(#tvAhcap)" marker-end="url(#tvAhcap)"/><text x="180.0" y="43.0" text-anchor="middle" class="tank-svg-text">a</text>
+<line x1="44.0" y1="68.0" x2="56.0" y2="68.0" class="tank-svg-tick"/>
+<line x1="44.0" y1="168.0" x2="56.0" y2="168.0" class="tank-svg-tick"/>
+<line x1="40.0" y1="68.0" x2="40.0" y2="168.0" class="tank-svg-dim" marker-start="url(#tvAhcap)" marker-end="url(#tvAhcap)"/><text x="31.0" y="122.5" text-anchor="end" class="tank-svg-text">d</text>
+<line x1="62.0" y1="126.0" x2="114.0" y2="126.0" class="tank-svg-tick"/>
+<line x1="68.0" y1="126.0" x2="68.0" y2="168.0" class="tank-svg-dim" marker-start="url(#tvAhcap)" marker-end="url(#tvAhcap)"/><text x="77.0" y="151.5" text-anchor="start" class="tank-svg-text">f</text>
+</svg>
+<p class="text-center text-sm font-bold text-brandDark mt-3">Horizontal Capsule</p>
+</div>
+
+<div id="svg-v-cap" class="tank-svg hidden">
+<svg viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" class="w-full" role="img" aria-label="Vertical capsule tank showing diameter d, straight length a and filled depth f">
+<defs><marker id="tvAvcap" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="tank-svg-dim-fill"/></marker></defs>
+<clipPath id="clipvcap"><path d="M 134.0 82.0 A 44.0 44.0 0 0 1 222.0 82.0 L 222.0 172.0 A 44.0 44.0 0 0 1 134.0 172.0 Z"/></clipPath>
+<path d="M 134.0 82.0 A 44.0 44.0 0 0 1 222.0 82.0 L 222.0 172.0 A 44.0 44.0 0 0 1 134.0 172.0 Z" class="tank-svg-shape"/>
+<rect x="132.0" y="141.2" width="92.0" height="76.8" class="tank-svg-liquid" clip-path="url(#clipvcap)"/>
+<ellipse cx="178.0" cy="141.2" rx="44.0" ry="9.0" class="tank-svg-liquid-top"/>
+<path d="M 134.0 82.0 A 44.0 44.0 0 0 1 222.0 82.0 L 222.0 172.0 A 44.0 44.0 0 0 1 134.0 172.0 Z" class="tank-svg-outline"/>
+<ellipse cx="178.0" cy="82.0" rx="44.0" ry="13.0" class="tank-svg-seam"/>
+<ellipse cx="178.0" cy="172.0" rx="44.0" ry="13.0" class="tank-svg-seam"/>
+
+<line x1="134.0" y1="38.0" x2="134.0" y2="38.0" class="tank-svg-tick"/>
+<line x1="222.0" y1="38.0" x2="222.0" y2="38.0" class="tank-svg-tick"/>
+<line x1="134.0" y1="44.0" x2="222.0" y2="44.0" class="tank-svg-dim" marker-start="url(#tvAvcap)" marker-end="url(#tvAvcap)"/><text x="178.0" y="35.0" text-anchor="middle" class="tank-svg-text">d</text>
+<line x1="222.0" y1="82.0" x2="256.0" y2="82.0" class="tank-svg-tick"/>
+<line x1="222.0" y1="172.0" x2="256.0" y2="172.0" class="tank-svg-tick"/>
+<line x1="252.0" y1="82.0" x2="252.0" y2="172.0" class="tank-svg-dim" marker-start="url(#tvAvcap)" marker-end="url(#tvAvcap)"/><text x="261.0" y="131.5" text-anchor="start" class="tank-svg-text">a</text>
+<line x1="98.0" y1="141.2" x2="138.0" y2="141.2" class="tank-svg-tick"/>
+<line x1="98.0" y1="216.0" x2="134.0" y2="216.0" class="tank-svg-tick"/>
+<line x1="102.0" y1="141.2" x2="102.0" y2="216.0" class="tank-svg-dim" marker-start="url(#tvAvcap)" marker-end="url(#tvAvcap)"/><text x="93.0" y="183.1" text-anchor="end" class="tank-svg-text">f</text>
+</svg>
+<p class="text-center text-sm font-bold text-brandDark mt-3">Vertical Capsule</p>
+</div>
+
+<div id="svg-h-21e" class="tank-svg hidden">
+<svg viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" class="w-full" role="img" aria-label="Horizontal 2:1 Elliptical tank showing diameter d, straight length a and filled depth f">
+<defs><marker id="tvAh21e" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="tank-svg-dim-fill"/></marker></defs>
+<clipPath id="cliph21e"><path d="M 108.0 68.0 L 252.0 68.0 A 25.0 50.0 0 0 1 252.0 168.0 L 108.0 168.0 A 25.0 50.0 0 0 1 108.0 68.0 Z"/></clipPath>
+<path d="M 108.0 68.0 L 252.0 68.0 A 25.0 50.0 0 0 1 252.0 168.0 L 108.0 168.0 A 25.0 50.0 0 0 1 108.0 68.0 Z" class="tank-svg-shape"/>
+<rect x="81.0" y="126.0" width="198.0" height="44.0" class="tank-svg-liquid" clip-path="url(#cliph21e)"/>
+<path d="M 83.0 126.0 L 252.0 126.0" class="tank-svg-liquid-line"/>
+<path d="M 108.0 68.0 L 252.0 68.0 A 25.0 50.0 0 0 1 252.0 168.0 L 108.0 168.0 A 25.0 50.0 0 0 1 108.0 68.0 Z" class="tank-svg-outline"/>
+<ellipse cx="108.0" cy="118.0" rx="15.0" ry="50.0" class="tank-svg-seam"/>
+<path d="M 252.0 68.0 A 15.0 50.0 0 0 0 252.0 168.0" class="tank-svg-seam"/>
+
+<line x1="108.0" y1="68.0" x2="108.0" y2="46.0" class="tank-svg-tick"/>
+<line x1="252.0" y1="68.0" x2="252.0" y2="46.0" class="tank-svg-tick"/>
+<line x1="108.0" y1="52.0" x2="252.0" y2="52.0" class="tank-svg-dim" marker-start="url(#tvAh21e)" marker-end="url(#tvAh21e)"/><text x="180.0" y="43.0" text-anchor="middle" class="tank-svg-text">a</text>
+<line x1="69.0" y1="68.0" x2="81.0" y2="68.0" class="tank-svg-tick"/>
+<line x1="69.0" y1="168.0" x2="81.0" y2="168.0" class="tank-svg-tick"/>
+<line x1="65.0" y1="68.0" x2="65.0" y2="168.0" class="tank-svg-dim" marker-start="url(#tvAh21e)" marker-end="url(#tvAh21e)"/><text x="56.0" y="122.5" text-anchor="end" class="tank-svg-text">d</text>
+<line x1="87.0" y1="126.0" x2="114.0" y2="126.0" class="tank-svg-tick"/>
+<line x1="93.0" y1="126.0" x2="93.0" y2="168.0" class="tank-svg-dim" marker-start="url(#tvAh21e)" marker-end="url(#tvAh21e)"/><text x="102.0" y="151.5" text-anchor="start" class="tank-svg-text">f</text>
+</svg>
+<p class="text-center text-sm font-bold text-brandDark mt-3">Horizontal 2:1 Elliptical</p>
+</div>
+
+<div id="svg-h-dish" class="tank-svg hidden">
+<svg viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" class="w-full" role="img" aria-label="Horizontal Dish Ends tank showing diameter d, straight length a and filled depth f">
+<defs><marker id="tvAhdish" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="tank-svg-dim-fill"/></marker></defs>
+<clipPath id="cliphdish"><path d="M 108.0 68.0 L 252.0 68.0 A 16.9 50.0 0 0 1 252.0 168.0 L 108.0 168.0 A 16.9 50.0 0 0 1 108.0 68.0 Z"/></clipPath>
+<path d="M 108.0 68.0 L 252.0 68.0 A 16.9 50.0 0 0 1 252.0 168.0 L 108.0 168.0 A 16.9 50.0 0 0 1 108.0 68.0 Z" class="tank-svg-shape"/>
+<rect x="89.1" y="126.0" width="181.8" height="44.0" class="tank-svg-liquid" clip-path="url(#cliphdish)"/>
+<path d="M 91.1 126.0 L 252.0 126.0" class="tank-svg-liquid-line"/>
+<path d="M 108.0 68.0 L 252.0 68.0 A 16.9 50.0 0 0 1 252.0 168.0 L 108.0 168.0 A 16.9 50.0 0 0 1 108.0 68.0 Z" class="tank-svg-outline"/>
+<ellipse cx="108.0" cy="118.0" rx="15.0" ry="50.0" class="tank-svg-seam"/>
+<path d="M 252.0 68.0 A 15.0 50.0 0 0 0 252.0 168.0" class="tank-svg-seam"/>
+
+<line x1="108.0" y1="68.0" x2="108.0" y2="46.0" class="tank-svg-tick"/>
+<line x1="252.0" y1="68.0" x2="252.0" y2="46.0" class="tank-svg-tick"/>
+<line x1="108.0" y1="52.0" x2="252.0" y2="52.0" class="tank-svg-dim" marker-start="url(#tvAhdish)" marker-end="url(#tvAhdish)"/><text x="180.0" y="43.0" text-anchor="middle" class="tank-svg-text">a</text>
+<line x1="77.1" y1="68.0" x2="89.1" y2="68.0" class="tank-svg-tick"/>
+<line x1="77.1" y1="168.0" x2="89.1" y2="168.0" class="tank-svg-tick"/>
+<line x1="73.1" y1="68.0" x2="73.1" y2="168.0" class="tank-svg-dim" marker-start="url(#tvAhdish)" marker-end="url(#tvAhdish)"/><text x="64.1" y="122.5" text-anchor="end" class="tank-svg-text">d</text>
+<line x1="95.1" y1="126.0" x2="114.0" y2="126.0" class="tank-svg-tick"/>
+<line x1="101.1" y1="126.0" x2="101.1" y2="168.0" class="tank-svg-dim" marker-start="url(#tvAhdish)" marker-end="url(#tvAhdish)"/><text x="110.1" y="151.5" text-anchor="start" class="tank-svg-text">f</text>
+<line x1="252.0" y1="190.0" x2="268.9" y2="190.0" class="tank-svg-dim" marker-start="url(#tvAhdish)" marker-end="url(#tvAhdish)"/><text x="260.4" y="206.0" text-anchor="middle" class="tank-svg-text">z</text><line x1="252.0" y1="168.0" x2="252.0" y2="194.0" class="tank-svg-tick"/><line x1="268.9" y1="118.0" x2="268.9" y2="194.0" class="tank-svg-tick"/>
+</svg>
+<p class="text-center text-sm font-bold text-brandDark mt-3">Horizontal Dish Ends</p>
+</div>
+
+<div id="svg-h-ellipse" class="tank-svg hidden">
+<svg viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" class="w-full" role="img" aria-label="Horizontal ellipse tank showing width w, height h, length l and filled depth f">
+<defs><marker id="tvAhellipse" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="tank-svg-dim-fill"/></marker></defs>
+<clipPath id="cliphell"><path d="M 62.0 128.0 A 96.0 54.0 0 0 1 254.0 128.0 A 96.0 54.0 0 0 1 62.0 128.0 Z"/></clipPath>
+<path d="M 102.0 98.0 A 96.0 54.0 0 0 1 294.0 98.0 A 96.0 54.0 0 0 1 102.0 98.0 Z" class="tank-svg-shape-alt"/>
+<line x1="158.0" y1="74.0" x2="198.0" y2="44.0" class="tank-svg-outline-thin"/>
+<line x1="254.0" y1="128.0" x2="294.0" y2="98.0" class="tank-svg-outline-thin"/>
+<path d="M 102.0 98.0 A 96.0 54.0 0 0 1 294.0 98.0 A 96.0 54.0 0 0 1 102.0 98.0 Z" class="tank-svg-outline-thin"/>
+<path d="M 62.0 128.0 A 96.0 54.0 0 0 1 254.0 128.0 A 96.0 54.0 0 0 1 62.0 128.0 Z" class="tank-svg-shape-solid"/>
+<rect x="-20" y="136.6" width="420.0" height="49.4" class="tank-svg-liquid" clip-path="url(#cliphell)"/>
+<path d="M 62.0 128.0 A 96.0 54.0 0 0 1 254.0 128.0 A 96.0 54.0 0 0 1 62.0 128.0 Z" class="tank-svg-outline"/>
+
+<line x1="22.0" y1="74.0" x2="72.0" y2="74.0" class="tank-svg-tick"/>
+<line x1="22.0" y1="182.0" x2="72.0" y2="182.0" class="tank-svg-tick"/>
+<line x1="26.0" y1="74.0" x2="26.0" y2="182.0" class="tank-svg-dim" marker-start="url(#tvAhellipse)" marker-end="url(#tvAhellipse)"/><text x="17.0" y="132.5" text-anchor="end" class="tank-svg-text">h</text>
+<line x1="78.0" y1="136.6" x2="102.0" y2="136.6" class="tank-svg-tick"/>
+<line x1="98.0" y1="136.6" x2="98.0" y2="182.0" class="tank-svg-dim" marker-start="url(#tvAhellipse)" marker-end="url(#tvAhellipse)"/><text x="107.0" y="163.8" text-anchor="start" class="tank-svg-text">f</text>
+<line x1="62.0" y1="182.0" x2="62.0" y2="216.0" class="tank-svg-tick"/>
+<line x1="254.0" y1="182.0" x2="254.0" y2="216.0" class="tank-svg-tick"/>
+<line x1="62.0" y1="212.0" x2="254.0" y2="212.0" class="tank-svg-dim" marker-start="url(#tvAhellipse)" marker-end="url(#tvAhellipse)"/><text x="158.0" y="231.0" text-anchor="middle" class="tank-svg-text">w</text>
+<line x1="262.0" y1="134.0" x2="302.0" y2="104.0" class="tank-svg-dim" marker-start="url(#tvAhellipse)" marker-end="url(#tvAhellipse)"/><text x="310.0" y="108.0" class="tank-svg-text">l</text>
+</svg>
+<p class="text-center text-sm font-bold text-brandDark mt-3">Horizontal Ellipse</p>
+</div>
+<p class="text-center text-xs text-gray-400 mt-3">Illustrative diagram showing the dimensions each field refers to. The liquid level shown is a fixed example and does not track the Filled Depth you enter.</p>
+</div>
+      </div>
+
+      <div class="result-tile rounded-2xl p-6 text-white">
+        <span class="font-mono text-[11px] uppercase tracking-wider text-sky-300">Total Capacity</span>
+        <div id="tvResultHeadline" class="text-4xl font-display font-bold mt-1">—</div>
+        <div id="tvResultSub" class="text-gray-400 text-xs mt-2">—</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- UNIT CONVERSION TABLE -->
+  <div class="mt-6 bg-white rounded-xl border border-gray-100 p-4 md:p-5">
+    <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Tank Volumes — All Units</span>
+    <div class="breakdown-wrap">
+      <table class="breakdown-table">
+        <thead><tr><th>Unit</th><th>Total Capacity</th><th>Filled Volume</th></tr></thead>
+        <tbody id="tvUnitTableBody">
+          <tr><td>US Gallons</td><td>—</td><td>—</td></tr>
+          <tr><td>US Quarts</td><td>—</td><td>—</td></tr>
+          <tr><td>Imperial Gallons</td><td>—</td><td>—</td></tr>
+          <tr><td>Liters</td><td>—</td><td>—</td></tr>
+          <tr><td>Cubic Meters</td><td>—</td><td>—</td></tr>
+          <tr><td>Cubic Feet</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-gray-400 mt-2">Calculations assume inside dimensions and an idealized geometric model of the selected shape; Horizontal Dish Ends uses a standard flanged-and-dished (F&D) approximation rather than exact torispherical geometry. Actual tanks may have wall curvature, fittings, or heads that differ slightly from these idealized shapes — treat results as estimates for planning and inventory purposes.</p>
+  </div>
+</section>
+
+<span id="shareFeedbackAnchor"></span>
+<section id="shareFeedbackBar" class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="share-result-btn" onclick="loadShareModal()">🔗 Share Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button id="fbYes" class="action-icon-btn" onclick="setFeedback('yes')">👍 Yes</button>
+      <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Tank%20Volume%20Calculator">✉️ Feedback</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RELATED CALCULATORS ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-6">
+  <div id="relatedCalculatorsBox" class="bg-white rounded-xl border border-gray-100 p-4" data-copy-exclude>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+        <div class="grid sm:grid-cols-2 gap-1.5">
+          <a href="/mechanical/air-receiver-tank" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Air Receiver Tank Size Calculator <span class="text-sky-500">→</span>
+          </a>
+          <a href="/mechanical-calculators" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            🛠️ Explore all Mechanical Calculators <span class="text-sky-500">→</span>
+          </a>
+        </div>
+      </div>
+</section>
+
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. How tank volume is calculated</a></li>
+      <li><a href="#second" class="hover:underline">3. Choosing the right shape and head type</a></li>
+      <li><a href="#dipstick" class="hover:underline">4. Why a dipstick reading misleads</a></li>
+      <li><a href="#calibration" class="hover:underline">5. How tanks are calibrated in the field</a></li>
+      <li><a href="#mistakes" class="hover:underline">6. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">7. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Standards referenced: Standard geometric solid-of-revolution formulas; ASME Section VIII Division 1 head proportions (2:1 semi-elliptical and F&amp;D torispherical heads) for the domed-end shapes.</p>
+    </div>
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Tank volume calculations, explained</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Every shape here reduces to the same basic idea: find the cross-sectional area at each point along the tank, and integrate it along the tank's length or height. For the five shapes with uniform, flat-ended cross-sections — Horizontal Cylinder, Vertical Cylinder, Rectangle, Horizontal Oval, and Horizontal Ellipse — that cross-section never changes shape along the axis, so total volume is simply cross-sectional area × length (or height, for vertical tanks), and filled volume just needs the area of that same cross-section up to the liquid line.</p>
+      <p>Vertical Oval is a special case worth calling out separately: it's a stadium shape standing on end (rounded top and bottom, flat sides), so the liquid level cuts through curved caps rather than a constant cross-section. It uses the same three-zone method as the domed-end shapes below (bottom cap, straight middle, top cap) — just with a 2D circular segment for each curved cap instead of a 3D spherical or ellipsoidal cap.</p>
+      <p>The remaining four shapes — Horizontal Capsule, Vertical Capsule, Horizontal 2:1 Elliptical, and Horizontal Dish Ends — add curved 3D end caps to a cylindrical middle section. Their total volume is the cylinder's volume plus the volume of the two end caps combined. For filled volume, this calculator uses a standard trick from horizontal-tank strapping charts: two identical opposite end caps, sliced at the same liquid height, together hold exactly as much liquid as a single combined solid of that cap shape (two hemispheres make one full sphere; two 2:1 elliptical heads make one oblate spheroid) sliced at that same height. Dish Ends heads use the same idea, applied through numerical integration since a torispherical shape has no simple closed-form slice formula.</p>
+      <p class="formula-chip text-sm">Cylinder: V = (π/4)·d²·l &nbsp;&nbsp; Capsule: V = (π/4)·d²·a + (4/3)π·(d/2)³</p>
+      <p>The three domed-end shapes only differ in how deep the end caps bulge relative to the diameter: a capsule's ends are full hemispheres (depth = d/2), a 2:1 elliptical head is shallower (depth = d/4), and a dished (F&amp;D) head is shallower again (depth ≈ 0.169×d for standard proportions). Deeper heads add proportionally more volume for the same overall tank length — useful to know when comparing a capsule-shaped propane tank to a flat-headed rectangular tote of similar footprint.</p>
+    </div>
+
+    <div id="tv-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      <h3 class="font-display font-semibold text-brandDark mb-3">Worked Example — Horizontal Capsule</h3>
+      <p class="text-sm text-gray-600 mb-2">A horizontal capsule tank has a 1.2 m diameter and a 2.5 m straight cylindrical section, filled to a depth of 0.8 m.</p>
+      <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+        <li>Total capacity = (π/4)×1.2²×2.5 + (4/3)π×0.6³ = 2.827 + 0.905 = <strong>3.732 m³</strong> ≈ 3,732 L ≈ 986 US gal</li>
+        <li>Filled volume at 0.8 m depth: circular-segment area at 0.8 m (of the 1.2 m circle) × 2.5 m, plus the equivalent spherical-cap volume at 0.8 m of a 1.2 m sphere</li>
+        <li>Filled volume ≈ <strong>2,673 L</strong> ≈ <strong>71.6%</strong> of total capacity, even though the liquid depth (0.8 m) is only 67% of the diameter — because the cross-sectional area available to hold liquid grows non-linearly as the level rises toward the centreline</li>
+      </ul>
+      <p class="text-sm text-gray-600 mt-2">This non-linear relationship between depth and filled percentage is exactly why a dipstick chart for a horizontal tank is never a straight line — use the Filled Depth field above to check any level directly instead of estimating by eye.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">All results assume the tank is level, the geometry is an idealized solid (no internal baffles, fittings, or wall curvature irregularities), and dimensions entered are internal (inside) measurements.</p>
+  </div>
+</section>
+
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Choosing the right shape</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Matching your tank to the right shape and head type</h2>
+  <p class="text-sm text-gray-600 mb-4">If you're not sure which of the 10 shapes matches your tank, this quick reference covers the most common real-world tanks and which option to pick:</p>
+  <div class="overflow-x-auto">
+  <table class="w-full text-sm border-collapse">
+    <thead><tr class="text-left text-gray-500 text-xs uppercase border-b border-gray-200">
+      <th class="py-2 pr-4">Common tank</th><th class="py-2">Pick this shape</th>
+    </tr></thead>
+    <tbody class="divide-y divide-gray-100 text-gray-700">
+      <tr><td class="py-2 pr-4">Propane / LPG bullet tank, small air receiver</td><td class="py-2">Horizontal Capsule</td></tr>
+      <tr><td class="py-2 pr-4">Vertical LPG bullet, small vertical air receiver</td><td class="py-2">Vertical Capsule</td></tr>
+      <tr><td class="py-2 pr-4">Large ASME pressure vessel with semi-elliptical heads</td><td class="py-2">Horizontal 2:1 Elliptical</td></tr>
+      <tr><td class="py-2 pr-4">Low-pressure storage tank with flanged &amp; dished (F&amp;D) heads</td><td class="py-2">Horizontal Dish Ends</td></tr>
+      <tr><td class="py-2 pr-4">Fuel/water tank welded from flat plate, rounded corners, flat ends</td><td class="py-2">Horizontal or Vertical Oval</td></tr>
+      <tr><td class="py-2 pr-4">Open-top water tank, silo, drum standing upright</td><td class="py-2">Vertical Cylinder</td></tr>
+      <tr><td class="py-2 pr-4">Rectangular tote, sump, or concrete tank</td><td class="py-2">Rectangle</td></tr>
+      <tr><td class="py-2 pr-4">Flat-ended tank with a true elliptical (not stadium) cross-section</td><td class="py-2">Horizontal Ellipse</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="text-sm text-gray-600 mt-4">When in doubt between a capsule and an oval, look at the tank's ends from the side: if the ends themselves bulge outward in a dome (you'd see curvature looking straight at the flat end), it's a capsule-family shape (Capsule, 2:1 Elliptical, or Dish Ends). If the ends are flat plates and only the tank's cross-section (viewed from either end) is rounded on the sides, it's an Oval or Ellipse.</p>
+</section>
+
+<!-- ===================== [PER-PAGE] DIPSTICK / GAUGING ===================== -->
+<section id="dipstick" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">From the plant floor</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Why a dipstick reading misleads you on a horizontal tank</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+
+      <p>Assuming that liquid depth percentage equals volume percentage is a common source of tank inventory errors in day-to-day plant operation, and it catches experienced people out. On a vertical tank, the arithmetic is forgiving: the cross-section never changes, so half the depth really is half the volume, and a stick marked in equal increments gives equal volume steps all the way up. On a <strong>horizontal</strong> cylindrical tank, none of that holds. The tank is widest across its middle and pinches to nothing at the top and bottom, so equal steps of depth are not equal steps of volume.</p>
+
+      <p>The practical result: if someone reads the stick, sees the liquid at a quarter of the tank's diameter, and reports the tank as "about 25% full," the number is wrong — and it is wrong in a predictable direction. Below the halfway mark a straight-line guess always <em>over</em>-states the contents; above the halfway mark it always <em>under</em>-states them. The only depth where the naive estimate is exactly right is dead centre.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark">Depth percentage vs actual volume percentage</h3>
+      <p>These figures are for a plain horizontal cylinder (flat ends). They depend only on the ratio of liquid depth to tank diameter, so the same table applies to any horizontal cylindrical tank regardless of its size or length:</p>
+
+      <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead><tr class="text-left text-gray-500 text-xs uppercase border-b border-gray-200">
+          <th scope="col" class="py-2 pr-4">Liquid depth (% of diameter)</th>
+          <th scope="col" class="py-2 pr-4">Actual volume (% of capacity)</th>
+          <th scope="col" class="py-2">Error if you assume they match</th>
+        </tr></thead>
+        <tbody class="divide-y divide-gray-100 text-gray-700">
+          <tr><td class="py-2 pr-4">10%</td><td class="py-2 pr-4">5.2%</td><td class="py-2">Over-reads by 4.8 points</td></tr>
+          <tr><td class="py-2 pr-4">20%</td><td class="py-2 pr-4">14.2%</td><td class="py-2">Over-reads by 5.8 points (worst case)</td></tr>
+          <tr><td class="py-2 pr-4">25%</td><td class="py-2 pr-4">19.6%</td><td class="py-2">Over-reads by 5.4 points</td></tr>
+          <tr><td class="py-2 pr-4">40%</td><td class="py-2 pr-4">37.4%</td><td class="py-2">Over-reads by 2.6 points</td></tr>
+          <tr><td class="py-2 pr-4">50%</td><td class="py-2 pr-4">50.0%</td><td class="py-2">Exact — the only point that matches</td></tr>
+          <tr><td class="py-2 pr-4">60%</td><td class="py-2 pr-4">62.6%</td><td class="py-2">Under-reads by 2.6 points</td></tr>
+          <tr><td class="py-2 pr-4">75%</td><td class="py-2 pr-4">80.4%</td><td class="py-2">Under-reads by 5.4 points</td></tr>
+          <tr><td class="py-2 pr-4">80%</td><td class="py-2 pr-4">85.8%</td><td class="py-2">Under-reads by 5.8 points (worst case)</td></tr>
+          <tr><td class="py-2 pr-4">90%</td><td class="py-2 pr-4">94.8%</td><td class="py-2">Under-reads by 4.8 points</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="text-xs text-gray-400">Values computed from the circular-segment area of a horizontal cylinder; the pattern is symmetrical about the 50% point.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark">What that costs on a real tank</h3>
+      <p>Take a common size of horizontal storage tank: 8 ft diameter by 27 ft long, roughly 10,150 US gallons (about 38,400 litres) when full.</p>
+      <ul class="list-disc list-inside space-y-1">
+        <li>Liquid at quarter depth (24 in on the stick): actual contents about <strong>1,985 gallons</strong>, not the 2,538 gallons a "quarter full" assumption gives — a <strong>553 gallon</strong> gap.</li>
+        <li>Liquid at three-quarter depth (72 in): actual contents about <strong>8,168 gallons</strong>, not 7,614 — the same 553 gallons, now in the opposite direction.</li>
+      </ul>
+      <p>On a single tank that is a delivery-sized error. Across a tank farm, reconciled monthly, it is the kind of discrepancy that gets blamed on leaks, theft, or meter drift long before anyone questions the gauging method.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark">Where reading precision matters most</h3>
+      <p>There is a second, less obvious consequence. Because the tank is widest at its centreline, each inch of depth is worth far more volume in the middle of the tank than near the top or bottom. On that same 8 ft × 27 ft tank:</p>
+      <ul class="list-disc list-inside space-y-1">
+        <li>Near the middle (around 48 in depth): roughly <strong>135 gallons per inch</strong>.</li>
+        <li>Near the top or bottom (around 6 in or 90 in): roughly <strong>65 gallons per inch</strong> — less than half as sensitive.</li>
+      </ul>
+      <p>So a stick misread by one inch costs you about twice as much accuracy when the tank is around half full as it does when it is nearly empty or nearly full. If you are gauging a tank in the mid-band, that is where careful reading, a clean stick, and a properly fixed dip point actually pay off. It also means an operator who "rounds to the nearest inch" is introducing a much larger error at mid-level than the same habit would cause on a vertical tank.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark">End caps make it worse again</h3>
+      <p>Everything above assumes a plain cylinder with flat ends. Most real pressure vessels and bulk tanks have domed heads — hemispherical, 2:1 semi-elliptical, or flanged-and-dished. Those heads hold extra liquid that the simple circular-segment calculation does not account for, and they contribute it in their own non-linear way as the level rises. Pick the shape that actually matches your vessel in the calculator above rather than defaulting to Horizontal Cylinder, or you will understate the contents — most noticeably on short, large-diameter tanks where the heads are a large fraction of the total volume.</p>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] FIELD CALIBRATION ===================== -->
+<section id="calibration" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">From the plant floor</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How tanks are actually calibrated in the field</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+
+    <p>A geometric calculation like the one on this page tells you what an ideal tank of those dimensions would hold. For custody transfer, regulatory reporting, or any figure that has money attached to it, that is not the number the industry works from. Instead, each tank gets its own <strong>tank table</strong> (also called a capacity table, gauge table, or strapping table) — a calibrated lookup of gauge height against volume, produced for that specific vessel and periodically revalidated. Understanding how that table is built explains most of the gaps between a clean calculation and what the tank really holds.</p>
+
+    <h3 class="text-lg font-display font-semibold text-brandDark">The two main calibration methods</h3>
+    <p><strong>Manual strapping (geometric).</strong> The tank's external circumference is measured with a calibrated tape at several heights, because a real shell is never perfectly uniform — plate courses differ, welds add thickness, and older tanks bulge. Those measurements are then corrected inward to get internal dimensions: plate thickness and any insulation, lining, or coating is subtracted. The result is a course-by-course model of the tank rather than a single nominal diameter. This is the closest relative to what this calculator does, but with the real measured shell instead of a drawing figure.</p>
+    <p><strong>Liquid calibration (volumetric).</strong> Known volumes of liquid are metered into the tank and the level is recorded at each step, building the table directly from measurement. It is slower and needs a calibrated meter or prover, but it gives a direct measurement-based representation of the vessel's actual capacity — which matters most for tanks that geometry struggles with: vessels with heavy internal furniture, irregular or repaired shells, or unusual shapes. Where the two methods disagree on an in-service tank, the liquid calibration generally reflects the tank as it now stands.</p>
+
+    <h3 class="text-lg font-display font-semibold text-brandDark">Deadwood — the correction people forget</h3>
+    <p>"Deadwood" is the trade term for anything inside the tank that displaces liquid or adds space, and it is the most commonly missed correction when someone sizes a tank from a drawing. It cuts both ways:</p>
+    <ul class="list-disc list-inside space-y-1">
+      <li><strong>Subtracts volume:</strong> internal heating or cooling coils, agitator shafts and impellers, baffles, internal supports and stiffeners, ladders, standpipes, mixers, submerged pumps.</li>
+      <li><strong>Adds volume:</strong> sumps and drain-down wells below the main shell, large nozzle bores, manway barrels, and any dished bottom section below the datum.</li>
+    </ul>
+    <p>On a clean, empty storage tank the correction may be negligible. On a jacketed and agitated process vessel it can be a significant fraction of the nominal capacity — which is why a process vessel's working volume is often noticeably less than its geometric volume, and why the two figures should never be used interchangeably in a mass balance.</p>
+
+    <h3 class="text-lg font-display font-semibold text-brandDark">Out-of-level and tilt</h3>
+    <p>Horizontal tanks are unusually sensitive to this, and it is worth checking before blaming the maths. Many horizontal tanks are deliberately installed with a slight fall toward a drain or sump so they can be emptied and so water drops out at one end. That tilt means the liquid surface is no longer parallel to the tank axis, so the depth at the dip point is not the average depth along the tank, and the level-to-volume relationship shifts — most noticeably when the tank is nearly empty, where the liquid is pooled at one end and a stick at the other end may read essentially nothing while there is still usable product inside. Settlement of foundations or saddles over the years produces the same effect without anyone having designed it in. Vertical tanks are affected too, but the error is generally smaller for the same amount of tilt.</p>
+
+    <h3 class="text-lg font-display font-semibold text-brandDark">Fix the dip point and the datum</h3>
+    <p>A tank table is only meaningful against a defined reference. The dip point must be a fixed, marked location with a datum plate beneath it, and everyone gauging that tank must use the same one. Gauging from a different nozzle, or from a hatch that happens to be more convenient that shift, quietly invalidates the table — the reference height changes, so every reading is offset by a constant that nobody has written down. Where a tank has been re-roofed, had nozzles moved, or been repaired, the datum should be re-established rather than assumed.</p>
+
+    <h3 class="text-lg font-display font-semibold text-brandDark">Temperature: the liquid and the steel both move</h3>
+    <p>Two separate effects get confused here. The <em>liquid</em> expands and contracts with temperature, so a volume measured at tank temperature is converted to a standard reference temperature — 60&nbsp;°F in US practice, 15&nbsp;°C in most international practice — before it is reported or invoiced. That is the larger effect for most products, and for petroleum it is handled by published volume correction factors rather than a rule of thumb. Separately, the <em>tank shell itself</em> expands, which slightly changes the tank's own capacity at a given gauge height; calibration standards handle this with a shell temperature correction. For a rough operational stock check neither matters much, but for anything reconciled against a meter or invoiced, both belong in the calculation.</p>
+
+    <h3 class="text-lg font-display font-semibold text-brandDark">When to recalibrate</h3>
+    <p>Tank tables are not permanent. A tank should be recalibrated after any repair or modification that touches the shell, after significant settlement, after a change in internal fittings, and at whatever interval the applicable standard or the local weights-and-measures authority requires. A table produced before an agitator was installed will overstate the capacity from the day that agitator went in.</p>
+
+    <h3 class="text-lg font-display font-semibold text-brandDark">So where does this calculator fit?</h3>
+    <p>It is the right tool for design and planning work: sizing a new vessel, checking whether a tank will fit a duty, estimating a bund or secondary containment requirement, sanity-checking a supplier's quoted capacity, or working out roughly how much product a partly full tank is holding. It is not a substitute for a calibrated tank table on a vessel where the number carries commercial or regulatory weight. If your calculated figure and the tank's own table differ noticeably, the table is not necessarily wrong — deadwood, shell deformation, tilt, and the difference between nominal and measured dimensions all live in that gap.</p>
+    <p class="text-xs text-gray-400">Tank calibration and static measurement practice are covered by published standards from bodies including API (in its Manual of Petroleum Measurement Standards) and ISO, with separate documents for vertical and horizontal cylindrical tanks and for the calibration methods themselves. Requirements, applicable editions, and legal metrology obligations vary by country and by what the tank is used for — confirm the specific standard and revision that applies in your jurisdiction before relying on it for custody transfer or regulatory work.</p>
+
+  </div>
+</section>
+
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common mistakes when calculating tank volume</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p><strong>1. Using outside dimensions instead of inside dimensions.</strong> Tank capacity is based on the internal volume — using the outer diameter or outer dimensions (without subtracting wall thickness) overstates capacity, more noticeably on thick-walled pressure vessels.</p>
+      <p><strong>2. Picking Capsule when the tank actually has flat ends.</strong> A stadium-shaped (oval) cross-section with flat plate ends is a completely different shape from a round tube with domed hemispherical ends — mixing these up gives a meaningfully wrong volume, especially for shorter tanks where the end-cap volume is a larger share of the total.</p>
+      <p><strong>3. Assuming filled percentage matches depth percentage.</strong> For any horizontal round-cross-section tank, a liquid depth at 50% of the diameter is exactly 50% full, but any other depth is not proportional — 60% depth holds noticeably more than 60% of the volume, since the tank is widest at the middle. Always use the actual filled-volume calculation, not a straight-line estimate from the dipstick reading.</p>
+      <p><strong>4. Mixing up which dimension is the straight length for domed-end tanks.</strong> For Capsule, 2:1 Elliptical, and Dish Ends shapes, the "Straight Length (a)" field is only the cylindrical middle section — it does not include the two end-cap bulges. The tank's true overall length is longer than "a" by the combined depth of both end caps.</p>
+      <p><strong>5. Treating a Dish Ends result as exact for fabrication purposes.</strong> The Dish Ends calculation here uses a standard approximate depth ratio for typical F&amp;D proportions — real torispherical heads vary slightly by crown and knuckle radius, so treat the result as a close planning estimate, not a certified fabrication figure.</p>
+      <p><strong>6. Forgetting the oval/ellipse width-vs-height relationship.</strong> For Horizontal Oval, Width must be greater than or equal to Height; for Vertical Oval, Height must be greater than or equal to Width — the rounded ends can only be as wide as the cross-section itself. The calculator flags this automatically, but it's a common data-entry mix-up when copying dimensions from a drawing.</p>
+    </div>
+  </div>
+</section>
+
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+    <p class="text-xs text-gray-400 mt-2">Straight answers on tank shapes, fill depth, units, and head-type accuracy.</p>
+  </div>
+  <div class="divide-y divide-gray-200">
+    <details class="py-4" open>
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What tank shapes does this calculator support?</span><span class="plus text-sky-600 text-xl" aria-hidden="true">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Ten shapes: Horizontal and Vertical Cylinder, Rectangle, Horizontal and Vertical Oval, Horizontal and Vertical Capsule, Horizontal 2:1 Elliptical, Horizontal Dish Ends, and Horizontal Ellipse. Each uses its own geometric calculation for total capacity and, optionally, the volume at a given filled depth. The Horizontal Dish Ends result uses a standard flanged-and-dished (F&D) approximation rather than exact torispherical geometry.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How is filled volume calculated for a partially full tank?</span><span class="plus text-sky-600 text-xl" aria-hidden="true">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">For shapes with a constant cross-section along the tank length (Horizontal Cylinder, Rectangle, Horizontal Oval, Horizontal Ellipse) the filled volume is the cross-sectional area below the liquid level, multiplied by the tank's length. For domed-end shapes (capsule, 2:1 elliptical, dish ends) the two end caps are combined into an equivalent single solid (a sphere, an oblate spheroid, or a shallow spherical segment respectively) and sliced at the same liquid height — a standard method used for horizontal tank strapping charts.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What's the difference between a capsule, a 2:1 elliptical head, and a dished (F&D) head tank?</span><span class="plus text-sky-600 text-xl" aria-hidden="true">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">They differ only in how deep the rounded ends bulge relative to the tank diameter (D). A capsule has fully hemispherical ends (depth = D/2). A 2:1 semi-elliptical head is shallower (depth = D/4), the standard ASME ellipsoidal head ratio. A dished (flanged and dished, F&D) end is shallower still (depth ≈ 0.169×D for the common crown radius = D, knuckle radius = 0.06×D proportions) and blends into the shell through a small toroidal knuckle rather than a smooth curve all the way to the edge.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Are these calculations based on inside or outside dimensions?</span><span class="plus text-sky-600 text-xl" aria-hidden="true">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Inside (internal) dimensions, matching how tank capacity is normally specified. If you only have outside dimensions and a known wall thickness, subtract twice the wall thickness from each diameter/width/height before entering values here.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Which units can I use for input and output?</span><span class="plus text-sky-600 text-xl" aria-hidden="true">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Enter all dimensions in millimeters, centimeters, meters, inches, or feet using the unit selector — the same unit applies to every field including Filled Depth. Results are always shown in six common units at once: US gallons, US quarts, imperial gallons, liters, cubic meters, and cubic feet.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How accurate is the Horizontal Dish Ends result?</span><span class="plus text-sky-600 text-xl" aria-hidden="true">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">The dish-ends volume uses a standard ASME F&D approximation (crown radius = diameter, knuckle radius = 6% of diameter, giving an effective dish depth z of about 0.169×D), modeled as a shallow spherical segment rather than the full torispherical (sphere + toroidal knuckle) geometry. This is accurate to within a small percentage for standard proportions and is a common engineering approximation, but if your vessel uses a non-standard knuckle radius, treat the result as a close estimate and confirm against the actual head datasheet for fabrication or precise inventory purposes.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What if my tank has a torispherical head with a different knuckle radius than standard?</span><span class="plus text-sky-600 text-xl" aria-hidden="true">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">A larger knuckle radius makes the head shallower (closer to a flat plate) and a smaller knuckle radius makes it closer to a full hemisphere — the standard 6%-of-diameter knuckle used here sits at the common end of that range. If your head's actual depth is known from a datasheet, you can approximate its volume by treating it as a Horizontal Capsule (if it's close to hemispherical) or by scaling between the Dish Ends and 2:1 Elliptical results here as a bracket.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Can I use this for a partially-filled vertical tank?</span><span class="plus text-sky-600 text-xl" aria-hidden="true">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Yes. Vertical Cylinder uses a simple constant cross-sectional area times liquid height, so any depth works directly. Vertical Oval and Vertical Capsule both use a three-zone method instead, since they have curved caps at the bottom and top — a circular-segment calculation for Vertical Oval's 2D rounded ends, or a spherical-cap calculation for Vertical Capsule's 3D hemispherical ends, for whichever zone the liquid level falls in.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why doesn't my dipstick reading match the percentage full on a horizontal tank?</span><span class="plus text-sky-600 text-xl" aria-hidden="true">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Because a horizontal cylinder is widest at its centreline and narrows to nothing at the top and bottom, so equal steps of depth are not equal steps of volume. Below half depth a straight-line estimate always overstates the contents and above half depth it always understates them, by as much as about 5.8 percentage points around the 20% and 80% depth marks. The only depth where a proportional guess is exactly right is 50%. Enter the measured depth in the Filled Depth field above to get the actual figure instead of estimating.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why does my calculated volume differ from the tank's official capacity table?</span><span class="plus text-sky-600 text-xl" aria-hidden="true">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">A geometric calculation models an ideal tank built exactly to its nominal dimensions. A calibrated tank table is built from the real vessel and includes corrections a calculation cannot know about: deadwood (internal coils, agitators, baffles, supports that displace liquid, and sumps or large nozzles that add space), actual measured shell dimensions rather than drawing figures, shell deformation on older tanks, and any tilt or settlement. Small differences are common; a larger gap often points to significant deadwood, shell deformation, tilt, or a difference between nominal and measured dimensions.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Does a tank being slightly out of level affect the reading?</span><span class="plus text-sky-600 text-xl" aria-hidden="true">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Yes, and horizontal tanks are especially sensitive. Many are installed with a deliberate fall toward a drain or sump, and foundations settle over time. When the tank is tilted the liquid surface is no longer parallel to the tank axis, so the depth at the dip point is not the average depth along the tank. The effect is most pronounced near empty, where product pools at the low end and a stick at the high end can read almost nothing while usable liquid remains in the tank.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Where on the tank is a gauging error most costly?</span><span class="plus text-sky-600 text-xl" aria-hidden="true">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Around the middle. Because the tank is widest at its centreline, each unit of depth represents far more volume there than near the top or bottom — on a typical 8 ft diameter horizontal tank, roughly twice as much volume per inch at mid-level as near either extreme. A stick misread by one inch therefore costs about double the accuracy at half full compared with nearly empty or nearly full, which is where careful reading and a properly fixed dip point matter most.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Should I use this calculator for custody transfer or regulatory reporting?</span><span class="plus text-sky-600 text-xl" aria-hidden="true">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">No. For any figure carrying commercial or regulatory weight, use the vessel's own calibrated tank table, produced for that specific tank and revalidated at the required interval. This calculator is intended for design and planning work — sizing a new vessel, checking a tank fits a duty, estimating containment requirements, sanity-checking a quoted capacity, or gauging roughly how much a partly full tank holds. Note also that reported volumes are normally corrected to a standard reference temperature (60 °F in US practice, 15 °C in most international practice), which this calculator does not apply.</p>
+    </details>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<script>
+  function setFeedback(val){
+    document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
+    document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
+  }
+</script>
+<script>
+// ===== Geometry + calc engine (identical logic to the verified test suite) =====
+function circSeg(r, f){
+  if(r<=0) return 0;
+  if(f<=0) return 0;
+  if(f>=2*r) return Math.PI*r*r;
+  return r*r*Math.acos((r-f)/r) - (r-f)*Math.sqrt(2*r*f - f*f);
+}
+function sphereCapFull(r, f){
+  if(f<=0) return 0;
+  if(f>=2*r) return (4/3)*Math.PI*r*r*r;
+  return Math.PI*f*f*(3*r-f)/3;
+}
+function ellip21CapFull(D, f){
+  const b=D/2, a=D/4, c=D/2;
+  if(f<=0) return 0;
+  if(f>=D) return (4/3)*Math.PI*a*b*c;
+  const y=f-b;
+  return Math.PI*a*c*( y - (y*y*y)/(3*b*b) + 2*b/3 );
+}
+function dishHeadTotalVol(D, hDish){
+  const rb=D/2;
+  return (Math.PI*hDish/6)*(3*rb*rb + hDish*hDish);
+}
+function dishHeadPartialVol(D, hDish, y, N){
+  const rb = D/2;
+  const Rp = (rb*rb + hDish*hDish) / (2*hDish);
+  N = N || 150;
+  const dt = hDish / N;
+  let sum = 0;
+  for(let i=0;i<N;i++){
+    const t = (i+0.5)*dt;
+    const rt = Math.sqrt(Math.max(0, 2*Rp*t - t*t));
+    const localBottom = rb - rt;
+    let fLocal = y - localBottom;
+    if(fLocal < 0) fLocal = 0;
+    if(fLocal > 2*rt) fLocal = 2*rt;
+    sum += circSeg(rt, fLocal) * dt;
+  }
+  return sum;
+}
+function vertCapsulePartial(r, straightLen, f){
+  const H = straightLen + 2*r;
+  if(f<=0) return 0;
+  if(f>=H) return Math.PI*r*r*straightLen + (4/3)*Math.PI*r*r*r;
+  if(f<=r){ return Math.PI*f*f*(3*r-f)/3; }
+  if(f<=r+straightLen){ return (2/3)*Math.PI*r*r*r + Math.PI*r*r*(f-r); }
+  const topf = f-(r+straightLen);
+  return (2/3)*Math.PI*r*r*r + Math.PI*r*r*straightLen + Math.PI*topf*topf*(3*r-topf)/3;
+}
+function tvClamp(v,lo,hi){ return Math.max(lo, Math.min(hi, v)); }
+
+const TANK_CALC = {
+  'h-cyl': (v, f) => { const r=v.d/2; const total=Math.PI*r*r*v.l; const filled=(f==null)?null:circSeg(r,tvClamp(f,0,v.d))*v.l; return {total,filled,valid:true}; },
+  'v-cyl': (v, f) => { const r=v.d/2; const total=Math.PI*r*r*v.h; const filled=(f==null)?null:Math.PI*r*r*tvClamp(f,0,v.h); return {total,filled,valid:true}; },
+  'rect': (v, f) => { const total=v.w*v.h*v.l; const filled=(f==null)?null:v.w*tvClamp(f,0,v.h)*v.l; return {total,filled,valid:true}; },
+  'h-oval': (v, f) => {
+    const r=v.h/2, a=v.w-v.h;
+    if(a<0) return {valid:false, error:'Width (w) must be greater than or equal to Height (h) for an oval cross-section.'};
+    const total=(a*v.h+Math.PI*r*r)*v.l;
+    const filled=(f==null)?null:(a*tvClamp(f,0,v.h)+circSeg(r,tvClamp(f,0,v.h)))*v.l;
+    return {total,filled,valid:true};
+  },
+  'v-oval': (v, f) => {
+    const r=v.w/2, aStraight=v.h-v.w;
+    if(aStraight<0) return {valid:false, error:'Height (h) must be greater than or equal to Width (w) for an oval cross-section.'};
+    const total=(Math.PI*r*r + v.w*aStraight)*v.l;
+    let filled=null;
+    if(f!=null){
+      const fc = tvClamp(f,0,v.h);
+      let area;
+      if(fc<=r){ area = circSeg(r,fc); }
+      else if(fc<=r+aStraight){ area = (Math.PI*r*r/2) + v.w*(fc-r); }
+      else { area = Math.PI*r*r + v.w*aStraight - circSeg(r, v.h-fc); }
+      filled = area*v.l;
+    }
+    return {total,filled,valid:true};
+  },
+  'h-cap': (v, f) => {
+    const r=v.d/2; const total=Math.PI*r*r*v.a+(4/3)*Math.PI*r*r*r;
+    const filled=(f==null)?null:circSeg(r,tvClamp(f,0,v.d))*v.a+sphereCapFull(r,tvClamp(f,0,v.d));
+    return {total,filled,valid:true};
+  },
+  'v-cap': (v, f) => {
+    const r=v.d/2; const total=Math.PI*r*r*v.a+(4/3)*Math.PI*r*r*r; const H=v.a+v.d;
+    const filled=(f==null)?null:vertCapsulePartial(r,v.a,tvClamp(f,0,H));
+    return {total,filled,valid:true};
+  },
+  'h-21e': (v, f) => {
+    const r=v.d/2; const total=Math.PI*r*r*v.a+Math.PI*Math.pow(v.d,3)/12;
+    const filled=(f==null)?null:circSeg(r,tvClamp(f,0,v.d))*v.a+ellip21CapFull(v.d,tvClamp(f,0,v.d));
+    return {total,filled,valid:true};
+  },
+  'h-dish': (v, f) => {
+    const r=v.d/2; const hDish=0.169*v.d; const capVol=dishHeadTotalVol(v.d,hDish);
+    const total=Math.PI*r*r*v.a+2*capVol;
+    const filled=(f==null)?null:circSeg(r,tvClamp(f,0,v.d))*v.a+2*dishHeadPartialVol(v.d,hDish,tvClamp(f,0,v.d));
+    return {total,filled,valid:true};
+  },
+  'h-ellipse': (v, f) => {
+    const total=(Math.PI*v.w*v.h/4)*v.l;
+    const filled=(f==null)?null:(v.w/v.h)*circSeg(v.h/2,tvClamp(f,0,v.h))*v.l;
+    return {total,filled,valid:true};
+  }
+};
+
+const LENGTH_TO_M = { mm: 0.001, cm: 0.01, m: 1, in: 0.0254, ft: 0.3048 };
+function m3ToUnits(m3){
+  return {
+    usGal: m3*264.172052, usQt: m3*1056.68821, impGal: m3*219.969157,
+    liters: m3*1000, m3: m3, ft3: m3/0.0283168466
+  };
+}
+
+// tankHeight: the vertical dimension the Filled Depth is measured against, so a
+// fill deeper than the tank can be rejected instead of silently clamped.
+const TANK_TYPES = {
+  'h-cyl': { label: 'Horizontal Cylinder', fields: ['d','l'], tankHeight: v => v.d },
+  'v-cyl': { label: 'Vertical Cylinder', fields: ['d','h'], tankHeight: v => v.h },
+  'rect': { label: 'Rectangle', fields: ['w','h','l'], tankHeight: v => v.h },
+  'h-oval': { label: 'Horizontal Oval', fields: ['h','w','l'], tankHeight: v => v.h },
+  'v-oval': { label: 'Vertical Oval', fields: ['w','h','l'], tankHeight: v => v.h },
+  'h-cap': { label: 'Horizontal Capsule', fields: ['d','a'], tankHeight: v => v.d },
+  'v-cap': { label: 'Vertical Capsule', fields: ['d','a'], tankHeight: v => v.a + v.d },
+  'h-21e': { label: 'Horizontal 2:1 Elliptical', fields: ['d','a'], tankHeight: v => v.d },
+  'h-dish': { label: 'Horizontal Dish Ends', fields: ['d','a'], tankHeight: v => v.d },
+  'h-ellipse': { label: 'Horizontal Ellipse', fields: ['w','h','l'], tankHeight: v => v.h }
+};
+
+// Readable names for validation messages (was showing cryptic "D value").
+const FIELD_LABELS = {
+  d: 'Diameter (d)', l: 'Length (l)', h: 'Height (h)', w: 'Width (w)',
+  a: 'Straight Length (a)'
+};
+
+let currentTankType = 'h-cyl';
+
+function tvSetType(key){
+  currentTankType = key;
+  Object.keys(TANK_TYPES).forEach(k=>{
+    const fg = document.getElementById('fields-'+k);
+    const sv = document.getElementById('svg-'+k);
+    if(fg) fg.classList.toggle('hidden', k!==key);
+    if(sv) sv.classList.toggle('hidden', k!==key);
+  });
+  tvCalculate();
+}
+
+function tvCalculate(){
+  const unit = document.getElementById('tvUnit').value;
+  const toM = LENGTH_TO_M[unit];
+  const type = TANK_TYPES[currentTankType];
+  const validationBox = document.getElementById('tvValidationBox');
+  const errors = [];
+  const vals = {};
+
+  type.fields.forEach(fid=>{
+    const el = document.getElementById('tv_'+currentTankType+'_'+fid);
+    const raw = parseFloat(el.value);
+    if(!Number.isFinite(raw) || raw <= 0){
+      errors.push('Enter a valid ' + (FIELD_LABELS[fid] || fid) + ' greater than 0.');
+    }
+    vals[fid] = raw * toM;
+  });
+
+  const fillRaw = document.getElementById('tvFillDepth').value;
+  let fillM = null;
+  if(fillRaw !== ''){
+    const fillNum = parseFloat(fillRaw);
+    if(!Number.isFinite(fillNum) || fillNum < 0){
+      errors.push('Filled Depth must be 0 or a positive number.');
+    } else {
+      fillM = fillNum * toM;
+    }
+  }
+
+  if(errors.length){
+    validationBox.classList.remove('hidden');
+    validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
+    document.getElementById('tvResultHeadline').textContent = '\u2014';
+    document.getElementById('tvResultSub').textContent = '\u2014';
+    document.getElementById('tvUnitTableBody').innerHTML = '';
+    return;
+  }
+
+  const result = TANK_CALC[currentTankType](vals, fillM);
+  if(!result.valid){
+    validationBox.classList.remove('hidden');
+    validationBox.innerHTML = '\u2022 ' + result.error;
+    document.getElementById('tvResultHeadline').textContent = '\u2014';
+    document.getElementById('tvResultSub').textContent = '\u2014';
+    document.getElementById('tvUnitTableBody').innerHTML = '';
+    return;
+  }
+
+  // Reject a fill deeper than the tank itself. Done after the shape call so
+  // shape-specific dimension errors (e.g. oval w<h) are reported first, and
+  // only when those passed is tankHeight meaningful.
+  if(fillM !== null){
+    const maxFillM = type.tankHeight(vals);
+    if(Number.isFinite(maxFillM) && fillM > maxFillM + 1e-9){
+      const maxDisp = maxFillM / toM;
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = '\u2022 Filled Depth cannot exceed the tank\u2019s height of ' +
+        maxDisp.toLocaleString('en-US',{maximumFractionDigits:4}) + ' ' + unit + '.';
+      document.getElementById('tvResultHeadline').textContent = '\u2014';
+      document.getElementById('tvResultSub').textContent = '\u2014';
+      document.getElementById('tvUnitTableBody').innerHTML = '';
+      return;
+    }
+  }
+  validationBox.classList.add('hidden');
+  validationBox.innerHTML = '';
+
+  const totalUnits = m3ToUnits(result.total);
+  const filledUnits = (result.filled==null) ? null : m3ToUnits(result.filled);
+
+  document.getElementById('tvResultHeadline').textContent = totalUnits.liters.toLocaleString('en-US',{maximumFractionDigits:1}) + ' L';
+  document.getElementById('tvResultSub').textContent = 'Total capacity \u2014 ' + totalUnits.m3.toLocaleString('en-US',{maximumFractionDigits:4}) + ' m\u00b3' + (filledUnits ? ' \u00b7 Filled: ' + filledUnits.liters.toLocaleString('en-US',{maximumFractionDigits:1}) + ' L' : '');
+
+  const rows = [
+    ['US Gallons','usGal'],
+    ['US Quarts','usQt'],
+    ['Imperial Gallons','impGal'],
+    ['Liters','liters'],
+    ['Cubic Meters','m3'],
+    ['Cubic Feet','ft3']
+  ];
+  const fmt = (n, key) => {
+    if(n==null) return '\u2014';
+    const dec = (key==='m3') ? 4 : (key==='ft3' ? 3 : 1);
+    return n.toLocaleString('en-US',{maximumFractionDigits:dec});
+  };
+  document.getElementById('tvUnitTableBody').innerHTML = rows.map(([label,key]) =>
+    `<tr><td>${label}</td><td>${fmt(totalUnits[key],key)}</td><td>${filledUnits ? fmt(filledUnits[key],key) : '\u2014'}</td></tr>`
+  ).join('');
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  tvSetType('h-cyl');
+});
+
+</script>
+<script>
+  var __shareModalLoading = false;
+  function loadShareModal(){
+    if (typeof openShareModal === 'function'){ openShareModal(); return; }
+    if (__shareModalLoading) return;
+    __shareModalLoading = true;
+    var s = document.createElement('script');
+    s.src = '/assets/share-modal.js';
+    s.onload = function(){ __shareModalLoading = false; openShareModal(); };
+    s.onerror = function(){ __shareModalLoading = false; };
+    document.head.appendChild(s);
+  }
+</script>
+
+<script>
+(() => {
+  const el = document.getElementById("heroTypingText");
+  if (!el) return;
+  const words = [
+    "Calculate Smarter. Work Faster.",
+    "Practical Calculators & Maintenance Guides."
+  ];
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion) { el.textContent = words[0]; return; }
+  let wordIndex = 0;
+  let charIndex = words[0].length;
+  let deleting = true;
+  const typeSpeed = 90;
+  const deleteSpeed = 55;
+  const pauseAfterTyping = 1800;
+  const pauseAfterDeleting = 500;
+  function animate() {
+    const word = words[wordIndex];
+    if (deleting) {
+      if (charIndex > 0) { charIndex--; el.textContent = word.substring(0, charIndex); setTimeout(animate, deleteSpeed); }
+      else { deleting = false; wordIndex = (wordIndex + 1) % words.length; charIndex = 0; setTimeout(animate, pauseAfterDeleting); }
+    } else {
+      const nextWord = words[wordIndex];
+      if (charIndex < nextWord.length) { charIndex++; el.textContent = nextWord.substring(0, charIndex); setTimeout(animate, typeSpeed); }
+      else { deleting = true; setTimeout(animate, pauseAfterTyping); }
+    }
+  }
+  setTimeout(() => { wordIndex = 0; charIndex = words[0].length; deleting = true; animate(); }, 1500);
+})();
+</script>
+</body>
+</html>
