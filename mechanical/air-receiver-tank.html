@@ -260,12 +260,15 @@
     color:#fff;
     box-shadow:0 4px 10px rgba(14,165,233,0.35);
   }
+  /* Calculation-method tabs: mimic the dark pill tab bar used sitewide
+     (inactive=dark navy bg/white text, active=white bg/dark text) */
+  body:not(.dark-theme) #calculator .bg-gray-100:has(.toggle-btn){ background:#0B1220 !important; border:none !important; padding:3px !important; }
+  body:not(.dark-theme) #calculator .toggle-btn{ color:#fff !important; }
+  body:not(.dark-theme) #calculator .toggle-btn.active{ background:#fff !important; color:#0B1220 !important; box-shadow:none !important; font-weight:700; }
+  /* Defensive: ensure adequate contrast for the inactive tab's own base
+     color (#64748b) if this ever renders against a dark surface without
+     the scoped override above (e.g. dark theme). */
   body.dark-theme .toggle-btn:not(.active){ color:#94a3b8; }
-  .mode-toggle-wrap{
-    display:flex; gap:4px; padding:4px;
-    background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;
-  }
-  body.dark-theme .mode-toggle-wrap{ background:#0B1220; border-color:#1f2f47; }
   .hidden-field{ display:none !important; }
   .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
   .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
@@ -509,7 +512,7 @@
       <!-- ===== Calculation method toggle: buffer-time (classic) vs. switching-frequency (load-factor) method ===== -->
       <div class="mb-5">
         <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2 block">Calculation Method</label>
-        <div class="mode-toggle-wrap" role="group" aria-label="Calculation method">
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5" role="group" aria-label="Calculation method">
           <button type="button" id="modeBufferBtn" class="toggle-btn active" aria-pressed="true" onclick="setCalcMode('buffer')">By Buffer Time</button>
           <button type="button" id="modeFreqBtn" class="toggle-btn" aria-pressed="false" onclick="setCalcMode('freq')">By Switching Frequency</button>
         </div>
