@@ -37,7 +37,7 @@
      crossorigin="anonymous"></script>
 
 <!-- ===================== [PER-PAGE] SEO META ===================== -->
-<meta name="description" content="Free air receiver tank sizing calculator. Find the minimum receiver tank volume from compressor free air delivery (FAD), cut-in/cut-out pressure, and minimum allowable cycle time.">
+<meta name="description" content="Free air receiver tank sizing calculator with two methods — buffer time or permissible switching frequency — from compressor FAD, cut-in/cut-out pressure, and load factor, plus a tank dimension estimator.">
 <meta name="keywords" content="air receiver tank calculator, air receiver sizing formula, compressor tank size calculator, receiver tank volume calculator, cut-in cut-out pressure sizing">
 <meta name="robots" content="index, follow">
 <!-- PAGE_CATEGORY = electrical | mechanical | financial (no slashes).
@@ -74,12 +74,12 @@
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "Air Receiver Tank Calculator",
+  "name": "Air Receiver Tank Size Calculator",
   "url": "https://www.electromechcalc.com/mechanical/air-receiver-tank",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "description": "Free online calculator for minimum compressed air receiver tank volume, based on compressor free air delivery, cut-in and cut-out pressure settings, and the minimum acceptable time between compressor starts.",
+  "description": "Free online calculator for minimum compressed air receiver tank volume, using either a target minimum time between compressor starts or a permissible switching frequency and load factor, with an optional temperature correction and a tank dimension estimator.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
 </script>
@@ -91,7 +91,7 @@
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
     { "@type": "ListItem", "position": 2, "name": "Mechanical Calculators", "item": "https://www.electromechcalc.com/mechanical-calculators" },
-    { "@type": "ListItem", "position": 3, "name": "Air Receiver Tank Calculator", "item": "https://www.electromechcalc.com/mechanical/air-receiver-tank" }
+    { "@type": "ListItem", "position": 3, "name": "Air Receiver Tank Size Calculator", "item": "https://www.electromechcalc.com/mechanical/air-receiver-tank" }
   ]
 }
 </script>
@@ -104,7 +104,7 @@
     {
       "@type": "Question",
       "name": "What is the formula for air receiver tank sizing?",
-      "acceptedAnswer": { "@type": "Answer", "text": "V = (t times C times Pa) divided by (P1 minus P2), where t is the minimum acceptable time between compressor starts in minutes, C is compressor free air delivery in cubic metres per minute, Pa is atmospheric pressure (1.013 bar absolute), and P1 and P2 are the cut-out and cut-in pressures in bar." }
+      "acceptedAnswer": { "@type": "Answer", "text": "V = (t times C times Pa) divided by (P1 minus P2), where t is the minimum acceptable buffer/swing time between compressor starts, in minutes (the receiver pressure-swing time used by this simplified formula, not necessarily the complete electrical start-to-start cycle), C is compressor free air delivery in cubic metres per minute, Pa is atmospheric pressure (1.013 bar absolute), and P1 and P2 are the cut-out and cut-in pressures in bar." }
     },
     {
       "@type": "Question",
@@ -139,7 +139,22 @@
     {
       "@type": "Question",
       "name": "How do I size a receiver for a system with more than one compressor?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Use the effective combined free air delivery relevant to the compressor staging strategy actually in use (for example, the FAD of the lead compressor if only one runs at low demand, or the combined FAD if multiple run together), since the receiver needs to smooth the cycling behavior of whichever compressor(s) are actually starting and stopping under the demand condition being checked." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Determine which compressor(s) actually cycle under the design operating condition, based on the station's staging/sequencing control strategy (which unit is base-load, which is trim, and how they hand off), then use that compressor's (or combination's) FAD in the calculation above. Do not simply add up every installed compressor's capacity unless the control strategy genuinely runs them together — follow the compressor manufacturer's sequencing and receiver-sizing guidance for the actual station." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between the buffer time method and the switching frequency method?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Both methods address compressor short-cycling, but they use different design assumptions and inputs, so their results may differ. The buffer time method uses a target minimum buffer/swing time between starts directly. The switching frequency method instead uses the compressor motor's rated maximum starts per hour together with the load factor (average consumption divided by the largest compressor's delivery), which peaks in required volume around a 50% load factor. Use whichever figure you actually have available, not both together." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does receiver temperature affect the required tank volume?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Both formulas assume a standard 20°C reference. Since stored air volume scales with absolute temperature at a given mass and pressure, a receiver running consistently hotter or colder than that reference needs a proportionally larger or smaller physical volume — enter the actual design temperature in the advanced temperature field to apply this correction." }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the suggested tank length calculated from the volume?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The dimension estimator treats the tank as a cylinder with two hemispherical end caps (a capsule shape), where the two hemispheres together equal one sphere of the chosen diameter. Given the required volume and a selected shell diameter, it solves for the straight cylindrical length needed to make up the remaining volume. Real tank heads (such as torispherical or dished ends) differ from a true hemisphere, so treat this as a planning estimate and confirm final dimensions against the manufacturer's datasheet." }
     }
   ]
 }
@@ -245,6 +260,11 @@
     color:#fff;
     box-shadow:0 4px 10px rgba(14,165,233,0.35);
   }
+  .mode-toggle-wrap{
+    display:flex; gap:4px; padding:4px;
+    background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;
+  }
+  body.dark-theme .mode-toggle-wrap{ background:#0B1220; border-color:#1f2f47; }
   .hidden-field{ display:none !important; }
   .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
   .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
@@ -361,17 +381,17 @@
   .breakdown-wrap{ min-width:0; }
   /* Dark-mode fix: "Worked Example / Reference" box (bg-sky-50/60) had no
      body.dark-theme override, so it stayed near-invisible in dark mode. */
-  body.dark-theme #cs-example-box{
+  body.dark-theme #cs-example-box, body.dark-theme #cs-example-box-2{
     background:rgba(14,165,233,0.07); border-color:#164e63;
   }
-  body.dark-theme #cs-example-box thead tr{ border-color:#164e63; }
-  body.dark-theme #cs-example-box th{ color:#7dd3fc; }
-  body.dark-theme #cs-example-box tbody{ color:#cbd5e1; }
-  body.dark-theme #cs-example-box tbody tr{ border-color:rgba(125,211,252,0.15); }
-  body.dark-theme #cs-example-box .text-gray-400{ color:#64748b; }
-  body.dark-theme #cs-example-box .text-gray-500{ color:#7dd3fc; }
-  body.dark-theme #cs-example-box .text-gray-600{ color:#cbd5e1; }
-  body.dark-theme #cs-example-box .text-gray-700{ color:#e2e8f0; }
+  body.dark-theme #cs-example-box thead tr, body.dark-theme #cs-example-box-2 thead tr{ border-color:#164e63; }
+  body.dark-theme #cs-example-box th, body.dark-theme #cs-example-box-2 th{ color:#7dd3fc; }
+  body.dark-theme #cs-example-box tbody, body.dark-theme #cs-example-box-2 tbody{ color:#cbd5e1; }
+  body.dark-theme #cs-example-box tbody tr, body.dark-theme #cs-example-box-2 tbody tr{ border-color:rgba(125,211,252,0.15); }
+  body.dark-theme #cs-example-box .text-gray-400, body.dark-theme #cs-example-box-2 .text-gray-400{ color:#64748b; }
+  body.dark-theme #cs-example-box .text-gray-500, body.dark-theme #cs-example-box-2 .text-gray-500{ color:#7dd3fc; }
+  body.dark-theme #cs-example-box .text-gray-600, body.dark-theme #cs-example-box-2 .text-gray-600{ color:#cbd5e1; }
+  body.dark-theme #cs-example-box .text-gray-700, body.dark-theme #cs-example-box-2 .text-gray-700{ color:#e2e8f0; }
 
   .hero-typing-box{
     display:flex;
@@ -447,7 +467,7 @@
           Mechanical · Free · Instant results
         </span>
         <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
-          Air Receiver Tank <span class="text-sky-400">Calculator</span>
+          Air Receiver Tank Size <span class="text-sky-400">Calculator</span>
         </h1>
     <div class="hero-typing-box">
       <p class="hero-typing text-[#d4af37] text-sm font-mono font-bold justify-center" aria-label="Calculate Smarter. Work Faster. Practical Calculators & Maintenance Guides.">
@@ -485,43 +505,93 @@
         <h2 class="font-display font-semibold text-lg text-brandDark mb-5">Compressor &amp; Pressure Inputs</h2>
       </div>
 
+      <!-- ===== Calculation method toggle: buffer-time (classic) vs. switching-frequency (load-factor) method ===== -->
       <div class="mb-5">
-        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="artFad">Compressor FAD (m³/min)</label>
-        <input id="artFad" type="number" value="2.0" step="0.1" min="0" class="input-field mt-2">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2 block">Calculation Method</label>
+        <div class="mode-toggle-wrap" role="group" aria-label="Calculation method">
+          <button type="button" id="modeBufferBtn" class="toggle-btn active" aria-pressed="true" onclick="setCalcMode('buffer')">By Buffer Time</button>
+          <button type="button" id="modeFreqBtn" class="toggle-btn" aria-pressed="false" onclick="setCalcMode('freq')">By Switching Frequency</button>
+        </div>
       </div>
 
+      <!-- ===== Buffer-time method fields ===== -->
+      <div id="bufferFields">
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="artFad">Compressor FAD (m³/min)</label>
+          <input id="artFad" type="number" value="2.0" step="0.1" min="0.1" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="artTime">Minimum Buffer / Swing Time (minutes)</label>
+          <input id="artTime" type="number" value="1" step="0.1" min="0.1" class="input-field mt-2">
+          <div class="flex justify-end">
+              <span class="info-icon" tabindex="0" role="button" aria-label="More info">
+                i
+                <span class="info-tooltip">This models the buffer/off-load swing time (compressor idle while demand drains the receiver, or filling against little demand), not a full electrical start-to-start cycle. Example value only — always check the specific compressor motor's rated maximum starts/hour; larger motors typically need several minutes, not 1</span>
+              </span>
+            </div>
+        </div>
+      </div>
+
+      <!-- ===== Switching-frequency (load-factor) method fields ===== -->
+      <div id="freqFields" class="hidden">
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="freqQ1">Largest Compressor's Delivery, Q₁ (m³/min)</label>
+          <input id="freqQ1" type="number" value="6" step="0.1" min="0.1" class="input-field mt-2">
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="freqQ2">Average Air Consumption, Q₂ (m³/min)</label>
+          <input id="freqQ2" type="number" value="3" step="0.1" min="0" class="input-field mt-2">
+          <div class="flex justify-end">
+              <span class="info-icon" tabindex="0" role="button" aria-label="More info">
+                i
+                <span class="info-tooltip">The required volume is largest when consumption sits near 50% of the compressor's delivery — this is the usual worst-case check point, not necessarily your actual average load</span>
+              </span>
+            </div>
+        </div>
+        <div class="mb-5">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="freqZ">Permissible Switching Cycles, Z (starts/hour)</label>
+          <input id="freqZ" type="number" value="30" step="1" min="1" class="input-field mt-2">
+          <div class="flex justify-end">
+              <span class="info-icon" tabindex="0" role="button" aria-label="More info">
+                i
+                <span class="info-tooltip">Example only — enter the compressor motor manufacturer's actual maximum permissible starts/hour. Common guideline ranges: up to ~25 HP around 120/h, up to ~100 HP around 60/h, above ~100 HP around 30/h — these vary by manufacturer, always confirm against the motor's rating</span>
+              </span>
+            </div>
+        </div>
+      </div>
+
+      <!-- ===== Shared: pressure settings (used by both methods) ===== -->
       <div class="grid grid-cols-2 gap-4 mb-5">
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="artP1">Cut-Out (Max) Pressure, P₁ (bar)</label>
-          <input id="artP1" type="number" value="8" step="0.1" min="0" class="input-field mt-2">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="artP1">Cut-Out (Max) Pressure, P₁ (bar(g))</label>
+          <input id="artP1" type="number" value="8" step="0.1" min="0.1" class="input-field mt-2">
         </div>
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="artP2">Cut-In (Min) Pressure, P₂ (bar)</label>
-          <input id="artP2" type="number" value="6.5" step="0.1" min="0" class="input-field mt-2">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="artP2">Cut-In (Min) Pressure, P₂ (bar(g))</label>
+          <input id="artP2" type="number" value="6.5" step="0.1" min="0.1" class="input-field mt-2">
         </div>
-      </div>
-
-      <div class="mb-5">
-        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="artTime">Minimum Time Between Starts (minutes)</label>
-        <input id="artTime" type="number" value="1" step="0.1" min="0" class="input-field mt-2">
-        <div class="flex justify-end">
-            <span class="info-icon" tabindex="0" role="button" aria-label="More info">
-              i
-              <span class="info-tooltip">Typical minimum 1 minute for standard motors; check manufacturer's max starts/hour rating</span>
-            </span>
-          </div>
       </div>
 
       <div class="mb-5">
         <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="artMargin">Safety Margin (%)</label>
-        <input id="artMargin" type="number" value="15" step="1" min="0" class="input-field mt-2">
+        <input id="artMargin" type="number" value="15" step="1" min="0" max="200" class="input-field mt-2">
         <div class="flex justify-end">
             <span class="info-icon" tabindex="0" role="button" aria-label="More info">
               i
-              <span class="info-tooltip">Added on top of the calculated minimum — covers demand spikes, future growth, and vessel design allowance</span>
+              <span class="info-tooltip">Optional sizing allowance added on top of the calculated minimum — not a substitute for a separate peak-demand, pressure-drop, vessel-code, or manufacturer sizing check</span>
             </span>
           </div>
       </div>
+
+      <!-- ===== Optional advanced: temperature correction ===== -->
+      <details class="mb-5">
+        <summary class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Advanced: Temperature Correction (optional)</summary>
+        <div class="mt-3">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="artTemp">Air Temperature for Volume Correction (°C)</label>
+          <input id="artTemp" type="number" value="20" step="1" min="-50" max="200" class="input-field mt-2">
+          <p class="text-xs text-gray-400 mt-2">The actual air temperature inside the receiver — not necessarily the ambient or compressor discharge temperature, since cooling and vessel location affect this. Stored air volume scales with absolute temperature. Leave at 20°C (standard reference — no correction applied) unless the receiver consistently runs hotter or colder, e.g. mounted close to an uncooled compressor discharge line. This adjusts stored-air density only — it does not correct a compressor's rated FAD for ambient/inlet conditions, which is a separate check against the compressor's own datasheet.</p>
+        </div>
+      </details>
 
       <button onclick="calculateReceiverTank()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold py-3 rounded-lg shadow transition">Calculate Tank Size</button>
 
@@ -545,7 +615,7 @@
           <div id="rLitres" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
         </div>
         <div class="bg-white rounded-xl border border-gray-100 p-4">
-          <span class="text-[11px] text-gray-500 uppercase tracking-wide">Suggested Standard Size</span>
+          <span class="text-[11px] text-gray-500 uppercase tracking-wide">Next Listed Tank Size</span>
           <div id="rStdSize" class="text-xl font-display font-bold text-brandDark mt-1">—</div>
         </div>
       </div>
@@ -560,6 +630,29 @@
 
     </div>
 
+  </div>
+
+  <!-- ===================== TANK DIMENSION ESTIMATOR (optional bonus tool) ===================== -->
+  <div class="mt-6 bg-white rounded-xl border border-gray-100 p-4 md:p-5">
+    <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Suggested Tank Dimensions (Optional)</span>
+    <p class="text-sm text-gray-600 mb-4">Pick a standard shell diameter to estimate the straight-length and overall length needed to hold the calculated volume (with margin), for a horizontal cylindrical vessel with hemispherical end caps.</p>
+    <div class="grid sm:grid-cols-2 gap-4">
+      <div>
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="dimDiameter">Shell Diameter</label>
+        <select id="dimDiameter" class="input-field mt-2" onchange="updateDimensionSuggestion()">
+          <option value="300">300 mm</option>
+          <option value="400">400 mm</option>
+          <option value="500">500 mm</option>
+          <option value="600" selected>600 mm</option>
+          <option value="750">750 mm</option>
+          <option value="900">900 mm</option>
+          <option value="1000">1000 mm</option>
+          <option value="1200">1200 mm</option>
+          <option value="1500">1500 mm</option>
+        </select>
+      </div>
+      <div id="dimResultBox" class="text-sm text-gray-600 space-y-1 mt-2"></div>
+    </div>
   </div>
 </section>
 
@@ -586,7 +679,7 @@
       <button id="fbNo" class="action-icon-btn" onclick="setFeedback('no')">👎 No</button>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
-      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Air%20Receiver%20Tank%20Calculator">✉️ Feedback</a>
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Air%20Receiver%20Tank%20Size%20Calculator">✉️ Feedback</a>
     </div>
   </div>
 </section>
@@ -602,7 +695,34 @@
           <a href="/mechanical/compressed-air-consumption" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
             Compressed Air Consumption Calculator <span class="text-sky-500">→</span>
           </a>
+          <a href="/mechanical-calculators" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            🛠️ Explore all Mechanical Calculators <span class="text-sky-500">→</span>
+          </a>
 
+        </div>
+      </div>
+</section>
+
+<!-- ===================== RELATED MAINTENANCE GUIDES ===================== -->
+<section class="max-w-6xl mx-auto px-4 mb-6">
+  <div id="relatedGuidesBox" class="bg-white rounded-xl border border-gray-100 p-4" data-copy-exclude>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Maintenance Guides</span>
+        <div class="grid sm:grid-cols-2 gap-1.5">
+          <a href="/blog/mechanical/air-compressor-maintenance-guide" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Air Compressor Maintenance Guide <span class="text-sky-500">→</span>
+          </a>
+          <a href="/blog/mechanical/boiler-maintenance-guide" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Industrial Boiler Maintenance Guide <span class="text-sky-500">→</span>
+          </a>
+          <a href="/blog/mechanical/centrifugal-pump-maintenance-guide" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Centrifugal Pump Maintenance Guide <span class="text-sky-500">→</span>
+          </a>
+          <a href="/blog/mechanical/cooling-tower-maintenance-guide" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Cooling Tower Maintenance Guide <span class="text-sky-500">→</span>
+          </a>
+          <a href="/blog-guides" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            📚 All Maintenance Guides <span class="text-sky-500">→</span>
+          </a>
         </div>
       </div>
 </section>
@@ -637,36 +757,56 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: General compressed air system design practice (compressor manufacturer receiver sizing guidelines)</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Technical basis: compressor-manufacturer receiver-sizing guidance and general compressed air system design practice</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Air receiver tank sizing, explained</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
       
-      <p>An air receiver tank acts as a buffer between a compressor's intermittent on/off (or load/unload) operation and the plant's continuous air demand. Without a large enough receiver, a compressor controlled by simple pressure switches would start and stop far too frequently — a problem called short-cycling, which stresses the motor, wastes energy on repeated starts, and shortens compressor life.</p>
-      <p>The standard sizing approach works from the compressor's cycle: the compressor runs (filling the receiver) until pressure reaches the cut-out (maximum) setting, then stops; system demand then draws the pressure back down until it reaches the cut-in (minimum) setting, at which point the compressor restarts. A larger receiver takes longer to swing between these two pressures for a given demand, which directly increases the time between compressor starts. This gives the standard receiver sizing formula:</p>
+      <p>An air receiver tank acts as a buffer between a compressor's intermittent on/off (or load/unload) operation and the plant's continuous air demand. Without a large enough receiver, a compressor controlled by simple pressure switches would start and stop far too frequently — a problem called short-cycling, which stresses the motor, wastes energy on repeated starts, and shortens compressor life. This calculator offers two ways to size the receiver, depending on which figure you actually have to design against: a target minimum time between starts (buffer time method), or a maximum permissible switching frequency from the motor's own rating (switching frequency method).</p>
+      <p><strong>Buffer time method.</strong> The compressor runs (filling the receiver) until pressure reaches the cut-out (maximum) setting, then stops; system demand then draws the pressure back down until it reaches the cut-in (minimum) setting, at which point the compressor restarts. A larger receiver takes longer to swing between these two pressures for a given demand, which directly increases the time between compressor starts. This gives the standard receiver sizing formula:</p>
       <p class="formula-chip text-sm">V = (t × C × Pₐ) / (P₁ − P₂)</p>
-      <p>Here, t is the minimum acceptable time between compressor starts (in minutes), C is the compressor's free air delivery (in m³/min), Pₐ is atmospheric pressure (1.013 bar absolute), and P₁ and P₂ are the cut-out and cut-in pressures respectively (in bar gauge, since the difference P₁−P₂ is what matters and the atmospheric offset cancels in that subtraction). The result gives the minimum receiver volume that ensures at least t minutes pass between compressor starts under the assumed demand condition.</p>
+      <p>Here, t is the minimum acceptable buffer/swing time between compressor starts (in minutes) — the receiver pressure-swing time used by this simplified formula, not necessarily the complete electrical start-to-start cycle — C is the compressor's free air delivery (in m³/min), Pₐ is atmospheric pressure (1.013 bar absolute), and P₁ and P₂ are the cut-out and cut-in pressures respectively (in bar gauge, since the difference P₁−P₂ is what matters and the atmospheric offset cancels in that subtraction). This is the same simplified buffer-volume model used by major compressor manufacturers' own receiver-sizing tools: it treats C as the full swing volume driver (the worst case where the compressor fills against little or no downstream draw, or drains under full downstream draw with the compressor off) rather than modeling continuous simultaneous supply and demand — a deliberate simplification, not a precise transient simulation.</p>
       <p>The formula effectively answers: "how large does the tank need to be so that, filling from P₂ to P₁ (or draining from P₁ to P₂ under load), at least t minutes elapse?" A wider pressure differential (P₁−P₂) means less receiver volume is needed for the same cycle time, since more usable air is stored per bar of pressure swing — which is why compressor control pressure bands are usually set at least 1–2 bar apart rather than very tight, in addition to the receiver size itself.</p>
+      <p><strong>Switching frequency method.</strong> Rather than picking a target time between starts directly, this method starts from the compressor motor's own permissible switching frequency (starts per hour, Z) and the actual load pattern: the largest compressor's delivery (Q₁) and the average downstream air consumption (Q₂). The load factor x = Q₂/Q₁ describes how heavily loaded the compressor runs; the receiver requirement is governed by x(1−x), a term that peaks at x = 0.5 — meaning the compressor cycles hardest, and needs the most receiver volume, when consumption sits at roughly half the compressor's delivery. This gives:</p>
+      <p class="formula-chip text-sm">V = x(1−x) × (Q₁×60/Z) × Pₐ / (P₁ − P₂)</p>
+      <p>Both methods address the same underlying goal — avoiding compressor short-cycling — but they rest on different design inputs and assumptions, so they won't always agree closely for the same system: the buffer-time method assumes a single target cycle time, while the switching-frequency method explicitly models a continuous load factor. Use whichever method matches the figure you actually have available (a target cycle time, or the motor's rated starts/hour) and the sizing approach recommended by the compressor manufacturer, rather than treating the two as interchangeable checks on each other.</p>
+      <p><strong>Optional temperature correction.</strong> Both formulas assume standard reference conditions (20°C). Since stored air volume scales with absolute temperature at a given mass and pressure, a receiver that consistently runs hotter or colder than that reference needs a proportionally larger or smaller physical volume to hold the same equivalent free-air buffer — the advanced temperature field applies this correction directly to the result when it's set away from the 20°C default. This is a simplified ideal-gas adjustment; it doesn't replace the compressor's own rated FAD reference conditions or a detailed thermodynamic vessel calculation.</p>
 
     </div>
 
     <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
     <div id="cs-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
       
-      <h3 class="font-display font-semibold text-brandDark mb-3">Worked Example</h3>
+      <h3 class="font-display font-semibold text-brandDark mb-3">Worked Example — Buffer Time Method</h3>
       <p class="text-sm text-gray-600 mb-2">A compressor delivers 2.0 m³/min FAD, with pressure switch settings of 8 bar cut-out and 6.5 bar cut-in, a target minimum of 1 minute between starts, and a 15% safety margin.</p>
       <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
         <li>ΔP = 8 − 6.5 = 1.5 bar</li>
         <li>Bare minimum V = (1 × 2.0 × 1.013) / 1.5 = <strong>1.351 m³</strong> = 1,351 litres</li>
         <li>With 15% margin: 1,351 × 1.15 ≈ <strong>1,553 litres</strong></li>
-        <li>Nearest standard commercial tank size above this: <strong>2000 L</strong></li>
+        <li>Next listed tank size above this: <strong>2000 L</strong></li>
       </ul>
       <p class="text-sm text-gray-600 mt-2">If the pressure band were tightened to a 0.5 bar swing (e.g. 7.5–8 bar) instead, the bare minimum for the same 1-minute cycle time target would be V = (1×2.0×1.013)/0.5 ≈ 4.05 m³ — nearly three times the tank volume, illustrating why a narrow control band drives up receiver size fast.</p>
 
     </div>
 
-    <p class="text-xs text-gray-400 mt-6">This gives a minimum buffer volume against motor short-cycling; systems with large intermittent demand spikes (e.g. sudden high-flow tools) may need a larger receiver sized against the demand event itself, not just the cycling formula shown here.</p>
+    <!-- ===================== [PER-PAGE] SECOND EXAMPLE ===================== -->
+    <div id="cs-example-box-2" class="mt-6 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+
+      <h3 class="font-display font-semibold text-brandDark mb-3">Worked Example — Switching Frequency Method</h3>
+      <p class="text-sm text-gray-600 mb-2">A 6.0 m³/min compressor is the largest switching unit, average downstream consumption is 3.0 m³/min, pressure switches are set at 8 bar cut-out / 6.5 bar cut-in, the motor's rated maximum is 30 starts/hour, and a 15% safety margin is applied.</p>
+      <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+        <li>Load factor x = Q₂/Q₁ = 3.0/6.0 = 0.5 (the worst case)</li>
+        <li>Worst-case factor x(1−x) = 0.5 × 0.5 = 0.25</li>
+        <li>ΔP = 8 − 6.5 = 1.5 bar</li>
+        <li>Bare minimum V = 0.25 × (6.0×60/30) × 1.013 / 1.5 = <strong>2.026 m³</strong> = 2,026 litres</li>
+        <li>With 15% margin: 2,026 × 1.15 ≈ <strong>2,330 litres</strong> → nearest standard size <strong>3000 L</strong></li>
+      </ul>
+      <p class="text-sm text-gray-600 mt-2">Note this gives a larger tank than the buffer-time example above for a similar-scale system — that's expected, since the two examples describe different compressors and a stricter 30-starts/hour motor limit (typical of a larger horsepower motor) rather than the smaller compressor's looser cycling requirement.</p>
+
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Both methods give a minimum buffer volume against motor short-cycling; systems with large intermittent demand spikes (e.g. sudden high-flow tools) may need a larger receiver sized against the demand event itself, not just the cycling formula shown here.</p>
   </div>
 </section>
 
@@ -681,11 +821,11 @@
   <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Why it matters</span>
   <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Compressor cycling and motor life</h2>
   
-      <p class="text-sm text-gray-600 mb-4">Most standard induction motors used to drive reciprocating and small rotary screw compressors have a manufacturer-specified maximum number of starts per hour, because each start draws a large inrush current that heats the motor windings well beyond normal running current:</p>
+      <p class="text-sm text-gray-600 mb-4">Most standard induction motors used to drive reciprocating and small rotary screw compressors have a manufacturer-specified maximum number of starts per hour, because each start draws a large inrush current that heats the motor windings well beyond normal running current. The ranges below are illustrative examples only, not manufacturer limits — always use the actual rating from the specific motor's nameplate or datasheet:</p>
       <div class="overflow-x-auto">
       <table class="w-full text-sm border-collapse">
         <thead><tr class="text-left text-gray-500 text-xs uppercase border-b border-gray-200">
-          <th class="py-2 pr-4">Motor size / type</th><th class="py-2">Typical max starts/hour</th>
+          <th scope="col" class="py-2 pr-4">Motor size / type</th><th scope="col" class="py-2">Illustrative example (not a manufacturer limit)</th>
         </tr></thead>
         <tbody class="divide-y divide-gray-100 text-gray-700">
           <tr><td class="py-2 pr-4">Small motors, up to ~5 HP</td><td class="py-2">Up to 15–20</td></tr>
@@ -712,8 +852,9 @@
       <p><strong>2. Assuming a fixed 1-minute cycle time regardless of motor size.</strong> Larger compressor motors need longer minimum times between starts than small ones — check the actual motor manufacturer's maximum starts-per-hour rating rather than defaulting to a generic 1-minute assumption for every size.</p>
       <p><strong>3. Sizing the receiver only against average demand, ignoring intermittent high-flow spikes.</strong> A receiver sized purely for compressor cycling may still be too small to buffer sudden short-duration demand spikes from a high-flow tool or process — that scenario needs a separate check against the actual peak demand event.</p>
       <p><strong>4. Mixing gauge and absolute pressure inconsistently.</strong> The formula's atmospheric pressure term (Pₐ) is in absolute units, but P₁ and P₂ are used as a gauge-pressure difference — as long as this convention is followed consistently, the formula works correctly, but mixing conventions inconsistently introduces an error.</p>
-      <p><strong>5. Undersizing when multiple compressors share one receiver.</strong> With multiple compressors on a shared header, the effective combined FAD used in sizing needs to reflect the actual staged/cascaded control strategy of the compressors, not just a single compressor's FAD, or the receiver will be undersized for the true combined cycling behavior.</p>
+      <p><strong>5. Using the wrong compressor FAD for a multi-compressor system.</strong> Identify which compressor actually cycles under the station's staging/sequencing strategy and use that compressor's delivery — do not automatically add all installed compressor capacities together, or the sizing will no longer match the actual cycling behavior being checked.</p>
       <p><strong>6. Forgetting that receiver size also affects moisture drop-out and pulsation damping.</strong> Beyond cycling control, the receiver also allows compressed air to cool and drop out condensate, and dampens pressure pulsations from reciprocating compressors — a tank sized to the bare minimum cycling requirement may be undersized for these secondary benefits in some applications.</p>
+      <p><strong>7. Mixing the two sizing methods together instead of picking one.</strong> The buffer-time and switching-frequency methods use different design assumptions and inputs, so their calculated volumes can differ — they shouldn't be added on top of each other. Use whichever method matches the figure actually available (a target buffer/swing time, or the motor's rated maximum starts/hour), then apply the safety margin once.</p>
 
     </div>
   </div>
@@ -734,7 +875,7 @@
     
     <details class="py-4" open>
       <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What is the formula for air receiver tank sizing?</span><span class="plus text-sky-600 text-xl">+</span></summary>
-      <p class="text-sm text-gray-600 mt-3">V = (t times C times Pa) divided by (P1 minus P2), where t is the minimum acceptable time between compressor starts in minutes, C is compressor free air delivery in cubic metres per minute, Pa is atmospheric pressure (1.013 bar absolute), and P1 and P2 are the cut-out and cut-in pressures in bar.</p>
+      <p class="text-sm text-gray-600 mt-3">V = (t times C times Pa) divided by (P1 minus P2), where t is the minimum acceptable buffer/swing time between compressor starts, in minutes (the receiver pressure-swing time used by this simplified formula, not necessarily the complete electrical start-to-start cycle), C is compressor free air delivery in cubic metres per minute, Pa is atmospheric pressure (1.013 bar absolute), and P1 and P2 are the cut-out and cut-in pressures in bar.</p>
     </details>
     <details class="py-4">
       <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Why does a bigger pressure differential between cut-in and cut-out mean a smaller tank is needed?</span><span class="plus text-sky-600 text-xl">+</span></summary>
@@ -762,7 +903,19 @@
     </details>
     <details class="py-4">
       <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How do I size a receiver for a system with more than one compressor?</span><span class="plus text-sky-600 text-xl">+</span></summary>
-      <p class="text-sm text-gray-600 mt-3">Use the effective combined free air delivery relevant to the compressor staging strategy actually in use (for example, the FAD of the lead compressor if only one runs at low demand, or the combined FAD if multiple run together), since the receiver needs to smooth the cycling behavior of whichever compressor(s) are actually starting and stopping under the demand condition being checked.</p>
+      <p class="text-sm text-gray-600 mt-3">Determine which compressor(s) actually cycle under the design operating condition, based on the station's staging/sequencing control strategy (which unit is base-load, which is trim, and how they hand off), then use that compressor's (or combination's) FAD in the calculation above. Do not simply add up every installed compressor's capacity unless the control strategy genuinely runs them together — follow the compressor manufacturer's sequencing and receiver-sizing guidance for the actual station.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>What is the difference between the buffer time method and the switching frequency method?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Both methods address compressor short-cycling, but they use different design assumptions and inputs, so their results may differ. The buffer time method uses a target minimum buffer/swing time between starts directly. The switching frequency method instead uses the compressor motor's rated maximum starts per hour together with the load factor (average consumption divided by the largest compressor's delivery), which peaks in required volume around a 50% load factor. Use whichever figure you actually have available, not both together.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>Does receiver temperature affect the required tank volume?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">Yes. Both formulas assume a standard 20°C reference. Since stored air volume scales with absolute temperature at a given mass and pressure, a receiver running consistently hotter or colder than that reference needs a proportionally larger or smaller physical volume — enter the actual design temperature in the advanced temperature field to apply this correction.</p>
+    </details>
+    <details class="py-4">
+      <summary class="flex justify-between items-center font-semibold text-brandDark"><span>How is the suggested tank length calculated from the volume?</span><span class="plus text-sky-600 text-xl">+</span></summary>
+      <p class="text-sm text-gray-600 mt-3">The dimension estimator treats the tank as a cylinder with two hemispherical end caps (a capsule shape), where the two hemispheres together equal one sphere of the chosen diameter. Given the required volume and a selected shell diameter, it solves for the straight cylindrical length needed to make up the remaining volume. Real tank heads (such as torispherical or dished ends) differ from a true hemisphere, so treat this as a planning estimate and confirm final dimensions against the manufacturer's datasheet.</p>
     </details>
 
   </div>
@@ -782,21 +935,55 @@
   }
 
   const standardTankSizesL = [100, 150, 200, 250, 300, 500, 750, 1000, 1500, 2000, 3000, 5000, 8000, 10000];
+  const Pa = 1.013;      // atmospheric pressure, bar absolute
+  const Tstd = 293.15;   // standard reference temperature, 20°C in Kelvin
+  let calcMode = 'buffer';
+
+  function setCalcMode(mode){
+    calcMode = mode;
+    const bufBtn = document.getElementById('modeBufferBtn');
+    const freqBtn = document.getElementById('modeFreqBtn');
+    document.getElementById('bufferFields').classList.toggle('hidden', mode !== 'buffer');
+    document.getElementById('freqFields').classList.toggle('hidden', mode !== 'freq');
+    bufBtn.classList.toggle('active', mode === 'buffer');
+    bufBtn.setAttribute('aria-pressed', mode === 'buffer');
+    freqBtn.classList.toggle('active', mode === 'freq');
+    freqBtn.setAttribute('aria-pressed', mode === 'freq');
+    calculateReceiverTank();
+  }
 
   function calculateReceiverTank(){
-    const C = parseFloat(document.getElementById('artFad').value);
     const P1 = parseFloat(document.getElementById('artP1').value);
     const P2 = parseFloat(document.getElementById('artP2').value);
-    const t = parseFloat(document.getElementById('artTime').value);
-    const marginPct = parseFloat(document.getElementById('artMargin').value) || 0;
+    const marginPct = parseFloat(document.getElementById('artMargin').value);
+    const tempC = parseFloat(document.getElementById('artTemp').value);
 
     const validationBox = document.getElementById('validationBox');
     const errors = [];
-    if(isNaN(C) || C <= 0){ errors.push('Enter a valid compressor FAD greater than 0.'); }
-    if(isNaN(P1) || P1 <= 0){ errors.push('Enter a valid cut-out pressure greater than 0.'); }
-    if(isNaN(P2) || P2 <= 0){ errors.push('Enter a valid cut-in pressure greater than 0.'); }
-    if(!isNaN(P1) && !isNaN(P2) && P2 >= P1){ errors.push('Cut-in pressure must be lower than cut-out pressure.'); }
-    if(isNaN(t) || t <= 0){ errors.push('Enter a valid minimum time between starts greater than 0.'); }
+    if(!Number.isFinite(P1) || P1 <= 0){ errors.push('Enter a valid cut-out pressure greater than 0.'); }
+    if(!Number.isFinite(P2) || P2 <= 0){ errors.push('Enter a valid cut-in pressure greater than 0.'); }
+    if(Number.isFinite(P1) && Number.isFinite(P2) && P2 >= P1){ errors.push('Cut-in pressure must be lower than cut-out pressure.'); }
+    if(!Number.isFinite(marginPct) || marginPct < 0){ errors.push('Enter a safety margin of 0% or more.'); }
+    else if(marginPct > 200){ errors.push('Enter a safety margin of 200% or less.'); }
+    if(!Number.isFinite(tempC)){ errors.push('Enter a valid receiver design temperature.'); }
+    else if(tempC <= -273.15){ errors.push('Temperature cannot be at or below absolute zero (-273.15\u00b0C).'); }
+    else if(tempC > 200){ errors.push('Enter a temperature of 200\u00b0C or below.'); }
+
+    let C, t, Q1, Q2, Z, loadFactor, worstCaseFactor;
+    if(calcMode === 'buffer'){
+      C = parseFloat(document.getElementById('artFad').value);
+      t = parseFloat(document.getElementById('artTime').value);
+      if(!Number.isFinite(C) || C <= 0){ errors.push('Enter a valid compressor FAD greater than 0.'); }
+      if(!Number.isFinite(t) || t <= 0){ errors.push('Enter a valid minimum time between starts greater than 0.'); }
+    } else {
+      Q1 = parseFloat(document.getElementById('freqQ1').value);
+      Q2 = parseFloat(document.getElementById('freqQ2').value);
+      Z = parseFloat(document.getElementById('freqZ').value);
+      if(!Number.isFinite(Q1) || Q1 <= 0){ errors.push('Enter a valid delivery volume for the largest compressor, greater than 0.'); }
+      if(!Number.isFinite(Q2) || Q2 < 0){ errors.push('Enter a valid average air consumption, 0 or more.'); }
+      if(Number.isFinite(Q1) && Number.isFinite(Q2) && Q2 > Q1){ errors.push('Air consumption cannot exceed the largest compressor\u2019s delivery volume.'); }
+      if(!Number.isFinite(Z) || Z <= 0){ errors.push('Enter a valid permissible switching frequency greater than 0.'); }
+    }
 
     if(errors.length){
       validationBox.classList.remove('hidden');
@@ -810,34 +997,101 @@
     validationBox.classList.add('hidden');
     validationBox.innerHTML = '';
 
-    const Pa = 1.013; // atmospheric, bar absolute
     const deltaP = P1 - P2;
-    const volumeM3 = (t * C * Pa) / deltaP;
+    const Tactual = tempC + 273.15;
+    const tempFactor = Tactual / Tstd;
+    const tempApplied = Math.abs(tempFactor - 1) > 0.0005;
+
+    let volumeM3, resultSubText, formulaChipText, breakdownRows;
+
+    if(calcMode === 'buffer'){
+      volumeM3 = (t * C * Pa / deltaP) * tempFactor;
+      formulaChipText = 'V = t\u00d7C\u00d7Pa / (P\u2081\u2212P\u2082)' + (tempApplied ? ' \u00d7 (T/Tstd)' : '');
+      resultSubText = 'FAD=' + C + ' m\u00b3/min, \u0394P=' + deltaP.toFixed(1) + ' bar, t=' + t + ' min';
+      breakdownRows = `
+        <tr><td>Compressor FAD (C)</td><td>${C} m\u00b3/min</td></tr>
+        <tr><td>Cut-Out Pressure (P\u2081)</td><td>${P1} bar(g)</td></tr>
+        <tr><td>Cut-In Pressure (P\u2082)</td><td>${P2} bar(g)</td></tr>
+        <tr><td>Pressure Swing (\u0394P = P\u2081\u2212P\u2082)</td><td>${deltaP.toFixed(2)} bar</td></tr>
+        <tr><td>Atmospheric Pressure (Pa)</td><td>${Pa} bar (abs)</td></tr>
+        <tr><td>Minimum Time Between Starts (t)</td><td>${t} min</td></tr>
+      `;
+    } else {
+      loadFactor = Q2 / Q1;
+      worstCaseFactor = loadFactor * (1 - loadFactor);
+      volumeM3 = worstCaseFactor * (Q1 * 60 / Z) * (Pa / deltaP) * tempFactor;
+      formulaChipText = 'V = x(1\u2212x)\u00d7(Q\u2081\u00d760/Z)\u00d7Pa/(P\u2081\u2212P\u2082)' + (tempApplied ? ' \u00d7 (T/Tstd)' : '');
+      resultSubText = 'Q\u2081=' + Q1 + ' m\u00b3/min, load factor x=' + (loadFactor*100).toFixed(0) + '%, Z=' + Z + '/h';
+      breakdownRows = `
+        <tr><td>Largest Compressor Delivery (Q\u2081)</td><td>${Q1} m\u00b3/min</td></tr>
+        <tr><td>Average Air Consumption (Q\u2082)</td><td>${Q2} m\u00b3/min</td></tr>
+        <tr><td>Load Factor (x = Q\u2082/Q\u2081)</td><td>${(loadFactor*100).toFixed(1)}%</td></tr>
+        <tr><td>Worst-Case Factor x(1\u2212x)</td><td>${worstCaseFactor.toFixed(4)}</td></tr>
+        <tr><td>Cut-Out Pressure (P\u2081)</td><td>${P1} bar(g)</td></tr>
+        <tr><td>Cut-In Pressure (P\u2082)</td><td>${P2} bar(g)</td></tr>
+        <tr><td>Pressure Swing (\u0394P = P\u2081\u2212P\u2082)</td><td>${deltaP.toFixed(2)} bar</td></tr>
+        <tr><td>Atmospheric Pressure (Pa)</td><td>${Pa} bar (abs)</td></tr>
+        <tr><td>Permissible Switching Cycles (Z)</td><td>${Z} /hour</td></tr>
+      `;
+    }
+
+    if(tempApplied){
+      breakdownRows += `
+        <tr><td>Air Temperature Used</td><td>${tempC}\u00b0C (${Tactual.toFixed(1)} K)</td></tr>
+        <tr><td>Temperature Correction Factor (T/Tstd)</td><td>${tempFactor.toFixed(3)}</td></tr>
+      `;
+    }
+
     const volumeL = volumeM3 * 1000;
     const volumeWithMarginL = volumeL * (1 + marginPct/100);
     const suggested = standardTankSizesL.find(s => s >= volumeWithMarginL);
 
-    document.getElementById('rResult').textContent = volumeM3.toLocaleString('en-US', {maximumFractionDigits:3}) + ' m³';
-    document.getElementById('resultSub').textContent = 'FAD=' + C + ' m³/min, ΔP=' + deltaP.toFixed(1) + ' bar, t=' + t + ' min';
+    document.getElementById('rResult').textContent = volumeM3.toLocaleString('en-US', {maximumFractionDigits:3}) + ' m\u00b3';
+    document.getElementById('resultSub').textContent = resultSubText;
+    document.getElementById('formulaChip').textContent = formulaChipText;
     document.getElementById('rLitres').textContent = Math.round(volumeL).toLocaleString('en-US') + ' L';
     document.getElementById('rStdSize').textContent = suggested ? suggested.toLocaleString('en-US') + ' L' : 'Above ' + standardTankSizesL[standardTankSizesL.length-1] + ' L — custom/multiple tanks';
 
+    breakdownRows += `
+        <tr><td><strong>Minimum Receiver Volume (bare)</strong></td><td><strong>${volumeM3.toFixed(3)} m\u00b3 (${Math.round(volumeL).toLocaleString('en-US')} L)</strong></td></tr>
+        <tr><td>Safety Margin</td><td>${marginPct}%</td></tr>
+        <tr><td><strong>Volume with Margin</strong></td><td><strong>${(volumeWithMarginL/1000).toFixed(3)} m\u00b3 (${Math.round(volumeWithMarginL).toLocaleString('en-US')} L)</strong></td></tr>
+        <tr><td>Next Listed Tank Size</td><td>${suggested ? suggested.toLocaleString('en-US') + ' L' : 'Above largest listed size'}</td></tr>
+    `;
     document.getElementById('breakdownBox').innerHTML = `
         <table class="breakdown-table">
-            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
-            <tbody>
-                <tr><td>Compressor FAD (C)</td><td>${C} m³/min</td></tr>
-                <tr><td>Cut-Out Pressure (P₁)</td><td>${P1} bar</td></tr>
-                <tr><td>Cut-In Pressure (P₂)</td><td>${P2} bar</td></tr>
-                <tr><td>Pressure Swing (ΔP = P₁−P₂)</td><td>${deltaP.toFixed(2)} bar</td></tr>
-                <tr><td>Atmospheric Pressure (Pa)</td><td>${Pa} bar (abs)</td></tr>
-                <tr><td>Minimum Time Between Starts (t)</td><td>${t} min</td></tr>
-                <tr><td><strong>Minimum Receiver Volume (bare)</strong></td><td><strong>${volumeM3.toFixed(3)} m³ (${Math.round(volumeL).toLocaleString('en-US')} L)</strong></td></tr>
-                <tr><td>Safety Margin</td><td>${marginPct}%</td></tr>
-                <tr><td><strong>Volume with Margin</strong></td><td><strong>${(volumeWithMarginL/1000).toFixed(3)} m³ (${Math.round(volumeWithMarginL).toLocaleString('en-US')} L)</strong></td></tr>
-                <tr><td>Nearest Standard Tank Size</td><td>${suggested ? suggested.toLocaleString('en-US') + ' L' : 'Above largest standard size'}</td></tr>
-            </tbody>
+            <thead><tr><th scope="col">Quantity</th><th scope="col">Value</th></tr></thead>
+            <tbody>${breakdownRows}</tbody>
         </table>
+    `;
+
+    updateDimensionSuggestion(volumeWithMarginL);
+  }
+
+  // ===== Suggested tank dimensions (hemispherical-end capsule estimate) =====
+  let __lastVolumeWithMarginL = null;
+  function updateDimensionSuggestion(volumeLOverride){
+    const box = document.getElementById('dimResultBox');
+    if(!box) return;
+    if(typeof volumeLOverride === 'number'){ __lastVolumeWithMarginL = volumeLOverride; }
+    if(typeof __lastVolumeWithMarginL !== 'number' || isNaN(__lastVolumeWithMarginL)){
+      box.innerHTML = '<p class="text-xs text-gray-400">Calculate a receiver volume above first.</p>';
+      return;
+    }
+    const Dmm = parseFloat(document.getElementById('dimDiameter').value);
+    const D = Dmm / 1000;
+    const V = __lastVolumeWithMarginL / 1000;
+    const capsVolume = (Math.PI / 6) * Math.pow(D, 3);
+    if(capsVolume >= V){
+      box.innerHTML = '<p class="text-xs text-red-600">This diameter alone (as a full sphere) already exceeds the required volume \u2014 pick a smaller shell diameter.</p>';
+      return;
+    }
+    const E = (V - capsVolume) / ((Math.PI / 4) * Math.pow(D, 2));
+    const overallLength = E + D;
+    box.innerHTML = `
+      <div class="flex justify-between"><span>Straight Length (E)</span><strong>${E.toFixed(2)} m</strong></div>
+      <div class="flex justify-between"><span>Overall Length</span><strong>${overallLength.toFixed(2)} m</strong></div>
+      <p class="text-xs text-gray-400 mt-1">Simplified estimate assuming hemispherical end caps. Real tank heads (e.g. torispherical/dished) and wall thickness vary by standard \u2014 confirm final dimensions against the manufacturer's datasheet.</p>
     `;
   }
 
@@ -891,6 +1145,14 @@
       if (corrected !== null && corrected !== v) {
         el.value = corrected;
         el.dispatchEvent(new Event('input', { bubbles: true }));
+        // This page triggers its calculation from the Calculate button's
+        // onclick, not from oninput/onchange on the fields themselves, so
+        // the dispatched "input" event above has no listener to reach —
+        // call the calc function directly so a corrected value is reflected
+        // immediately instead of leaving a stale result until next click.
+        if (typeof calculateReceiverTank === 'function') {
+          calculateReceiverTank();
+        }
       }
     }
     document.querySelectorAll('input[type="number"]').forEach(function(el){
