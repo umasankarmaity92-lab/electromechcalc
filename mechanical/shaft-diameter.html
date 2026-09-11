@@ -5,12 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#ffffff">
 
-<!-- ===================== THEME (FLASH/CLS PREVENTION) =====================
-     Runs synchronously, before any stylesheet or paint, so the correct
-     dark-theme/light-theme class is already present on <html> the instant
-     CSS starts applying. A matching inline script sits right after the body tag opens to cover body.dark-theme / body.light-theme selectors too.
-     site-nav.js still re-applies both classes on DOMContentLoaded as a
-     no-op safety net and handles the toggle button switching themes. -->
+<!-- ===================== THEME (FLASH/CLS PREVENTION) ===================== -->
 <script>
 (function(){
   try {
@@ -23,37 +18,32 @@
 </script>
 
 <!-- ===================== [PER-PAGE] TITLE ===================== -->
-<title>Shaft Diameter Calculator (Torsion) | ElectroMechCalc</title>
+<title>Shaft Diameter Calculator – Solid &amp; Hollow Shaft Size | ElectroMechCalc</title>
 
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
      crossorigin="anonymous"></script>
 
 <!-- ===================== [PER-PAGE] SEO META ===================== -->
-<meta name="description" content="Free Shaft Diameter Calculator based on pure torsion. Enter torque (or power + RPM) and allowable shear stress to get the minimum required solid shaft diameter, with formula and worked example.">
-<meta name="keywords" content="shaft diameter calculator, shaft sizing formula, torsion shaft diameter, minimum shaft diameter torque, allowable shear stress shaft">
-<meta name="robots" content="index, follow">
-<!-- mechanical = electrical | mechanical | financial (no slashes).
-     shaft-diameter = extensionless slug only, e.g. "cable-derating" — NOT
-     "cable-derating.html". Cloudflare Pages 308-redirects any .html
-     request to its extensionless URL, so canonical/og:url/JSON-LD must
-     always describe the extensionless /<category>/<slug> URL, or
-     Google logs "Page with redirect" and won't index the page. -->
+<meta name="description" content="Free shaft diameter calculator for solid and hollow shafts. Size a shaft from torque or power and rpm, bending moment, combined or fluctuating loads (ASME Km/Kt), or torsional rigidity — with formulas, unit conversion and worked examples.">
+<meta name="keywords" content="shaft diameter calculator, shaft size calculator, shaft design calculator, hollow shaft diameter calculator, minimum shaft diameter formula, shaft diameter from power and rpm, combined bending and torsion shaft design, equivalent twisting moment calculator, ASME shaft design calculator, torsional rigidity shaft diameter">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<meta name="author" content="Umasankar Maity">
 <link rel="canonical" href="https://www.electromechcalc.com/mechanical/shaft-diameter">
 <link rel="icon" href="/favicon.png" type="image/png">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ElectroMechCalc">
-<meta property="og:title" content="Shaft Diameter Calculator">
-<meta property="og:description" content="Free Shaft Diameter Calculator based on pure torsion — enter torque and allowable shear stress to get minimum shaft diameter instantly.">
+<meta property="og:title" content="Shaft Diameter Calculator – Solid &amp; Hollow Shaft Size">
+<meta property="og:description" content="Calculate minimum shaft diameter from torque, power and rpm, bending moment, combined or fluctuating loads, or torsional rigidity — solid and hollow shafts, all units.">
 <meta property="og:url" content="https://www.electromechcalc.com/mechanical/shaft-diameter">
 <meta property="og:image" content="https://www.electromechcalc.com/logo.png">
 <meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Shaft Diameter Calculator">
-<meta name="twitter:description" content="Free Shaft Diameter Calculator based on pure torsion — enter torque and allowable shear stress to get minimum shaft diameter instantly.">
+<meta name="twitter:title" content="Shaft Diameter Calculator – Solid &amp; Hollow Shaft Size">
+<meta name="twitter:description" content="Size a solid or hollow shaft from torque, power and rpm, bending moment, combined/fluctuating loads or torsional rigidity. Free, instant, with formulas.">
 <meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
 
 <!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
@@ -66,7 +56,17 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "description": "Free Shaft Diameter Calculator based on pure torsion. Enter torque (or power + RPM) and allowable shear stress to get the minimum required solid shaft diameter, with formula and worked example.",
+  "featureList": [
+    "Shaft diameter for pure torsion (solid and hollow)",
+    "Shaft diameter for pure bending moment",
+    "Combined twisting and bending moment (equivalent torque and equivalent bending moment)",
+    "Fluctuating loads with shock and fatigue allowance factors Km and Kt (preliminary sizing)",
+    "Shaft sizing for desired torsional rigidity (angle of twist)",
+    "Torque from power and rpm",
+    "Keyway allowance and factor of safety",
+    "Automatic rounding to the next listed stock shaft size"
+  ],
+  "description": "Free shaft diameter calculator for solid and hollow shafts. Size a shaft from torque or power and rpm, bending moment, combined or fluctuating loads (ASME Km/Kt), or torsional rigidity.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
 </script>
@@ -86,47 +86,94 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to calculate shaft diameter",
+  "description": "Step-by-step method to calculate the minimum diameter of a solid or hollow shaft from torque, bending moment or torsional rigidity.",
+  "totalTime": "PT2M",
+  "step": [
+    { "@type": "HowToStep", "name": "Choose the design basis", "text": "Select whether the shaft carries twisting moment only, bending moment only, combined twisting and bending, fluctuating twisting and bending, or is limited by torsional rigidity." },
+    { "@type": "HowToStep", "name": "Enter torque or power and speed", "text": "Enter the torque directly, or enter transmitted power and shaft speed in rpm and let the calculator find torque using T = 60P / (2\u03c0N)." },
+    { "@type": "HowToStep", "name": "Enter the allowable stresses", "text": "Enter allowable shear stress for torsion and allowable bending stress for bending. ASME transmission shaft practice uses 56 MPa shear without keyway and 42 MPa with a keyway." },
+    { "@type": "HowToStep", "name": "Select solid or hollow shaft", "text": "For a hollow shaft, enter k, the ratio of inner to outer diameter, so the calculator applies the (1 - k^4) factor." },
+    { "@type": "HowToStep", "name": "Read and round the result", "text": "Read the minimum calculated diameter and round it up to the next listed stock size shown by the calculator, then check that size against your supplier's range and your bearing and coupling bores." }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
     {
       "@type": "Question",
       "name": "What is the formula for minimum shaft diameter under pure torsion?",
-      "acceptedAnswer": { "@type": "Answer", "text": "d = (16T / (π × τ_allow))^(1/3), where d is the shaft diameter, T is the torque, and τ_allow is the allowable shear stress of the shaft material. Keeping T in N·mm and τ_allow in N/mm² (MPa) gives d directly in millimetres." }
+      "acceptedAnswer": { "@type": "Answer", "text": "d = (16T / (\u03c0 \u00d7 \u03c4_allow))^(1/3), where d is the shaft diameter, T is the twisting moment and \u03c4_allow is the allowable shear stress. Keeping T in N\u00b7mm and \u03c4_allow in N/mm\u00b2 (MPa) gives d directly in millimetres. For a hollow shaft the same formula becomes d\u2092 = (16T / (\u03c0 \u00d7 \u03c4_allow \u00d7 (1 \u2212 k\u2074)))^(1/3), where k is the ratio of inner to outer diameter." }
     },
     {
       "@type": "Question",
-      "name": "Where does the 16/π factor in the formula come from?",
-      "acceptedAnswer": { "@type": "Answer", "text": "It comes from the torsion equation τ = T·r/J, where J is the polar moment of inertia of a solid circular shaft (J = πd⁴/32) and r = d/2. Substituting and solving for d gives d³ = 16T/(πτ), hence the cube-root formula used here." }
+      "name": "What shaft size is required to transmit 20 kW at 200 rpm?",
+      "acceptedAnswer": { "@type": "Answer", "text": "About 48.7 mm using an allowable shear stress of 42 MPa (ASME transmission-shaft practice with a keyway). First find torque: T = 60P / (2\u03c0N) = (60 \u00d7 20000) / (2\u03c0 \u00d7 200) = 955 N\u00b7m. Then T = \u03c0\u03c4d\u00b3/16 gives d = 48.7 mm, which is rounded up to a 50 mm listed stock size. At 56 MPa, the same shaft without a keyway needs about 44.2 mm." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I calculate shaft diameter from power and rpm?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Convert power to torque first using T (N\u00b7m) = 60 \u00d7 P (W) / (2\u03c0 \u00d7 N) or the shortcut T = 9550 \u00d7 P(kW) / N(rpm), then substitute that torque into the torsion sizing formula d = (16T / (\u03c0\u03c4))^(1/3). This calculator does both steps automatically when you switch the torque input to power and speed mode." }
+    },
+    {
+      "@type": "Question",
+      "name": "How is shaft diameter calculated for combined bending and torsion?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Two diameters are calculated and the larger one is used. Maximum shear stress theory gives the equivalent twisting moment Te = \u221a(M\u00b2 + T\u00b2) = \u03c0\u03c4_max d\u00b3/16, and maximum normal stress theory gives the equivalent bending moment Me = \u00bd[M + \u221a(M\u00b2 + T\u00b2)] = \u03c0\u03c3_b d\u00b3/32. The governing diameter is whichever of the two is larger." }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the shock and fatigue allowance factors Km and Kt?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Km and Kt are shock and fatigue allowance factors applied to bending moment and twisting moment respectively when the load fluctuates. Scaling the full moments this way is a preliminary sizing allowance rather than a fatigue analysis, since it does not separate mean and alternating stress or apply endurance-limit, size, surface and notch factors. For a rotating shaft with a gradually applied steady load, Km is about 1.5 and Kt about 1.0. For suddenly applied loads with minor shock both are roughly 1.5 to 2.0, and for heavy shock Km is 2.0 to 3.0 and Kt is 1.5 to 3.0." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you calculate hollow shaft diameter?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Use the same equations as a solid shaft with an extra (1 \u2212 k\u2074) factor, where k = d\u1d62/d\u2092. For torsion, T = (\u03c0/16) \u00d7 \u03c4 \u00d7 d\u2092\u00b3 \u00d7 (1 \u2212 k\u2074); for bending, M = (\u03c0/32) \u00d7 \u03c3_b \u00d7 d\u2092\u00b3 \u00d7 (1 \u2212 k\u2074). Once the outer diameter is known, the inner diameter is simply d\u1d62 = k \u00d7 d\u2092." }
+    },
+    {
+      "@type": "Question",
+      "name": "How is shaft diameter calculated for torsional rigidity?",
+      "acceptedAnswer": { "@type": "Answer", "text": "From the torsion equation T/J = G\u03b8/L, a solid shaft gives d = (32TL / (\u03c0G\u03b8))^(1/4), where \u03b8 is the permissible angle of twist in radians, L is the shaft length and G is the modulus of rigidity. A hollow shaft adds the (1 \u2212 k\u2074) factor in the denominator. This basis is used for camshafts and long line shafts where twist, not stress, is the limit." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the maximum permissible shear stress for a transmission shaft?",
+      "acceptedAnswer": { "@type": "Answer", "text": "ASME transmission-shaft practice, as commonly published in machine-design references, takes a maximum permissible shear stress of 56 MPa for a shaft without an allowance for keyways, and 42 MPa where a keyway is present, with corresponding permissible bending stresses of 112 MPa and 84 MPa. Treat these as typical design figures and confirm them against the edition of the code your project works to." }
     },
     {
       "@type": "Question",
       "name": "What allowable shear stress should I use for mild steel?",
-      "acceptedAnswer": { "@type": "Answer", "text": "A commonly used allowable shear stress for general-purpose mild steel (like EN8/C45) shafting is in the 40-60 MPa range, already incorporating a reasonable factor of safety against yield. Always check your specific material's shear yield strength and apply your own required factor of safety rather than assuming a single universal number — this varies by code, application, and material grade." }
+      "acceptedAnswer": { "@type": "Answer", "text": "For general-purpose shafting steels, a commonly used allowable shear stress is in the 40-60 MPa range, which already includes a reasonable factor of safety against yield. Note that the usual shafting grades C45 and EN8 are medium-carbon steels rather than true low-carbon mild steel, and the two designations are broadly comparable rather than exact equivalents, so always check the shear yield strength of your specific grade and apply your own required factor of safety rather than assuming a universal number." }
     },
     {
       "@type": "Question",
-      "name": "Does this calculator size for combined bending and torsion?",
-      "acceptedAnswer": { "@type": "Answer", "text": "No — this is a pure-torsion calculation only. Most real shafts (carrying a pulley, sprocket, or gear that applies a side load) experience combined bending and torsion simultaneously, which requires the ASME combined-shock-and-fatigue formula using an equivalent torque that folds in both bending moment and torque with their respective shock/fatigue factors — the diameter from that method is normally larger than pure-torsion sizing alone." }
+      "name": "What is the difference between a shaft and an axle?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A shaft is a rotating member that transmits torque and power from one machine element to another, so it is designed mainly for torsion or combined torsion and bending. An axle is normally stationary and supports a rotating body such as a wheel, so it is designed mainly for bending moment." }
     },
     {
       "@type": "Question",
-      "name": "How do I get torque if I only know power and RPM?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Use T (Nm) = 9550 × P(kW) ÷ N(rpm) first — our Shaft Torque Calculator does exactly this conversion — then feed the resulting torque into this shaft diameter formula." }
+      "name": "Does a keyway reduce shaft strength?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Cutting a keyway removes material and creates a stress concentration, so common design practice increases the calculated plain-shaft diameter by roughly 6-10 percent at the keyway section, or uses the lower keyway allowable stress of 42 MPa from the ASME code. This calculator offers an optional keyway allowance you can apply to the result." }
     },
     {
       "@type": "Question",
-      "name": "Should I round the calculated diameter up to a standard size?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes, always round up (never down) to the nearest standard/stock shaft diameter available from your supplier — common metric stock sizes step in 5mm or 10mm increments in the mid-range — since a shaft slightly larger than the bare-minimum calculated value only adds margin, while rounding down removes your safety margin entirely." }
+      "name": "Should I round the calculated shaft diameter up to a standard size?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, always round up and never down, to the nearest standard stock diameter offered by your supplier and compatible with your bearing and coupling bores. Rounding up only adds margin, while rounding down removes the safety margin the calculation was based on." }
     },
     {
       "@type": "Question",
-      "name": "Does keyway cutting reduce the effective shaft strength?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes significantly — cutting a keyway removes material and creates a stress concentration, and common design practice increases the calculated plain-shaft diameter by roughly 6–10% (or applies a specific keyway stress-concentration factor) at the keyway cross-section to compensate. This calculator does not apply that adjustment automatically." }
+      "name": "Why is torsional rigidity important for a camshaft?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A camshaft controls valve timing, so once the twist along its length exceeds the permissible limit set for that design, valve events shift out of position. A figure such as 0.25 degrees per metre is often quoted as a typical criterion, but the actual limit depends on the application and the manufacturer's requirements. Either way, such shafts are sized for a permissible angle of twist rather than for stress alone." }
     },
     {
       "@type": "Question",
-      "name": "What happens if I use too low an allowable shear stress value?",
-      "acceptedAnswer": { "@type": "Answer", "text": "You'll get an oversized, overly conservative shaft diameter — safe, but potentially wasteful in material, weight, and cost. Too high an allowable stress (too optimistic) is the more dangerous mistake, since it can undersize the shaft with insufficient safety margin against yielding or fatigue failure in service." }
+      "name": "Is a hollow shaft stronger than a solid shaft?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For the same outer diameter a hollow shaft is weaker, because removing the core removes some load-carrying material. For the same weight of material, however, a hollow shaft with a larger outer diameter carries more torque than a smaller solid shaft, since material far from the axis contributes most to torsional strength. That is why weight-critical drive shafts are usually hollow." }
     }
   ]
 }
@@ -164,10 +211,10 @@
 
   .formula-chip{
     font-family:'JetBrains Mono',monospace;
-    font-size:11px;
+    font-size:12.5px;
     background:#eaf6fd;
     color:#0369a1;
-    padding:3px 9px;
+    padding:5px 11px;
     border-radius:6px;
     display:inline-block;
   }
@@ -207,6 +254,11 @@
     background:#fff;
     box-shadow:0 0 0 3px rgba(14,165,233,0.12);
   }
+  select.input-field{ appearance:none; -webkit-appearance:none; background-image:none; cursor:pointer; }
+  .unit-row{ display:flex; gap:8px; }
+  .unit-row .input-field{ flex:1 1 auto; min-width:0; }
+  .unit-row select.input-field{ flex:0 0 42%; max-width:170px; font-size:13px; }
+
   .toggle-btn{
     flex:1;
     text-align:center;
@@ -223,6 +275,7 @@
     color:#fff;
     box-shadow:0 4px 10px rgba(14,165,233,0.35);
   }
+  .toggle-wrap{ display:flex; gap:6px; background:#f1f5f9; padding:4px; border-radius:10px; }
   .hidden-field{ display:none !important; }
   .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
   .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
@@ -238,13 +291,9 @@
   }
   .breakdown-table td{ color:#111827; }
   .breakdown-wrap{
-    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    max-height:320px; overflow-y:auto; overflow-x:auto; margin-top:4px;
     border-radius:8px; border:1px solid #e5e7eb;
   }
-
-  /* search bar styles live in /assets/theme.css?v=2 — this page links the
-     shared stylesheet as the single source of truth for search-bar
-     layout, so no local duplicate is defined here. */
 
   .tab-pill{
     font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
@@ -259,6 +308,12 @@
 
   .calc-panel{ display:none; }
   .calc-panel.active{ display:block; }
+
+  .field-group{ border:1px dashed #e2e8f0; border-radius:12px; padding:14px; }
+  .field-group-title{
+    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.06em;
+    text-transform:uppercase; color:#0369a1; margin-bottom:10px; display:block;
+  }
 
   /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
   .nav-icon-badge{
@@ -282,28 +337,21 @@
   .mobile-dropdown summary .plus{ transition:transform .2s ease; }
   .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
 
-  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
-     .theme-switch / .theme-switch-dot styles live in /assets/theme.css?v=2 —
-     no local duplicate needed here. */
-
+  /* ===================== [SHARED] DARK / LIGHT THEME ===================== */
   body{ transition:background-color .2s ease, color .2s ease; }
   body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
-  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
-     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
-     live in /assets/theme.css?v=2 via CSS variables — only page-specific
-     component overrides (below) belong here. */
   body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .toggle-wrap{ background:#111c2e; }
+  body.dark-theme .field-group{ border-color:#1f2f47; }
   body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
   body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
   body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
   body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
   body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
   body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+  body.dark-theme .formula-chip{ background:rgba(14,165,233,0.12); color:#7dd3fc; }
 
-  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
-
-  /* .action-icon-btn was missing from this page's styles entirely,
-     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  /* ===================== [PER-PAGE] EXTRA STYLES ===================== */
   .action-icon-btn{
     display:inline-flex;
     align-items:center;
@@ -322,23 +370,13 @@
   .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
   body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
 
-  .author-box{
-    border:2px solid #000000;
-  }
-  body.dark-theme .author-box{
-    border-color:#ffffff;
-    background:#0B1220;
-    color:#e2e8f0;
-  }
-  /* Prevents wide nowrap breakdown tables (and any other wide content in
-     the result column) from forcing flex/grid ancestors to expand past
-     the viewport on mobile — without this, overflow-x:auto on
-     .breakdown-wrap never gets a chance to kick in. */
+  .author-box{ border:2px solid #000000; }
+  body.dark-theme .author-box{ border-color:#ffffff; background:#0B1220; color:#e2e8f0; }
+
   .lg\:col-span-2.flex.flex-col.gap-4{ min-width:0; }
   .lg\:col-span-2.flex.flex-col.gap-4 > div{ min-width:0; }
   .breakdown-wrap{ min-width:0; }
-  /* Dark-mode fix: "Worked Example / Reference" box (bg-sky-50/60) had no
-     body.dark-theme override, so it stayed near-invisible in dark mode. */
+
   body.dark-theme #cs-example-box{
     background:rgba(14,165,233,0.07); border-color:#164e63;
   }
@@ -350,6 +388,41 @@
   body.dark-theme #cs-example-box .text-gray-500{ color:#7dd3fc; }
   body.dark-theme #cs-example-box .text-gray-600{ color:#cbd5e1; }
   body.dark-theme #cs-example-box .text-gray-700{ color:#e2e8f0; }
+
+  .ref-table{ width:100%; font-size:13px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden; border-collapse:collapse; }
+  .ref-table th{ background:#f8fafc; color:#475569; font-weight:600; text-align:left; padding:9px 12px; font-size:12.5px; }
+  .ref-table td{ padding:9px 12px; border-top:1px solid #eef2f7; color:#475569; }
+  body.dark-theme .ref-table{ border-color:#1f2f47; }
+  body.dark-theme .ref-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .ref-table td{ border-top-color:#1f2f47; color:#cbd5e1; }
+
+  .eq-box{
+    position:relative;
+    font-family:'JetBrains Mono',monospace;
+    font-size:17px;
+    font-weight:500;
+    line-height:2;
+    text-align:center;
+    white-space:pre-line;
+    background:#fffbeb;
+    border:1px solid #fde68a;
+    border-radius:12px;
+    padding:22px 66px 22px 26px;
+    overflow-x:auto;
+    color:#0f172a;
+  }
+  .eq-box::after{
+    content:attr(data-eq);
+    position:absolute; right:20px; top:50%; transform:translateY(-50%);
+    font-size:13px; color:#b45309; opacity:.85;
+  }
+  .eq-box strong{ font-weight:600; }
+  @media (max-width:640px){
+    .eq-box{ font-size:14.5px; line-height:1.95; padding:16px 16px; text-align:left; }
+    .eq-box::after{ position:static; transform:none; display:block; text-align:right; margin-top:10px; }
+  }
+  body.dark-theme .eq-box{ background:rgba(251,191,36,0.08); border-color:#78350f; color:#fde68a; }
+  body.dark-theme .eq-box::after{ color:#fbbf24; }
 
   .hero-typing-box{
     display:flex;
@@ -400,16 +473,10 @@
 })();
 </script>
 
-<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH ===================== -->
 <div id="site-header"></div>
 
-<!-- ===================== [SHARED] BREADCRUMB =====================
-     Filled server-side by functions/_middleware.js from
-     /search-index.json — same data source the Related Calculators
-     widget already uses. No per-page edits needed; add/rename/
-     re-categorize a page in search-index.json and every page's
-     breadcrumb updates automatically. Empty on non-calculator pages
-     (home, about, etc.) since middleware injects nothing there. -->
+<!-- ===================== [SHARED] BREADCRUMB ===================== -->
 <div id="breadcrumb"></div>
 
 <!-- ===================== [PER-PAGE] HERO ===================== -->
@@ -422,19 +489,19 @@
       <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
         <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
           <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
-          Mechanical · Shafts & Drives
+          Mechanical · Shafts &amp; Drives
         </span>
         <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
           Shaft Diameter <span class="text-sky-400">Calculator</span>
         </h1>
     <div class="hero-typing-box">
-      <p class="hero-typing text-[#d4af37] text-sm font-mono font-bold justify-center" aria-label="Calculate Smarter. Work Faster. Practical Calculators & Maintenance Guides.">
+      <p class="hero-typing text-[#d4af37] text-sm font-mono font-bold justify-center" aria-label="Calculate Smarter. Work Faster. Practical Calculators &amp; Maintenance Guides.">
         <span id="heroTypingText">Calculate Smarter. Work Faster.</span><span class="hero-cursor" aria-hidden="true"></span>
       </p>
     </div>
 
         <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
-          Find the minimum solid shaft diameter for a given torque and allowable shear stress, using the standard pure-torsion formula.
+          Calculate the minimum diameter of a <strong class="text-gray-200">solid or hollow shaft</strong> from torque, power and rpm, bending moment, combined or fluctuating loads, or a permissible angle of twist — with every formula and unit handled for you.
         </p>
       </div>
 
@@ -458,40 +525,261 @@
 
     <!-- INPUT PANEL -->
     <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
-            <div id="calcHeaderBar">
-        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Shaft Diameter Details</h2>
-      <p class="text-xs text-gray-500 mb-6">Enter torque and allowable shear stress to get the minimum shaft diameter (pure torsion).</p>
+      <div id="calcHeaderBar">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Shaft Design Inputs</h2>
+        <p class="text-xs text-gray-500 mb-6">Pick a design basis, enter the loads and allowable stresses, and get the minimum shaft diameter instantly.</p>
       </div>
 
       <div class="space-y-4 mb-5">
+
+        <!-- DESIGN BASIS -->
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="torque">Torque (Nm)</label>
-          <input id="torque" type="number" value="100" step="1" min="0" placeholder="e.g. 100" class="input-field mt-2">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="designBasis">Design Basis</label>
+          <select id="designBasis" class="input-field mt-2" onchange="syncFields();calculateShaftDiameter()">
+            <option value="torsion" selected>Twisting moment (torsion) only</option>
+            <option value="bending">Bending moment only</option>
+            <option value="combined">Combined twisting &amp; bending moments</option>
+            <option value="fluctuating">Fluctuating twisting &amp; bending moments (preliminary)</option>
+            <option value="rigidity">Torsional rigidity (angle of twist)</option>
+          </select>
         </div>
+
+        <!-- SHAFT TYPE -->
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tauAllow">Allowable Shear Stress (MPa / N/mm²)</label>
-          <input id="tauAllow" type="number" value="45" step="1" min="0" placeholder="e.g. 45" class="input-field mt-2">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Shaft Type</label>
+          <div class="toggle-wrap mt-2">
+            <div class="toggle-btn active" id="btnSolid" onclick="setShaftType('solid')">Solid shaft</div>
+            <div class="toggle-btn" id="btnHollow" onclick="setShaftType('hollow')">Hollow shaft</div>
+          </div>
         </div>
+
+        <div id="grpK" class="hidden-field">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="kRatio">Ratio of Inner to Outer Diameter (k = dᵢ / dₒ)</label>
+          <input id="kRatio" type="number" value="0.5" step="0.05" min="0" max="0.95" placeholder="e.g. 0.5" class="input-field mt-2" oninput="calculateShaftDiameter()">
+        </div>
+
+        <!-- MATERIAL PRESET -->
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="fos">Factor of Safety <span class="normal-case text-gray-400">(applied to torque, optional)</span></label>
-          <input id="fos" type="number" value="1" step="0.1" min="1" placeholder="e.g. 1.5" class="input-field mt-2">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="material">Shaft Material <span class="normal-case text-gray-400">(fills allowable stresses)</span></label>
+          <select id="material" class="input-field mt-2" onchange="applyMaterial()">
+            <option value="custom">Custom / enter my own values</option>
+            <option value="asme_key" selected>ASME transmission shaft, with keyway — preset τ 42, σb 84 MPa</option>
+            <option value="asme_nokey">ASME transmission shaft, no keyway — preset τ 56, σb 112 MPa</option>
+            <option value="mild">C45 / EN8 — typical shafting steel, preset τ 45, σb 75 MPa</option>
+            <option value="alloy">Alloy steel EN24 / EN19 — typical preset τ 80, σb 130 MPa</option>
+            <option value="ss304">Stainless steel 304 — typical preset τ 35, σb 60 MPa</option>
+            <option value="ci">Cast iron — typical preset τ 30, σb 50 MPa</option>
+            <option value="al">Aluminium 6061-T6 — typical preset τ 40, σb 65 MPa</option>
+          </select>
+          <p class="text-[11px] text-gray-400 mt-2">Presets are representative preliminary values, not universal material constants — real allowable stresses vary with grade, heat treatment, surface finish and design code. Check the <a href="#materials" class="text-sky-600 underline">material reference table</a> and your own material certificate, then switch to Custom if your figure differs.</p>
         </div>
+
+        <!-- TORQUE GROUP -->
+        <div class="field-group" id="grpTorque">
+          <span class="field-group-title">Twisting moment (torque)</span>
+
+          <div class="toggle-wrap mb-3">
+            <div class="toggle-btn active" id="btnTdirect" onclick="setTorqueMode('direct')">Enter torque</div>
+            <div class="toggle-btn" id="btnTpower" onclick="setTorqueMode('power')">From power &amp; rpm</div>
+          </div>
+
+          <div id="grpPower" class="hidden-field space-y-3 mb-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="transmittedPower">Power Transmitted (P)</label>
+              <div class="unit-row mt-2">
+                <input id="transmittedPower" type="number" value="20" step="0.1" min="0" placeholder="e.g. 20" class="input-field" oninput="calculateShaftDiameter()">
+                <select id="powerUnit" class="input-field" onchange="calculateShaftDiameter()">
+                  <option value="1">watts (W)</option>
+                  <option value="1000" selected>kilowatts (kW)</option>
+                  <option value="1000000">megawatts (MW)</option>
+                  <option value="745.699872">horsepower (hp)</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="rpm">Shaft Speed (N)</label>
+              <div class="unit-row mt-2">
+                <input id="rpm" type="number" value="200" step="1" min="0" placeholder="e.g. 200" class="input-field" oninput="calculateShaftDiameter()">
+                <select class="input-field" disabled><option>rpm</option></select>
+              </div>
+            </div>
+          </div>
+
+          <div id="grpTorqueDirect">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="torque">Torque (T)</label>
+            <div class="unit-row mt-2">
+              <input id="torque" type="number" value="100" step="1" min="0" placeholder="e.g. 100" class="input-field" oninput="calculateShaftDiameter()">
+              <select id="torqueUnit" class="input-field" onchange="calculateShaftDiameter()">
+                <option value="1000" selected>newton metres (N·m)</option>
+                <option value="1">newton millimetres (N·mm)</option>
+                <option value="1000000">kilonewton metres (kN·m)</option>
+                <option value="9806.65">kilogram-force metres (kgf·m)</option>
+                <option value="98.0665">kilogram-force centimetres (kgf·cm)</option>
+                <option value="1355.81795">pound-force feet (lbf·ft)</option>
+                <option value="112.984829">pound-force inches (lbf·in)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- BENDING MOMENT -->
+        <div class="field-group hidden-field" id="grpBending">
+          <span class="field-group-title">Bending moment</span>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="bendMoment">Bending Moment (M)</label>
+          <div class="unit-row mt-2">
+            <input id="bendMoment" type="number" value="150" step="1" min="0" placeholder="e.g. 150" class="input-field" oninput="calculateShaftDiameter()">
+            <select id="bendUnit" class="input-field" onchange="calculateShaftDiameter()">
+              <option value="1000" selected>newton metres (N·m)</option>
+              <option value="1">newton millimetres (N·mm)</option>
+              <option value="1000000">kilonewton metres (kN·m)</option>
+              <option value="9806.65">kilogram-force metres (kgf·m)</option>
+              <option value="98.0665">kilogram-force centimetres (kgf·cm)</option>
+              <option value="1355.81795">pound-force feet (lbf·ft)</option>
+              <option value="112.984829">pound-force inches (lbf·in)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- SHOCK & FATIGUE FACTORS -->
+        <div class="field-group hidden-field" id="grpFactors">
+          <span class="field-group-title">Shock &amp; fatigue allowance factors (preliminary)</span>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="kmFac">Bending factor (K<sub>m</sub>)</label>
+              <input id="kmFac" type="number" value="1.5" step="0.1" min="1" max="5" placeholder="e.g. 1.5" class="input-field mt-2" oninput="calculateShaftDiameter()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="ktFac">Torsion factor (K<sub>t</sub>)</label>
+              <input id="ktFac" type="number" value="1.0" step="0.1" min="1" max="5" placeholder="e.g. 1.0" class="input-field mt-2" oninput="calculateShaftDiameter()">
+            </div>
+          </div>
+          <p class="text-[11px] text-amber-600 mt-2"><strong>Preliminary sizing method:</strong> K<sub>m</sub> and K<sub>t</sub> scale the full moments as a shock-and-fatigue allowance. This is not a full mean-plus-alternating fatigue analysis against an endurance limit.</p>
+          <p class="text-[11px] text-gray-400 mt-2">Rotating shaft, steady load: K<sub>m</sub> ≈ 1.5, K<sub>t</sub> ≈ 1.0 · minor shock: 1.5–2.0 both · heavy shock: K<sub>m</sub> 2.0–3.0, K<sub>t</sub> 1.5–3.0.</p>
+        </div>
+
+        <!-- ALLOWABLE STRESSES -->
+        <div class="field-group" id="grpStress">
+          <span class="field-group-title">Allowable stresses</span>
+          <div id="grpTau">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tauAllow">Allowable Shear Stress (τ)</label>
+            <div class="unit-row mt-2">
+              <input id="tauAllow" type="number" value="42" step="1" min="0" placeholder="e.g. 42" class="input-field" oninput="markCustomMaterial();calculateShaftDiameter()">
+              <select id="tauUnit" class="input-field" onchange="calculateShaftDiameter()">
+                <option value="1" selected>megapascals (MPa = N/mm²)</option>
+                <option value="0.000001">pascals (Pa)</option>
+                <option value="0.001">kilopascals (kPa)</option>
+                <option value="1000">gigapascals (GPa)</option>
+                <option value="0.00689476">pounds per sq. inch (psi)</option>
+                <option value="6.89476">kilopounds per sq. inch (ksi)</option>
+                <option value="0.0980665">kgf per sq. cm (kgf/cm²)</option>
+              </select>
+            </div>
+          </div>
+          <div id="grpSigma" class="hidden-field mt-3">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="sigmaAllow">Allowable Bending Stress (σ<sub>b</sub>)</label>
+            <div class="unit-row mt-2">
+              <input id="sigmaAllow" type="number" value="84" step="1" min="0" placeholder="e.g. 84" class="input-field" oninput="markCustomMaterial();calculateShaftDiameter()">
+              <select id="sigmaUnit" class="input-field" onchange="calculateShaftDiameter()">
+                <option value="1" selected>megapascals (MPa = N/mm²)</option>
+                <option value="0.000001">pascals (Pa)</option>
+                <option value="0.001">kilopascals (kPa)</option>
+                <option value="1000">gigapascals (GPa)</option>
+                <option value="0.00689476">pounds per sq. inch (psi)</option>
+                <option value="6.89476">kilopounds per sq. inch (ksi)</option>
+                <option value="0.0980665">kgf per sq. cm (kgf/cm²)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- TORSIONAL RIGIDITY -->
+        <div class="field-group hidden-field" id="grpRigidity">
+          <span class="field-group-title">Torsional rigidity data</span>
+          <p class="text-[11px] text-amber-600 mb-3">This basis sizes for stiffness only. Run the stress-based bases as well and take the larger diameter for the final design.</p>
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="gMod">Modulus of Rigidity (G)</label>
+              <div class="unit-row mt-2">
+                <input id="gMod" type="number" value="79.3" step="0.1" min="0" placeholder="e.g. 79.3" class="input-field" oninput="calculateShaftDiameter()">
+                <select id="gUnit" class="input-field" onchange="calculateShaftDiameter()">
+                  <option value="1000" selected>gigapascals (GPa)</option>
+                  <option value="1">megapascals (MPa)</option>
+                  <option value="6.89476">kilopounds per sq. inch (ksi)</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="thetaDeg">Permissible Angle of Twist (θ)</label>
+              <div class="unit-row mt-2">
+                <input id="thetaDeg" type="number" value="0.25" step="0.05" min="0" placeholder="e.g. 0.25" class="input-field" oninput="calculateShaftDiameter()">
+                <select class="input-field" disabled><option>degrees (°)</option></select>
+              </div>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="shaftLen">Shaft Length (L)</label>
+              <div class="unit-row mt-2">
+                <input id="shaftLen" type="number" value="1" step="0.1" min="0" placeholder="e.g. 1" class="input-field" oninput="calculateShaftDiameter()">
+                <select id="lenUnit" class="input-field" onchange="calculateShaftDiameter()">
+                  <option value="1000" selected>metres (m)</option>
+                  <option value="1">millimetres (mm)</option>
+                  <option value="10">centimetres (cm)</option>
+                  <option value="25.4">inches (in)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DESIGN ALLOWANCES -->
+        <div class="field-group">
+          <span class="field-group-title">Design allowances &amp; output</span>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="loadFactor">Additional Load Factor <span class="normal-case text-gray-400">(multiplies T and M)</span></label>
+              <input id="loadFactor" type="number" value="1" step="0.1" min="1" placeholder="e.g. 1.5" class="input-field mt-2" oninput="calculateShaftDiameter()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="outUnit">Show Diameter In</label>
+              <select id="outUnit" class="input-field mt-2" onchange="calculateShaftDiameter()">
+                <option value="1" selected>millimetres (mm)</option>
+                <option value="10">centimetres (cm)</option>
+                <option value="1000">metres (m)</option>
+                <option value="25.4">inches (in)</option>
+              </select>
+            </div>
+          </div>
+          <p class="text-[11px] text-gray-400 mt-2">This is a <strong>load factor</strong>, not a stress-based factor of safety — it multiplies the torque and bending moment before sizing. The factor of safety itself is already inside the allowable stress you selected, so keep this at 1.0 unless your design method calls for an extra load margin. In torsional-rigidity mode it simply scales the torque.</p>
+          <div class="mt-3 flex items-center gap-2 flex-wrap">
+            <input id="keywayOn" type="checkbox" class="w-4 h-4 accent-sky-500" onchange="syncKeywayUI(false);calculateShaftDiameter()">
+            <label for="keywayOn" class="text-xs font-semibold text-gray-600">Additional keyway diameter allowance</label>
+            <input id="keywayPct" type="number" value="8" step="1" min="0" max="30" class="input-field" style="width:80px;padding:6px 8px;" oninput="calculateShaftDiameter()">
+            <span class="text-xs text-gray-500">% on diameter</span>
+            <p class="text-[11px] text-gray-400 w-full mt-1">A flat percentage is a rule-of-thumb allowance, not a stress-concentration calculation — the real effect depends on keyway geometry, fillet radius and material notch sensitivity.</p>
+          </div>
+          <p id="keywayWarn" class="hidden-field text-[11px] mt-2 rounded-lg px-3 py-2"></p>
+        </div>
+
       </div>
 
       <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculateShaftDiameter()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
-        Calculate
+        Calculate Shaft Diameter
       </button>
 
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
-        <span class="formula-chip">d = (16T / (π×τ))^(1/3)</span>
+        <span class="formula-chip">d = (16T / (π·τ))^(1/3)</span>
+        <span class="formula-chip">d = (32M / (π·σb))^(1/3)</span>
+        <span class="formula-chip">Te = √(M² + T²)</span>
+        <span class="formula-chip">Me = ½[M + √(M² + T²)]</span>
+        <span class="formula-chip">dₒ³(1 − k⁴)</span>
+        <span class="formula-chip">d = (32TL / (π·G·θ))^(1/4)</span>
       </div>
     </div>
 
     <!-- RESULT PANEL -->
     <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
-            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Min. Shaft Diameter</span>
         <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
@@ -499,19 +787,33 @@
 
         <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Design Torque</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rTorqueLabel">Design Torque</span>
             <span id="rDesignTorque" class="font-display font-semibold text-lg">—</span>
           </div>
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Next Standard Size</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rEquivLabel">Equivalent Moment</span>
+            <span id="rEquiv" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rInnerLabel">Inner Diameter</span>
+            <span id="rInner" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Next Standard Size (mm)</span>
             <span id="rStdSize" class="font-display font-semibold text-lg">—</span>
           </div>
         </div>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Governing Check</span>
+        <p id="governingNote" class="text-xs text-gray-500 leading-relaxed">Select a design basis to see which stress check governs the diameter.</p>
+        <p id="hollowNote" class="hidden-field text-[11px] text-gray-400 leading-relaxed mt-2">Inner diameter is derived from the constant dᵢ/dₒ ratio you entered — it is not treated as a fixed bore, so it scales with the outer diameter.</p>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
-        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a step-by-step breakdown.</p></div>
       </div>
 
     </div>
@@ -538,7 +840,7 @@
   </div>
 </section>
 
-<!-- ===================== RELATED CALCULATORS (moved below Share/Feedback bar) ===================== -->
+<!-- ===================== RELATED CALCULATORS ===================== -->
 <section class="max-w-6xl mx-auto px-4 mb-6">
   <div id="relatedCalculatorsBox" class="bg-white rounded-xl border border-gray-100 p-4" data-copy-exclude>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
@@ -552,6 +854,9 @@
           <a href="/bearing-life" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
             Bearing Life Calculator <span class="text-sky-500">→</span>
           </a>
+          <a href="/mechanical-calculators" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            All Mechanical Calculators <span class="text-sky-500">→</span>
+          </a>
         </div>
       </div>
 </section>
@@ -561,110 +866,301 @@
   <div class="border border-gray-200 rounded-xl bg-white p-5">
     <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
     <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
-      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
-      <li><a href="#how-it-works" class="hover:underline">2. Understanding shaft diameter sizing</a></li>
-      <li><a href="#second" class="hover:underline">3. Standard shaft sizes and rounding practice (reference table)</a></li>
-      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
-      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+      <li><a href="#calculator" class="hover:underline">1. Use the shaft diameter calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. How shaft diameter is calculated</a></li>
+      <li><a href="#torsion" class="hover:underline">3. Torsion only (solid &amp; hollow)</a></li>
+      <li><a href="#bending" class="hover:underline">4. Bending moment only</a></li>
+      <li><a href="#combined" class="hover:underline">5. Combined twisting &amp; bending</a></li>
+      <li><a href="#fluctuating" class="hover:underline">6. Fluctuating loads (K<sub>m</sub>, K<sub>t</sub>)</a></li>
+      <li><a href="#rigidity" class="hover:underline">7. Torsional rigidity sizing</a></li>
+      <li><a href="#power" class="hover:underline">8. Shaft diameter from power &amp; rpm</a></li>
+      <li><a href="#materials" class="hover:underline">9. Allowable stress by material</a></li>
+      <li><a href="#second" class="hover:underline">10. Standard shaft sizes &amp; rounding</a></li>
+      <li><a href="#examples" class="hover:underline">11. Worked examples</a></li>
+      <li><a href="#mistakes" class="hover:underline">12. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">13. FAQs</a></li>
     </ul>
   </div>
 </nav>
-
 <!-- ===================== EXPLANATION ===================== -->
 <section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
   <div class="max-w-3xl mx-auto px-4">
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
-      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial plant maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Pure torsion shaft design (ASME/IS 210 allowable-stress approach, general machine design practice)</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Design references: ASME transmission-shaft practice and established machine-design methods, including Guest's (maximum shear stress) and Rankine's (maximum normal stress) theories. Material properties should be verified against the applicable material standard and grade.</p>
     </div>
+
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
-    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Minimum Shaft Diameter Is Calculated from Torque</h2>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Shaft Diameter Is Calculated</h2>
+
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-            <p><strong>Shaft diameter formula (solid shaft):</strong> d = ((16 × T) ÷ (π × τ))^(1/3), where T is torque and τ is allowable shear stress. Once you know how much torque a shaft has to carry, the next question is how thick that shaft needs to be so it doesn't twist past its material's safe shear stress limit. This calculator uses the standard pure-torsion sizing formula, the same one taught in every machine design course and used as the starting point for shaft sizing in mechanical engineering practice worldwide.</p>
+      <p>A shaft is a rotating member that transmits power between machine elements through a twisting moment. Because almost every shaft has a circular cross-section, <strong>shaft design</strong> effectively means <strong>calculating the shaft diameter</strong> that keeps every stress in the shaft inside its permissible limit. Three stresses matter:</p>
 
-      <p><strong>Formula used:</strong> d = (16T / (π × τ_allow))^(1/3), derived from the torsion stress equation τ = T·r/J for a solid circular shaft, where J (polar moment of inertia) = πd⁴/32 and r = d/2. Substituting these into τ = Tr/J and solving for d gives the cube-root formula above, with T in N·mm and τ_allow in N/mm² (MPa) for a diameter result in millimetres.</p>
+      <ul>
+        <li><strong>Shear stress</strong> from the torque (torsion) the shaft carries.</li>
+        <li><strong>Bending stress</strong> from mounted gears, pulleys and sprockets, plus the shaft's own weight.</li>
+        <li><strong>Combined stress</strong> where twisting and bending act together — the normal case in real machinery.</li>
+      </ul>
 
-      <p><strong>Worked example:</strong> a shaft carrying 100 Nm (100,000 N·mm) of torque, sized against an allowable shear stress of 45 MPa for a common mild-steel shaft material, needs a minimum diameter of d = (16 × 100,000 / (π × 45))^(1/3) ≈ 28.3 mm. In practice, this would be rounded up to the next available standard stock size — typically 30 mm.</p>
+      <p>So before you can calculate shaft size, you have to decide what the shaft is actually loaded by. This calculator covers five common shaft-design bases used in machine design:</p>
 
-      <p><strong>Choosing an allowable shear stress:</strong> the allowable shear stress isn't the material's raw shear yield strength — it already has a design factor of safety built in. A rough industry convention derives allowable shear stress as the material's shear yield strength divided by a chosen factor of safety (commonly 2–4 for steady, well-known loads, higher for shock or fatigue-prone applications). For plain carbon steel shafting, allowable shear stress values in the 40–60 MPa range are commonly used as a starting point, but the correct figure always depends on your specific material grade, loading type, and applicable design code.</p>
+      <ol>
+        <li>Shaft transmitting <strong>twisting moment only</strong>.</li>
+        <li>Shaft under <strong>bending moment only</strong>.</li>
+        <li>Shaft under a <strong>combination of twisting and bending moments</strong>.</li>
+        <li>Shaft under <strong>fluctuating twisting and bending moments</strong> (shock and fatigue factors).</li>
+        <li>Shaft designed for a <strong>desired torsional rigidity</strong> (permissible angle of twist).</li>
+      </ol>
 
-      <p><strong>Why this is a starting point, not the final answer:</strong> pure torsion sizing assumes the shaft only twists — no bending. Almost every real machine shaft also bends, because it usually carries something (a pulley, gear, sprocket, or coupling) that applies a radial or overhung force in addition to torque. Combined bending-and-torsion design (commonly the ASME shaft design equation, which folds bending moment and torque into a single equivalent torque with separate shock/fatigue factors for each) typically calls for a somewhat larger diameter than pure torsion alone — this calculator is the right first step, but a shaft carrying a side load needs the combined check before it's finalized.</p>
+      <p>Each basis has its own formula, and each has a solid-shaft and a hollow-shaft form. Every diameter the calculator returns is a <em>minimum</em> — the next step in practice is always rounding up to a listed stock size your supplier actually carries.</p>
 
-      <p><strong>The ASME combined-loading approach, in outline:</strong> where a shaft carries both bending moment M and torque T simultaneously (the normal case for anything with an overhung pulley, gear, or sprocket), the ASME code method computes an equivalent torque Te using both M and T with separate shock-and-fatigue factors Kb and Kt (values commonly range from 1.0 for gradually applied, steady loads up to 2.0-3.0 for loads with heavy shock). This equivalent torque then goes into the same cube-root diameter formula used here, meaning the pure-torsion result from this calculator is always a lower bound, never an overestimate, for a shaft that also experiences bending.</p>
-
-      <p><strong>Solid vs hollow shafts:</strong> this calculator sizes a solid circular shaft. A hollow shaft of the same outer diameter is both lighter and, for the same outer diameter, has a slightly lower torque capacity, since some of the outer-diameter material, which contributes most to torsional strength, has been removed from the center where it contributes least. Hollow shafts are chosen specifically for weight-critical applications (aerospace, high-speed machinery) where the modest strength penalty is an acceptable trade for reduced rotating mass and inertia, and need a modified polar moment of inertia calculation rather than the solid-shaft formula used here.</p>
-
-      <p><strong>Critical speed, a separate check for long slender shafts:</strong> beyond static torsion strength, a long or slender shaft has a critical (whirling) speed at which it resonates and can vibrate destructively, a function of shaft length, diameter, and support/bearing spacing entirely separate from the torque-based sizing this calculator performs. For long line shafts, high-speed spindles, or any shaft where the span between bearings is large relative to diameter, a critical speed check, keeping operating speed comfortably below the shaft's first critical speed with a margin of 20% or more, is an essential additional design step that a torsion-only diameter calculation does not cover.</p>
-
-      <p><strong>Material selection and its effect on the allowable stress input:</strong> the allowable shear stress you enter is entirely dependent on the shaft material chosen, and different common shafting materials carry quite different figures. Mild steel (EN8/C45 grade, one of the most common general-purpose shafting materials) typically supports an allowable shear stress in the 40-60 MPa range with a reasonable safety factor; higher-strength alloy steels (EN24, EN19) can support meaningfully higher allowable stresses, letting a smaller diameter carry the same torque, at a higher material cost. Stainless steel shafting, chosen for corrosion resistance rather than raw strength, often has a lower allowable stress than equivalent-grade carbon steel and needs its own specific figure rather than reusing a generic "steel" assumption.</p>
-
-      <p><strong>Manufacturing tolerance and fit considerations:</strong> the diameter this calculator produces is a strength-based minimum, not a manufacturing dimension with tolerances applied. In practice, a shaft diameter also needs to satisfy fit requirements with mating bearings, couplings, and seals — commonly specified using ISO fit tolerance classes (like k6 for a bearing journal, or h7/g6 for a sliding fit) — which are a separate, downstream drawing consideration once the strength-based minimum diameter from this calculator has established the size range you're working within.</p>
-
-      <p><strong>Where this calculator fits in a complete shaft design workflow:</strong> a typical shaft design process starts with establishing the torque (often from a power and speed calculation, see the Shaft Torque Calculator), then uses that torque with an allowable stress to get a first-pass minimum diameter here, then layers on the combined bending-and-torsion check for any radial load, the keyway stress-concentration adjustment, a critical speed check for the specific bearing span, and finally rounds to a standard, available stock size that also satisfies bearing and coupling bore requirements. Skipping straight from this calculator's pure-torsion output to a final drawing dimension, without working through the rest of that chain, is one of the more common shortcuts that leads to an undersized shaft in service, particularly on shafts that carry an overhung pulley or gear load.</p>
-
-      <p><strong>A worked comparison, torsion-only vs combined loading:</strong> consider a shaft carrying 100 Nm of torque and, additionally, a bending moment of 150 Nm from an overhung pulley load. Pure torsion sizing (this calculator) at 45 MPa allowable stress gives roughly 28.3 mm, as shown in the worked example above. Running the same shaft through the ASME combined equation with moderate shock factors typically increases the equivalent torque well above the raw 100 Nm figure, pushing the required diameter up by several millimetres, often enough to move to the next standard stock size. This is a realistic illustration of why the pure-torsion figure from this tool should be treated as a starting reference point for a shaft that also bends, not a final specification.</p>
-
-      <p><strong>Summary:</strong> use this calculator to get the pure-torsion minimum shaft diameter quickly, then treat that figure as a floor rather than a ceiling — round up to a standard stock size, add a keyway allowance if the shaft carries one, run the combined bending-and-torsion check if the shaft carries a side load, and verify critical speed for any long or slender shaft before committing to a final drawing dimension.</p>
-
-      <p><strong>A note on units and consistency:</strong> this calculator works internally in millimetres and MPa (N/mm²), the most common combination in Indian and international mechanical drawings and material datasheets. If your source data is in different units (inches, PSI, or SI base units like Pascals and metres), convert everything to mm and MPa before entering values, or convert the calculator's output back to your preferred units afterward, rather than mixing unit systems partway through the calculation, which is a common and easily-avoided source of order-of-magnitude errors in shaft sizing.</p>
-
-      <p>Finally, remember that this is a preliminary sizing tool intended to give a quick, defensible starting figure early in a design — for any shaft going into a safety-critical, high-cost, or high-volume application, the full combined-loading, fatigue, and critical-speed checks referenced throughout this page should be carried out and reviewed by a qualified mechanical engineer before the design is finalized and released for manufacture.</p>
-
-      <p>This preliminary-vs-final distinction is worth repeating because it's easy to treat any calculator's output as an authoritative final answer simply because it came from a formula and a computed number — but a shaft diameter, like most mechanical design outputs, is the product of several linked checks working together, not a single formula in isolation.</p>
+      <p><strong>Units used internally:</strong> torque and bending moment in N·mm, stresses in N/mm² (MPa) and lengths in mm, which returns the diameter directly in millimetres. You can enter data in any unit you like from the dropdowns; the calculator converts before computing.</p>
     </div>
-
-    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
-    <div id="cs-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
-            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
-      <p class="text-sm text-gray-600 leading-relaxed">Torque = 100 Nm, allowable shear stress = 45 MPa: d = (16 × 100,000 ÷ (π × 45))<sup>1/3</sup> ≈ <strong>28.3 mm</strong>, rounded up to the next standard stock size of <strong>30 mm</strong>.</p>
-    </div>
-
-    <p class="text-xs text-gray-400 mt-6">This calculator sizes a solid shaft for pure torsion only — it does not account for bending moment, axial load, fatigue, or stress concentration at keyways and shoulders. For a shaft subject to combined bending and torsion (the normal case for a shaft carrying a pulley, gear, or overhung load), use a combined-loading (ASME) shaft design method instead, and apply an appropriate factor of safety. Always confirm material grade, allowable stress source, and applicable design code with a qualified engineer for any load-bearing or safety-critical shaft before manufacture.</p>
   </div>
 </section>
 
-<!-- ===================== SECOND SECTION ===================== -->
-<section id="second" class="max-w-3xl mx-auto px-4 py-16">
-  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Quick Reference</span>
-  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Rounding Up to a Standard Shaft Size</h2>
-    <div class="not-prose overflow-x-auto my-4">
-    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
-      <thead class="bg-gray-50 text-gray-600">
+<!-- ===================== TORSION ONLY ===================== -->
+<section id="torsion" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Design basis 1</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Shaft Diameter for Twisting Moment Only</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Some shafts carry torque alone, with any other load negligible — a propeller shaft or a plain line shaft is a typical example. These are sized directly from the torsion equation:</p>
+
+    <div class="not-prose eq-box my-5" data-eq="(1)">T / J = τ / r</div>
+
+    <p>where T is the twisting moment, J is the polar moment of inertia about the axis of rotation, τ is the torsional shear stress and r is the distance from the neutral axis to the outermost fibre, which equals the shaft radius d/2 for a circular section.</p>
+
+    <p><strong>Solid shaft.</strong> For a solid circular shaft, J = πd⁴/32 and r = d/2. Substituting both into the torsion equation gives the working formula:</p>
+
+    <div class="not-prose eq-box my-5" data-eq="(2)">T = (π / 16) × τ × d³&nbsp;&nbsp;→&nbsp;&nbsp;d = (16T / (π × τ))^(1/3)</div>
+
+    <p><strong>Hollow shaft.</strong> For a hollow shaft, J = (π/32)(dₒ⁴ − dᵢ⁴) and r = dₒ/2. Writing k = dᵢ/dₒ for the ratio of inner to outer diameter simplifies the result to:</p>
+
+    <div class="not-prose eq-box my-5" data-eq="(3)">T = (π / 16) × τ × dₒ³ × (1 − k⁴)&nbsp;&nbsp;→&nbsp;&nbsp;dₒ = (16T / (π × τ × (1 − k⁴)))^(1/3)</div>
+
+    <p>So a hollow shaft needs one extra input beyond torque and allowable shear stress: the diameter ratio k. Once the outer diameter is known, the bore follows as dᵢ = k × dₒ.</p>
+  </div>
+</section>
+
+<!-- ===================== BENDING ONLY ===================== -->
+<section id="bending" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Design basis 2</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Shaft Diameter for Bending Moment Only</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Shafts are rarely designed for bending alone — that case belongs more to axles — but it applies where torsional load is negligible. The permissible stress then comes from the bending equation:</p>
+
+      <div class="not-prose eq-box my-5" data-eq="(4)">M / I = σ_b / y</div>
+
+      <p>where M is the bending moment, I is the moment of inertia of the cross-section, σ_b is the bending stress and y is the distance from the neutral axis to the outermost fibre.</p>
+
+      <p><strong>Solid shaft.</strong> With I = πd⁴/64 and y = d/2:</p>
+      <div class="not-prose eq-box my-5" data-eq="(5)">M = (π / 32) × σ_b × d³&nbsp;&nbsp;→&nbsp;&nbsp;d = (32M / (π × σ_b))^(1/3)</div>
+
+      <p><strong>Hollow shaft.</strong> With I = (π/64)(dₒ⁴ − dᵢ⁴), y = dₒ/2 and k = dᵢ/dₒ:</p>
+      <div class="not-prose eq-box my-5" data-eq="(6)">M = (π / 32) × σ_b × dₒ³ × (1 − k⁴)</div>
+
+      <p>Note the difference from the torsion case: the constant is 32 instead of 16, because the section modulus in bending is half the polar section modulus in torsion for the same circular section.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COMBINED ===================== -->
+<section id="combined" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Design basis 3</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Combined Twisting and Bending Moments</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>This is the realistic case for most machine shafts — anything carrying a gear, pulley, sprocket or overhung coupling twists <em>and</em> bends at the same time. Two classical theories are used, and the shaft is sized for whichever gives the larger diameter.</p>
+
+    <p><strong>Maximum shear stress theory (Guest's theory)</strong> gives the maximum shear stress in the shaft as τ_max = ½√(σ_b² + 4τ²). Substituting the solid-shaft expressions τ = 16T/πd³ and σ_b = 32M/πd³ produces the <strong>equivalent twisting moment</strong> T_e:</p>
+
+    <div class="not-prose eq-box my-5" data-eq="(7)">T_e = √(M² + T²) = (π / 16) × τ_max × d³</div>
+
+    <p><strong>Maximum normal stress theory (Rankine's theory)</strong> gives σ_b(max) = ½[σ_b + √(σ_b² + 4τ²)], which produces the <strong>equivalent bending moment</strong> M_e:</p>
+
+    <div class="not-prose eq-box my-5" data-eq="(8)">M_e = ½ [ M + √(M² + T²) ] = (π / 32) × σ_b(max) × d³</div>
+
+    <p>You therefore get two candidate diameters — one from T_e with the allowable shear stress, one from M_e with the allowable bending stress. <strong>Always take the larger of the two</strong> so the shaft survives both checks. The calculator computes both and tells you which one governs.</p>
+
+    <p><strong>Hollow shafts</strong> use the same two equations with the (1 − k⁴) factor applied:</p>
+    <div class="not-prose eq-box my-5" data-eq="(9)">T_e = (π / 16) × τ_max × dₒ³ × (1 − k⁴)
+M_e = (π / 32) × σ_b(max) × dₒ³ × (1 − k⁴)</div>
+  </div>
+</section>
+
+<!-- ===================== FLUCTUATING ===================== -->
+<section id="fluctuating" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Design basis 4</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Fluctuating Twisting and Bending Moments</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>In service, torque and bending moment almost never stay constant. Starting, stopping, load swings and shock all raise the effective load well above the nominal figure, so the ASME approach multiplies each moment by a <strong>combined shock and fatigue factor</strong> before the equivalent moments are formed:</p>
+
+      <div class="not-prose eq-box my-5" data-eq="(10)">T_e = √( (K_m·M)² + (K_t·T)² )
+M_e = ½ [ K_m·M + √( (K_m·M)² + (K_t·T)² ) ]</div>
+
+      <p>where K_m is the factor for bending and K_t the factor for torsion. These equivalent moments then go into exactly the same diameter equations as the steady-load case, for solid or hollow shafts.</p>
+
+      <div class="not-prose overflow-x-auto my-5">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Load type (rotating shafts)</th><th>K<sub>m</sub></th><th>K<sub>t</sub></th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Gradually applied or steady load</td><td>1.5</td><td>1.0</td></tr>
+            <tr><td>Suddenly applied load, minor shocks</td><td>1.5 – 2.0</td><td>1.5 – 2.0</td></tr>
+            <tr><td>Suddenly applied load, heavy shocks</td><td>2.0 – 3.0</td><td>1.5 – 3.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Choosing K values is a judgement call, so err on the higher side for crushers, mills, reciprocating compressors, and any drive with frequent direct-on-line starts or reversals. For a smoothly loaded fan or pump drive, the steady-load row is normally adequate.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RIGIDITY ===================== -->
+<section id="rigidity" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Design basis 5</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Shaft Diameter for Torsional Rigidity</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Some shafts are limited by twist rather than stress. A camshaft is the classic example: once the angle of twist grows beyond the limit set for that design — a figure such as 0.25° per metre is often quoted, though the actual limit depends on the engine and the manufacturer's requirements — valve timing shifts. Machine-tool lead shafts, long line shafts and indexing drives have similar limits. Here the torsion equation is used in its rigidity form:</p>
+
+    <div class="not-prose eq-box my-5" data-eq="(11)">T / J = G·θ / L</div>
+
+    <p>where G is the modulus of rigidity (about 79.3 GPa for steel), θ is the permissible angle of twist in <em>radians</em>, and L is the shaft length. Substituting the polar moment of inertia:</p>
+
+    <div class="not-prose eq-box my-5" data-eq="(12)">Solid:&nbsp; T = (G·θ / L) × (π / 32) × d⁴&nbsp;&nbsp;→&nbsp;&nbsp;d = (32·T·L / (π·G·θ))^(1/4)
+Hollow: T = (G·θ / L) × (π / 32) × dₒ⁴ × (1 − k⁴)</div>
+
+    <p>Note the fourth root rather than the cube root — rigidity sizing scales with d⁴, so a small diameter increase buys a large reduction in twist. Enter θ in degrees in the calculator; the conversion to radians is handled internally.</p>
+
+    <p><strong>Always check both.</strong> A shaft sized for rigidity may still fail on stress, and a shaft sized for stress may twist too much. For precision drives, run both bases and take the larger diameter.</p>
+  </div>
+</section>
+
+<!-- ===================== POWER TO TORQUE ===================== -->
+<section id="power" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Practical input</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Calculating Shaft Diameter from Power and RPM</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>On site you usually know the motor rating and speed, not the torque. Torque follows from the power relation:</p>
+
+      <div class="not-prose eq-box my-5" data-eq="(13)">P = 2πNT / 60&nbsp;&nbsp;→&nbsp;&nbsp;T (N·m) = 60 × P (W) / (2π × N)&nbsp;&nbsp;or&nbsp;&nbsp;T = 9550 × P (kW) / N (rpm)</div>
+
+      <p>Switch the torque input to <em>From power &amp; rpm</em> in the calculator and both steps run together: power and speed become torque, and torque becomes diameter. For a motor, use the shaft speed at the point you are sizing — after a gearbox the torque rises in proportion to the reduction ratio, so a shaft on the slow-speed side of a 20:1 reducer carries roughly twenty times the motor torque and needs sizing accordingly.</p>
+
+      <p>If you only need the torque figure itself, the dedicated <a href="/mechanical/shaft-torque" class="text-sky-600 underline">Shaft Torque Calculator</a> does that conversion on its own.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MATERIALS ===================== -->
+<section id="materials" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Allowable Stress Values for Common Shaft Materials</h2>
+  <div class="not-prose overflow-x-auto my-4">
+    <table class="ref-table">
+      <thead>
         <tr>
-          <th class="text-left px-4 py-2 font-semibold">Calculated d</th>
-          <th class="text-left px-4 py-2 font-semibold">Round up to</th>
+          <th>Material / basis</th>
+          <th>Allowable shear τ (MPa)</th>
+          <th>Allowable bending σ<sub>b</sub> (MPa)</th>
+          <th>G (GPa)</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-100">
-        <tr><td class="px-4 py-2">up to 20 mm</td><td class="px-4 py-2">nearest 2 mm step</td></tr>
-        <tr><td class="px-4 py-2">20 – 50 mm</td><td class="px-4 py-2">nearest 5 mm step</td></tr>
-        <tr><td class="px-4 py-2">50 – 100 mm</td><td class="px-4 py-2">nearest 5–10 mm step</td></tr>
-        <tr><td class="px-4 py-2">above 100 mm</td><td class="px-4 py-2">nearest 10 mm step (check supplier stock list)</td></tr>
+      <tbody>
+        <tr><td>ASME transmission-shaft practice — no keyway</td><td>56</td><td>112</td><td>79.3</td></tr>
+        <tr><td>ASME transmission-shaft practice — with keyway</td><td>42</td><td>84</td><td>79.3</td></tr>
+        <tr><td>C45 / EN8 — typical shafting steel (medium-carbon)</td><td>40 – 60</td><td>70 – 90</td><td>79.3</td></tr>
+        <tr><td>Alloy steel EN19 / EN24</td><td>70 – 90</td><td>120 – 150</td><td>79.3</td></tr>
+        <tr><td>Stainless steel 304</td><td>30 – 40</td><td>55 – 70</td><td>77.0</td></tr>
+        <tr><td>Cast iron</td><td>25 – 35</td><td>45 – 60</td><td>41.0</td></tr>
+        <tr><td>Aluminium 6061-T6</td><td>35 – 45</td><td>60 – 75</td><td>26.0</td></tr>
       </tbody>
     </table>
   </div>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-    <p>Bar stock, ready-made shafting, and standard bearing bores are only available in discrete standard sizes — the calculated "minimum" diameter almost never lands exactly on one. Always round up (never down) to the nearest commercially available size, and double-check that size against the bore of any bearing, coupling, or pulley the shaft has to mate with, since the shaft diameter often ends up being dictated by the smallest available bearing bore rather than the bare torsion calculation once you're in the typical 20–60 mm range used in industrial drives.</p>
-
-    <p>It's also worth checking the calculated diameter against the shaft manufacturer's or supplier's actual stocked sizes for your chosen material grade before finalizing a drawing, since not every diameter step is necessarily stocked in every grade, and a size that requires a special mill order rather than a stock bar can meaningfully affect lead time and cost on a project even when the difference from the "ideal" rounded standard size is only a few millimetres.</p>
+    <p>These are typical working values that already include a design margin — they are not raw yield strengths. The ASME rows are the figures most often quoted for transmission shafting in machine-design references, and the drop from 56 MPa to 42 MPa is that method's own allowance for a keyway — which is why adding a further diameter allowance for the same keyway would count it twice. Ranges for the other materials vary with grade, heat treatment and surface finish, so confirm the figure against your material certificate or design code before finalising a drawing.</p>
+    <p>Choosing a stronger material lets a smaller shaft carry the same torque, but the diameter often ends up dictated by the bearing bore, coupling bore or keyway anyway, so the strength gain is not always usable. Check what the mating components need before paying for an alloy upgrade.</p>
   </div>
+</section>
+<!-- ===================== STANDARD SIZES ===================== -->
+<section id="second" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Quick Reference</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Standard Shaft Sizes and Rounding Practice</h2>
+    <div class="not-prose overflow-x-auto my-4">
+      <table class="ref-table">
+        <thead>
+          <tr><th>Calculated d</th><th>Round up to</th><th>Commonly stocked sizes (mm)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>up to 20 mm</td><td>nearest 1–2 mm step</td><td>8, 10, 12, 14, 15, 16, 17, 18, 19, 20</td></tr>
+          <tr><td>20 – 50 mm</td><td>nearest 2–5 mm step</td><td>22, 24, 25, 28, 30, 32, 35, 38, 40, 42, 45, 48, 50</td></tr>
+          <tr><td>50 – 100 mm</td><td>nearest 5 mm step</td><td>55, 60, 63, 65, 70, 75, 80, 85, 90, 95, 100</td></tr>
+          <tr><td>100 – 400 mm</td><td>nearest 10–20 mm step</td><td>110, 120, 125, 130, 140, 150, 160, 170, 180, 190, 200, 220, 240, 250, 260, 280, 300, 320, 340, 360, 380, 400</td></tr>
+          <tr><td>above 400 mm</td><td>nearest 20 mm step</td><td>420, 440, 460, 480, 500…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>These are exactly the sizes the calculator rounds to, drawn from a common metric stock series, not a universal standard — what is actually available depends on your supplier, the material grade and the standard series your market follows, so always check a real stock list before committing. Bar stock, ready-made shafting and standard bearing bores exist only in discrete sizes, and the calculated minimum almost never lands exactly on one. Always round <strong>up</strong>, never down, and check the chosen size against the bore of every bearing, coupling and pulley the shaft has to mate with — in the 20–60 mm range typical of industrial drives, the bearing bore frequently dictates the shaft diameter before the torsion calculation does.</p>
+      <p>It is also worth confirming the size against your supplier's actual stocked diameters in your chosen grade. A size that needs a special mill order instead of a stock bar can cost more in lead time than the few millimetres are worth.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WORKED EXAMPLES ===================== -->
+<section id="examples" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Worked Examples</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Shaft Diameter Calculation Examples</h2>
+
+  <div id="cs-example-box" class="bg-sky-50/60 border border-sky-100 rounded-2xl p-6 space-y-6">
+
+    <div>
+      <p class="text-sm font-semibold text-brandDark mb-2">Example 1 — Shaft size to transmit 20 kW at 200 rpm</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Torque first: T = 60P / (2πN) = (60 × 20,000) / (2π × 200) = <strong>955 N·m</strong> = 955,000 N·mm. Taking an allowable shear stress of 42 MPa (ASME transmission shaft with a keyway) and using T = πτd³/16: d = (16 × 955,000 / (π × 42))<sup>1/3</sup> ≈ <strong>48.7 mm</strong>, rounded up to a <strong>50 mm</strong> listed stock size.</p>
+    </div>
+
+    <div>
+      <p class="text-sm font-semibold text-brandDark mb-2">Example 2 — Same shaft, but hollow with k = 0.5</p>
+      <p class="text-sm text-gray-600 leading-relaxed">The (1 − k⁴) factor is 1 − 0.5⁴ = 0.9375, so dₒ = (16 × 955,000 / (π × 42 × 0.9375))<sup>1/3</sup> ≈ <strong>49.8 mm</strong> with a bore of dᵢ = 0.5 × 49.8 ≈ <strong>24.9 mm</strong>. The outer diameter grows only about 2%, while roughly a quarter of the cross-sectional area — and its weight — is removed. That trade is why weight-critical drive shafts are bored out.</p>
+    </div>
+
+    <div>
+      <p class="text-sm font-semibold text-brandDark mb-2">Example 3 — Combined 100 N·m torque and 150 N·m bending moment</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Equivalent twisting moment T_e = √(150² + 100²) = 180.3 N·m, giving d = (16 × 180,300 / (π × 42))<sup>1/3</sup> ≈ 28.0 mm. Equivalent bending moment M_e = ½[150 + 180.3] = 165.1 N·m, giving d = (32 × 165,100 / (π × 84))<sup>1/3</sup> ≈ 27.2 mm. The shear check governs, so the design diameter is <strong>28.0 mm</strong> → use a <strong>28 mm</strong> listed stock size. Sizing the same shaft for its 100 N·m torque alone would have given only 23.0 mm — a clear illustration of why the bending load cannot be ignored.</p>
+    </div>
+
+    <div>
+      <p class="text-sm font-semibold text-brandDark mb-2">Example 4 — Camshaft sized for torsional rigidity</p>
+      <p class="text-sm text-gray-600 leading-relaxed">A 1 m long steel shaft (G = 79.3 GPa = 79,300 MPa) carrying 100 N·m with a permissible twist of 0.25° (0.004363 rad): d = (32 × 100,000 × 1000 / (π × 79,300 × 0.004363))<sup>1/4</sup> ≈ <strong>41.4 mm</strong>, rounded up to <strong>42 mm</strong>. The same shaft sized for stress alone at 42 MPa would need only about 23 mm — proof that for a rigidity-limited shaft, twist, not strength, sets the size.</p>
+    </div>
+
+  </div>
+
+  <p class="text-xs text-gray-400 mt-6">This calculator gives preliminary design diameters. It does not cover axial (thrust) loading, detailed fatigue life against an endurance limit, stress concentration at shoulders and fillets, critical (whirling) speed, or torsional vibration. For any safety-critical or high-value shaft, have the design verified by a qualified mechanical engineer against the applicable code before manufacture.</p>
 </section>
 
 <!-- ===================== COMMON MISTAKES ===================== -->
 <section id="mistakes" class="bg-white border-y border-gray-100 py-16">
   <div class="max-w-3xl mx-auto px-4">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
-    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Sizing a Shaft Diameter</h2>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Shaft Diameter</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-            <p><strong>1. Sizing for torsion only when the shaft also bends.</strong> Any shaft carrying a pulley, gear, sprocket, or overhung coupling load experiences bending in addition to torsion — pure-torsion sizing alone typically undersizes such a shaft; use a combined bending-and-torsion (ASME) method for anything carrying a side load.</p>
-      <p><strong>2. Using shear yield strength directly instead of an allowable (design) stress.</strong> The allowable shear stress in this formula already has a safety factor built in — plugging in the raw material yield strength with no safety margin produces a diameter with essentially zero design safety factor.</p>
-      <p><strong>3. Mixing up Nm and Nmm in the formula.</strong> The formula as commonly presented needs T in N·mm (not N·m) when τ is in N/mm² (MPa) — forgetting to multiply torque in Nm by 1000 before applying the formula understates the required diameter by roughly a factor of 10.</p>
-      <p><strong>4. Rounding the calculated diameter down instead of up.</strong> The calculated figure is the bare minimum — rounding down to a "close enough" stock size below the calculated value removes the entire safety margin and can put the shaft below its safe torque-carrying capacity.</p>
-      <p><strong>5. Ignoring the keyway stress concentration.</strong> Cutting a keyway into the shaft for a pulley, coupling, or gear removes material and introduces a stress riser — common practice increases the required diameter at the keyway location by roughly 6–10% (or applies a specific stress-concentration factor) rather than using the plain-shaft calculated diameter unchanged.</p>
-      <p><strong>6. Not checking fatigue for a shaft under a cyclic or reversing load.</strong> A shaft that sees continuously varying or reversing torque (common in most rotating machinery) can fail by fatigue at a stress well below the static allowable shear stress used here — for any cyclically loaded shaft, a fatigue-based design check (endurance limit, stress concentration, surface finish factors) is required in addition to this static sizing calculation.</p>
-      <p><strong>7. Skipping a critical speed check on a long or slender shaft.</strong> Torsion sizing alone says nothing about whether the shaft will run smoothly at operating speed — a long-span or slender shaft can be adequately strong in torsion while still being at risk of destructive resonance if operating speed approaches its critical (whirling) speed; this needs a separate dynamics check.</p>
-      <p><strong>8. Using solid-shaft formulas for a hollow shaft, or vice versa.</strong> A hollow shaft has a different polar moment of inertia than a solid shaft of the same outer diameter — applying the solid-shaft formula to a hollow-shaft design overstates its torque capacity for a given outer diameter.</p>
+      <p><strong>1. Sizing for torsion only when the shaft also bends.</strong> Any shaft carrying a pulley, gear, sprocket or overhung coupling bends as well as twists. Pure-torsion sizing undersizes it — use the combined basis with both M and T.</p>
+      <p><strong>2. Taking only one of the two combined-load answers.</strong> Guest's theory (T_e) and Rankine's theory (M_e) each give a diameter. The design value is the larger of the two, not whichever you calculated first.</p>
+      <p><strong>3. Mixing N·m and N·mm.</strong> With τ in N/mm², torque must be in N·mm. Forgetting the ×1000 understates the required diameter by a factor of ten in the cube root's input.</p>
+      <p><strong>4. Using the raw shear yield strength as the allowable stress.</strong> The allowable value already carries the design margin. Feeding in yield strength produces a shaft with essentially no factor of safety.</p>
+      <p><strong>5. Applying the solid-shaft formula to a hollow shaft.</strong> Without the (1 − k⁴) factor, a hollow shaft's torque capacity is overstated. The higher the k, the bigger the error.</p>
+      <p><strong>6. Ignoring the keyway.</strong> A keyway removes material and adds a stress raiser. Either increase the diameter by roughly 6–10% at that section or drop to the code's keyway allowable stress of 42 MPa.</p>
+      <p><strong>7. Rounding down to a convenient stock size.</strong> The calculated figure is a minimum. Rounding down deletes the margin the whole calculation was built on.</p>
+      <p><strong>8. Skipping the shock and fatigue factors on a shock-loaded drive.</strong> Crushers, mills, reciprocating compressors and reversing drives see peak torque far above nameplate. Use the fluctuating basis with realistic K<sub>m</sub> and K<sub>t</sub>.</p>
+      <p><strong>9. Forgetting the critical speed check on long, slender shafts.</strong> A shaft can be strong enough in torsion and still resonate destructively near its whirling speed. That is a separate dynamics check this calculator does not perform.</p>
+      <p><strong>10. Sizing from motor torque on the slow side of a gearbox.</strong> Torque multiplies by the reduction ratio. Always size each shaft for the torque it actually sees at its own speed.</p>
     </div>
   </div>
 </section>
@@ -674,24 +1170,72 @@
   <div class="text-center mb-10">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
-    <p class="text-xs text-gray-400 mt-2"></p>
+    <p class="text-xs text-gray-400 mt-2">Shaft diameter, shaft sizing and shaft design — answered</p>
   </div>
 
   <div class="divide-y divide-gray-200">
-        <details class="py-5" open>
+    <details class="py-5" open>
       <summary class="font-semibold text-brandDark flex justify-between items-center">
         What is the formula for minimum shaft diameter under pure torsion?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">d = (16T / (π × τ_allow))^(1/3), where d is the shaft diameter, T is the torque, and τ_allow is the allowable shear stress of the shaft material. Keeping T in N·mm and τ_allow in N/mm² (MPa) gives d directly in millimetres.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">d = (16T / (π × τ_allow))^(1/3), where d is the shaft diameter, T is the twisting moment and τ_allow is the allowable shear stress. Keeping T in N·mm and τ_allow in N/mm² (MPa) gives d directly in millimetres. For a hollow shaft it becomes dₒ = (16T / (π × τ_allow × (1 − k⁴)))^(1/3), where k is the ratio of inner to outer diameter.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Where does the 16/π factor in the formula come from?
+        What shaft size is required to transmit 20 kW at 200 rpm?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It comes from the torsion equation τ = T·r/J, where J is the polar moment of inertia of a solid circular shaft (J = πd⁴/32) and r = d/2. Substituting and solving for d gives d³ = 16T/(πτ), hence the cube-root formula used here.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">About 48.7 mm using an allowable shear stress of 42 MPa (ASME transmission-shaft practice with a keyway). First find torque: T = 60P / (2πN) = (60 × 20,000) / (2π × 200) = 955 N·m. Then T = πτd³/16 gives d = 48.7 mm, which is rounded up to a 50 mm listed stock size. A higher allowable stress — 56 MPa for the same shaft without a keyway — brings the required diameter down to about 44.2 mm.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I calculate shaft diameter from power and rpm?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Convert power to torque first using T (N·m) = 60 × P (W) / (2π × N), or the shortcut T = 9550 × P(kW) / N(rpm), then substitute that torque into d = (16T / (πτ))^(1/3). Switching the torque input above to "From power &amp; rpm" runs both steps automatically.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How is shaft diameter calculated for combined bending and torsion?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Two diameters are calculated and the larger is used. Maximum shear stress theory gives the equivalent twisting moment T_e = √(M² + T²) = πτ_max·d³/16, and maximum normal stress theory gives the equivalent bending moment M_e = ½[M + √(M² + T²)] = πσ_b·d³/32. Whichever produces the bigger diameter governs the design.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What are the shock and fatigue allowance factors K<sub>m</sub> and K<sub>t</sub>?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">They are allowance factors applied to the bending moment and the twisting moment respectively when loads fluctuate. For a rotating shaft with a gradually applied steady load, K<sub>m</sub> ≈ 1.5 and K<sub>t</sub> ≈ 1.0. Suddenly applied loads with minor shock use roughly 1.5–2.0 for both; heavy shock uses K<sub>m</sub> 2.0–3.0 and K<sub>t</sub> 1.5–3.0. Note that scaling the full moments this way is a preliminary design allowance, not a fatigue analysis — it does not separate mean and alternating stress or apply endurance-limit, size, surface-finish and notch factors, which a fatigue-critical shaft still needs.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do you calculate hollow shaft diameter?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Use the solid-shaft equations with an extra (1 − k⁴) factor, where k = dᵢ/dₒ. For torsion, T = (π/16) × τ × dₒ³ × (1 − k⁴); for bending, M = (π/32) × σ_b × dₒ³ × (1 − k⁴). Once dₒ is known, the bore is simply dᵢ = k × dₒ.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How is shaft diameter calculated for torsional rigidity?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">From T/J = Gθ/L, a solid shaft gives d = (32TL / (πGθ))^(1/4), with θ in radians, L the shaft length and G the modulus of rigidity (≈79.3 GPa for steel). A hollow shaft adds (1 − k⁴) in the denominator. This basis is used for camshafts and long line shafts where twist, not stress, is the limiting factor.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the maximum permissible shear stress for a transmission shaft?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">ASME transmission-shaft practice, as commonly published in machine-design references, takes 56 MPa where no keyway allowance is needed and 42 MPa where a keyway is present, with matching permissible bending stresses of 112 MPa and 84 MPa. Treat these as typical design figures and confirm them against the edition of the code or standard your project actually works to.</p>
     </details>
 
     <details class="py-5">
@@ -699,131 +1243,406 @@
         What allowable shear stress should I use for mild steel?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A commonly used allowable shear stress for general-purpose mild steel (like EN8/C45) shafting is in the 40-60 MPa range, already incorporating a reasonable factor of safety against yield. Always check your specific material's shear yield strength and apply your own required factor of safety rather than assuming a single universal number — this varies by code, application, and material grade.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For general-purpose shafting steels, a commonly used allowable shear stress falls in the 40–60 MPa range, already including a reasonable factor of safety against yield. Note that the usual shafting grades C45 and EN8 are medium-carbon steels rather than true low-carbon mild steel, and the two designations are broadly comparable rather than exact equivalents — so check the shear yield strength of your specific grade and apply your own required safety factor instead of assuming one universal figure.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Does this calculator size for combined bending and torsion?
+        What is the difference between a shaft and an axle?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — this is a pure-torsion calculation only. Most real shafts (carrying a pulley, sprocket, or gear that applies a side load) experience combined bending and torsion simultaneously, which requires the ASME combined-shock-and-fatigue formula using an equivalent torque that folds in both bending moment and torque with their respective shock/fatigue factors — the diameter from that method is normally larger than pure-torsion sizing alone.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A shaft rotates and transmits torque and power between machine elements, so it is designed mainly for torsion or combined torsion and bending. An axle is normally stationary and supports a rotating body such as a car wheel, so it is designed mainly for bending moment.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        How do I get torque if I only know power and RPM?
+        Does a keyway reduce shaft strength?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Use T (Nm) = 9550 × P(kW) ÷ N(rpm) first — our Shaft Torque Calculator does exactly this conversion — then feed the resulting torque into this shaft diameter formula.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes. A keyway removes material and creates a stress concentration, so common practice either raises the calculated plain-shaft diameter by roughly 6–10% at that section (a rule of thumb, not a stress-concentration calculation — the real factor depends on keyway geometry, fillet radius and notch sensitivity) <em>or</em> drops to the keyway allowable stress of 42 MPa — one or the other, not both, otherwise the same keyway is allowed for twice. The calculator above uses the keyway allowable stress by default and warns you if you switch on the extra diameter allowance as well.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Should I round the calculated diameter up to a standard size?
+        Should I round the calculated shaft diameter up to a standard size?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, always round up (never down) to the nearest standard/stock shaft diameter available from your supplier — common metric stock sizes step in 5mm or 10mm increments in the mid-range — since a shaft slightly larger than the bare-minimum calculated value only adds margin, while rounding down removes your safety margin entirely.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — always up, never down, to the nearest standard stock diameter that also suits your bearing and coupling bores. Rounding up only adds margin; rounding down removes the safety margin the calculation was based on.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Does keyway cutting reduce the effective shaft strength?
+        Why is torsional rigidity important when designing camshafts?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes significantly — cutting a keyway removes material and creates a stress concentration, and common design practice increases the calculated plain-shaft diameter by roughly 6–10% (or applies a specific keyway stress-concentration factor) at the keyway cross-section to compensate. This calculator does not apply that adjustment automatically.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A camshaft controls valve timing, so once the twist along its length exceeds the permissible limit for that design, valve events shift out of position. A figure such as 0.25° per metre is often quoted as a typical criterion, but the actual limit is set by the application and the manufacturer's requirements. Either way, such shafts are sized for a permissible angle of twist rather than for stress alone.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        What happens if I use too low an allowable shear stress value?
+        Is a hollow shaft stronger than a solid shaft?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">You'll get an oversized, overly conservative shaft diameter — safe, but potentially wasteful in material, weight, and cost. Too high an allowable stress (too optimistic) is the more dangerous mistake, since it can undersize the shaft with insufficient safety margin against yielding or fatigue failure in service.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For the same outer diameter, no — removing the core removes load-carrying material. For the same weight of material, yes — a hollow shaft with a larger outer diameter carries more torque than a smaller solid one, because material far from the axis contributes most to torsional strength. That is why weight-critical drive shafts are usually hollow.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Is a hollow shaft ever stronger than a solid one for the same weight?
+        Does this calculator cover fatigue life and critical speed?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — for a given weight (mass) of material, a hollow shaft with a larger outer diameter and a bored-out center is torsionally stronger than a solid shaft of smaller diameter using the same mass of material, since material near the outer surface contributes far more to torsional strength than material near the center. This is why weight-critical rotating shafts (aerospace drive shafts, some high-performance machinery) are frequently designed hollow rather than solid.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No. The fluctuating-load basis applies ASME shock and fatigue factors, which is a design allowance, not a full endurance-limit fatigue analysis with surface finish, size and notch factors. Critical (whirling) speed and torsional vibration are separate dynamic checks, essential for long or slender shafts, and are not covered here.</p>
     </details>
   </div>
 </section>
 
-<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<!-- ===================== [SHARED] FOOTER ===================== -->
 <div id="site-footer"></div>
 
 <script src="/assets/site-nav.js"></script>
-
 <!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
 <script>
-
   // ===== Share / Feedback bar =====
   function setFeedback(val){
     document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
     document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
   }
-    function calculateShaftDiameter(){
-    const torque = parseFloat(document.getElementById('torque').value);
-    const tau = parseFloat(document.getElementById('tauAllow').value);
-    const fos = parseFloat(document.getElementById('fos').value) || 1;
 
-    const validationBox = document.getElementById('validationBox');
-    const errors = [];
-    if(isNaN(torque) || torque <= 0){ errors.push('Enter a valid torque greater than 0.'); }
-    if(isNaN(tau) || tau <= 0){ errors.push('Enter a valid allowable shear stress greater than 0.'); }
-    if(isNaN(fos) || fos < 1){ errors.push('Factor of safety must be 1 or greater.'); }
+  var shaftType = 'solid';
+  var torqueMode = 'direct';
 
-    if(errors.length){
-      validationBox.classList.remove('hidden');
-      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
-      document.getElementById('rResult').textContent = '\u2014';
-      document.getElementById('rDesignTorque').textContent = '\u2014';
-      document.getElementById('rStdSize').textContent = '\u2014';
-      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
-      return;
+  var MATERIALS = {
+    asme_key:   { tau:42, sig:84,  g:79.3 },
+    asme_nokey: { tau:56, sig:112, g:79.3 },
+    mild:       { tau:45, sig:75,  g:79.3 },
+    alloy:      { tau:80, sig:130, g:79.3 },
+    ss304:      { tau:35, sig:60,  g:77.0 },
+    ci:         { tau:30, sig:50,  g:41.0 },
+    al:         { tau:40, sig:65,  g:26.0 }
+  };
+
+  var STD_SIZES = [8,10,12,14,15,16,17,18,19,20,22,24,25,28,30,32,35,38,40,42,45,48,50,55,60,63,65,70,75,80,85,90,95,100,110,120,125,130,140,150,160,170,180,190,200,220,240,250,260,280,300,320,340,360,380,400];
+
+  function val(id){ var el = document.getElementById(id); return el ? parseFloat(el.value) : NaN; }
+  function fac(id){ var el = document.getElementById(id); return el ? parseFloat(el.value) : 1; }
+  function show(id, on){ var el = document.getElementById(id); if(el) el.classList.toggle('hidden-field', !on); }
+  function txt(id, s){ var el = document.getElementById(id); if(el) el.textContent = s; }
+
+  function markCustomMaterial(){ document.getElementById('material').value = 'custom'; syncKeywayUI(false); }
+
+  function syncKeywayUI(autoUncheck){
+    var key  = document.getElementById('material').value;
+    var cb   = document.getElementById('keywayOn');
+    var warn = document.getElementById('keywayWarn');
+    if(!cb || !warn) return;
+    var pct  = document.getElementById('keywayPct');
+    var lbl  = document.querySelector('label[for="keywayOn"]');
+    var keyedStress = (key === 'asme_key');
+    if(keyedStress){
+      cb.checked = false;
+      cb.disabled = true;
+      if(pct) pct.disabled = true;
+      if(lbl) lbl.classList.add('premium-disabled');
+      warn.classList.remove('hidden-field');
+      warn.setAttribute('style','background:#f0f9ff;border:1px solid #bae6fd;color:#0369a1;');
+      warn.innerHTML = '<strong>Keyway already allowed for.</strong> This preset uses the keyway-adjusted allowable stress (42 / 84 MPa), so the extra diameter allowance is switched off to stop the same keyway being counted twice. To size on a plain-shaft stress and add a diameter allowance instead, pick the <em>no keyway</em> preset or Custom.';
+    } else {
+      cb.disabled = false;
+      if(pct) pct.disabled = false;
+      if(lbl) lbl.classList.remove('premium-disabled');
+      if(cb.checked){
+        warn.classList.remove('hidden-field');
+        warn.setAttribute('style','background:#fffbeb;border:1px solid #fde68a;color:#b45309;');
+        warn.innerHTML = 'Using a plain-shaft allowable stress plus a diameter allowance for the keyway. Do not also drop to a keyway-adjusted allowable stress, or the keyway is counted twice.';
+      } else {
+        warn.classList.add('hidden-field');
+        warn.removeAttribute('style');
+        warn.innerHTML = '';
+      }
     }
-    validationBox.classList.add('hidden');
-    validationBox.innerHTML = '';
-
-    const designTorqueNm = torque * fos;
-    const torqueNmm = designTorqueNm * 1000;
-    const dMm = Math.cbrt((16 * torqueNmm) / (Math.PI * tau));
-
-    function roundUpStd(d){
-      if(d <= 20) return Math.ceil(d/2)*2;
-      if(d <= 50) return Math.ceil(d/5)*5;
-      return Math.ceil(d/10)*10;
-    }
-    const stdSize = roundUpStd(dMm);
-
-    document.getElementById('rResult').textContent = dMm.toLocaleString('en-US', {maximumFractionDigits:2}) + ' mm';
-    document.getElementById('resultSub').textContent = 'Minimum diameter for ' + designTorqueNm.toFixed(1) + ' Nm at ' + tau + ' MPa';
-    document.getElementById('rDesignTorque').textContent = designTorqueNm.toFixed(1) + ' Nm';
-    document.getElementById('rStdSize').textContent = stdSize + ' mm';
-
-    document.getElementById('breakdownBox').innerHTML = `
-        <table class="breakdown-table">
-            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
-            <tbody>
-                <tr><td>Input Torque</td><td>${torque.toFixed(2)} Nm</td></tr>
-                <tr><td>Factor of Safety</td><td>${fos.toFixed(2)}</td></tr>
-                <tr><td>Design Torque</td><td>${designTorqueNm.toFixed(2)} Nm (${torqueNmm.toFixed(0)} Nmm)</td></tr>
-                <tr><td>Allowable Shear Stress</td><td>${tau} MPa</td></tr>
-                <tr><td><strong>Min. Calculated Diameter</strong></td><td><strong>${dMm.toFixed(2)} mm</strong></td></tr>
-                <tr><td>Rounded to Standard Size</td><td>${stdSize} mm</td></tr>
-            </tbody>
-        </table>
-    `;
   }
 
+  function applyMaterial(){
+    var key = document.getElementById('material').value;
+    var m = MATERIALS[key];
+    if(m){
+      document.getElementById('tauAllow').value = m.tau;
+      document.getElementById('tauUnit').value = '1';
+      document.getElementById('sigmaAllow').value = m.sig;
+      document.getElementById('sigmaUnit').value = '1';
+      document.getElementById('gMod').value = m.g;
+      document.getElementById('gUnit').value = '1000';
+    }
+    syncKeywayUI(true);
+    calculateShaftDiameter();
+  }
+
+  function setShaftType(t){
+    shaftType = t;
+    document.getElementById('btnSolid').classList.toggle('active', t === 'solid');
+    document.getElementById('btnHollow').classList.toggle('active', t === 'hollow');
+    show('grpK', t === 'hollow');
+    calculateShaftDiameter();
+  }
+
+  function setTorqueMode(m){
+    torqueMode = m;
+    document.getElementById('btnTdirect').classList.toggle('active', m === 'direct');
+    document.getElementById('btnTpower').classList.toggle('active', m === 'power');
+    show('grpPower', m === 'power');
+    show('grpTorqueDirect', m === 'direct');
+    calculateShaftDiameter();
+  }
+
+  function syncFields(){
+    var b = document.getElementById('designBasis').value;
+    var needT   = (b !== 'bending');
+    var needM   = (b === 'bending' || b === 'combined' || b === 'fluctuating');
+    var needK   = (b === 'fluctuating');
+    var needTau = (b === 'torsion' || b === 'combined' || b === 'fluctuating');
+    var needSig = (b === 'bending' || b === 'combined' || b === 'fluctuating');
+    var needRig = (b === 'rigidity');
+
+    show('grpTorque', needT);
+    show('grpBending', needM);
+    show('grpFactors', needK);
+    show('grpStress', needTau || needSig);
+    show('grpTau', needTau);
+    show('grpSigma', needSig);
+    show('grpRigidity', needRig);
+  }
+
+  function roundUpStd(d){
+    for(var i=0;i<STD_SIZES.length;i++){ if(STD_SIZES[i] >= d - 1e-9) return STD_SIZES[i]; }
+    return Math.ceil(d/20)*20;
+  }
+
+  function fmt(x, n){
+    if(!isFinite(x)) return '\u2014';
+    return x.toLocaleString('en-US', {maximumFractionDigits: (n === undefined ? 2 : n)});
+  }
+
+  function calculateShaftDiameter(){
+    var basis = document.getElementById('designBasis').value;
+    var box = document.getElementById('validationBox');
+    var errors = [];
+
+    var loadFactor = val('loadFactor'); if(isNaN(loadFactor) || loadFactor < 1) { loadFactor = 1; }
+    var outF = fac('outUnit');
+    var outLabel = document.getElementById('outUnit').options[document.getElementById('outUnit').selectedIndex].text.replace(/.*\(|\)/g,'');
+
+    // ---------- Torque ----------
+    var T = 0, tSourceRow = '';
+    if(basis !== 'bending'){
+      if(torqueMode === 'power'){
+        var P = val('transmittedPower') * fac('powerUnit');
+        var N = val('rpm');
+        if(isNaN(P) || P <= 0) errors.push('Enter a power greater than 0.');
+        if(isNaN(N) || N <= 0) errors.push('Enter a shaft speed greater than 0 rpm.');
+        if(P > 0 && N > 0){
+          var tNm = (60 * P) / (2 * Math.PI * N);
+          T = tNm * 1000;
+          tSourceRow = '<tr><td>Torque from P &amp; N</td><td>' + fmt(tNm) + ' N\u00b7m &nbsp;(60P/2\u03c0N)</td></tr>';
+        }
+      } else {
+        var tRaw = val('torque') * fac('torqueUnit');
+        if(isNaN(tRaw) || tRaw <= 0) errors.push('Enter a torque greater than 0.');
+        else T = tRaw;
+      }
+    }
+
+    // ---------- Bending moment ----------
+    var M = 0;
+    if(basis === 'bending' || basis === 'combined' || basis === 'fluctuating'){
+      var mRaw = val('bendMoment') * fac('bendUnit');
+      if(isNaN(mRaw) || mRaw <= 0) errors.push('Enter a bending moment greater than 0.');
+      else M = mRaw;
+    }
+
+    // ---------- Hollow ratio ----------
+    var k = 0;
+    if(shaftType === 'hollow'){
+      k = val('kRatio');
+      if(isNaN(k) || k <= 0 || k > 0.95) errors.push('Diameter ratio k (d\u1d62/d\u2092) must be greater than 0 and no more than 0.95. Use the solid-shaft option for a shaft with no bore.');
+    }
+    var kf = 1 - Math.pow(k, 4);
+
+    // ---------- Stresses ----------
+    var tau = 0, sig = 0;
+    if(basis === 'torsion' || basis === 'combined' || basis === 'fluctuating'){
+      tau = val('tauAllow') * fac('tauUnit');
+      if(isNaN(tau) || tau <= 0) errors.push('Enter an allowable shear stress greater than 0.');
+    }
+    if(basis === 'bending' || basis === 'combined' || basis === 'fluctuating'){
+      sig = val('sigmaAllow') * fac('sigmaUnit');
+      if(isNaN(sig) || sig <= 0) errors.push('Enter an allowable bending stress greater than 0.');
+    }
+
+    // ---------- Rigidity data ----------
+    var G = 0, thetaRad = 0, L = 0, thetaDeg = 0;
+    if(basis === 'rigidity'){
+      G = val('gMod') * fac('gUnit');
+      thetaDeg = val('thetaDeg');
+      L = val('shaftLen') * fac('lenUnit');
+      if(isNaN(G) || G <= 0) errors.push('Enter a modulus of rigidity greater than 0.');
+      if(isNaN(thetaDeg) || thetaDeg <= 0) errors.push('Enter a permissible angle of twist greater than 0\u00b0.');
+      if(isNaN(L) || L <= 0) errors.push('Enter a shaft length greater than 0.');
+      thetaRad = thetaDeg * Math.PI / 180;
+    }
+
+    // ---------- Shock & fatigue factors ----------
+    var Km = 1, Kt = 1;
+    if(basis === 'fluctuating'){
+      Km = val('kmFac'); Kt = val('ktFac');
+      if(isNaN(Km) || Km < 1) errors.push('K\u2098 must be 1 or greater.');
+      if(isNaN(Kt) || Kt < 1) errors.push('K\u209c must be 1 or greater.');
+    }
+
+    if(errors.length){
+      box.classList.remove('hidden');
+      box.innerHTML = errors.map(function(e){ return '\u2022 ' + e; }).join('<br>');
+      txt('rResult','\u2014'); txt('rDesignTorque','\u2014'); txt('rEquiv','\u2014');
+      txt('rInner','\u2014'); txt('rStdSize','\u2014');
+      txt('resultSub','Fix the input errors to see a result');
+      txt('governingNote','Correct the highlighted inputs to see which check governs.');
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid breakdown.</p>';
+      return;
+    }
+    box.classList.add('hidden'); box.innerHTML = '';
+
+    // ---------- Design loads ----------
+    var Td = T * loadFactor;
+    var Md = M * loadFactor;
+
+    var dMm = 0, governing = '', equivLabel = '\u2014', equivVal = '\u2014', rows = '';
+    var Te = 0, Me = 0, dTe = 0, dMe = 0;
+
+    if(basis === 'torsion'){
+      dMm = Math.cbrt((16 * Td) / (Math.PI * tau * kf));
+      governing = 'Torsional shear stress governs. The shaft is sized so the shear stress from the design torque stays at or below ' + fmt(tau) + ' MPa.';
+      equivLabel = 'Allowable \u03c4'; equivVal = fmt(tau) + ' MPa';
+      rows = tSourceRow +
+        '<tr><td>Design Torque (T \u00d7 load factor)</td><td>' + fmt(Td/1000) + ' N\u00b7m (' + fmt(Td,0) + ' N\u00b7mm)</td></tr>' +
+        '<tr><td>Allowable Shear Stress</td><td>' + fmt(tau) + ' MPa</td></tr>';
+    }
+    else if(basis === 'bending'){
+      dMm = Math.cbrt((32 * Md) / (Math.PI * sig * kf));
+      governing = 'Bending stress governs. The shaft is sized so the bending stress from the design moment stays at or below ' + fmt(sig) + ' MPa.';
+      equivLabel = 'Allowable \u03c3b'; equivVal = fmt(sig) + ' MPa';
+      rows = '<tr><td>Design Bending Moment (M \u00d7 load factor)</td><td>' + fmt(Md/1000) + ' N\u00b7m (' + fmt(Md,0) + ' N\u00b7mm)</td></tr>' +
+        '<tr><td>Allowable Bending Stress</td><td>' + fmt(sig) + ' MPa</td></tr>';
+    }
+    else if(basis === 'combined' || basis === 'fluctuating'){
+      var Mx = (basis === 'fluctuating') ? Km * Md : Md;
+      var Tx = (basis === 'fluctuating') ? Kt * Td : Td;
+      var root = Math.sqrt(Mx*Mx + Tx*Tx);
+      Te = root;
+      Me = 0.5 * (Mx + root);
+      dTe = Math.cbrt((16 * Te) / (Math.PI * tau * kf));
+      dMe = Math.cbrt((32 * Me) / (Math.PI * sig * kf));
+      dMm = Math.max(dTe, dMe);
+      var prelimNote = (basis === 'fluctuating')
+        ? ' Preliminary shock-and-fatigue sizing only \u2014 K\u2098 and K\u209c scale the full moments and do not replace a mean-plus-alternating fatigue check against an endurance limit.'
+        : '';
+      governing = (dTe >= dMe)
+        ? 'Maximum shear stress theory (Guest) governs: the equivalent twisting moment T\u2091 gives ' + fmt(dTe) + ' mm against ' + fmt(dMe) + ' mm from the equivalent bending moment M\u2091.'
+        : 'Maximum normal stress theory (Rankine) governs: the equivalent bending moment M\u2091 gives ' + fmt(dMe) + ' mm against ' + fmt(dTe) + ' mm from the equivalent twisting moment T\u2091.';
+      governing += prelimNote;
+      equivLabel = 'Equivalent Torque T\u2091'; equivVal = fmt(Te/1000) + ' N\u00b7m';
+      rows = tSourceRow +
+        '<tr><td>Design Torque (T \u00d7 load factor)</td><td>' + fmt(Td/1000) + ' N\u00b7m</td></tr>' +
+        '<tr><td>Design Bending Moment (M \u00d7 load factor)</td><td>' + fmt(Md/1000) + ' N\u00b7m</td></tr>' +
+        (basis === 'fluctuating'
+          ? '<tr><td>K\u2098 \u00d7 M</td><td>' + fmt(Mx/1000) + ' N\u00b7m (K\u2098 = ' + fmt(Km) + ')</td></tr>' +
+            '<tr><td>K\u209c \u00d7 T</td><td>' + fmt(Tx/1000) + ' N\u00b7m (K\u209c = ' + fmt(Kt) + ')</td></tr>'
+          : '') +
+        '<tr><td>Equivalent Twisting Moment T\u2091</td><td>' + fmt(Te/1000) + ' N\u00b7m</td></tr>' +
+        '<tr><td>Equivalent Bending Moment M\u2091</td><td>' + fmt(Me/1000) + ' N\u00b7m</td></tr>' +
+        '<tr><td>Diameter from T\u2091 (shear check)</td><td>' + fmt(dTe) + ' mm</td></tr>' +
+        '<tr><td>Diameter from M\u2091 (bending check)</td><td>' + fmt(dMe) + ' mm</td></tr>';
+    }
+    else if(basis === 'rigidity'){
+      dMm = Math.pow((32 * Td * L) / (Math.PI * G * thetaRad * kf), 0.25);
+      governing = 'Torsional rigidity governs. The shaft is sized so the twist over ' + fmt(L) + ' mm of length stays within ' + fmt(thetaDeg,3) + '\u00b0 \u2014 this is a stiffness limit, so run the stress check separately as well.';
+      equivLabel = 'Angle of Twist'; equivVal = fmt(thetaDeg,3) + '\u00b0';
+      rows = tSourceRow +
+        '<tr><td>Design Torque (T \u00d7 load factor)</td><td>' + fmt(Td/1000) + ' N\u00b7m</td></tr>' +
+        '<tr><td>Modulus of Rigidity G</td><td>' + fmt(G,0) + ' MPa</td></tr>' +
+        '<tr><td>Permissible Twist \u03b8</td><td>' + fmt(thetaDeg,3) + '\u00b0 (' + fmt(thetaRad,6) + ' rad)</td></tr>' +
+        '<tr><td>Shaft Length L</td><td>' + fmt(L,0) + ' mm</td></tr>';
+    }
+
+    // ---------- Keyway allowance ----------
+    var kwEl = document.getElementById('keywayOn');
+    var kwOn = kwEl.checked && !kwEl.disabled;
+    var kwPct = val('keywayPct'); if(isNaN(kwPct) || kwPct < 0) kwPct = 0;
+    var dPlain = dMm;
+    if(kwOn){ dMm = dMm * (1 + kwPct / 100); }
+
+    if(!isFinite(dMm) || dMm <= 0){
+      txt('rResult','\u2014');
+      txt('resultSub','Check the inputs — no valid diameter could be computed.');
+      return;
+    }
+
+    var stdMm = roundUpStd(dMm);
+    var dOut = dMm / outF;
+    var innerMm = shaftType === 'hollow' ? k * dMm : 0;
+
+    // ---------- Output ----------
+    txt('resultLabel', shaftType === 'hollow' ? 'Min. Outer Diameter (d\u2092)' : 'Min. Shaft Diameter (d)');
+    txt('rResult', fmt(dOut, outF === 25.4 ? 3 : 2) + ' ' + outLabel);
+    txt('resultSub', (shaftType === 'hollow' ? 'Hollow shaft, k = ' + fmt(k,2) : 'Solid shaft')
+        + (kwOn ? ' \u00b7 incl. ' + fmt(kwPct,0) + '% keyway allowance' : '')
+        + (loadFactor > 1 ? ' \u00b7 load factor ' + fmt(loadFactor,2) : ''));
+
+    if(basis === 'bending'){
+      txt('rTorqueLabel', 'Design Moment');
+      txt('rDesignTorque', fmt(Md/1000) + ' N\u00b7m');
+    } else {
+      txt('rTorqueLabel', 'Design Torque');
+      txt('rDesignTorque', fmt(Td/1000) + ' N\u00b7m');
+    }
+
+    txt('rEquivLabel', equivLabel);
+    txt('rEquiv', equivVal);
+
+    if(shaftType === 'hollow'){
+      txt('rInnerLabel', 'Inner Dia. (d\u1d62)');
+      txt('rInner', fmt(innerMm/outF, outF === 25.4 ? 3 : 2) + ' ' + outLabel);
+    } else {
+      txt('rInnerLabel', 'Section');
+      txt('rInner', 'Solid');
+    }
+
+    txt('rStdSize', stdMm + ' mm');
+    show('hollowNote', shaftType === 'hollow');
+    syncKeywayUI(false);
+    txt('governingNote', governing + ' Round the calculated ' + fmt(dMm) + ' mm up to the next standard size of ' + stdMm + ' mm. That figure comes from a common metric stock series \u2014 availability varies by supplier, grade and standard, so confirm it against your supplier list and your bearing and coupling bores.');
+
+    rows += (kwOn ? '<tr><td>Plain calculated diameter</td><td>' + fmt(dPlain) + ' mm</td></tr>' +
+                    '<tr><td>Keyway allowance</td><td>+' + fmt(kwPct,0) + '%</td></tr>' : '');
+    if(shaftType === 'hollow'){
+      rows += '<tr><td>Diameter ratio k</td><td>' + fmt(k,3) + ' (1 \u2212 k\u2074 = ' + fmt(kf,4) + ')</td></tr>' +
+              '<tr><td>Inner Diameter d\u1d62</td><td>' + fmt(innerMm) + ' mm</td></tr>';
+    }
+    rows += '<tr><td><strong>Min. Calculated Diameter</strong></td><td><strong>' + fmt(dMm) + ' mm</strong></td></tr>' +
+            '<tr><td>Rounded to Standard Size</td><td>' + stdMm + ' mm</td></tr>';
+
+    document.getElementById('breakdownBox').innerHTML =
+      '<table class="breakdown-table">' +
+        '<thead><tr><th>Quantity</th><th>Value</th></tr></thead>' +
+        '<tbody>' + rows + '</tbody>' +
+      '</table>';
+  }
+
+  syncFields();
+  syncKeywayUI(false);
   calculateShaftDiameter();
 </script>
 
 <script>
-  // ===== Generic Copy Result (added site-wide; does not touch page-specific calc logic) =====
+  // ===== Generic Copy Result =====
   function copyResultGeneric(){
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
@@ -847,12 +1666,7 @@
     }
   }
 
-  // ===== Generic number-input safety net (added site-wide; purely additive —
-  // runs on blur AFTER the page's own oninput/onchange calc handlers, and only
-  // corrects a value that is non-finite or outside the field's own declared
-  // min/max attributes, then re-fires "input" so the page's existing calc
-  // function recalculates with the corrected value. Never overrides or
-  // replaces any existing calculator logic. =====
+  // ===== Generic number-input safety net =====
   (function(){
     function clampNumberInput(el){
       if (el.type !== 'number' || el.value === '') return;
@@ -876,7 +1690,7 @@
   })();
 </script>
 <script>
-  // ===== Share Result modal loader (lazy-loads /assets/share-modal.js on first click) =====
+  // ===== Share Result modal loader =====
   var __shareModalLoading = false;
   function loadShareModal(){
     if (typeof openShareModal === 'function'){ openShareModal(); return; }
@@ -890,7 +1704,7 @@
   }
 </script>
 <script>
-  // ===== Share/Feedback bar: move above Related Calculators on mobile, restore on desktop =====
+  // ===== Share/Feedback bar: move above Related Calculators on mobile =====
   (function(){
     function positionShareBar(){
       var bar = document.getElementById('shareFeedbackBar');
