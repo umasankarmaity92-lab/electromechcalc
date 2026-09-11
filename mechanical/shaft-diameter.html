@@ -275,7 +275,9 @@
     color:#fff;
     box-shadow:0 4px 10px rgba(14,165,233,0.35);
   }
-  .toggle-wrap{ display:flex; gap:6px; background:#f1f5f9; padding:4px; border-radius:10px; }
+  .toggle-wrap{ display:flex; gap:6px; background:#f1f5f9; padding:4px; border-radius:10px; border:1px solid #e2e8f0; }
+  .toggle-btn:hover{ color:#0369a1; }
+
   .hidden-field{ display:none !important; }
   .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
   .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
@@ -341,7 +343,13 @@
   body{ transition:background-color .2s ease, color .2s ease; }
   body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
   body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
-  body.dark-theme .toggle-wrap{ background:#111c2e; }
+  body.dark-theme .toggle-wrap{ background:#0f1c30; border-color:#1f2f47; }
+  body.dark-theme .toggle-btn{ color:#cbd5e1; }
+  body.dark-theme .toggle-btn:hover{ color:#7dd3fc; }
+  body.dark-theme .toggle-btn.active{ background:#0ea5e9; color:#ffffff; }
+  body.dark-theme .field-group-title{ color:#7dd3fc; }
+  body.dark-theme .calc-input-panel .text-gray-400{ color:#94a3b8; }
+  body.dark-theme .premium-disabled{ opacity:.45; }
   body.dark-theme .field-group{ border-color:#1f2f47; }
   body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
   body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
@@ -542,6 +550,7 @@
             <option value="fluctuating">Fluctuating twisting &amp; bending moments (preliminary)</option>
             <option value="rigidity">Torsional rigidity (angle of twist)</option>
           </select>
+          <p class="text-xs text-gray-400 mt-1">Choose what actually loads the shaft. Most real shafts carrying a gear, pulley or sprocket need the combined basis.</p>
         </div>
 
         <!-- SHAFT TYPE -->
@@ -551,11 +560,13 @@
             <div class="toggle-btn active" id="btnSolid" onclick="setShaftType('solid')">Solid shaft</div>
             <div class="toggle-btn" id="btnHollow" onclick="setShaftType('hollow')">Hollow shaft</div>
           </div>
+          <p class="text-xs text-gray-400 mt-1">A hollow shaft uses the same formulas with a (1 &minus; k&#8308;) factor. For the same weight of steel it carries more torque than a smaller solid shaft.</p>
         </div>
 
         <div id="grpK" class="hidden-field">
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="kRatio">Ratio of Inner to Outer Diameter (k = dᵢ / dₒ)</label>
           <input id="kRatio" type="number" value="0.5" step="0.05" min="0" max="0.95" placeholder="e.g. 0.5" class="input-field mt-2" oninput="calculateShaftDiameter()">
+          <p class="text-xs text-gray-400 mt-1">Bore divided by outer diameter, between 0 and 0.95. The inner diameter follows this ratio rather than staying a fixed bore.</p>
         </div>
 
         <!-- MATERIAL PRESET -->
@@ -571,7 +582,7 @@
             <option value="ci">Cast iron — typical preset τ 30, σb 50 MPa</option>
             <option value="al">Aluminium 6061-T6 — typical preset τ 40, σb 65 MPa</option>
           </select>
-          <p class="text-[11px] text-gray-400 mt-2">Presets are representative preliminary values, not universal material constants — real allowable stresses vary with grade, heat treatment, surface finish and design code. Check the <a href="#materials" class="text-sky-600 underline">material reference table</a> and your own material certificate, then switch to Custom if your figure differs.</p>
+          <p class="text-xs text-gray-400 mt-1">Representative preliminary values, not universal material constants. Check the <a href="#materials" class="text-sky-600 underline">material reference table</a> and your own material certificate, then switch to Custom if your figure differs.</p>
         </div>
 
         <!-- TORQUE GROUP -->
@@ -619,6 +630,7 @@
                 <option value="112.984829">pound-force inches (lbf·in)</option>
               </select>
             </div>
+            <p class="text-xs text-gray-400 mt-1">Enter torque directly, or switch to power &amp; rpm and the calculator applies T = 60P &divide; 2&pi;N. After a gearbox, size each shaft for the torque it actually sees.</p>
           </div>
         </div>
 
@@ -638,6 +650,7 @@
               <option value="112.984829">pound-force inches (lbf·in)</option>
             </select>
           </div>
+          <p class="text-xs text-gray-400 mt-1">Bending moment at the section being sized — overhung pulley, gear or sprocket load plus the shaft's own weight.</p>
         </div>
 
         <!-- SHOCK & FATIGUE FACTORS -->
@@ -653,8 +666,8 @@
               <input id="ktFac" type="number" value="1.0" step="0.1" min="1" max="5" placeholder="e.g. 1.0" class="input-field mt-2" oninput="calculateShaftDiameter()">
             </div>
           </div>
-          <p class="text-[11px] text-amber-600 mt-2"><strong>Preliminary sizing method:</strong> K<sub>m</sub> and K<sub>t</sub> scale the full moments as a shock-and-fatigue allowance. This is not a full mean-plus-alternating fatigue analysis against an endurance limit.</p>
-          <p class="text-[11px] text-gray-400 mt-2">Rotating shaft, steady load: K<sub>m</sub> ≈ 1.5, K<sub>t</sub> ≈ 1.0 · minor shock: 1.5–2.0 both · heavy shock: K<sub>m</sub> 2.0–3.0, K<sub>t</sub> 1.5–3.0.</p>
+          <p class="text-xs text-gray-400 mt-1">Rotating shaft, steady load: K<sub>m</sub> &asymp; 1.5, K<sub>t</sub> &asymp; 1.0 &middot; minor shock: 1.5&ndash;2.0 both &middot; heavy shock: K<sub>m</sub> 2.0&ndash;3.0, K<sub>t</sub> 1.5&ndash;3.0.</p>
+          <p class="text-xs text-amber-600 mt-1">Preliminary sizing allowance only — not a full mean-plus-alternating fatigue calculation.</p>
         </div>
 
         <!-- ALLOWABLE STRESSES -->
@@ -674,6 +687,7 @@
                 <option value="0.0980665">kgf per sq. cm (kgf/cm²)</option>
               </select>
             </div>
+            <p class="text-xs text-gray-400 mt-1">ASME practice: 56 MPa without a keyway, 42 MPa with one. General shafting steels commonly sit in the 40&ndash;60 MPa range. These are working stresses that already carry a design margin, not yield strengths.</p>
           </div>
           <div id="grpSigma" class="hidden-field mt-3">
             <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="sigmaAllow">Allowable Bending Stress (σ<sub>b</sub>)</label>
@@ -689,13 +703,14 @@
                 <option value="0.0980665">kgf per sq. cm (kgf/cm²)</option>
               </select>
             </div>
+            <p class="text-xs text-gray-400 mt-1">ASME practice: 112 MPa without a keyway, 84 MPa with one. Used by the Rankine (maximum normal stress) check.</p>
           </div>
         </div>
 
         <!-- TORSIONAL RIGIDITY -->
         <div class="field-group hidden-field" id="grpRigidity">
           <span class="field-group-title">Torsional rigidity data</span>
-          <p class="text-[11px] text-amber-600 mb-3">This basis sizes for stiffness only. Run the stress-based bases as well and take the larger diameter for the final design.</p>
+          <p class="text-[11px] text-amber-600 mb-3">Stiffness check only — also run a stress-based basis and take the larger diameter.</p>
           <div class="space-y-3">
             <div>
               <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="gMod">Modulus of Rigidity (G)</label>
@@ -707,6 +722,7 @@
                   <option value="6.89476">kilopounds per sq. inch (ksi)</option>
                 </select>
               </div>
+              <p class="text-xs text-gray-400 mt-1">Shear modulus: about 79.3 GPa for steel, 77 GPa for 304 stainless, 41 GPa for cast iron, 26 GPa for aluminium.</p>
             </div>
             <div>
               <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="thetaDeg">Permissible Angle of Twist (θ)</label>
@@ -714,6 +730,7 @@
                 <input id="thetaDeg" type="number" value="0.25" step="0.05" min="0" placeholder="e.g. 0.25" class="input-field" oninput="calculateShaftDiameter()">
                 <select class="input-field" disabled><option>degrees (°)</option></select>
               </div>
+              <p class="text-xs text-gray-400 mt-1">Maximum twist allowed over the shaft length. A figure such as 0.25&deg; per metre is often quoted for camshafts and precision drives, but the real limit is set by the application.</p>
             </div>
             <div>
               <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="shaftLen">Shaft Length (L)</label>
@@ -726,6 +743,7 @@
                   <option value="25.4">inches (in)</option>
                 </select>
               </div>
+              <p class="text-xs text-gray-400 mt-1">The length over which the permissible twist applies, normally between the driving and driven ends.</p>
             </div>
           </div>
         </div>
@@ -737,6 +755,7 @@
             <div>
               <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="loadFactor">Additional Load Factor <span class="normal-case text-gray-400">(multiplies T and M)</span></label>
               <input id="loadFactor" type="number" value="1" step="0.1" min="1" placeholder="e.g. 1.5" class="input-field mt-2" oninput="calculateShaftDiameter()">
+              <p class="text-xs text-gray-400 mt-1">A load factor, not a stress-based factor of safety. The safety factor is already inside the allowable stress you picked, so keep this at 1.0 unless your method needs extra load margin.</p>
             </div>
             <div>
               <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="outUnit">Show Diameter In</label>
@@ -746,15 +765,15 @@
                 <option value="1000">metres (m)</option>
                 <option value="25.4">inches (in)</option>
               </select>
+              <p class="text-xs text-gray-400 mt-1">Changes the calculated diameter only — the next stock size is always listed in millimetres.</p>
             </div>
           </div>
-          <p class="text-[11px] text-gray-400 mt-2">This is a <strong>load factor</strong>, not a stress-based factor of safety — it multiplies the torque and bending moment before sizing. The factor of safety itself is already inside the allowable stress you selected, so keep this at 1.0 unless your design method calls for an extra load margin. In torsional-rigidity mode it simply scales the torque.</p>
           <div class="mt-3 flex items-center gap-2 flex-wrap">
             <input id="keywayOn" type="checkbox" class="w-4 h-4 accent-sky-500" onchange="syncKeywayUI(false);calculateShaftDiameter()">
             <label for="keywayOn" class="text-xs font-semibold text-gray-600">Additional keyway diameter allowance</label>
             <input id="keywayPct" type="number" value="8" step="1" min="0" max="30" class="input-field" style="width:80px;padding:6px 8px;" oninput="calculateShaftDiameter()">
             <span class="text-xs text-gray-500">% on diameter</span>
-            <p class="text-[11px] text-gray-400 w-full mt-1">A flat percentage is a rule-of-thumb allowance, not a stress-concentration calculation — the real effect depends on keyway geometry, fillet radius and material notch sensitivity.</p>
+            <p class="text-xs text-gray-400 mt-1">A flat percentage is a rule-of-thumb allowance, not a stress-concentration calculation. Use either this allowance or a keyway-adjusted allowable stress, never both.</p>
           </div>
           <p id="keywayWarn" class="hidden-field text-[11px] mt-2 rounded-lg px-3 py-2"></p>
         </div>
