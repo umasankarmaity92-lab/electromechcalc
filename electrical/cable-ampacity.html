@@ -307,29 +307,55 @@
   .calc-panel{ display:none; }
   .calc-panel.active{ display:block; }
 
-  /* The buried-mode info marker used .info-icon / .info-tooltip but this
-     page carried no rule for either, so the tooltip text rendered as a
-     permanently visible block of raw prose under the depth field. */
+  /* Info icon — same pattern, sizing and colours as the rest of the site
+     (see transformer-size.html): a small green italic "i" sitting inline in
+     the field label, with the hint text hidden until hover, focus or tap.
+     The tooltip drops BELOW the label and is left-aligned to the icon, so it
+     stays inside the input panel instead of spilling over the result column
+     and being clipped. */
   .info-icon{
-    display:inline-flex; align-items:center; justify-content:center;
-    width:18px; height:18px; border-radius:9999px;
-    background:#0ea5e9; color:#fff;
-    font-size:11px; font-weight:700; font-family:'Inter',system-ui,sans-serif;
-    cursor:help; position:relative; line-height:1; user-select:none;
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:15px;
+    height:15px;
+    border-radius:50%;
+    background:#16a34a;
+    color:#fff;
+    font-size:10px;
+    font-weight:700;
+    font-style:italic;
+    line-height:1;
+    cursor:pointer;
+    flex-shrink:0;
   }
-  .info-icon:focus-visible{ outline:2px solid #0369a1; outline-offset:2px; }
-  .info-tooltip{
-    display:none; position:absolute; right:0; bottom:26px; z-index:20;
-    width:min(280px, 70vw); padding:9px 11px;
-    background:#0B1220; color:#e2e8f0;
-    font-size:11.5px; font-weight:400; line-height:1.55; text-align:left;
-    border-radius:8px; box-shadow:0 8px 20px rgba(11,18,32,0.25);
+  .info-icon .info-tooltip{
+    display:none;
+    position:absolute;
+    left:0;
+    top:135%;
+    z-index:30;
+    width:230px;
+    max-width:60vw;
+    background:#111827;
+    color:#fff;
+    font-size:11px;
+    font-weight:400;
+    font-style:normal;
+    text-transform:none;
+    letter-spacing:normal;
+    line-height:1.45;
+    padding:8px 10px;
+    border-radius:6px;
+    box-shadow:0 6px 16px rgba(0,0,0,.2);
   }
   .info-icon:hover .info-tooltip,
   .info-icon:focus .info-tooltip,
-  .info-icon:focus-within .info-tooltip,
-  .info-icon.open .info-tooltip{ display:block; }
-  body.dark-theme .info-tooltip{ background:#1e293b; border:1px solid #334155; }
+  .info-icon:focus-visible .info-tooltip,
+  .info-icon.open .info-tooltip{
+    display:block;
+  }
 
   /* Toggle track: without a filled track the inactive button is transparent
      text on a white card and doesn't read as a control at all in light mode. */
@@ -361,11 +387,6 @@
   .amp-ok{ background:rgba(16,185,129,0.16); color:#34d399; }
   .amp-bad{ background:rgba(239,68,68,0.16); color:#f87171; }
   .amp-idle{ background:rgba(148,163,184,0.18); color:#cbd5e1; }
-  /* Field label + info marker on one row. Guidance that used to sit as a
-     permanent paragraph under each input now lives in the tooltip, so the
-     panel stays scannable and the explanation is one hover/tap away. */
-  .label-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
-  .label-row label{ flex:1; min-width:0; }
 
   /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
   .nav-icon-badge{
@@ -592,10 +613,13 @@
         </div>
 
         <div>
-          <div class="label-row">
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="harmonicFactor">Harmonic / Neutral Loading</label>
-            <span class="info-icon" tabindex="0" role="button" aria-label="More information about harmonicFactor">i<span class="info-tooltip">Triplen (3rd, 9th&hellip;) harmonics add in the neutral of a four-wire circuit instead of cancelling, so a cable feeding non-linear loads &mdash; VFDs, LED drivers, switched-mode supplies &mdash; runs hotter than its sinusoidal rating allows. Illustrative reference factors; above 33% the standard sizes the cable on neutral current instead, which this simplification does not reproduce.</span></span>
-          </div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="harmonicFactor">
+            Harmonic / Neutral Loading
+            <span class="info-icon" tabindex="0" role="button" aria-label="More information about harmonicFactor">
+              i
+              <span class="info-tooltip">Triplen (3rd, 9th&hellip;) harmonics add in the neutral of a four-wire circuit instead of cancelling, so a cable feeding non-linear loads &mdash; VFDs, LED drivers, switched-mode supplies &mdash; runs hotter than its sinusoidal rating allows. Illustrative reference factors; above 33% the standard sizes the cable on neutral current instead, which this simplification does not reproduce.</span>
+            </span>
+          </label>
           <select id="harmonicFactor" class="input-field mt-2">
             <option value="none" selected>No significant harmonics (3rd harmonic below 15%)</option>
             <option value="h15">Third harmonic 15&ndash;33% of line current</option>
@@ -609,17 +633,23 @@
             <input id="ambientTemp" type="number" value="40" step="any" min="-40" max="120" placeholder="e.g. 40" class="input-field mt-2">
           </div>
           <div>
-            <div class="label-row">
-              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="numCircuits">Number of Loaded Circuits Grouped Together</label>
-              <span class="info-icon" tabindex="0" role="button" aria-label="More information about numCircuits">i<span class="info-tooltip">Count every loaded circuit bunched in the same conduit, tray or clipped bundle &mdash; including the parallel runs of this same circuit, if they share that route.</span></span>
-            </div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="numCircuits">
+              Number of Loaded Circuits Grouped Together
+              <span class="info-icon" tabindex="0" role="button" aria-label="More information about numCircuits">
+                i
+                <span class="info-tooltip">Count every loaded circuit bunched in the same conduit, tray or clipped bundle &mdash; including the parallel runs of this same circuit, if they share that route.</span>
+              </span>
+            </label>
             <input id="numCircuits" type="number" value="1" step="1" min="1" max="100" placeholder="e.g. 1" class="input-field mt-2">
           </div>
           <div>
-            <div class="label-row">
-              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="thermalInsulation">Cable Surrounded by Thermal Insulation</label>
-              <span class="info-icon" tabindex="0" role="button" aria-label="More information about thermalInsulation">i<span class="info-tooltip">A cable buried in loft or wall insulation cannot shed heat sideways, so even a short enclosed length costs ampacity. Illustrative reference factors.</span></span>
-            </div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="thermalInsulation">
+              Cable Surrounded by Thermal Insulation
+              <span class="info-icon" tabindex="0" role="button" aria-label="More information about thermalInsulation">
+                i
+                <span class="info-tooltip">A cable buried in loft or wall insulation cannot shed heat sideways, so even a short enclosed length costs ampacity. Illustrative reference factors.</span>
+              </span>
+            </label>
             <select id="thermalInsulation" class="input-field mt-2">
               <option value="none" selected>Not in thermal insulation</option>
               <option value="50">Enclosed in insulation for about 50 mm</option>
@@ -647,7 +677,13 @@
             </select>
           </div>
           <div>
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="depthOfLaying">Depth of Laying (m)</label>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="depthOfLaying">
+              Depth of Laying (m)
+              <span class="info-icon" tabindex="0" role="button" aria-label="What buried-mode correction covers">
+                i
+                <span class="info-tooltip">Buried-cable grouping/spacing correction is not included here &mdash; this mode covers ground temperature, soil thermal resistivity, and depth of laying only. Consult the applicable standard&rsquo;s table or manufacturer data for grouped buried-cable spacing factors.</span>
+              </span>
+            </label>
             <select id="depthOfLaying" class="input-field mt-2">
               <option value="0.5">0.5 m</option>
               <option value="0.7" selected>0.7 m (reference)</option>
@@ -657,27 +693,27 @@
               <option value="2.5">2.5 m</option>
             </select>
           </div>
-          <div class="flex justify-end">
-            <span class="info-icon" tabindex="0" role="button" aria-label="More info">
-              i
-              <span class="info-tooltip">Buried-cable grouping/spacing correction is not included here — this mode covers ground temperature, soil thermal resistivity, and depth of laying only. Consult the applicable standard's table or manufacturer data for grouped buried-cable spacing factors.</span>
-            </span>
-          </div>
         </div>
 
         <div>
-          <div class="label-row">
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="parallelRuns">Parallel Runs per Phase</label>
-            <span class="info-icon" tabindex="0" role="button" aria-label="More information about parallelRuns">i<span class="info-tooltip">Identical cables run in parallel share the load, so total capacity is the derated figure multiplied by the number of runs. Parallel runs also count as grouped circuits &mdash; include them in the grouping field above when they share a route.</span></span>
-          </div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="parallelRuns">
+            Parallel Runs per Phase
+            <span class="info-icon" tabindex="0" role="button" aria-label="More information about parallelRuns">
+              i
+              <span class="info-tooltip">Identical cables run in parallel share the load, so total capacity is the derated figure multiplied by the number of runs. Parallel runs also count as grouped circuits &mdash; include them in the grouping field above when they share a route.</span>
+            </span>
+          </label>
           <input id="parallelRuns" type="number" value="1" step="1" min="1" max="20" placeholder="e.g. 1" class="input-field mt-2">
         </div>
 
         <div>
-          <div class="label-row">
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="designLoad">Design Load Current (A) &mdash; optional</label>
-            <span class="info-icon" tabindex="0" role="button" aria-label="More information about designLoad">i<span class="info-tooltip">Enter the continuous design current and the calculator checks it against the derated capacity, and works back to the minimum base ampacity you need to look up in your cable table.</span></span>
-          </div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="designLoad">
+            Design Load Current (A) &mdash; optional
+            <span class="info-icon" tabindex="0" role="button" aria-label="More information about designLoad">
+              i
+              <span class="info-tooltip">Enter the continuous design current and the calculator checks it against the derated capacity, and works back to the minimum base ampacity you need to look up in your cable table.</span>
+            </span>
+          </label>
           <input id="designLoad" type="number" value="" step="any" min="0" max="100000" placeholder="Leave blank to skip the load check" class="input-field mt-2">
         </div>
       </div>
@@ -1384,6 +1420,7 @@
     }
     icons.forEach(function(icon){
       icon.addEventListener('click', function(ev){
+        ev.preventDefault();
         ev.stopPropagation();
         var willOpen = !icon.classList.contains('open');
         closeAll(icon);
