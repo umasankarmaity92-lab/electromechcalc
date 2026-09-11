@@ -5,12 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#ffffff">
 
-<!-- ===================== THEME (FLASH/CLS PREVENTION) =====================
-     Runs synchronously, before any stylesheet or paint, so the correct
-     dark-theme/light-theme class is already present on <html> the instant
-     CSS starts applying. A matching inline script sits right after the body tag opens to cover body.dark-theme / body.light-theme selectors too.
-     site-nav.js still re-applies both classes on DOMContentLoaded as a
-     no-op safety net and handles the toggle button switching themes. -->
+<!-- ===================== THEME (FLASH/CLS PREVENTION) ===================== -->
 <script>
 (function(){
   try {
@@ -23,37 +18,32 @@
 </script>
 
 <!-- ===================== [PER-PAGE] TITLE ===================== -->
-<title>Shaft Torque Calculator (Power & RPM) | ElectroMechCalc</title>
+<title>Shaft Torque Calculator (Torsion &amp; Power) | ElectroMechCalc</title>
 
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
      crossorigin="anonymous"></script>
 
 <!-- ===================== [PER-PAGE] SEO META ===================== -->
-<meta name="description" content="Free Shaft Torque Calculator. Enter power (kW or HP) and rotational speed (RPM) to instantly get shaft torque in Nm, kgf·m, and lb·ft, with the full formula and a worked example.">
-<meta name="keywords" content="shaft torque calculator, torque from power and rpm, motor shaft torque, torque formula Nm, power to torque conversion">
-<meta name="robots" content="index, follow">
-<!-- mechanical = electrical | mechanical | financial (no slashes).
-     shaft-torque = extensionless slug only, e.g. "cable-derating" — NOT
-     "cable-derating.html". Cloudflare Pages 308-redirects any .html
-     request to its extensionless URL, so canonical/og:url/JSON-LD must
-     always describe the extensionless /<category>/<slug> URL, or
-     Google logs "Page with redirect" and won't index the page. -->
+<meta name="description" content="Free shaft torque calculator. Get torque from power and rpm, or find torsional shear stress, polar moment of inertia, angle of twist, stiffness, shear strain and maximum torque capacity of a shaft.">
+<meta name="keywords" content="shaft torque calculator, torque from power and rpm, torsional shear stress calculator, angle of twist calculator, polar moment of inertia shaft, torsional stiffness calculator, shear strain shaft, maximum torque capacity shaft, hollow shaft torque, T = tau J / r">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<meta name="author" content="Umasankar Maity">
 <link rel="canonical" href="https://www.electromechcalc.com/mechanical/shaft-torque">
 <link rel="icon" href="/favicon.png" type="image/png">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ElectroMechCalc">
-<meta property="og:title" content="Shaft Torque Calculator">
-<meta property="og:description" content="Free Shaft Torque Calculator. Enter power and RPM to get shaft torque in Nm, kgf·m, and lb·ft instantly, with formula and worked example.">
+<meta property="og:title" content="Shaft Torque Calculator (Torsion &amp; Power)">
+<meta property="og:description" content="Torque from power and rpm, plus shear stress, angle of twist, stiffness and torque capacity for solid and hollow shafts.">
 <meta property="og:url" content="https://www.electromechcalc.com/mechanical/shaft-torque">
 <meta property="og:image" content="https://www.electromechcalc.com/logo.png">
 <meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Shaft Torque Calculator">
-<meta name="twitter:description" content="Free Shaft Torque Calculator. Enter power and RPM to get shaft torque in Nm, kgf·m, and lb·ft instantly, with formula and worked example.">
+<meta name="twitter:title" content="Shaft Torque Calculator (Torsion &amp; Power)">
+<meta name="twitter:description" content="Torque from power and rpm, plus shear stress, twist angle, stiffness and torque capacity. Solid and hollow shafts.">
 <meta name="twitter:image" content="https://www.electromechcalc.com/logo.png">
 
 <!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
@@ -61,12 +51,21 @@
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "Shaft Torque Calculator",
+  "name": "Shaft Torque Calculator (Torsion & Power)",
   "url": "https://www.electromechcalc.com/mechanical/shaft-torque",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "description": "Free Shaft Torque Calculator. Enter power (kW or HP) and rotational speed (RPM) to instantly get shaft torque in Nm, kgf·m, and lb·ft, with the full formula and a worked example.",
+  "featureList": [
+    "Torque, power or speed — solve for any one from the other two",
+    "Torsional shear stress and polar moment of inertia for solid and hollow shafts",
+    "Angle of twist, twist per metre and torsional stiffness",
+    "Shear strain from shear stress and modulus of rigidity",
+    "Torque from shear stress using T = tau x J / r",
+    "Maximum torque capacity from allowable shear stress or permissible twist",
+    "Mechanical efficiency allowance and full unit conversion"
+  ],
+  "description": "Free shaft torque calculator. Get torque from power and rpm, or find torsional shear stress, polar moment of inertia, angle of twist, stiffness, shear strain and maximum torque capacity of a shaft.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
 </script>
@@ -86,47 +85,94 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to calculate shaft torque",
+  "description": "Find shaft torque from transmitted power and rotational speed, then check the shear stress and angle of twist the torque produces in the shaft.",
+  "totalTime": "PT2M",
+  "step": [
+    { "@type": "HowToStep", "name": "Pick what you want to find", "text": "Choose torque, power or speed when you are working from a drive rating, or choose the torsion mode to get shear stress and twist from a known torque." },
+    { "@type": "HowToStep", "name": "Enter power and speed", "text": "Enter the transmitted power and the shaft speed in rpm. Torque follows from T = 60P divided by 2 pi N, or the shortcut T (Nm) = 9550 x P(kW) divided by N(rpm)." },
+    { "@type": "HowToStep", "name": "Allow for losses", "text": "If the power figure is an input rating rather than shaft output, enter the mechanical efficiency so the calculator works from the power actually reaching the shaft." },
+    { "@type": "HowToStep", "name": "Add the shaft geometry", "text": "For the torsion checks, enter the shaft diameter and length, select solid or hollow, and give the modulus of rigidity of the material." },
+    { "@type": "HowToStep", "name": "Read stress, twist and capacity", "text": "The calculator returns the polar moment of inertia, maximum shear stress, angle of twist, torsional stiffness and shear strain, and can compare the torque against the shaft's allowable capacity." }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "What is the formula for shaft torque from power and RPM?",
-      "acceptedAnswer": { "@type": "Answer", "text": "T (Nm) = 9550 × P (kW) ÷ N (rpm). This comes from the power-torque relationship P = T×ω, where ω (rad/s) = 2πN/60, rearranged and simplified with the constant 9550 (more precisely 60000/2π ≈ 9549.3)." }
+      "name": "What is the shaft torque formula?",
+      "acceptedAnswer": { "@type": "Answer", "text": "From a drive rating, T (Nm) = 60 x P (W) divided by (2 pi x N), which simplifies to T = 9550 x P(kW) divided by N(rpm). From the state of stress in the shaft itself, T = tau x J / r, where tau is the shear stress, J is the polar moment of inertia and r is the outer radius. Both describe the same torque, one from the power being transmitted and one from the stress that torque produces." }
     },
     {
       "@type": "Question",
-      "name": "Is this the motor's rated torque or the actual running torque?",
-      "acceptedAnswer": { "@type": "Answer", "text": "It's the steady-state torque corresponding to the power and speed you enter — effectively the rated or full-load torque if you enter rated power and rated speed. Starting torque, peak torque, and torque under a fluctuating load can differ significantly and aren't covered by this simple relation." }
+      "name": "How do I calculate torque from horsepower and rpm?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Convert horsepower to watts first (1 mechanical hp = 745.7 W), then use T = 60P / (2 pi N). In imperial units the same relation is T (lbf-ft) = 5252 x hp divided by rpm. A 20 hp drive at 1750 rpm therefore gives about 60 lbf-ft, or 81.4 Nm." }
     },
     {
       "@type": "Question",
-      "name": "How do I convert horsepower (HP) to torque instead of kW?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Select HP as the power unit — internally this calculator converts HP to kW (1 HP = 0.7457 kW) before applying the same T = 9550 × P(kW) ÷ N formula, so you get the identical result either way." }
+      "name": "Where does the constant 9550 come from?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It packages the unit conversions in P = T x omega. With omega = 2 pi N / 60 and power in kilowatts, T = 1000 x 60 x P / (2 pi N) = 9549.3 x P(kW) / N(rpm), which is rounded to 9550 in everyday use." }
     },
     {
       "@type": "Question",
-      "name": "Why does torque go down as RPM goes up, for the same power?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Because power is the product of torque and angular speed (P = T × ω) — for a fixed power output, torque and speed are inversely proportional. A motor delivering the same kW at a higher RPM does so with proportionally lower torque, and vice versa." }
+      "name": "How do you calculate shear stress in a shaft from torque?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Use tau = T x r / J. For a solid circular shaft J = pi d^4 / 32 and r = d/2, which reduces to tau = 16T / (pi d^3). The stress is highest at the outer surface and falls linearly to zero at the axis, which is why hollowing out the centre costs very little strength." }
     },
     {
       "@type": "Question",
-      "name": "Does this calculator account for gearbox reduction?",
-      "acceptedAnswer": { "@type": "Answer", "text": "No — it calculates torque directly at the power and RPM you enter. If you have a gearbox, apply the gear ratio to your RPM first (output RPM = input RPM ÷ ratio) if you want output-shaft torque, since torque increases roughly in proportion to the speed reduction (minus gearbox losses)." }
+      "name": "What is the polar moment of inertia of a shaft?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It measures how the cross-section resists twisting. For a solid circular shaft J = pi d^4 / 32. For a hollow shaft J = pi (do^4 - di^4) / 32. Because it depends on the fourth power of diameter, a 10 percent larger shaft is about 46 percent stiffer and stronger in torsion." }
     },
     {
       "@type": "Question",
-      "name": "What torque unit should I use for coupling or key design?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Most Indian and international mechanical design references (couplings, keys, shaft calculations) use Nm or Nmm — this calculator shows Nm by default, and Nmm (Nm × 1000) is easy to derive from the Nm figure shown for use directly in shaft diameter/key sizing formulas." }
+      "name": "What is the angle of twist formula for a shaft?",
+      "acceptedAnswer": { "@type": "Answer", "text": "theta = T x L / (G x J), with theta in radians, L the shaft length, G the modulus of rigidity (about 79.3 GPa for steel) and J the polar moment of inertia. Multiply by 180/pi for degrees. Long or precision drives are often limited to a twist of the order of 0.25 degrees per metre." }
     },
     {
       "@type": "Question",
-      "name": "Why do I need a service factor on top of this calculated torque?",
-      "acceptedAnswer": { "@type": "Answer", "text": "The raw T = 9550P/N figure is the average, steady running torque. Real drives see startup surges, shock loads, and cyclic variation — a service factor (typically 1.25–2.0+ depending on the application, per manufacturer/ASME guidance) is applied on top of this base torque before sizing shafts, keys, or couplings, to avoid undersizing for real-world conditions." }
+      "name": "What is torsional stiffness and how is it calculated?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Torsional stiffness is the torque needed per unit of twist, k = G x J / L, usually quoted in Nm per radian or Nm per degree. It sets how much wind-up a drivetrain has, which matters for positioning accuracy, torsional resonance and shock response." }
     },
     {
       "@type": "Question",
-      "name": "Is kgf·m or lb·ft ever used instead of Nm?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes — kgf·m is still common on older Indian nameplates and some technical literature, and lb·ft (or ft·lb) is standard in US/imperial contexts. This calculator shows all three (Nm, kgf·m, lb·ft) so you can match whichever your datasheet or drawing uses." }
+      "name": "How do you find the shear strain in a twisted shaft?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Shear strain at the surface is gamma = tau / G, and geometrically gamma = r x theta / L. It is dimensionless and usually tiny, so it is often quoted in microstrain (strain x 10^6). For steel at 40 MPa shear stress, gamma is about 0.0005, or 500 microstrain." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the maximum torque a shaft can transmit?",
+      "acceptedAnswer": { "@type": "Answer", "text": "From strength, T_max = tau_allow x J / r, which for a solid shaft is pi x tau_allow x d^3 / 16. From stiffness, T_max = G x J x theta_permissible / L. The governing capacity is whichever is smaller, since the shaft must satisfy both the stress limit and any twist limit." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a hollow shaft transmit less torque than a solid one?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For the same outer diameter, yes, but by less than you might expect. A bore of half the outer diameter removes a quarter of the metal but only about 6 percent of the torque capacity, because the removed material sits near the axis where stress is lowest. For the same weight, a hollow shaft with a larger outer diameter beats a solid one." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between torque and power?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Torque is the twisting effort at the shaft, measured in Nm. Power is the rate of doing work, torque multiplied by angular velocity. The same power can appear as high torque at low speed or low torque at high speed, which is exactly what a gearbox trades between." }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I use nameplate power or shaft output power?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The kW figure on an induction motor nameplate is rated mechanical output at the shaft, so it can be used directly. If your figure is an electrical input rating, or the torque you need is downstream of a gearbox or belt drive, apply the relevant efficiency first using the efficiency field in this calculator." }
+    },
+    {
+      "@type": "Question",
+      "name": "How does torque change after a gearbox?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Speed drops by the reduction ratio and torque rises by the same ratio, less the gearbox efficiency. A 10 Nm input through a 20:1 reducer at 95 percent efficiency gives about 190 Nm at the output shaft, running at one twentieth of the input speed." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does an induction motor hold full torque at reduced speed on a VFD?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Below base frequency a VFD holds roughly constant torque capability, so power falls in proportion to speed. Above base frequency the drive runs into constant-power, field-weakening territory and available torque falls off. Self-cooled motors also lose cooling at low speed, so continuous torque may have to be derated." }
     }
   ]
 }
@@ -164,10 +210,10 @@
 
   .formula-chip{
     font-family:'JetBrains Mono',monospace;
-    font-size:11px;
+    font-size:12.5px;
     background:#eaf6fd;
     color:#0369a1;
-    padding:3px 9px;
+    padding:5px 11px;
     border-radius:6px;
     display:inline-block;
   }
@@ -207,8 +253,17 @@
     background:#fff;
     box-shadow:0 0 0 3px rgba(14,165,233,0.12);
   }
+  select.input-field{ appearance:none; -webkit-appearance:none; background-image:none; cursor:pointer; }
+  .unit-row{ display:flex; gap:8px; }
+  .unit-row .input-field{ flex:1 1 auto; min-width:0; }
+  .unit-row select.input-field{ flex:0 0 42%; max-width:170px; font-size:13px; }
+
   .toggle-btn{
     flex:1;
+    appearance:none;
+    border:none;
+    background:transparent;
+    font-family:inherit;
     text-align:center;
     padding:10px 8px;
     font-size:13px;
@@ -223,6 +278,55 @@
     color:#fff;
     box-shadow:0 4px 10px rgba(14,165,233,0.35);
   }
+  .toggle-btn:hover{ opacity:.85; }
+  .toggle-btn:focus-visible{ outline:2px solid #0ea5e9; outline-offset:2px; }
+
+  /* Input info icon — small green "i" button; hint text appears as a
+     tooltip on hover/focus (keyboard-accessible). Same pattern as the
+     other calculator pages so the whole site stays consistent. */
+  .info-icon{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:15px;
+    height:15px;
+    border-radius:50%;
+    background:#16a34a;
+    color:#fff;
+    font-size:10px;
+    font-weight:700;
+    font-style:italic;
+    line-height:1;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .info-icon .info-tooltip{
+    display:none;
+    position:absolute;
+    left:0;
+    top:135%;
+    z-index:30;
+    width:230px;
+    max-width:60vw;
+    background:#111827;
+    color:#fff;
+    font-size:11px;
+    font-weight:400;
+    font-style:normal;
+    text-transform:none;
+    letter-spacing:normal;
+    line-height:1.45;
+    padding:8px 10px;
+    border-radius:6px;
+    box-shadow:0 6px 16px rgba(0,0,0,.2);
+  }
+  .info-icon:hover .info-tooltip,
+  .info-icon:focus .info-tooltip,
+  .info-icon:focus-visible .info-tooltip{
+    display:block;
+  }
+
   .hidden-field{ display:none !important; }
   .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
   .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
@@ -238,13 +342,9 @@
   }
   .breakdown-table td{ color:#111827; }
   .breakdown-wrap{
-    max-height:280px; overflow-y:auto; overflow-x:auto; margin-top:4px;
+    max-height:320px; overflow-y:auto; overflow-x:auto; margin-top:4px;
     border-radius:8px; border:1px solid #e5e7eb;
   }
-
-  /* search bar styles live in /assets/theme.css?v=2 — this page links the
-     shared stylesheet as the single source of truth for search-bar
-     layout, so no local duplicate is defined here. */
 
   .tab-pill{
     font-size:13px; font-weight:600; padding:9px 16px; border-radius:9999px;
@@ -259,6 +359,12 @@
 
   .calc-panel{ display:none; }
   .calc-panel.active{ display:block; }
+
+  .field-group{ border:1px dashed #e2e8f0; border-radius:12px; padding:14px; }
+  .field-group-title{
+    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.06em;
+    text-transform:uppercase; color:#0369a1; margin-bottom:10px; display:block;
+  }
 
   /* ===================== [SHARED] MOBILE NAV ICON BADGES ===================== */
   .nav-icon-badge{
@@ -282,28 +388,30 @@
   .mobile-dropdown summary .plus{ transition:transform .2s ease; }
   .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
 
-  /* ===================== [SHARED] DARK / LIGHT THEME TOGGLE =====================
-     .theme-switch / .theme-switch-dot styles live in /assets/theme.css?v=2 —
-     no local duplicate needed here. */
-
+  /* ===================== [SHARED] DARK / LIGHT THEME ===================== */
   body{ transition:background-color .2s ease, color .2s ease; }
   body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
-  /* Generic Tailwind utility dark-mode overrides (.bg-white, .bg-gray-50,
-     .text-gray-800, .text-brandDark, .text-gray-600, .border-gray-100)
-     live in /assets/theme.css?v=2 via CSS variables — only page-specific
-     component overrides (below) belong here. */
   body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  /* Toggle tab bars (shaft type, torque input mode): dark bar with white
+     text, active tab white on dark — matching the other calculator pages. */
+  #calculator .bg-gray-100:has(.toggle-btn){ background:#0B1220 !important; border:none !important; padding:3px !important; }
+  #calculator .toggle-btn{ color:#fff !important; }
+  #calculator .toggle-btn.active{ background:#fff !important; color:#0B1220 !important; box-shadow:none !important; font-weight:700; }
+  body.dark-theme #calculator .bg-gray-100:has(.toggle-btn){ background:#0f1c30 !important; border:1px solid #1f2f47 !important; }
+  body.dark-theme #calculator .toggle-btn.active{ background:#0ea5e9 !important; color:#fff !important; }
+  body.dark-theme .field-group-title{ color:#7dd3fc; }
+  body.dark-theme .calc-input-panel .text-gray-400{ color:#94a3b8; }
+  body.dark-theme .premium-disabled{ opacity:.45; }
+  body.dark-theme .field-group{ border-color:#1f2f47; }
   body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
   body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
   body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
   body.dark-theme .tab-pill{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
   body.dark-theme .quick-chip{ background:#111c2e; border-color:#1f2f47; }
   body.dark-theme .quick-chip .qval{ color:#e2e8f0; }
+  body.dark-theme .formula-chip{ background:rgba(14,165,233,0.12); color:#7dd3fc; }
 
-  /* ===================== [PER-PAGE] EXTRA STYLES (optional) ===================== */
-
-  /* .action-icon-btn was missing from this page's styles entirely,
-     leaving the Share/Copy/Yes/No/Feedback buttons unstyled. */
+  /* ===================== [PER-PAGE] EXTRA STYLES ===================== */
   .action-icon-btn{
     display:inline-flex;
     align-items:center;
@@ -322,23 +430,13 @@
   .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
   body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
 
-  .author-box{
-    border:2px solid #000000;
-  }
-  body.dark-theme .author-box{
-    border-color:#ffffff;
-    background:#0B1220;
-    color:#e2e8f0;
-  }
-  /* Prevents wide nowrap breakdown tables (and any other wide content in
-     the result column) from forcing flex/grid ancestors to expand past
-     the viewport on mobile — without this, overflow-x:auto on
-     .breakdown-wrap never gets a chance to kick in. */
+  .author-box{ border:2px solid #000000; }
+  body.dark-theme .author-box{ border-color:#ffffff; background:#0B1220; color:#e2e8f0; }
+
   .lg\:col-span-2.flex.flex-col.gap-4{ min-width:0; }
   .lg\:col-span-2.flex.flex-col.gap-4 > div{ min-width:0; }
   .breakdown-wrap{ min-width:0; }
-  /* Dark-mode fix: "Worked Example / Reference" box (bg-sky-50/60) had no
-     body.dark-theme override, so it stayed near-invisible in dark mode. */
+
   body.dark-theme #cs-example-box{
     background:rgba(14,165,233,0.07); border-color:#164e63;
   }
@@ -350,6 +448,41 @@
   body.dark-theme #cs-example-box .text-gray-500{ color:#7dd3fc; }
   body.dark-theme #cs-example-box .text-gray-600{ color:#cbd5e1; }
   body.dark-theme #cs-example-box .text-gray-700{ color:#e2e8f0; }
+
+  .ref-table{ width:100%; font-size:13px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden; border-collapse:collapse; }
+  .ref-table th{ background:#f8fafc; color:#475569; font-weight:600; text-align:left; padding:9px 12px; font-size:12.5px; }
+  .ref-table td{ padding:9px 12px; border-top:1px solid #eef2f7; color:#475569; }
+  body.dark-theme .ref-table{ border-color:#1f2f47; }
+  body.dark-theme .ref-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .ref-table td{ border-top-color:#1f2f47; color:#cbd5e1; }
+
+  .eq-box{
+    position:relative;
+    font-family:'JetBrains Mono',monospace;
+    font-size:17px;
+    font-weight:500;
+    line-height:2;
+    text-align:center;
+    white-space:pre-line;
+    background:#fffbeb;
+    border:1px solid #fde68a;
+    border-radius:12px;
+    padding:22px 66px 22px 26px;
+    overflow-x:auto;
+    color:#0f172a;
+  }
+  .eq-box::after{
+    content:attr(data-eq);
+    position:absolute; right:20px; top:50%; transform:translateY(-50%);
+    font-size:13px; color:#b45309; opacity:.85;
+  }
+  .eq-box strong{ font-weight:600; }
+  @media (max-width:640px){
+    .eq-box{ font-size:14.5px; line-height:1.95; padding:16px 16px; text-align:left; }
+    .eq-box::after{ position:static; transform:none; display:block; text-align:right; margin-top:10px; }
+  }
+  body.dark-theme .eq-box{ background:rgba(251,191,36,0.08); border-color:#78350f; color:#fde68a; }
+  body.dark-theme .eq-box::after{ color:#fbbf24; }
 
   .hero-typing-box{
     display:flex;
@@ -387,8 +520,7 @@
   @media (prefers-reduced-motion: reduce){
     .hero-cursor{ animation:none; }
   }
-</style>
-</head>
+</style></head>
 <body class="bg-gray-50 text-gray-800">
 <script>
 (function(){
@@ -400,16 +532,10 @@
 })();
 </script>
 
-<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH (same on every page) ===================== -->
+<!-- ===================== [SHARED] HEADER + NAVBAR + SEARCH ===================== -->
 <div id="site-header"></div>
 
-<!-- ===================== [SHARED] BREADCRUMB =====================
-     Filled server-side by functions/_middleware.js from
-     /search-index.json — same data source the Related Calculators
-     widget already uses. No per-page edits needed; add/rename/
-     re-categorize a page in search-index.json and every page's
-     breadcrumb updates automatically. Empty on non-calculator pages
-     (home, about, etc.) since middleware injects nothing there. -->
+<!-- ===================== [SHARED] BREADCRUMB ===================== -->
 <div id="breadcrumb"></div>
 
 <!-- ===================== [PER-PAGE] HERO ===================== -->
@@ -418,27 +544,25 @@
   <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
     <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
 
-      <!-- Text column -->
       <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
         <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
           <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
-          Mechanical · Shafts & Drives
+          Mechanical · Shafts &amp; Drives
         </span>
         <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
           Shaft Torque <span class="text-sky-400">Calculator</span>
         </h1>
     <div class="hero-typing-box">
-      <p class="hero-typing text-[#d4af37] text-sm font-mono font-bold justify-center" aria-label="Calculate Smarter. Work Faster. Practical Calculators & Maintenance Guides.">
+      <p class="hero-typing text-[#d4af37] text-sm font-mono font-bold justify-center" aria-label="Calculate Smarter. Work Faster. Practical Calculators &amp; Maintenance Guides.">
         <span id="heroTypingText">Calculate Smarter. Work Faster.</span><span class="hero-cursor" aria-hidden="true"></span>
       </p>
     </div>
 
         <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
-          Convert motor or shaft power and rotational speed into torque — Nm, kgf·m, and lb·ft — with the exact formula shown.
+          Get shaft torque from power and rpm — then check what that torque does to the shaft: <strong class="text-gray-200">shear stress, angle of twist, torsional stiffness, shear strain</strong> and maximum torque capacity, for solid or hollow shafts.
         </p>
       </div>
 
-      <!-- Animation column -->
       <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
         <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
           <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" aria-label="ElectroMechCalc" style="opacity:.9">
@@ -458,43 +582,298 @@
 
     <!-- INPUT PANEL -->
     <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
-            <div id="calcHeaderBar">
-        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Shaft Torque Details</h2>
-      <p class="text-xs text-gray-500 mb-6">Enter power and rotational speed to get shaft torque instantly.</p>
+      <div id="calcHeaderBar">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Shaft Torque Inputs</h2>
+        <p class="text-xs text-gray-500 mb-6">Pick what you want to calculate, enter the drive data or shaft geometry, and get the answer instantly.</p>
       </div>
 
       <div class="space-y-4 mb-5">
+
+        <!-- MODE -->
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="powerUnit">Power Unit</label>
-          <select id="powerUnit" class="input-field mt-2">
-            <option value="kw" selected>Kilowatts (kW)</option>
-            <option value="hp">Horsepower (HP)</option>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="calcMode">Calculation Mode<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">Power / torque / speed works from a drive rating. Torsion analysis works out what a known torque does inside the shaft. T = &tau;J/r gives torque from a known shear stress. Torque capacity gives the maximum a shaft can safely carry.</span>i</span></label>
+          <select id="calcMode" class="input-field mt-2" onchange="syncFields();calcShaftTorque()">
+            <option value="pts" selected>Power / torque / speed</option>
+            <option value="torsion">Torsion analysis — stress, twist &amp; strain</option>
+            <option value="fromstress">Torque from shear stress (T = τ·J/r)</option>
+            <option value="capacity">Maximum torque capacity of a shaft</option>
           </select>
         </div>
-        <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="power">Power</label>
-          <input id="power" type="number" value="15" step="0.1" min="0" placeholder="e.g. 15" class="input-field mt-2">
+
+        <!-- SOLVE FOR (pts) -->
+        <div id="grpSolve">
+          <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" id="tgLabelSolve">Solve For<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">Any one of power, torque and speed follows from the other two, through P = 2&pi;NT / 60. Pick the one you do not know.</span>i</span></span>
+          <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabelSolve">
+            <button type="button" class="toggle-btn active" id="btnSolveT" aria-pressed="true" onclick="setSolve('torque')">Torque</button>
+            <button type="button" class="toggle-btn" id="btnSolveP" aria-pressed="false" onclick="setSolve('power')">Power</button>
+            <button type="button" class="toggle-btn" id="btnSolveN" aria-pressed="false" onclick="setSolve('speed')">Speed</button>
+          </div>
         </div>
-        <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="rpm">Shaft Speed (RPM)</label>
-          <input id="rpm" type="number" value="1440" step="1" min="0" placeholder="e.g. 1440" class="input-field mt-2">
+
+        <!-- POWER -->
+        <div id="grpPower">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="power">Power (P)<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">The mechanical power at the shaft. An induction motor nameplate kW is already rated shaft output, so it can be used directly.</span>i</span></label>
+          <div class="unit-row mt-2">
+            <input id="power" type="number" value="15" step="0.1" min="0" placeholder="e.g. 15" class="input-field" oninput="calcShaftTorque()">
+            <select id="powerUnit" class="input-field" onchange="calcShaftTorque()">
+              <option value="1000" selected>kilowatts (kW)</option>
+              <option value="1">watts (W)</option>
+              <option value="1000000">megawatts (MW)</option>
+              <option value="745.699872">mechanical horsepower (hp)</option>
+              <option value="735.49875">metric horsepower (PS)</option>
+            </select>
+          </div>
         </div>
+
+        <!-- SPEED -->
+        <div id="grpSpeed">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="speed">Shaft Speed (N)<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">Use the speed of the shaft you are sizing. After a gearbox the speed drops and the torque rises by the reduction ratio.</span>i</span></label>
+          <div class="unit-row mt-2">
+            <input id="speed" type="number" value="1440" step="1" min="0" placeholder="e.g. 1440" class="input-field" oninput="calcShaftTorque()">
+            <select id="speedUnit" class="input-field" onchange="calcShaftTorque()">
+              <option value="1" selected>rev/min (rpm)</option>
+              <option value="60">rev/sec (Hz)</option>
+              <option value="9.549296586">radians/sec (rad/s)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- TORQUE -->
+        <div id="grpTorque">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="torque">Torque (T)<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">The actual twisting moment carried by the shaft &mdash; efficiency is not applied to it in the torsion modes. 1 kgf&middot;m = 9.807 Nm and 1 lbf&middot;ft = 1.356 Nm.</span>i</span></label>
+          <div class="unit-row mt-2">
+            <input id="torque" type="number" value="100" step="0.1" min="0" placeholder="e.g. 100" class="input-field" oninput="calcShaftTorque()">
+            <select id="torqueUnit" class="input-field" onchange="calcShaftTorque()">
+              <option value="1" selected>newton metres (N·m)</option>
+              <option value="0.001">newton millimetres (N·mm)</option>
+              <option value="1000">kilonewton metres (kN·m)</option>
+              <option value="9.80665">kilogram-force metres (kgf·m)</option>
+              <option value="0.0980665">kilogram-force centimetres (kgf·cm)</option>
+              <option value="1.35581795">pound-force feet (lbf·ft)</option>
+              <option value="0.112984829">pound-force inches (lbf·in)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- EFFICIENCY -->
+        <div id="grpEff">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="effPct">Mechanical Efficiency <span class="normal-case text-gray-400">(optional)</span><span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">Leave at 100% when the power figure is already shaft output, as an induction motor nameplate kW is. Lower it when power is lost between that rating and the shaft you are looking at &mdash; a belt drive, gearbox or coupling. Solving for power, the calculator shows shaft power and the input rating needed to produce it. Efficiency is not used in the torsion modes, which take the actual shaft torque as entered.</span>i</span></label>
+          <div class="unit-row mt-2">
+            <input id="effPct" type="number" value="100" step="1" min="1" max="100" placeholder="e.g. 95" class="input-field" oninput="calcShaftTorque()">
+            <select class="input-field" disabled><option>percent (%)</option></select>
+          </div>
+        </div>
+
+        <!-- SHAFT GEOMETRY -->
+        <div class="field-group hidden-field" id="grpGeom">
+          <span class="field-group-title inline-flex items-center gap-1.5" id="tgLabelShaftType">Shaft geometry<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">Torsional stress and twist both depend on the polar moment of inertia J, which scales with diameter to the fourth power. A 10% bigger shaft is about 46% stronger and stiffer in torsion.</span>i</span></span>
+
+          <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mb-3" role="group" aria-labelledby="tgLabelShaftType">
+            <button type="button" class="toggle-btn active" id="btnSolid" aria-pressed="true" onclick="setShaftType('solid')">Solid shaft</button>
+            <button type="button" class="toggle-btn" id="btnHollow" aria-pressed="false" onclick="setShaftType('hollow')">Hollow shaft</button>
+          </div>
+
+          <div id="grpJmodeWrap" class="hidden-field mb-3">
+            <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5" role="group" aria-labelledby="tgLabelShaftType">
+              <button type="button" class="toggle-btn active" id="btnJdia" aria-pressed="true" onclick="setJMode('dia')">From diameter</button>
+              <button type="button" class="toggle-btn" id="btnJdirect" aria-pressed="false" onclick="setJMode('direct')">Enter J and r</button>
+            </div>
+          </div>
+
+          <div id="grpDia" class="space-y-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="dOuter"><span id="dOuterLabel">Shaft Diameter (d)</span><span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">Outside diameter of the shaft at the section being checked. Use the smallest diameter along the loaded length, since that is where stress and twist are worst.</span>i</span></label>
+              <div class="unit-row mt-2">
+                <input id="dOuter" type="number" value="40" step="0.1" min="0" placeholder="e.g. 40" class="input-field" oninput="calcShaftTorque()">
+                <select id="dOuterUnit" class="input-field" onchange="calcShaftTorque()">
+                  <option value="1" selected>millimetres (mm)</option>
+                  <option value="10">centimetres (cm)</option>
+                  <option value="1000">metres (m)</option>
+                  <option value="25.4">inches (in)</option>
+                </select>
+              </div>
+            </div>
+            <div id="grpDi" class="hidden-field">
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="dInner">Bore / Inner Diameter (dᵢ)<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">Must be smaller than the outer diameter. Removing metal near the axis costs very little torque capacity, because shear stress there is close to zero.</span>i</span></label>
+              <div class="unit-row mt-2">
+                <input id="dInner" type="number" value="20" step="0.1" min="0" placeholder="e.g. 20" class="input-field" oninput="calcShaftTorque()">
+                <select id="dInnerUnit" class="input-field" onchange="calcShaftTorque()">
+                  <option value="1" selected>millimetres (mm)</option>
+                  <option value="10">centimetres (cm)</option>
+                  <option value="1000">metres (m)</option>
+                  <option value="25.4">inches (in)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div id="grpJdirect" class="hidden-field space-y-3">
+            <p class="text-xs text-gray-400">For a circular shaft, make sure J and r correspond to the same cross-section — entered values are used exactly as given, with no consistency check.</p>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="jVal">Polar Moment of Inertia (J)<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">Enter J directly when it comes from a drawing, a section table or your own calculation. For a solid circular shaft J = &pi;d&#8308;/32.</span>i</span></label>
+              <div class="unit-row mt-2">
+                <input id="jVal" type="number" value="251327" step="any" min="0" placeholder="e.g. 251327" class="input-field" oninput="calcShaftTorque()">
+                <select id="jUnit" class="input-field" onchange="calcShaftTorque()">
+                  <option value="1" selected>mm⁴</option>
+                  <option value="10000">cm⁴</option>
+                  <option value="1000000000000">m⁴</option>
+                  <option value="416231.426">in⁴</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="rVal">Outer Radius (r)<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">Distance from the shaft axis to the outermost fibre, where shear stress peaks. For a circular shaft this is half the outside diameter &mdash; make sure J and r describe the same cross-section, since the calculator takes both as entered.</span>i</span></label>
+              <div class="unit-row mt-2">
+                <input id="rVal" type="number" value="20" step="any" min="0" placeholder="e.g. 20" class="input-field" oninput="calcShaftTorque()">
+                <select id="rUnit" class="input-field" onchange="calcShaftTorque()">
+                  <option value="1" selected>millimetres (mm)</option>
+                  <option value="10">centimetres (cm)</option>
+                  <option value="1000">metres (m)</option>
+                  <option value="25.4">inches (in)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MATERIAL + LENGTH -->
+        <div class="field-group hidden-field" id="grpMat">
+          <span class="field-group-title inline-flex items-center gap-1.5">Material &amp; length<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">The modulus of rigidity G and the twisted length L are what turn a torque into an angle of twist and a shear strain.</span>i</span></span>
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="material">Material<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">Representative values for the shear modulus, not universal constants. Check your own material data, then switch to Custom if your figure differs.</span>i</span></label>
+              <select id="material" class="input-field mt-2" onchange="applyMaterial()">
+                <option value="custom">Custom — enter my own G</option>
+                <option value="steel" selected>Structural / carbon steel — G 79.3 GPa</option>
+                <option value="ss">Stainless steel 304 — G 77 GPa</option>
+                <option value="ci">Cast iron — G 41 GPa</option>
+                <option value="ti">Titanium alloy — G 44 GPa</option>
+                <option value="brass">Brass — G 37 GPa</option>
+                <option value="al">Aluminium 6061-T6 — G 26 GPa</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="gMod">Modulus of Rigidity (G)<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">Also called the shear modulus. About 79.3 GPa for steel, 77 GPa for 304 stainless, 44 GPa for titanium alloy, 41 GPa for cast iron, 37 GPa for brass and 26 GPa for aluminium.</span>i</span></label>
+              <div class="unit-row mt-2">
+                <input id="gMod" type="number" value="79.3" step="0.1" min="0" placeholder="e.g. 79.3" class="input-field" oninput="markCustomMaterial();calcShaftTorque()">
+                <select id="gUnit" class="input-field" onchange="calcShaftTorque()">
+                  <option value="1000" selected>gigapascals (GPa)</option>
+                  <option value="1">megapascals (MPa)</option>
+                  <option value="0.00689476">pounds per sq. inch (psi)</option>
+                  <option value="6.89476">kilopounds per sq. inch (ksi)</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="shaftLen">Shaft Length (L)<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">The twisted length between the driving and driven ends. Twist is proportional to length, so a shaft twice as long twists twice as much under the same torque.</span>i</span></label>
+              <div class="unit-row mt-2">
+                <input id="shaftLen" type="number" value="1" step="0.01" min="0" placeholder="e.g. 1" class="input-field" oninput="calcShaftTorque()">
+                <select id="lenUnit" class="input-field" onchange="calcShaftTorque()">
+                  <option value="1000" selected>metres (m)</option>
+                  <option value="1">millimetres (mm)</option>
+                  <option value="10">centimetres (cm)</option>
+                  <option value="25.4">inches (in)</option>
+                  <option value="304.8">feet (ft)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SHEAR STRESS INPUT -->
+        <div class="field-group hidden-field" id="grpTau">
+          <span class="field-group-title inline-flex items-center gap-1.5" id="tauGroupTitle">Shear stress<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">In T = &tau;J/r this is the working shear stress at the outer surface. As an allowable limit, ASME transmission-shaft practice takes 56 MPa without a keyway and 42 MPa with one.</span>i</span></span>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tauVal"><span id="tauLabel">Shear Stress (τ)</span></label>
+          <div class="unit-row mt-2">
+            <input id="tauVal" type="number" value="42" step="any" min="0" placeholder="e.g. 42" class="input-field" oninput="calcShaftTorque()">
+            <select id="tauUnit" class="input-field" onchange="calcShaftTorque()">
+              <option value="1" selected>megapascals (MPa = N/mm²)</option>
+              <option value="0.000001">pascals (Pa = N/m²)</option>
+              <option value="0.001">kilopascals (kPa)</option>
+              <option value="1000">gigapascals (GPa)</option>
+              <option value="0.00689476">pounds per sq. inch (psi)</option>
+              <option value="6.89476">kilopounds per sq. inch (ksi)</option>
+              <option value="0.0980665">kgf per sq. cm (kgf/cm²)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- PERMISSIBLE TWIST (capacity mode) -->
+        <div class="field-group hidden-field" id="grpTwistLimit">
+          <span class="field-group-title inline-flex items-center gap-1.5">Permissible twist<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">Optional stiffness limit. The capacity is then the smaller of the stress-limited and twist-limited torques. A figure such as 0.25&deg; per metre is often quoted for precision drives.</span>i</span></span>
+          <div class="flex items-center gap-2 flex-wrap mb-3">
+            <input id="twistLimitOn" type="checkbox" class="w-4 h-4 accent-sky-500" checked onchange="calcShaftTorque()">
+            <label for="twistLimitOn" class="text-xs font-semibold text-gray-600">Also limit by angle of twist</label>
+          </div>
+          <div class="unit-row">
+            <input id="thetaLimit" type="number" value="0.25" step="0.05" min="0" placeholder="e.g. 0.25" class="input-field" oninput="calcShaftTorque()">
+            <select id="thetaBasis" class="input-field" onchange="calcShaftTorque()">
+              <option value="perlen" selected>degrees over the shaft length</option>
+              <option value="permetre">degrees per metre</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- REFERENCE SPEED (capacity mode) -->
+        <div class="field-group hidden-field" id="grpRefSpeed">
+          <span class="field-group-title inline-flex items-center gap-1.5">Reference speed <span class="normal-case">(optional)</span><span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">Only used to express the torque capacity as an equivalent power, through P = 2&pi;NT / 60. It does not affect the capacity itself, which depends on the shaft section and its limits alone.</span>i</span></span>
+          <div class="flex items-center gap-2 flex-wrap mb-3">
+            <input id="refSpeedOn" type="checkbox" class="w-4 h-4 accent-sky-500" onchange="calcShaftTorque()">
+            <label for="refSpeedOn" class="text-xs font-semibold text-gray-600">Show the equivalent power at a given speed</label>
+          </div>
+          <div class="unit-row">
+            <input id="refSpeed" type="number" value="1440" step="1" min="0" placeholder="e.g. 1440" class="input-field" oninput="calcShaftTorque()">
+            <select class="input-field" disabled><option>rev/min (rpm)</option></select>
+          </div>
+        </div>
+
+        <!-- OUTPUT UNITS -->
+        <div class="field-group">
+          <span class="field-group-title inline-flex items-center gap-1.5">Output units<span class="info-icon" tabindex="0" role="button" aria-label="More information"><span class="info-tooltip">Changes how the headline result is displayed. Every conversion is done internally in SI, so switching units never changes the underlying answer.</span>i</span></span>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="outTorqueUnit">Show Torque In</label>
+              <select id="outTorqueUnit" class="input-field mt-2" onchange="calcShaftTorque()">
+                <option value="1" selected>newton metres (N·m)</option>
+                <option value="1000">kilonewton metres (kN·m)</option>
+                <option value="9.80665">kilogram-force metres (kgf·m)</option>
+                <option value="1.35581795">pound-force feet (lbf·ft)</option>
+                <option value="0.112984829">pound-force inches (lbf·in)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="outStressUnit">Show Stress In</label>
+              <select id="outStressUnit" class="input-field mt-2" onchange="calcShaftTorque()">
+                <option value="1" selected>megapascals (MPa)</option>
+                <option value="0.00689476">pounds per sq. inch (psi)</option>
+                <option value="6.89476">kilopounds per sq. inch (ksi)</option>
+                <option value="0.0980665">kgf per sq. cm (kgf/cm²)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
-      <button onclick="calculateShaftTorque()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+      <button onclick="calcShaftTorque()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate
       </button>
 
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
-        <span class="formula-chip">T (Nm) = 9550 × P(kW) ÷ N(rpm)</span>
+        <span class="formula-chip">T = 9550 · P(kW) / N(rpm)</span>
+        <span class="formula-chip">T = τ · J / r</span>
+        <span class="formula-chip">J = π·d⁴ / 32</span>
+        <span class="formula-chip">θ = T·L / (G·J)</span>
+        <span class="formula-chip">k = G·J / L</span>
+        <span class="formula-chip">γ = τ / G</span>
       </div>
     </div>
 
     <!-- RESULT PANEL -->
     <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
-            <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Shaft Torque</span>
         <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
@@ -502,19 +881,32 @@
 
         <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Torque (kgf·m)</span>
-            <span id="rKgfm" class="font-display font-semibold text-lg">—</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rT1Label">Torque (kgf·m)</span>
+            <span id="rT1" class="font-display font-semibold text-lg">—</span>
           </div>
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Torque (lb·ft)</span>
-            <span id="rLbft" class="font-display font-semibold text-lg">—</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rT2Label">Torque (lbf·ft)</span>
+            <span id="rT2" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rT3Label">Shear Stress</span>
+            <span id="rT3" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rT4Label">Angle of Twist</span>
+            <span id="rT4" class="font-display font-semibold text-lg">—</span>
           </div>
         </div>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">What this means</span>
+        <p id="verdictNote" class="text-xs text-gray-500 leading-relaxed">Choose a mode and enter values to see how the result was reached.</p>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
-        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a step-by-step breakdown.</p></div>
       </div>
 
     </div>
@@ -541,7 +933,7 @@
   </div>
 </section>
 
-<!-- ===================== RELATED CALCULATORS (moved below Share/Feedback bar) ===================== -->
+<!-- ===================== RELATED CALCULATORS ===================== -->
 <section class="max-w-6xl mx-auto px-4 mb-6">
   <div id="relatedCalculatorsBox" class="bg-white rounded-xl border border-gray-100 p-4" data-copy-exclude>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
@@ -552,11 +944,11 @@
           <a href="/mechanical/key-size" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
             Key Size Calculator <span class="text-sky-500">→</span>
           </a>
-          <a href="/bearing-life" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
-            Bearing Life Calculator <span class="text-sky-500">→</span>
+          <a href="/mechanical/pulley-ratio" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            Pulley Ratio Calculator <span class="text-sky-500">→</span>
           </a>
-          <a href="/gear-ratio" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
-            Gear Ratio Calculator <span class="text-sky-500">→</span>
+          <a href="/mechanical-calculators" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+            All Mechanical Calculators <span class="text-sky-500">→</span>
           </a>
         </div>
       </div>
@@ -567,90 +959,219 @@
   <div class="border border-gray-200 rounded-xl bg-white p-5">
     <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
     <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
-      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
-      <li><a href="#how-it-works" class="hover:underline">2. Understanding shaft torque</a></li>
-      <li><a href="#second" class="hover:underline">3. Torque at a glance (reference table)</a></li>
-      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
-      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+      <li><a href="#calculator" class="hover:underline">1. Use the shaft torque calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Torque from power and speed</a></li>
+      <li><a href="#stress" class="hover:underline">3. Shear stress and polar moment (J)</a></li>
+      <li><a href="#twist" class="hover:underline">4. Angle of twist and stiffness</a></li>
+      <li><a href="#strain" class="hover:underline">5. Shear strain in a twisted shaft</a></li>
+      <li><a href="#capacity" class="hover:underline">6. Maximum torque a shaft can carry</a></li>
+      <li><a href="#units" class="hover:underline">7. Torque unit conversions</a></li>
+      <li><a href="#second" class="hover:underline">8. Torque at common power &amp; speed</a></li>
+      <li><a href="#examples" class="hover:underline">9. Worked examples</a></li>
+      <li><a href="#mistakes" class="hover:underline">10. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">11. FAQs</a></li>
     </ul>
   </div>
 </nav>
-
 <!-- ===================== EXPLANATION ===================== -->
 <section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
   <div class="max-w-3xl mx-auto px-4">
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
-      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial plant maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard mechanical engineering power-torque relation (SI units, IS/IEC motor rating conventions)</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Design references: standard power–torque relation P = T&omega;, the torsion equation T/J = &tau;/r = G&theta;/L, and established machine-design practice.</p>
     </div>
+
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Shaft Torque Is Calculated from Power and Speed</h2>
+
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-            <p>Every rotating shaft transmits power as a combination of torque (twisting force) and rotational speed — the same power can be delivered as high torque at low speed, or low torque at high speed, and shaft torque is the number that actually matters when you're sizing the shaft diameter, selecting a coupling, choosing a key, or specifying a chain or belt drive downstream of a motor or gearbox.</p>
+      <p>A rotating shaft carries power as a combination of <strong>torque</strong> (twisting effort) and <strong>speed</strong>. The same power can arrive as a lot of torque turning slowly, or a little torque turning fast — which is exactly the trade a gearbox makes. The relationship is:</p>
 
-      <p><strong>Formula used:</strong> T (Nm) = 9550 × P (kW) ÷ N (rpm). The constant 9550 comes directly from the fundamental relationship between power, torque, and angular velocity: P = T × ω, where angular velocity ω (in radians per second) equals 2πN/60 for a speed of N revolutions per minute. Rearranging P = T × (2πN/60) for T gives T = 60P/(2πN) = 9549.3P/N, which is rounded to 9550 in virtually every mechanical engineering handbook and textbook.</p>
+      <div class="not-prose eq-box my-5" data-eq="(1)">P = T × ω&nbsp;&nbsp;where&nbsp;&nbsp;ω = 2πN / 60</div>
 
-      <p><strong>Worked example:</strong> a 15 kW three-phase induction motor running at its rated speed of 1440 RPM (a common rated speed for a 4-pole motor on a 50 Hz supply, after accounting for typical slip) delivers a shaft torque of T = 9550 × 15 ÷ 1440 ≈ 99.5 Nm. That same motor at a slower 720 RPM (an 8-pole equivalent) would deliver roughly double the torque — about 199 Nm — for the identical 15 kW power rating, which is exactly why lower-speed motors are physically larger and heavier for the same power output.</p>
+      <p>Rearranged for torque, with power in watts and speed in rev/min:</p>
 
-      <p><strong>Why speed and torque trade off inversely:</strong> since power is fixed by the motor's electrical rating (or by whatever mechanical power source you're working from), and power equals torque multiplied by angular speed, any increase in speed at constant power necessarily means a proportional decrease in torque, and vice versa. This is the same underlying principle that makes a bicycle's lower gear feel "harder to spin but easier to push" — lower gear ratio, lower speed, higher torque at the wheel for the same rider power output.</p>
+      <div class="not-prose eq-box my-5" data-eq="(2)">T (N·m) = 60 × P (W) / (2π × N)&nbsp;&nbsp;→&nbsp;&nbsp;T = 9550 × P (kW) / N (rpm)</div>
 
-      <p><strong>From electrical input power to mechanical shaft power:</strong> if the power figure you have is the motor's electrical input rating (as read from a nameplate's kW figure, which for an induction motor is typically already the rated mechanical output, not electrical input — check your specific nameplate), remember that gearbox, belt, or coupling losses downstream will reduce the torque actually available at the far end of the drive train. This calculator computes torque at the point where you apply the power and speed figures you enter — it does not automatically apply any efficiency loss.</p>
+      <p>The familiar 9550 simply packs those unit conversions into one number: 1000 × 60 ÷ 2π = 9549.3, rounded for everyday use. In imperial units the same relation reads T (lbf·ft) = 5252 × hp ÷ rpm, where 5252 is 33,000 ÷ 2π.</p>
 
-      <p><strong>Torque and current in an induction motor:</strong> at a given voltage, motor current draw is roughly proportional to the load torque demanded of it (up to the motor's rated torque, beyond which slip and current rise disproportionately) — this is why a torque calculation from power and speed is often the missing link engineers need when troubleshooting why a motor is drawing more current than its nameplate rating suggests it should for a given process. If your calculated required torque exceeds the motor's rated torque at its rated speed, the motor will draw excess current, run hot, and eventually trip on overload — a strong signal the motor is undersized for the actual mechanical demand, not a wiring or supply fault.</p>
+      <p><strong>Worked example:</strong> a 15 kW motor at 1440 rpm gives T = 9550 × 15 ÷ 1440 = <strong>99.5 N·m</strong> (10.1 kgf·m, 73.4 lbf·ft).</p>
 
-      <p><strong>Starting torque vs running torque:</strong> everything in this calculator describes steady-state running torque at a given power and speed — it says nothing about the torque needed to start a stationary load from rest. Starting torque requirements can be dramatically higher than running torque for high-inertia loads (large fans, crushers, ball mills) or loads that start under full load (positive-displacement pumps, some conveyors) — motor and drive selection for these applications needs a separate starting-torque analysis, since a motor correctly sized for running torque alone can stall or trip on starting current if starting torque demand is underestimated.</p>
+      <p><strong>Which power figure to use.</strong> On an induction motor nameplate the kW rating is already rated mechanical output at the shaft, so it goes straight into the formula. If your figure is electrical input, or the shaft you care about sits behind a belt drive or gearbox, apply the efficiency first — the calculator's efficiency field does this for you.</p>
 
-      <p><strong>Variable frequency drives and torque at reduced speed:</strong> a VFD-controlled induction motor run below its rated (base) frequency typically maintains roughly constant torque capability down to a low speed threshold, meaning available torque stays close to the motor's rated torque even as RPM drops — quite different from simply reading torque off the T = 9550P/N curve at reduced power, which would show torque rising as speed falls for a fixed power. Understanding whether your application is more naturally described by "constant torque" (most conveyors, positive-displacement pumps) or "variable torque" (most centrifugal fans and pumps, where torque falls with the square of speed) affects both motor/VFD sizing and how you interpret a torque figure calculated at a non-rated speed.</p>
+      <p><strong>Torque after a reduction.</strong> Speed falls by the ratio and torque rises by the same ratio, less losses. 10 N·m through a 20:1 reducer at 95% efficiency leaves about 190 N·m on the slow shaft. Always size each shaft for the torque it actually sees at its own speed.</p>
 
-      <p><strong>Practical uses of a torque figure once you have it:</strong> beyond motor/drive selection, this number feeds directly into several downstream calculations — the Shaft Diameter Calculator on this site takes torque as its primary input to size a shaft against allowable shear stress; coupling selection catalogs specify a maximum torque rating that the calculated (and appropriately factored) torque must stay under; and key/keyway sizing standards (like IS 2048) use shaft torque as the starting point for determining key dimensions. In each of these downstream steps, remember to apply an appropriate service or design factor on top of the raw calculated torque, since none of them are designed around the bare average running torque alone.</p>
-
-      <p><strong>A note on multi-cylinder engines and pulsating torque:</strong> for reciprocating engines (as opposed to smooth electric motors), instantaneous torque actually fluctuates significantly through each combustion cycle even at constant average power and speed — the T = 9550P/N formula gives the mean torque over a full cycle, not the peak instantaneous torque, which can be considerably higher for a single- or few-cylinder engine. This is exactly why engines carry a flywheel: to smooth out this pulsating torque delivery into something closer to the steady mean value this formula describes, which is also why an engine's flywheel energy calculation (see the Flywheel Energy Calculator) is a closely related design consideration whenever torque uniformity matters for the driven equipment.</p>
-
-      <p><strong>Reading torque and speed off a nameplate correctly:</strong> a typical Indian three-phase induction motor nameplate lists rated output power (kW), rated speed (RPM), rated voltage, rated current, and sometimes rated torque directly. If rated torque isn't printed, this calculator reproduces exactly what you'd get from those two other nameplate figures — but always double check whether the printed "speed" is the synchronous speed (a round number like 1500 or 3000 RPM) or the actual rated/full-load speed (a slightly lower number reflecting slip, like 1440 or 2900 RPM); using synchronous speed instead of actual rated speed introduces a small underestimate of torque, typically in the 2-4% range for a standard-efficiency motor.</p>
-
-      <p><strong>Torque requirements across common industrial applications:</strong> different classes of driven equipment have characteristically different torque-speed profiles that are worth knowing when sanity-checking a calculated figure. Centrifugal pumps and fans need relatively low starting torque (roughly 20-30% of full-load torque) that rises with the square of speed, making them relatively easy to start. Positive-displacement pumps, compressors, and crushers typically need close to full torque right from standstill, since they're doing mechanical work (compressing, crushing, displacing fluid) regardless of speed. Conveyors fall in between, with starting torque requirements depending heavily on whether they start loaded or empty. Recognizing which category your application falls into helps validate whether a calculated running torque figure, on its own, is likely to be sufficient information for motor selection or whether a separate starting-torque check is essential.</p>
-
-      <p><strong>Summary — using this calculator as part of a larger drive-sizing workflow:</strong> shaft torque from power and speed is usually the first of several linked calculations in mechanical drive design — it feeds shaft diameter sizing, coupling and key selection, belt or chain drive tension calculations, and gearbox torque ratings. Because it sits at the start of that chain, an error here (wrong units, wrong speed, ignoring starting torque) propagates through every downstream calculation that depends on it — which is exactly why the common mistakes below are worth reading carefully before using a calculated torque figure for anything safety- or cost-critical.</p>
+      <p>Knowing the torque is only half the job, though. The next question is what that torque does <em>inside</em> the shaft — the stress it sets up, how much the shaft twists, and how close it is to its limit. That is what the remaining modes of this calculator cover.</p>
     </div>
-
-    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
-    <div id="cs-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
-            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
-      <p class="text-sm text-gray-600 leading-relaxed">A 15 kW motor running at 1440 RPM: T = 9550 × 15 ÷ 1440 = <strong>99.48 Nm</strong> ≈ <strong>10.14 kgf·m</strong> ≈ <strong>73.38 lb·ft</strong>. Halving the speed to 720 RPM (same 15 kW power) roughly doubles the torque to about 198.96 Nm.</p>
-    </div>
-
-    <p class="text-xs text-gray-400 mt-6">This calculator assumes 100% mechanical efficiency between the power rating entered and the shaft — actual output shaft torque on a geared or belt-driven system will be lower once transmission losses are accounted for, typically by a few percent per gear stage or belt drive. For safety-critical shaft design, apply an appropriate service/design factor and verify against the relevant standard (IS 210 / ASME) before finalizing, and cross-check any starting-torque-sensitive application separately from this steady-state running torque figure.</p>
   </div>
 </section>
 
-<!-- ===================== SECOND SECTION ===================== -->
-<section id="second" class="max-w-3xl mx-auto px-4 py-16">
-  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Quick Reference</span>
-  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Typical Shaft Torque at Common Power & Speed Combinations</h2>
-    <div class="not-prose overflow-x-auto my-4">
-    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
-      <thead class="bg-gray-50 text-gray-600">
-        <tr>
-          <th class="text-left px-4 py-2 font-semibold">Power</th>
-          <th class="text-left px-4 py-2 font-semibold">1440 RPM (4-pole)</th>
-          <th class="text-left px-4 py-2 font-semibold">960 RPM (6-pole)</th>
-          <th class="text-left px-4 py-2 font-semibold">720 RPM (8-pole)</th>
-        </tr>
+<!-- ===================== SHEAR STRESS ===================== -->
+<section id="stress" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Torsion</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Shear Stress and Polar Moment of Inertia</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Torque in a circular shaft produces pure shear. The governing relation is the torsion equation:</p>
+
+    <div class="not-prose eq-box my-5" data-eq="(3)">T / J = τ / r = G·θ / L</div>
+
+    <p>where T is torque, J the polar moment of inertia, τ the shear stress at radius r, G the modulus of rigidity, θ the angle of twist and L the twisted length. Rearranged the two ways you normally need:</p>
+
+    <div class="not-prose eq-box my-5" data-eq="(4)">τ = T · r / J&nbsp;&nbsp;&nbsp;&nbsp;T = τ · J / r</div>
+
+    <p>The second form is how you go from a known or allowable shear stress back to the torque the shaft is carrying — the mode labelled <em>Torque from shear stress</em> above.</p>
+
+    <p><strong>Polar moment of inertia.</strong> J describes how the cross-section resists twisting:</p>
+
+    <div class="not-prose eq-box my-5" data-eq="(5)">Solid:&nbsp; J = π·d⁴ / 32
+Hollow: J = π·(dₒ⁴ − dᵢ⁴) / 32</div>
+
+    <p>Substituting J and r = d/2 into (4) gives the compact solid-shaft form:</p>
+
+    <div class="not-prose eq-box my-5" data-eq="(6)">τ = 16T / (π·d³)</div>
+
+    <p><strong>Why the fourth power matters.</strong> Because J goes as d⁴, a 10% increase in diameter makes the shaft roughly 46% stiffer in torsion and about 33% stronger. It is nearly always cheaper to step up one stock size than to change material.</p>
+
+    <p><strong>Why hollow shafts work.</strong> Shear stress is zero at the axis and maximum at the surface, so the metal in the middle earns very little. Boring a hole of half the outside diameter removes a quarter of the cross-sectional area but only about 6% of the torque capacity — which is why weight-critical drive shafts, from aerospace to motorsport, are hollow.</p>
+  </div>
+</section>
+
+<!-- ===================== ANGLE OF TWIST ===================== -->
+<section id="twist" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Stiffness</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Angle of Twist and Torsional Stiffness</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>The same torsion equation, taken from its right-hand pair, gives how far one end of the shaft rotates relative to the other:</p>
+
+      <div class="not-prose eq-box my-5" data-eq="(7)">θ (rad) = T · L / (G · J)&nbsp;&nbsp;&nbsp;&nbsp;θ (°) = θ (rad) × 180/π</div>
+
+      <p>Torsional stiffness is simply the torque needed per unit of twist:</p>
+
+      <div class="not-prose eq-box my-5" data-eq="(8)">k = T / θ = G · J / L</div>
+
+      <p>usually quoted in N·m per radian or N·m per degree. Stiffness is what decides how much a drivetrain winds up under load — it matters for positioning accuracy on machine tools and indexing drives, for torsional resonance in reciprocating machinery, and for how badly shock loads are amplified.</p>
+
+      <p><strong>Typical limits.</strong> Precision and long line shafts are often held to a twist of the order of 0.25° per metre, but the real limit belongs to the application: a camshaft that shifts valve timing, a lead shaft that loses index accuracy, and a general-purpose drive shaft all tolerate very different amounts. Where twist governs rather than stress, the shaft has to be sized on stiffness — see the <a href="/mechanical/shaft-diameter" class="text-sky-600 underline">Shaft Diameter Calculator</a>, which sizes on that basis directly.</p>
+
+      <p>Note that stress and stiffness scale differently with diameter: stress goes as d³ but twist as d⁴. A shaft can be comfortably within its stress limit and still twist far too much, particularly when it is long and slender. Always check both.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SHEAR STRAIN ===================== -->
+<section id="strain" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Strain</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Shear Strain in a Twisted Shaft</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Shear strain γ is the angular distortion the torque produces. It follows from Hooke's law in shear, and can equally be read off the geometry of the twist:</p>
+
+    <div class="not-prose eq-box my-5" data-eq="(9)">γ = τ / G = r · θ / L</div>
+
+    <p>It is dimensionless and usually very small, so it is commonly quoted in microstrain (strain × 10⁶). A steel shaft at 40 MPa shear stress has γ = 40 / 79,300 ≈ 0.000504, or about <strong>504 µε</strong>.</p>
+
+    <p>Like stress, strain is largest at the outer surface and falls linearly to zero at the axis, which is why torsional fatigue cracks start at the surface and why surface finish, keyway corners and fillet radii dominate real shaft life. It is also the quantity a shear-mode strain gauge rosette actually measures: bonding a rosette at 45° to the axis and reading the strain gives you torque on a running machine, using this same relation in reverse.</p>
+  </div>
+</section>
+
+<!-- ===================== TORQUE CAPACITY ===================== -->
+<section id="capacity" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Capacity</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Maximum Torque a Shaft Can Transmit</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Two separate limits apply, and the smaller one wins.</p>
+
+      <div class="not-prose eq-box my-5" data-eq="(10)">Strength:&nbsp;  T_max = τ_allow · J / r = π · τ_allow · d³ / 16
+Stiffness: T_max = G · J · θ_permissible / L</div>
+
+      <p><strong>Allowable shear stress.</strong> ASME transmission-shaft practice, as commonly published in machine-design references, takes 56 MPa where no keyway allowance is needed and 42 MPa where a keyway is present. General shafting steels are commonly worked in the 40–60 MPa range. These are working stresses that already carry a design margin — they are not yield strengths, and feeding a yield value into the formula leaves essentially no safety factor.</p>
+
+      <p><strong>What this calculation does not cover.</strong> Pure torsion is only part of the story for a real shaft. Anything carrying a gear, pulley or sprocket also bends, and combined bending and torsion normally calls for a larger diameter than torque alone — that is the job of the <a href="/mechanical/shaft-diameter" class="text-sky-600 underline">Shaft Diameter Calculator</a>. Fatigue under fluctuating load, stress concentration at keyways and shoulders, and critical (whirling) speed on long shafts are further checks in their own right.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== UNITS ===================== -->
+<section id="units" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Torque Unit Conversions</h2>
+  <div class="not-prose overflow-x-auto my-4">
+    <table class="ref-table">
+      <thead>
+        <tr><th>Unit</th><th>In newton metres</th><th>Where you meet it</th></tr>
       </thead>
-      <tbody class="divide-y divide-gray-100">
-        <tr><td class="px-4 py-2">3.7 kW</td><td class="px-4 py-2">24.5 Nm</td><td class="px-4 py-2">36.8 Nm</td><td class="px-4 py-2">49.1 Nm</td></tr>
-        <tr><td class="px-4 py-2">7.5 kW</td><td class="px-4 py-2">49.7 Nm</td><td class="px-4 py-2">74.6 Nm</td><td class="px-4 py-2">99.5 Nm</td></tr>
-        <tr><td class="px-4 py-2">15 kW</td><td class="px-4 py-2">99.5 Nm</td><td class="px-4 py-2">149.2 Nm</td><td class="px-4 py-2">199.0 Nm</td></tr>
-        <tr><td class="px-4 py-2">37 kW</td><td class="px-4 py-2">245.4 Nm</td><td class="px-4 py-2">368.1 Nm</td><td class="px-4 py-2">490.8 Nm</td></tr>
+      <tbody>
+        <tr><td>1 N·m</td><td>1</td><td>SI base unit for torque; motor and gearbox data</td></tr>
+        <tr><td>1 kN·m</td><td>1,000</td><td>Large drives, mill and marine shafting</td></tr>
+        <tr><td>1 kgf·m</td><td>9.80665</td><td>Older Indian and European nameplates, hand tools</td></tr>
+        <tr><td>1 kgf·cm</td><td>0.0980665</td><td>Small motors, instruments</td></tr>
+        <tr><td>1 lbf·ft</td><td>1.35582</td><td>US machinery ratings, bolt torque specs</td></tr>
+        <tr><td>1 lbf·in</td><td>0.112985</td><td>Small fasteners, fractional-hp drives</td></tr>
       </tbody>
     </table>
   </div>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-    <p>This table shows why a lower-speed (higher pole count) motor of the same power rating is always the higher-torque, physically larger option — for identical power, an 8-pole (720 RPM nominal) motor delivers exactly double the torque of a 4-pole (1440 RPM nominal) motor, since torque is inversely proportional to speed at constant power. This is a key consideration when selecting a motor for a direct-drive, high-torque, low-speed application (like a slow conveyor or an agitator) versus using a higher-speed motor with a gearbox to achieve the same output torque more compactly.</p>
-      <p>This is also why direct-drive, low-speed, high-torque applications (large slow-turning agitators, some conveyor drives, certain mill drives) often favor purpose-built low-pole-count-equivalent or geared motors over trying to run a standard high-speed motor at very low frequency on a VFD — running a 4-pole motor at, say, 10 Hz (roughly 288 RPM) to chase a low-speed, high-torque requirement can push it outside its efficient cooling and torque-capability range, since standard induction motors rely partly on shaft speed for self-cooling via their integral fan.</p>
-    <p>The broader lesson from this table is that "power" alone never fully describes a drive requirement — the same kW rating can mean very different torque depending on shaft speed, so motor selection always needs both figures together, not power in isolation. When comparing motor options or quotations, always confirm whether quoted torque is at the motor's rated speed, a specific reduced speed, or peak/starting torque, since these are three different numbers that are easy to conflate.</p>
+    <p>A handful of shortcuts worth remembering: T (N·m) = 9550 × kW ÷ rpm, T (lbf·ft) = 5252 × hp ÷ rpm, and 1 lbf·ft ≈ 1.356 N·m. Mixing systems halfway through is the most common source of order-of-magnitude errors, so convert everything before you start — or let the unit dropdowns above do it.</p>
   </div>
+</section>
+
+<!-- ===================== REFERENCE TABLE ===================== -->
+<section id="second" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Quick Reference</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Shaft Torque at Common Power &amp; Speed Combinations</h2>
+    <div class="not-prose overflow-x-auto my-4">
+      <table class="ref-table">
+        <thead>
+          <tr><th>Power</th><th>2880 rpm (2-pole)</th><th>1440 rpm (4-pole)</th><th>960 rpm (6-pole)</th><th>720 rpm (8-pole)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>3.7 kW</td><td>12.3 N·m</td><td>24.5 N·m</td><td>36.8 N·m</td><td>49.1 N·m</td></tr>
+          <tr><td>7.5 kW</td><td>24.9 N·m</td><td>49.7 N·m</td><td>74.6 N·m</td><td>99.5 N·m</td></tr>
+          <tr><td>15 kW</td><td>49.7 N·m</td><td>99.5 N·m</td><td>149.2 N·m</td><td>199.0 N·m</td></tr>
+          <tr><td>37 kW</td><td>122.7 N·m</td><td>245.4 N·m</td><td>368.1 N·m</td><td>490.8 N·m</td></tr>
+          <tr><td>75 kW</td><td>248.7 N·m</td><td>497.4 N·m</td><td>746.1 N·m</td><td>994.8 N·m</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>This is why a lower-speed motor of the same kW rating is always the bigger, heavier machine: at 720 rpm an 8-pole motor delivers four times the torque of a 2-pole one of identical power, and torque is what sets shaft, key, coupling and gearbox size. "Power" alone never describes a drive requirement — the same kW can mean wildly different mechanical duty depending on the speed it turns at.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WORKED EXAMPLES ===================== -->
+<section id="examples" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Worked Examples</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Shaft Torque Calculation Examples</h2>
+
+  <div id="cs-example-box" class="bg-sky-50/60 border border-sky-100 rounded-2xl p-6 space-y-6">
+
+    <div>
+      <p class="text-sm font-semibold text-brandDark mb-2">Example 1 — Torque from power and speed</p>
+      <p class="text-sm text-gray-600 leading-relaxed">A 15 kW motor at 1440 rpm: T = 9550 × 15 ÷ 1440 = <strong>99.5 N·m</strong> — equal to 10.1 kgf·m or 73.4 lbf·ft. Through a 20:1 reducer at 95% efficiency, the output shaft sees about 1890 N·m at 72 rpm.</p>
+    </div>
+
+    <div>
+      <p class="text-sm font-semibold text-brandDark mb-2">Example 2 — Stress and twist in a 40 mm solid shaft</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Take that 99.5 N·m on a 40 mm steel shaft, 1 m long, G = 79.3 GPa. J = π × 40⁴ / 32 = <strong>251,327 mm⁴</strong>; τ = T·r/J = 99,500 × 20 ÷ 251,327 ≈ <strong>7.9 MPa</strong>; θ = T·L/(G·J) = 99,500 × 1000 ÷ (79,300 × 251,327) ≈ 0.00499 rad = <strong>0.286°</strong> over the metre. Torsional stiffness k = G·J/L ≈ 19,930 N·m/rad, and shear strain γ = τ/G ≈ 100 µε. Comfortable on both counts.</p>
+    </div>
+
+    <div>
+      <p class="text-sm font-semibold text-brandDark mb-2">Example 3 — Torque from a known shear stress (T = τ·J/r)</p>
+      <p class="text-sm text-gray-600 leading-relaxed">A shaft with J = 30 m⁴ and r = 4 m carrying a shear stress of 500 N/m²: T = 500 × 30 ÷ 4 = <strong>3,750 N·m</strong>. The same form answers the practical version too — for a 50 mm solid shaft at an allowable 42 MPa, J = 613,592 mm⁴ and r = 25 mm, giving T = 42 × 613,592 ÷ 25 ≈ <strong>1,031 N·m</strong> of capacity.</p>
+    </div>
+
+    <div>
+      <p class="text-sm font-semibold text-brandDark mb-2">Example 4 — Hollow versus solid</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Bore the 40 mm shaft out to a 20 mm hole: J drops from 251,327 to π(40⁴ − 20⁴)/32 = <strong>235,619 mm⁴</strong>, a loss of just 6.25% in both capacity and stiffness — while 25% of the metal, and 25% of the rotating weight, is gone. That trade is the whole reason hollow drive shafts exist.</p>
+    </div>
+
+  </div>
+
+  <p class="text-xs text-gray-400 mt-6">These results describe pure torsion in a plain circular shaft. They do not account for bending from overhung loads, axial thrust, fatigue under fluctuating torque, stress concentration at keyways, splines, shoulders and fillets, or critical (whirling) speed. For any safety-critical shaft, have the design checked by a qualified mechanical engineer against the applicable code before manufacture.</p>
 </section>
 
 <!-- ===================== COMMON MISTAKES ===================== -->
@@ -659,174 +1180,485 @@
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Shaft Torque</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-            <p><strong>1. Using electrical input power instead of mechanical shaft power.</strong> For an induction motor, the nameplate kW rating is normally already the rated mechanical output — but if you're working from an electrical measurement (line power, calculated from V×I×PF×√3), that figure includes motor losses and overstates shaft torque unless you multiply by the motor's efficiency first.</p>
-      <p><strong>2. Forgetting motor slip when assuming synchronous speed.</strong> A "1500 RPM" 4-pole motor on 50 Hz actually runs at roughly 1440-1480 RPM under load due to slip — using the synchronous speed (1500) instead of the actual running speed introduces a small but real error in the torque figure.</p>
-      <p><strong>3. Mixing up HP and kW without converting.</strong> Plugging a horsepower figure directly into the kW-based formula (T = 9550P/N) without converting HP to kW first (1 HP = 0.7457 kW) overstates torque by roughly 34% — always convert units before applying the formula, or use this calculator's unit selector.</p>
-      <p><strong>4. Applying this torque figure directly to shaft or key design without a service factor.</strong> This is the steady, average running torque — real drives experience starting torque spikes, shock loads, and cyclic variation that can be 1.5-3x higher momentarily; downstream component sizing (shaft, key, coupling) should apply an appropriate service factor on top of this base figure.</p>
-      <p><strong>5. Ignoring gearbox or belt-drive losses when calculating output-shaft torque.</strong> If power and RPM are measured at the motor but you need torque at a gearbox output shaft, apply the reduced RPM (input RPM ÷ gear ratio) and account for gearbox efficiency (typically 92-98% for a single-stage helical gearbox) — using motor-side RPM with output-side torque expectations gives the wrong number.</p>
-      <p><strong>6. Confusing torque units when reading old or imported equipment documentation.</strong> Older Indian technical literature and some imported equipment nameplates use kgf·m rather than Nm — 1 kgf·m ≈ 9.807 Nm — mixing these up by a factor of ~9.8x is a common and consequential unit error in shaft and coupling design.</p>
-      <p><strong>7. Assuming running torque covers starting torque requirements.</strong> High-inertia or full-load-start applications can demand starting torque well above the steady running torque this formula describes — sizing a motor or drive purely from running torque can lead to stalling or nuisance tripping on start-up for these loads.</p>
-      <p><strong>8. Not distinguishing constant-torque from variable-torque load behavior on a VFD.</strong> Centrifugal loads (fans, pumps) see torque fall with the square of speed reduction, while constant-torque loads (conveyors, positive-displacement pumps, hoists) need close to full torque even at low speed — using a single T = 9550P/N figure calculated at rated speed to judge performance across a VFD's whole speed range can be misleading for either load type.</p>
+      <p><strong>1. Using motor speed for a shaft behind a gearbox.</strong> Torque multiplies by the reduction ratio. Size every shaft for the torque at its own speed, not the motor's.</p>
+      <p><strong>2. Mixing N·m and N·mm with MPa.</strong> With τ in N/mm² the torque must be in N·mm. Forgetting the ×1000 throws the stress out by a factor of a thousand.</p>
+      <p><strong>3. Confusing torque with power.</strong> A high-kW machine at high speed can produce less torque than a small slow-speed one. Shaft, key and coupling sizes follow torque, never kW.</p>
+      <p><strong>4. Using electrical input kW as shaft power.</strong> An induction motor nameplate kW is already shaft output. Taking an electrical input figure without applying efficiency overstates the torque.</p>
+      <p><strong>5. Checking stress but not twist.</strong> A long slender shaft can pass the stress check comfortably and still wind up far more than the drive can tolerate. Stress goes as d³, twist as d⁴.</p>
+      <p><strong>6. Treating yield strength as allowable shear stress.</strong> The allowable value already contains the design margin; the raw yield figure does not.</p>
+      <p><strong>7. Applying solid-shaft formulas to a hollow shaft.</strong> Without the (dₒ⁴ − dᵢ⁴) term, J and therefore capacity are overstated.</p>
+      <p><strong>8. Sizing on running torque alone.</strong> Direct-on-line starting, jams and reversals produce peaks well above nameplate torque — allow for them, or use a shock and fatigue factor approach.</p>
+      <p><strong>9. Ignoring keyways and fillets.</strong> The calculated stress is for a plain shaft; a keyway removes metal and concentrates stress at exactly the point the drive is transmitted.</p>
+      <p><strong>10. Forgetting derating on a VFD at low speed.</strong> A self-cooled motor turning slowly loses its own fan cooling, so continuous torque may need derating even though the drive can command it.</p>
     </div>
   </div>
 </section>
-
 <!-- ===================== FAQ ===================== -->
 <section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
   <div class="text-center mb-10">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
-    <p class="text-xs text-gray-400 mt-2"></p>
+    <p class="text-xs text-gray-400 mt-2">Shaft torque, shear stress, twist and capacity — answered</p>
   </div>
 
   <div class="divide-y divide-gray-200">
-        <details class="py-5" open>
+    <details class="py-5" open>
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        What is the formula for shaft torque from power and RPM?
+        What is the shaft torque formula?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">T (Nm) = 9550 × P (kW) ÷ N (rpm). This comes from the power-torque relationship P = T×ω, where ω (rad/s) = 2πN/60, rearranged and simplified with the constant 9550 (more precisely 60000/2π ≈ 9549.3).</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">From a drive rating, T (N·m) = 60 × P (W) ÷ (2π × N), which simplifies to T = 9550 × P(kW) ÷ N(rpm). From the state of stress in the shaft itself, T = τ·J/r, where τ is the shear stress, J the polar moment of inertia and r the outer radius. Both describe the same torque — one from the power being transmitted, one from the stress that torque produces.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Is this the motor's rated torque or the actual running torque?
+        How do I calculate torque from horsepower and rpm?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It's the steady-state torque corresponding to the power and speed you enter — effectively the rated or full-load torque if you enter rated power and rated speed. Starting torque, peak torque, and torque under a fluctuating load can differ significantly and aren't covered by this simple relation.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Convert horsepower to watts first (1 mechanical hp = 745.7 W), then use T = 60P ÷ (2πN). In imperial units the same relation is T (lbf·ft) = 5252 × hp ÷ rpm. A 20 hp drive at 1750 rpm gives about 60 lbf·ft, or 81.4 N·m.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        How do I convert horsepower (HP) to torque instead of kW?
+        Where does the constant 9550 come from?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Select HP as the power unit — internally this calculator converts HP to kW (1 HP = 0.7457 kW) before applying the same T = 9550 × P(kW) ÷ N formula, so you get the identical result either way.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It packages the unit conversions in P = T × ω. With ω = 2πN/60 and power in kilowatts, T = 1000 × 60 × P ÷ (2πN) = 9549.3 × P(kW) ÷ N(rpm), rounded to 9550 in everyday use.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Why does torque go down as RPM goes up, for the same power?
+        How do you calculate shear stress in a shaft from torque?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Because power is the product of torque and angular speed (P = T × ω) — for a fixed power output, torque and speed are inversely proportional. A motor delivering the same kW at a higher RPM does so with proportionally lower torque, and vice versa.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Use τ = T·r/J. For a solid circular shaft J = πd⁴/32 and r = d/2, which reduces to τ = 16T/(πd³). Stress is highest at the outer surface and falls linearly to zero at the axis — which is why hollowing out the centre costs so little strength.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Does this calculator account for gearbox reduction?
+        What is the polar moment of inertia of a shaft?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — it calculates torque directly at the power and RPM you enter. If you have a gearbox, apply the gear ratio to your RPM first (output RPM = input RPM ÷ ratio) if you want output-shaft torque, since torque increases roughly in proportion to the speed reduction (minus gearbox losses).</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It measures how the cross-section resists twisting. Solid circular shaft: J = πd⁴/32. Hollow shaft: J = π(dₒ⁴ − dᵢ⁴)/32. Because it depends on the fourth power of diameter, a 10% larger shaft is about 46% stiffer and 33% stronger in torsion.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        What torque unit should I use for coupling or key design?
+        What is the angle of twist formula for a shaft?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Most Indian and international mechanical design references (couplings, keys, shaft calculations) use Nm or Nmm — this calculator shows Nm by default, and Nmm (Nm × 1000) is easy to derive from the Nm figure shown for use directly in shaft diameter/key sizing formulas.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">θ = T·L/(G·J), with θ in radians, L the twisted length, G the modulus of rigidity (about 79.3 GPa for steel) and J the polar moment of inertia. Multiply by 180/π for degrees. Long or precision drives are often held to a twist of the order of 0.25° per metre, though the real limit depends on the application.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Why do I need a service factor on top of this calculated torque?
+        What is torsional stiffness and how is it calculated?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The raw T = 9550P/N figure is the average, steady running torque. Real drives see startup surges, shock loads, and cyclic variation — a service factor (typically 1.25–2.0+ depending on the application, per manufacturer/ASME guidance) is applied on top of this base torque before sizing shafts, keys, or couplings, to avoid undersizing for real-world conditions.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Torsional stiffness is the torque needed per unit of twist, k = G·J/L, usually quoted in N·m per radian or per degree. It sets how much a drivetrain winds up, which matters for positioning accuracy, torsional resonance and how badly shock loads are amplified.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Is kgf·m or lb·ft ever used instead of Nm?
+        How do you find the shear strain in a twisted shaft?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — kgf·m is still common on older Indian nameplates and some technical literature, and lb·ft (or ft·lb) is standard in US/imperial contexts. This calculator shows all three (Nm, kgf·m, lb·ft) so you can match whichever your datasheet or drawing uses.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Shear strain at the surface is γ = τ/G, and geometrically γ = r·θ/L. It is dimensionless and usually tiny, so it is often quoted in microstrain (strain × 10⁶). For steel at 40 MPa shear stress, γ ≈ 0.0005, or about 500 µε.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Does starting torque need a separate calculation from this running torque?
+        What is the maximum torque a shaft can transmit?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes for many loads — this calculator gives steady-state running torque only. High-inertia loads (large fans, ball mills) or loads that must start under full load (positive-displacement pumps) can need substantially more starting torque than running torque, and should be checked separately using the driven equipment manufacturer's starting torque specification rather than assuming the running torque figure is sufficient for motor starting capability.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">From strength, T_max = τ_allow·J/r, which for a solid shaft is π·τ_allow·d³/16. From stiffness, T_max = G·J·θ_permissible/L. The governing capacity is whichever is smaller, since the shaft has to satisfy both the stress limit and any twist limit.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does a hollow shaft transmit less torque than a solid one?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For the same outer diameter, yes — but by less than you might expect. A bore of half the outer diameter removes a quarter of the metal and only about 6% of the torque capacity, because the removed material sits near the axis where stress is lowest. For the same weight, a hollow shaft with a larger outer diameter beats a solid one.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the difference between torque and power?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Torque is the twisting effort at the shaft, in N·m. Power is the rate of doing work — torque multiplied by angular velocity. The same power can appear as high torque at low speed or low torque at high speed, which is exactly what a gearbox trades between.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I use nameplate power or shaft output power?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The kW figure on an induction motor nameplate is rated mechanical output at the shaft, so it can be used directly. If your figure is an electrical input rating, or the torque you need is downstream of a gearbox or belt drive, apply the relevant efficiency first using the efficiency field in this calculator.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How does torque change after a gearbox?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Speed drops by the reduction ratio and torque rises by the same ratio, less the gearbox efficiency. 10 N·m through a 20:1 reducer at 95% efficiency gives about 190 N·m at the output shaft, turning at one twentieth of the input speed.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does an induction motor hold full torque at reduced speed on a VFD?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Below base frequency a VFD holds roughly constant torque capability, so power falls in proportion to speed. Above base frequency it moves into constant-power, field-weakening operation and available torque drops off. Self-cooled motors also lose fan cooling at low speed, so continuous torque may have to be derated.</p>
     </details>
   </div>
 </section>
 
-<!-- ===================== [SHARED] FOOTER (same on every page) ===================== -->
+<!-- ===================== [SHARED] FOOTER ===================== -->
 <div id="site-footer"></div>
 
 <script src="/assets/site-nav.js"></script>
-
 <!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
 <script>
-
-  // ===== Share / Feedback bar =====
   function setFeedback(val){
     document.getElementById('fbYes').classList.toggle('active-like', val === 'yes');
     document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
   }
-    function convertToKW(power, unit){
-    return unit === 'hp' ? power * 0.745699872 : power;
+
+  var shaftType = 'solid';
+  var jMode = 'dia';
+  var solveFor = 'torque';
+
+  var GVALS = { steel:79.3, ss:77, ci:41, ti:44, brass:37, al:26 };
+
+  function setToggle(id, on){
+    var el = document.getElementById(id);
+    if(!el) return;
+    el.classList.toggle('active', on);
+    el.setAttribute('aria-pressed', on ? 'true' : 'false');
   }
 
-  function calculateShaftTorque(){
-    const unit = document.getElementById('powerUnit').value;
-    const powerRaw = parseFloat(document.getElementById('power').value);
-    const rpm = parseFloat(document.getElementById('rpm').value);
+  function val(id){ var el = document.getElementById(id); return el ? parseFloat(el.value) : NaN; }
+  function fac(id){ var el = document.getElementById(id); return el ? parseFloat(el.value) : 1; }
+  function show(id, on){ var el = document.getElementById(id); if(el) el.classList.toggle('hidden-field', !on); }
+  function txt(id, s){ var el = document.getElementById(id); if(el) el.textContent = s; }
+  function unitText(id){
+    var el = document.getElementById(id);
+    if(!el) return '';
+    return el.options[el.selectedIndex].text.replace(/.*\(|\)/g,'');
+  }
+  function fmt(x, n){
+    if(!isFinite(x)) return '\u2014';
+    if(x !== 0 && Math.abs(x) < 0.001) return x.toExponential(3);
+    return x.toLocaleString('en-US', {maximumFractionDigits: (n === undefined ? 2 : n)});
+  }
 
-    const validationBox = document.getElementById('validationBox');
-    const errors = [];
-    if(isNaN(powerRaw) || powerRaw <= 0){ errors.push('Enter a valid power greater than 0.'); }
-    if(isNaN(rpm) || rpm <= 0){ errors.push('Enter a valid shaft speed (RPM) greater than 0.'); }
+  function markCustomMaterial(){ document.getElementById('material').value = 'custom'; }
+
+  function applyMaterial(){
+    var g = GVALS[document.getElementById('material').value];
+    if(g){
+      document.getElementById('gMod').value = g;
+      document.getElementById('gUnit').value = '1000';
+    }
+    calcShaftTorque();
+  }
+
+  function setShaftType(t){
+    shaftType = t;
+    setToggle('btnSolid', t === 'solid');
+    setToggle('btnHollow', t === 'hollow');
+    show('grpDi', t === 'hollow' && jMode === 'dia');
+    txt('dOuterLabel', t === 'hollow' ? 'Outer Diameter (d\u2092)' : 'Shaft Diameter (d)');
+    calcShaftTorque();
+  }
+
+  function setJMode(m){
+    jMode = m;
+    setToggle('btnJdia', m === 'dia');
+    setToggle('btnJdirect', m === 'direct');
+    show('grpDia', m === 'dia');
+    show('grpDi', m === 'dia' && shaftType === 'hollow');
+    show('grpJdirect', m === 'direct');
+    calcShaftTorque();
+  }
+
+  function setSolve(s){
+    solveFor = s;
+    setToggle('btnSolveT', s === 'torque');
+    setToggle('btnSolveP', s === 'power');
+    setToggle('btnSolveN', s === 'speed');
+    syncFields();
+    calcShaftTorque();
+  }
+
+  function syncFields(){
+    var m = document.getElementById('calcMode').value;
+    var isPts = (m === 'pts');
+
+    show('grpSolve', isPts);
+    show('grpEff', isPts);
+    show('grpPower', isPts && solveFor !== 'power');
+    show('grpSpeed', isPts && solveFor !== 'speed');
+    show('grpTorque', (isPts && solveFor !== 'torque') || m === 'torsion');
+    show('grpGeom', m !== 'pts');
+    show('grpJmodeWrap', m === 'fromstress' || m === 'torsion' || m === 'capacity');
+    show('grpMat', m === 'torsion' || m === 'capacity');
+    show('grpTau', m === 'fromstress' || m === 'capacity');
+    show('grpTwistLimit', m === 'capacity');
+    show('grpRefSpeed', m === 'capacity');
+
+    txt('tauLabel', m === 'capacity' ? 'Allowable Shear Stress (\u03c4_allow)' : 'Shear Stress (\u03c4)');
+    show('grpDia', jMode === 'dia');
+    show('grpDi', jMode === 'dia' && shaftType === 'hollow');
+    show('grpJdirect', jMode === 'direct');
+  }
+
+  function calcShaftTorque(){
+    var mode = document.getElementById('calcMode').value;
+    var box = document.getElementById('validationBox');
+    var errors = [];
+
+    var tqF = fac('outTorqueUnit'), tqU = unitText('outTorqueUnit');
+    var stF = fac('outStressUnit'), stU = unitText('outStressUnit');
+
+    function showTorque(Nm, dp){ return fmt(Nm / tqF, dp) + ' ' + tqU; }
+    function showStress(MPa, dp){ return fmt(MPa / stF, dp) + ' ' + stU; }
+
+    // ---------- geometry (mm, mm^4) ----------
+    var J = 0, r = 0, dOut = 0, dIn = 0, geomTxt = '';
+    if(mode !== 'pts'){
+      if(jMode === 'direct'){
+        J = val('jVal') * fac('jUnit');
+        r = val('rVal') * fac('rUnit');
+        if(isNaN(J) || J <= 0) errors.push('Enter a polar moment of inertia greater than 0.');
+        if(isNaN(r) || r <= 0) errors.push('Enter an outer radius greater than 0.');
+        geomTxt = 'J and r entered directly';
+      } else {
+        dOut = val('dOuter') * fac('dOuterUnit');
+        if(isNaN(dOut) || dOut <= 0) errors.push('Enter a shaft diameter greater than 0.');
+        if(shaftType === 'hollow'){
+          dIn = val('dInner') * fac('dInnerUnit');
+          if(isNaN(dIn) || dIn < 0) errors.push('Enter a bore diameter of 0 or more.');
+          else if(dIn >= dOut) errors.push('The bore diameter must be smaller than the outer diameter.');
+        }
+        if(dOut > 0 && (shaftType === 'solid' || (dIn >= 0 && dIn < dOut))){
+          J = Math.PI * (Math.pow(dOut,4) - (shaftType === 'hollow' ? Math.pow(dIn,4) : 0)) / 32;
+          r = dOut / 2;
+          geomTxt = (shaftType === 'hollow' ? 'Hollow shaft ' + fmt(dOut) + ' / ' + fmt(dIn) + ' mm' : 'Solid shaft ' + fmt(dOut) + ' mm');
+        }
+      }
+    }
+
+    // ---------- material & length ----------
+    var G = 0, L = 0;
+    if(mode === 'torsion' || mode === 'capacity'){
+      G = val('gMod') * fac('gUnit');
+      L = val('shaftLen') * fac('lenUnit');
+      if(isNaN(G) || G <= 0) errors.push('Enter a modulus of rigidity greater than 0.');
+      if(isNaN(L) || L <= 0) errors.push('Enter a shaft length greater than 0.');
+    }
+
+    // ---------- torque input ----------
+    var T_Nm = 0;
+    if(mode === 'torsion' || (mode === 'pts' && solveFor !== 'torque')){
+      T_Nm = val('torque') * fac('torqueUnit');
+      if(isNaN(T_Nm) || T_Nm <= 0) errors.push('Enter a torque greater than 0.');
+    }
+
+    // ---------- stress input ----------
+    var tau = 0;
+    if(mode === 'fromstress' || mode === 'capacity'){
+      tau = val('tauVal') * fac('tauUnit');
+      if(isNaN(tau) || tau <= 0) errors.push('Enter a shear stress greater than 0.');
+    }
+
+    // ---------- power / speed inputs ----------
+    var P_W = 0, N_rpm = 0, eff = 1;
+    if(mode === 'pts'){
+      eff = val('effPct');
+      if(isNaN(eff) || eff <= 0 || eff > 100){ errors.push('Efficiency must be between 1 and 100%.'); eff = 100; }
+      eff = eff / 100;
+      if(solveFor !== 'power'){
+        P_W = val('power') * fac('powerUnit');
+        if(isNaN(P_W) || P_W <= 0) errors.push('Enter a power greater than 0.');
+      }
+      if(solveFor !== 'speed'){
+        N_rpm = val('speed') * fac('speedUnit');
+        if(isNaN(N_rpm) || N_rpm <= 0) errors.push('Enter a shaft speed greater than 0.');
+      }
+    }
+
+    if(mode === 'capacity' && document.getElementById('refSpeedOn').checked){
+      var refCheck = val('refSpeed');
+      if(isNaN(refCheck) || refCheck <= 0) errors.push('Enter a reference speed greater than 0 rpm, or clear the equivalent-power checkbox.');
+    }
 
     if(errors.length){
-      validationBox.classList.remove('hidden');
-      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
-      document.getElementById('rResult').textContent = '\u2014';
-      document.getElementById('rKgfm').textContent = '\u2014';
-      document.getElementById('rLbft').textContent = '\u2014';
-      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      box.classList.remove('hidden');
+      box.innerHTML = errors.map(function(e){ return '\u2022 ' + e; }).join('<br>');
+      ['rResult','rT1','rT2','rT3','rT4'].forEach(function(id){ txt(id,'\u2014'); });
+      txt('resultSub','Fix the input errors to see a result');
+      txt('verdictNote','Correct the highlighted inputs to see the result.');
+      document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid breakdown.</p>';
       return;
     }
-    validationBox.classList.add('hidden');
-    validationBox.innerHTML = '';
+    box.classList.add('hidden'); box.innerHTML = '';
 
-    const powerKW = convertToKW(powerRaw, unit);
-    const torqueNm = 9550 * powerKW / rpm;
-    const torqueKgfm = torqueNm / 9.80665;
-    const torqueLbft = torqueNm * 0.737562;
-    const torqueNmm = torqueNm * 1000;
-    const omega = 2 * Math.PI * rpm / 60;
+    var rows = '', note = '', main = '', mainLabel = '', sub = '';
+    var t1L='\u2014',t1='\u2014',t2L='\u2014',t2='\u2014',t3L='\u2014',t3='\u2014',t4L='\u2014',t4='\u2014';
 
-    document.getElementById('rResult').textContent = torqueNm.toLocaleString('en-US', {maximumFractionDigits:2}) + ' Nm';
-    document.getElementById('resultSub').textContent = powerKW.toFixed(2) + ' kW at ' + rpm.toLocaleString('en-US') + ' RPM';
-    document.getElementById('rKgfm').textContent = torqueKgfm.toLocaleString('en-US', {maximumFractionDigits:2});
-    document.getElementById('rLbft').textContent = torqueLbft.toLocaleString('en-US', {maximumFractionDigits:2});
+    if(mode === 'pts'){
+      var P_shaft;
+      if(solveFor === 'torque'){
+        P_shaft = P_W * eff;
+        T_Nm = (60 * P_shaft) / (2 * Math.PI * N_rpm);
+        mainLabel = 'Shaft Torque'; main = showTorque(T_Nm);
+        sub = fmt(P_shaft/1000,3) + ' kW at the shaft, ' + fmt(N_rpm) + ' rpm' + (eff < 1 ? ' (after ' + fmt(eff*100,0) + '% efficiency)' : '');
+        note = 'Torque follows from T = 60P / (2\u03c0N). At ' + fmt(N_rpm) + ' rpm, every kilowatt at the shaft is worth about ' + fmt(9549.3/N_rpm) + ' N\u00b7m, so torque rises as speed falls for the same power.';
+      } else if(solveFor === 'power'){
+        P_shaft = 2 * Math.PI * N_rpm * T_Nm / 60;
+        var P_in = P_shaft / eff;
+        mainLabel = 'Shaft Power'; main = fmt(P_shaft/1000,3) + ' kW';
+        sub = fmt(T_Nm) + ' N\u00b7m at ' + fmt(N_rpm) + ' rpm' + (eff < 1 ? ' \u00b7 ' + fmt(P_in/1000,3) + ' kW input' : '');
+        note = 'Power follows from P = 2\u03c0NT / 60' + (eff < 1 ? ', and the input rating needed is that shaft power divided by the efficiency you entered.' : '.');
+        t3L = 'Power (hp)'; t3 = fmt(P_shaft/745.699872) + ' hp';
+        t4L = 'Input Power'; t4 = fmt(P_in/1000,3) + ' kW';
+      } else {
+        P_shaft = P_W * eff;
+        N_rpm = (60 * P_shaft) / (2 * Math.PI * T_Nm);
+        mainLabel = 'Shaft Speed'; main = fmt(N_rpm) + ' rpm';
+        sub = fmt(P_shaft/1000,3) + ' kW at the shaft carrying ' + fmt(T_Nm) + ' N\u00b7m';
+        note = 'Speed follows from N = 60P / (2\u03c0T). This is the speed at which the shaft would deliver that power at exactly that torque.';
+        t3L = 'Speed (rad/s)'; t3 = fmt(N_rpm * 2 * Math.PI / 60) + ' rad/s';
+        t4L = 'Speed (Hz)'; t4 = fmt(N_rpm / 60,3) + ' rev/s';
+      }
+      if(solveFor === 'torque'){
+        t1L = 'Torque (kgf\u00b7m)'; t1 = fmt(T_Nm / 9.80665) + ' kgf\u00b7m';
+        t2L = 'Torque (lbf\u00b7ft)'; t2 = fmt(T_Nm / 1.35581795) + ' lbf\u00b7ft';
+        t3L = 'Torque (N\u00b7mm)'; t3 = fmt(T_Nm * 1000, 0) + ' N\u00b7mm';
+        t4L = 'Angular Speed'; t4 = fmt(N_rpm * 2 * Math.PI / 60) + ' rad/s';
+      } else {
+        t1L = 'Torque (kgf\u00b7m)'; t1 = fmt(T_Nm / 9.80665) + ' kgf\u00b7m';
+        t2L = 'Torque (lbf\u00b7ft)'; t2 = fmt(T_Nm / 1.35581795) + ' lbf\u00b7ft';
+      }
+      rows =
+        '<tr><td>Power at the shaft</td><td>' + fmt(P_shaft/1000,3) + ' kW (' + fmt(P_shaft/745.699872) + ' hp)</td></tr>' +
+        (eff < 1 ? '<tr><td>Mechanical efficiency</td><td>' + fmt(eff*100,1) + ' %</td></tr>' : '') +
+        '<tr><td>Shaft speed</td><td>' + fmt(N_rpm) + ' rpm (' + fmt(N_rpm*2*Math.PI/60) + ' rad/s)</td></tr>' +
+        '<tr><td><strong>Torque</strong></td><td><strong>' + fmt(T_Nm) + ' N\u00b7m</strong></td></tr>' +
+        '<tr><td>Torque (other units)</td><td>' + fmt(T_Nm/9.80665) + ' kgf\u00b7m \u00b7 ' + fmt(T_Nm/1.35581795) + ' lbf\u00b7ft</td></tr>';
+    }
 
-    document.getElementById('breakdownBox').innerHTML = `
-        <table class="breakdown-table">
-            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
-            <tbody>
-                <tr><td>Power (input)</td><td>${powerRaw.toLocaleString('en-US')} ${unit === 'hp' ? 'HP' : 'kW'}</td></tr>
-                <tr><td>Power (kW, converted)</td><td>${powerKW.toFixed(3)} kW</td></tr>
-                <tr><td>Shaft Speed</td><td>${rpm.toLocaleString('en-US')} RPM</td></tr>
-                <tr><td>Angular Velocity (\u03c9)</td><td>${omega.toFixed(3)} rad/s</td></tr>
-                <tr><td><strong>Torque</strong></td><td><strong>${torqueNm.toFixed(3)} Nm</strong></td></tr>
-                <tr><td>Torque (Nmm)</td><td>${torqueNmm.toLocaleString('en-US', {maximumFractionDigits:0})} Nmm</td></tr>
-                <tr><td>Torque (kgf\u00b7m)</td><td>${torqueKgfm.toFixed(3)} kgf\u00b7m</td></tr>
-                <tr><td>Torque (lb\u00b7ft)</td><td>${torqueLbft.toFixed(3)} lb\u00b7ft</td></tr>
-            </tbody>
-        </table>
-    `;
+    else if(mode === 'torsion'){
+      var T_Nmm = T_Nm * 1000;
+      var tauMax = T_Nmm * r / J;
+      var thetaRad = (T_Nmm * L) / (G * J);
+      var thetaDeg = thetaRad * 180 / Math.PI;
+      var perM = thetaDeg / (L / 1000);
+      var stiffNmRad = (G * J / L) / 1000;
+      var gamma = tauMax / G;
+
+      mainLabel = 'Max. Shear Stress (\u03c4)'; main = showStress(tauMax);
+      sub = geomTxt + ' \u00b7 ' + fmt(T_Nm) + ' N\u00b7m over ' + fmt(L/1000,3) + ' m';
+      note = 'Shear stress peaks at the outer surface and falls to zero at the axis. The shaft twists ' + fmt(thetaDeg,3) + '\u00b0 over its length, or ' + fmt(perM,3) + '\u00b0 per metre, and its torsional stiffness is ' + fmt(stiffNmRad,0) + ' N\u00b7m per radian (' + fmt(stiffNmRad*Math.PI/180,1) + ' N\u00b7m per degree).';
+      t1L = 'Polar Moment J'; t1 = fmt(J,0) + ' mm\u2074';
+      t2L = 'Angle of Twist'; t2 = fmt(thetaDeg,3) + '\u00b0';
+      t3L = 'Torsional Stiffness'; t3 = fmt(stiffNmRad,0) + ' N\u00b7m/rad';
+      t4L = 'Shear Strain'; t4 = fmt(gamma*1e6,0) + ' \u00b5\u03b5';
+      rows =
+        '<tr><td>Applied torque</td><td>' + fmt(T_Nm) + ' N\u00b7m (' + fmt(T_Nmm,0) + ' N\u00b7mm)</td></tr>' +
+        '<tr><td>Geometry</td><td>' + geomTxt + '</td></tr>' +
+        '<tr><td>Polar moment of inertia J</td><td>' + fmt(J,0) + ' mm\u2074</td></tr>' +
+        '<tr><td>Outer radius r</td><td>' + fmt(r,2) + ' mm</td></tr>' +
+        '<tr><td><strong>Max. shear stress \u03c4 = T\u00b7r/J</strong></td><td><strong>' + fmt(tauMax) + ' MPa</strong></td></tr>' +
+        '<tr><td>Angle of twist \u03b8 = T\u00b7L/(G\u00b7J)</td><td>' + fmt(thetaDeg,3) + '\u00b0 (' + fmt(thetaRad,6) + ' rad)</td></tr>' +
+        '<tr><td>Twist per metre</td><td>' + fmt(perM,3) + '\u00b0 /m</td></tr>' +
+        '<tr><td>Torsional stiffness k = G\u00b7J/L</td><td>' + fmt(stiffNmRad,0) + ' N\u00b7m/rad</td></tr>' +
+        '<tr><td>Shear strain \u03b3 = \u03c4/G</td><td>' + fmt(gamma,6) + ' (' + fmt(gamma*1e6,0) + ' \u00b5\u03b5)</td></tr>';
+    }
+
+    else if(mode === 'fromstress'){
+      var T_Nmm = tau * J / r;          // N/mm² × mm⁴ ÷ mm = N·mm
+      var T2 = T_Nmm / 1000;             // N·mm → N·m
+      mainLabel = 'Shaft Torque'; main = showTorque(T2);
+      sub = 'From \u03c4 = ' + fmt(tau,4) + ' MPa \u00b7 ' + (geomTxt || 'entered section');
+      note = 'T = \u03c4\u00b7J/r inverts the torsion equation: multiply the shear stress by the polar moment of inertia and divide by the outer radius. Used with an allowable stress, the same calculation gives the torque capacity of the shaft.';
+      t1L = 'Torque (kgf\u00b7m)'; t1 = fmt(T2 / 9.80665) + ' kgf\u00b7m';
+      t2L = 'Torque (lbf\u00b7ft)'; t2 = fmt(T2 / 1.35581795) + ' lbf\u00b7ft';
+      t3L = 'Polar Moment J'; t3 = fmt(J,0) + ' mm\u2074';
+      t4L = 'Outer Radius r'; t4 = fmt(r,2) + ' mm';
+      rows =
+        '<tr><td>Shear stress \u03c4</td><td>' + fmt(tau,6) + ' MPa</td></tr>' +
+        '<tr><td>Polar moment of inertia J</td><td>' + fmt(J,0) + ' mm\u2074</td></tr>' +
+        '<tr><td>Outer radius r</td><td>' + fmt(r,2) + ' mm</td></tr>' +
+        '<tr><td><strong>Torque T = \u03c4\u00b7J/r</strong></td><td><strong>' + fmt(T2) + ' N\u00b7m</strong></td></tr>' +
+        '<tr><td>Torque (other units)</td><td>' + fmt(T2/9.80665) + ' kgf\u00b7m \u00b7 ' + fmt(T2/1.35581795) + ' lbf\u00b7ft</td></tr>';
+    }
+
+    else {
+      var Tstress = (tau * J / r) / 1000;
+      var useTwist = document.getElementById('twistLimitOn').checked;
+      var Ttwist = Infinity, thetaAllowDeg = 0;
+      if(useTwist){
+        thetaAllowDeg = val('thetaLimit');
+        if(isNaN(thetaAllowDeg) || thetaAllowDeg <= 0){
+          box.classList.remove('hidden');
+          box.innerHTML = '\u2022 Enter a permissible angle of twist greater than 0\u00b0.';
+          return;
+        }
+        if(document.getElementById('thetaBasis').value === 'permetre') thetaAllowDeg = thetaAllowDeg * (L / 1000);
+        var thetaAllowRad = thetaAllowDeg * Math.PI / 180;
+        Ttwist = (G * J * thetaAllowRad / L) / 1000;
+      }
+      var Tgov = Math.min(Tstress, Ttwist);
+      var govBy = (useTwist && Ttwist < Tstress) ? 'twist' : 'stress';
+
+      mainLabel = 'Max. Torque Capacity'; main = showTorque(Tgov);
+      sub = geomTxt + ' \u00b7 limited by ' + (govBy === 'twist' ? 'permissible twist' : 'allowable shear stress');
+      note = govBy === 'twist'
+        ? 'Stiffness governs: the shaft could carry ' + fmt(Tstress) + ' N\u00b7m on stress alone, but reaches its ' + fmt(thetaAllowDeg,3) + '\u00b0 twist limit at ' + fmt(Ttwist) + ' N\u00b7m. Size on the smaller figure.'
+        : 'Strength governs: the stress limit is reached at ' + fmt(Tstress) + ' N\u00b7m' + (useTwist ? ', before the ' + fmt(thetaAllowDeg,3) + '\u00b0 twist limit at ' + fmt(Ttwist) + ' N\u00b7m.' : '.') + ' Remember this is pure torsion \u2014 a shaft that also bends needs a combined check.';
+      t1L = 'Stress-limited'; t1 = showTorque(Tstress);
+      t2L = 'Twist-limited'; t2 = useTwist ? showTorque(Ttwist) : 'not applied';
+      t3L = 'Polar Moment J'; t3 = fmt(J,0) + ' mm\u2074';
+      var refOn = document.getElementById('refSpeedOn').checked;
+      var refN = val('refSpeed');
+      var refOK = refOn && !isNaN(refN) && refN > 0;   // validated above
+      var refKW = refOK ? (2*Math.PI*refN*Tgov/60/1000) : 0;
+      if(refOK){ t4L = 'Power at ' + fmt(refN,0) + ' rpm'; t4 = fmt(refKW,2) + ' kW'; }
+      else { t4L = 'Twist Limit'; t4 = useTwist ? fmt(thetaAllowDeg,3) + '\u00b0' : 'not applied'; }
+      rows =
+        '<tr><td>Allowable shear stress</td><td>' + fmt(tau) + ' MPa</td></tr>' +
+        '<tr><td>Geometry</td><td>' + geomTxt + '</td></tr>' +
+        '<tr><td>Polar moment of inertia J</td><td>' + fmt(J,0) + ' mm\u2074</td></tr>' +
+        '<tr><td>Stress-limited torque \u03c4\u00b7J/r</td><td>' + fmt(Tstress) + ' N\u00b7m</td></tr>' +
+        (useTwist ? '<tr><td>Permissible twist</td><td>' + fmt(thetaAllowDeg,3) + '\u00b0 over ' + fmt(L/1000,3) + ' m</td></tr>' +
+                    '<tr><td>Twist-limited torque G\u00b7J\u00b7\u03b8/L</td><td>' + fmt(Ttwist) + ' N\u00b7m</td></tr>' : '') +
+        '<tr><td><strong>Governing capacity</strong></td><td><strong>' + fmt(Tgov) + ' N\u00b7m</strong></td></tr>' +
+        (refOK ? '<tr><td>Equivalent power at ' + fmt(refN,0) + ' rpm</td><td>' + fmt(refKW,2) + ' kW (' + fmt(refKW*1000/745.699872,2) + ' hp)</td></tr>' : '');
+    }
+
+    txt('resultLabel', mainLabel);
+    txt('rResult', main);
+    txt('resultSub', sub);
+    txt('rT1Label', t1L); txt('rT1', t1);
+    txt('rT2Label', t2L); txt('rT2', t2);
+    txt('rT3Label', t3L); txt('rT3', t3);
+    txt('rT4Label', t4L); txt('rT4', t4);
+    txt('verdictNote', note);
+    document.getElementById('breakdownBox').innerHTML =
+      '<table class="breakdown-table"><thead><tr><th>Quantity</th><th>Value</th></tr></thead><tbody>' + rows + '</tbody></table>';
   }
 
-  calculateShaftTorque();
+  syncFields();
+  calcShaftTorque();
 </script>
 
 <script>
-  // ===== Generic Copy Result (added site-wide; does not touch page-specific calc logic) =====
+  // ===== Generic Copy Result =====
   function copyResultGeneric(){
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
@@ -850,12 +1682,7 @@
     }
   }
 
-  // ===== Generic number-input safety net (added site-wide; purely additive —
-  // runs on blur AFTER the page's own oninput/onchange calc handlers, and only
-  // corrects a value that is non-finite or outside the field's own declared
-  // min/max attributes, then re-fires "input" so the page's existing calc
-  // function recalculates with the corrected value. Never overrides or
-  // replaces any existing calculator logic. =====
+  // ===== Generic number-input safety net =====
   (function(){
     function clampNumberInput(el){
       if (el.type !== 'number' || el.value === '') return;
@@ -879,7 +1706,7 @@
   })();
 </script>
 <script>
-  // ===== Share Result modal loader (lazy-loads /assets/share-modal.js on first click) =====
+  // ===== Share Result modal loader =====
   var __shareModalLoading = false;
   function loadShareModal(){
     if (typeof openShareModal === 'function'){ openShareModal(); return; }
@@ -893,7 +1720,7 @@
   }
 </script>
 <script>
-  // ===== Share/Feedback bar: move above Related Calculators on mobile, restore on desktop =====
+  // ===== Share/Feedback bar: move above Related Calculators on mobile =====
   (function(){
     function positionShareBar(){
       var bar = document.getElementById('shareFeedbackBar');
@@ -902,11 +1729,18 @@
       if(!bar || !related || !anchor) return;
       var isMobile = window.matchMedia('(max-width: 1023px)').matches;
       if(isMobile){
-        if(bar.nextElementSibling !== related){
+        // Moving the bar inside the Related Calculators section would apply
+        // that section's px-4 on top of the bar's own, so drop the bar's
+        // wrapper classes while it lives there and restore them on desktop.
+        if(bar.parentElement !== related.parentElement){
+          bar.classList.remove('max-w-6xl','mx-auto','px-4','mb-14');
+          bar.classList.add('mb-4');
           related.parentElement.insertBefore(bar, related);
         }
       } else {
         if(bar.previousElementSibling !== anchor){
+          bar.classList.remove('mb-4');
+          bar.classList.add('max-w-6xl','mx-auto','px-4','mb-14');
           anchor.parentElement.insertBefore(bar, anchor.nextSibling);
         }
       }
