@@ -472,7 +472,20 @@ async function getCachedJSON(context, origin, assetPath, ttlSeconds) {
   }
 
   const cache = caches.default;
-  const cacheKey = new Request(assetURL.toString());
+
+  // Version the cache key with the current deployment so a new deploy
+  // never serves the previous build's JSON. Without this, the key was
+  // just the asset URL, so an edited search-index.json stayed invisible
+  // to the middleware (breadcrumb, nav dropdowns, Related Calculators)
+  // for up to CACHE_TTL_SECONDS after deploy — even though the browser's
+  // own fetch of the same file, used by the search bar, was already
+  // showing the new data. Cloudflare Pages sets CF_PAGES_COMMIT_SHA on
+  // every build; if it is missing (local dev), fall back to the plain
+  // URL and keep the old behaviour.
+  const buildId = (context.env && context.env.CF_PAGES_COMMIT_SHA) || "";
+  const keyURL = new URL(assetURL.toString());
+  if (buildId) keyURL.searchParams.set("__build", buildId);
+  const cacheKey = new Request(keyURL.toString());
 
   let response = await cache.match(cacheKey);
   if (response) return response;
