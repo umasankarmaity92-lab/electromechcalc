@@ -481,6 +481,13 @@
       <button onclick="tvCalculate()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold py-3 rounded-lg shadow transition">Calculate Volume</button>
 
       <div id="tvValidationBox" class="hidden mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3"></div>
+
+      <!-- Formula chips — updated by tvSetType() so they always show the
+           equations actually applied to the selected tank shape. -->
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip" id="tvFormulaChip">Total: V = (&pi;/4)&middot;d&sup2;&middot;l</span>
+        <span class="formula-chip" id="tvFilledChip">Filled: A<sub>segment</sub>(d/2, f) &times; l</span>
+      </div>
     </div>
 
     <!-- RIGHT COLUMN: DIAGRAM + RESULT -->
@@ -1188,6 +1195,40 @@ const FIELD_LABELS = {
   a: 'Straight Length (a)'
 };
 
+// Formula shown on the chips under the Calculate button. Kept next to
+// TANK_CALC so the displayed equation and the executed one stay in step.
+const TANK_FORMULAS = {
+  'h-cyl':     { total: 'V = (\u03c0/4)\u00b7d\u00b2\u00b7l',
+                 filled: 'A_segment(d/2, f) \u00d7 l' },
+  'v-cyl':     { total: 'V = (\u03c0/4)\u00b7d\u00b2\u00b7h',
+                 filled: 'V = (\u03c0/4)\u00b7d\u00b2\u00b7f' },
+  'rect':      { total: 'V = w\u00b7h\u00b7l',
+                 filled: 'V = w\u00b7f\u00b7l' },
+  'h-oval':    { total: 'V = [(w\u2212h)\u00b7h + (\u03c0/4)\u00b7h\u00b2]\u00b7l',
+                 filled: '[(w\u2212h)\u00b7f + A_segment(h/2, f)] \u00d7 l' },
+  'v-oval':    { total: 'V = [(\u03c0/4)\u00b7w\u00b2 + w\u00b7(h\u2212w)]\u00b7l',
+                 filled: 'three zones: bottom cap \u2192 straight \u2192 top cap' },
+  'h-cap':     { total: 'V = (\u03c0/4)\u00b7d\u00b2\u00b7a + (\u03c0/6)\u00b7d\u00b3',
+                 filled: 'A_segment(d/2, f)\u00b7a + spherical cap at f' },
+  'v-cap':     { total: 'V = (\u03c0/4)\u00b7d\u00b2\u00b7a + (\u03c0/6)\u00b7d\u00b3',
+                 filled: 'three zones: hemisphere \u2192 cylinder \u2192 top cap' },
+  'h-21e':     { total: 'V = (\u03c0/4)\u00b7d\u00b2\u00b7a + (\u03c0/12)\u00b7d\u00b3',
+                 filled: 'A_segment(d/2, f)\u00b7a + spheroid cap at f' },
+  'h-dish':    { total: 'V = (\u03c0/4)\u00b7d\u00b2\u00b7a + 2\u00b7(\u03c0h/6)(3r\u00b2 + h\u00b2), h = 0.169d',
+                 filled: 'A_segment(d/2, f)\u00b7a + 2 \u00d7 numerically integrated head' },
+  'h-ellipse': { total: 'V = (\u03c0/4)\u00b7w\u00b7h\u00b7l',
+                 filled: '(w/h)\u00b7A_segment(h/2, f) \u00d7 l' }
+};
+
+function tvUpdateFormulaChips(key){
+  const f = TANK_FORMULAS[key];
+  const totalChip = document.getElementById('tvFormulaChip');
+  const filledChip = document.getElementById('tvFilledChip');
+  if(!f || !totalChip || !filledChip) return;
+  totalChip.textContent = 'Total: ' + f.total;
+  filledChip.textContent = 'Filled: ' + f.filled;
+}
+
 let currentTankType = 'h-cyl';
 
 function tvSetType(key){
@@ -1198,6 +1239,7 @@ function tvSetType(key){
     if(fg) fg.classList.toggle('hidden', k!==key);
     if(sv) sv.classList.toggle('hidden', k!==key);
   });
+  tvUpdateFormulaChips(key);
   tvCalculate();
 }
 
