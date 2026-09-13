@@ -398,6 +398,17 @@
   body{ transition:background-color .2s ease, color .2s ease; }
   body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
   body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  /* Calculate button: calculator.net green in light mode — targeted both by its
+     onclick attribute AND by its Tailwind class, so it's covered either way */
+  body:not(.dark-theme) #calculator button[onclick="calcAndScroll()"],
+  body:not(.dark-theme) #calculator .bg-brandBlue{
+    background:#4b7a2f !important;
+    background-color:#4b7a2f !important;
+    border-radius:4px !important;
+  }
+  body:not(.dark-theme) #calculator button[onclick="calcAndScroll()"]:hover,
+  body:not(.dark-theme) #calculator .hover\:bg-sky-600:hover{ background:#3e6527 !important; background-color:#3e6527 !important; }
+
   /* Toggle tab bars (shaft type, torque input mode): dark bar with white
      text, active tab white on dark — matching the other calculator pages. */
   #calculator .bg-gray-100:has(.toggle-btn){ background:#0B1220 !important; border:none !important; padding:3px !important; }
@@ -749,7 +760,7 @@
 
       <div id="validationBox" role="alert" aria-live="polite" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
-      <button onclick="calcStarDelta()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+      <button onclick="calcAndScroll()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate Starter Ratings
       </button>
 
@@ -1707,6 +1718,24 @@ Setting = 1.00 × I<sub>FLC</sub>&nbsp;&nbsp;(relay in the incoming line)</div>
           : '<tr><td>Short-circuit protection</td><td>per local code</td><td>select from code + manufacturer coordination table</td></tr>') +
         '<tr><td>Reference making current</td><td>\u2248 10 \u00d7 I</td><td>' + fmt(making,0) + ' A \u2014 check against the contactor\u2019s AC-3 data</td></tr>' +
       '</tbody></table>';
+  }
+
+  // Pressing Calculate should land the user on the answer: on narrow screens the
+  // result panel sits below the whole input form, so scroll it into view. If the
+  // inputs failed validation, scroll to the error instead.
+  function calcAndScroll(){
+    calcStarDelta();
+    var box = document.getElementById('validationBox');
+    var target = (box && !box.classList.contains('hidden')) ? box : document.getElementById('resultPanel');
+    if(!target) return;
+    var r = target.getBoundingClientRect();
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    if(r.top >= 0 && r.bottom <= vh) return;            // already fully visible
+    var reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e) {}
+    var top = Math.max(0, window.pageYOffset + r.top - 80);   // clear the sticky header
+    try { window.scrollTo({ top: top, behavior: reduce ? 'auto' : 'smooth' }); }
+    catch(e) { window.scrollTo(0, top); }
   }
 
   setMode('rating');
