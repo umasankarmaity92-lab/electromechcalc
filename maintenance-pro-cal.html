@@ -76,7 +76,7 @@
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
     { "@type": "ListItem", "position": 2, "name": "Mechanical Calculators", "item": "https://www.electromechcalc.com/mechanical-calculators" },
-    { "@type": "ListItem", "position": 3, "name": "Maintenance Pro Cal | MTBF, MTTR, OEE, Reliability &amp; PM Interval Calculator", "item": "https://www.electromechcalc.com/maintenance-pro-cal" }
+    { "@type": "ListItem", "position": 3, "name": "Maintenance Calculator", "item": "https://www.electromechcalc.com/maintenance-pro-cal" }
   ]
 }
 </script>
@@ -400,7 +400,7 @@
   <div class="flex justify-center mb-4">
     <label class="flex items-center gap-2 text-xs font-semibold text-gray-500 bg-white border border-gray-200 rounded-full px-3 py-1.5">
       Currency
-      <select id="currencySelect" class="font-mono text-xs font-semibold text-brandDark bg-transparent outline-none" onchange="changeCurrency(this.value)">
+      <select id="currencySelect" aria-label="Currency" class="font-mono text-xs font-semibold text-brandDark bg-transparent outline-none" onchange="changeCurrency(this.value)">
         <option value="USD" selected>USD ($)</option>
         <option value="EUR">EUR (€)</option>
         <option value="GBP">GBP (£)</option>
@@ -1581,14 +1581,16 @@
   function calcMTBF(){
     const t = parseFloat(document.getElementById('mtbf_time').value) || 0;
     const f = parseFloat(document.getElementById('mtbf_failures').value) || 0;
-    const mtbf = f > 0 ? t / f : 0;
+    const valid = f > 0 && t > 0;
+    const mtbf = valid ? t / f : 0;
     const rate = mtbf > 0 ? 1 / mtbf : 0;
-    setResult('MTBF', formatNum(mtbf) + ' hrs', 'Mean Time Between Failures', 'MTBF = Operating Time ÷ Failures');
+    setResult('MTBF', valid ? formatNum(mtbf) + ' hrs' : '—', 'Mean Time Between Failures', 'MTBF = Operating Time ÷ Failures');
+    if(!valid) setWarning('Enter operating hours and a failure count greater than zero — with no failures recorded, MTBF cannot be calculated from this data.');
     setQuickTable([
       { v: formatNum(t), l: 'Operating Hrs' },
       { v: formatNum(f), l: 'Failures' },
-      { v: formatNum(rate), l: 'Failure Rate /hr' },
-      { v: formatNum(mtbf/24), l: 'MTBF in Days' }
+      { v: valid ? formatNum(rate*1000) : '—', l: 'Failure Rate /1000hr' },
+      { v: valid ? formatNum(mtbf/24) : '—', l: 'MTBF in Days' }
     ]);
   }
 
@@ -1596,14 +1598,16 @@
   function calcMTTR(){
     const t = parseFloat(document.getElementById('mttr_time').value) || 0;
     const r = parseFloat(document.getElementById('mttr_repairs').value) || 0;
-    const mttr = r > 0 ? t / r : 0;
+    const valid = r > 0 && t > 0;
+    const mttr = valid ? t / r : 0;
     const repairRate = mttr > 0 ? 1 / mttr : 0;
-    setResult('MTTR', formatNum(mttr) + ' hrs', 'Mean Time To Repair', 'MTTR = Total Repair Time ÷ Repairs');
+    setResult('MTTR', valid ? formatNum(mttr) + ' hrs' : '—', 'Mean Time To Repair', 'MTTR = Total Repair Time ÷ Repairs');
+    if(!valid) setWarning('Enter total repair hours and a repair count greater than zero.');
     setQuickTable([
       { v: formatNum(t), l: 'Repair Hrs' },
       { v: formatNum(r), l: 'Repairs' },
-      { v: formatNum(mttr*60), l: 'MTTR in Minutes' },
-      { v: formatNum(repairRate), l: 'Repairs/hr Rate' }
+      { v: valid ? formatNum(mttr*60) : '—', l: 'MTTR in Minutes' },
+      { v: valid ? formatNum(repairRate) : '—', l: 'Repairs/hr Rate' }
     ]);
   }
 
@@ -1622,9 +1626,11 @@
     const oee = availability * performance * quality * 100;
 
     setResult('OEE', formatNum(oee) + ' %', 'Overall Equipment Effectiveness', 'OEE = Availability × Performance × Quality');
-    if (total > 0 && good > total) {
-      setWarning('Good Count exceeds Total Count — Quality has been capped at 100%. Check your inputs.');
-    }
+    const oeeNotes = [];
+    if (planned > 0 && down >= planned) oeeNotes.push('Downtime equals or exceeds Planned Production Time, so run time is zero and OEE cannot be calculated.');
+    if (total > 0 && good > total) oeeNotes.push('Good Count exceeds Total Count — Quality has been capped at 100%.');
+    if (opTime > 0 && (cycle * total) / (opTime * 60) > 1) oeeNotes.push('Ideal cycle time × Total Count exceeds the available run time, so Performance has been capped at 100% — check the cycle time.');
+    if (oeeNotes.length) setWarning(oeeNotes.join(' ') + ' Check your inputs.');
     setQuickTable([
       { v: formatNum(availability*100)+'%', l: 'Availability' },
       { v: formatNum(performance*100)+'%', l: 'Performance' },
@@ -1690,12 +1696,12 @@
     const dVal = parseFloat(dEl.value);
     const tVal = parseFloat(tEl.value);
     if(unit === 'imperial'){
-      if(!isNaN(dVal)) dEl.value = parseFloat(inFromMm(dVal).toFixed(3));
+      if(!isNaN(dVal)) dEl.value = parseFloat(inFromMm(dVal).toFixed(4));
       if(!isNaN(tVal)) tEl.value = parseFloat(fFromC(tVal).toFixed(2));
       document.getElementById('lube_d_label').textContent = 'Bearing Bore Diameter (in)';
       document.getElementById('lube_temp_label').textContent = 'Operating Temperature (°F)';
     } else {
-      if(!isNaN(dVal)) dEl.value = parseFloat(mmFromIn(dVal).toFixed(3));
+      if(!isNaN(dVal)) dEl.value = parseFloat(mmFromIn(dVal).toFixed(2));
       if(!isNaN(tVal)) tEl.value = parseFloat(cFromF(tVal).toFixed(2));
       document.getElementById('lube_d_label').textContent = 'Bearing Bore Diameter (mm)';
       document.getElementById('lube_temp_label').textContent = 'Operating Temperature (°C)';
@@ -1716,7 +1722,7 @@
         const tEl = document.getElementById('lube_temp');
         const dVal = parseFloat(dEl.value);
         const tVal = parseFloat(tEl.value);
-        if(!isNaN(dVal)) dEl.value = parseFloat(inFromMm(dVal).toFixed(3));
+        if(!isNaN(dVal)) dEl.value = parseFloat(inFromMm(dVal).toFixed(4));
         if(!isNaN(tVal)) tEl.value = parseFloat(fFromC(tVal).toFixed(2));
         document.getElementById('lube_d_label').textContent = 'Bearing Bore Diameter (in)';
         document.getElementById('lube_temp_label').textContent = 'Operating Temperature (°F)';
@@ -1772,11 +1778,12 @@
     const ordersPerYear = eoq > 0 ? demand / eoq : 0;
 
     setResult('Reorder Point', formatNum(rop) + ' units', 'Stock level that triggers a new order', 'ROP = (Avg Usage × Lead Time) + Safety Stock');
+    if (hcost <= 0) setWarning('Annual holding cost per unit must be greater than zero for the EOQ figure — the reorder point above is unaffected.');
     setQuickTable([
       { v: formatNum(safetyStock), l: 'Safety Stock' },
-      { v: formatNum(eoq), l: 'EOQ (units)' },
+      { v: hcost > 0 ? formatNum(eoq) : '—', l: 'EOQ (units)' },
       { v: formatNum(avg*lead), l: 'Lead-Time Demand' },
-      { v: formatNum(ordersPerYear), l: 'Orders / Year' }
+      { v: eoq > 0 ? formatNum(ordersPerYear) : '—', l: 'Orders / Year' }
     ]);
   }
 
@@ -1823,12 +1830,14 @@
   function calcReliability(){
     const mtbf = parseFloat(document.getElementById('rel_mtbf').value) || 0;
     const t = parseFloat(document.getElementById('rel_t').value) || 0;
-    const r = mtbf > 0 ? Math.exp(-t / mtbf) : 0;
+    const valid = mtbf > 0;
+    const r = valid ? Math.exp(-t / mtbf) : 0;
     const f = 1 - r;
 
-    setResult('Reliability R(t)', formatNum(r*100) + ' %', 'Probability of survival to mission time t', 'R(t) = e^(−t / MTBF)');
+    setResult('Reliability R(t)', valid ? formatNum(r*100) + ' %' : '—', 'Probability of survival to mission time t', 'R(t) = e^(−t / MTBF)');
+    if(!valid) setWarning('Enter an MTBF greater than zero — reliability is undefined without it.');
     setQuickTable([
-      { v: formatNum(f*100)+'%', l: 'Failure Prob. F(t)' },
+      { v: valid ? formatNum(f*100)+'%' : '—', l: 'Failure Prob. F(t)' },
       { v: formatNum(mtbf), l: 'MTBF (hrs)' },
       { v: formatNum(t), l: 'Mission Time (hrs)' },
       { v: mtbf>0 ? formatNum(1/mtbf*1000)+'/1000hr' : '—', l: 'Failure Rate λ' }
