@@ -18,19 +18,21 @@
       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
     document.documentElement.classList.add(t);
     document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+    var tc = document.querySelector('meta[name="theme-color"]');
+    if(tc) tc.setAttribute('content', t === 'dark-theme' ? '#0B1220' : '#ffffff');
   } catch(e) {}
 })();
 </script>
 
 <!-- ===================== [PER-PAGE] TITLE ===================== -->
-<title>Motor Starting Current Calculator | ElectroMechCalc</title>
+<title>Motor Starting Current Calculator (LRA &amp; Code Letter) | EMC</title>
 
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
      crossorigin="anonymous"></script>
 
 <!-- ===================== [PER-PAGE] SEO META ===================== -->
-<meta name="description" content="Free Motor Starting Current Calculator. Enter motor full load current and starting method (DOL, star-delta, autotransformer) to get actual line starting current instantly, with formula and worked example.">
-<meta name="keywords" content="motor starting current calculator, locked rotor current calculator, star delta starting current, autotransformer starting current, dol starting current">
+<meta name="description" content="Free motor starting current calculator — inrush from nameplate FLC, motor kW or HP, or the NEMA code letter, for DOL, star-delta, autotransformer, soft starter and VFD, with starting kVA and voltage dip.">
+<meta name="keywords" content="motor starting current calculator, locked rotor current calculator, LRA calculator, NEMA code letter calculator, motor inrush current, star delta starting current, autotransformer starting current, dol starting current, motor starting kVA, voltage dip on motor starting">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.electromechcalc.com/electrical/motor-starting-current">
 <link rel="icon" href="/favicon.png" type="image/png">
@@ -38,16 +40,16 @@
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ElectroMechCalc">
-<meta property="og:title" content="Motor Starting Current Calculator">
-<meta property="og:description" content="Free Motor Starting Current Calculator — enter FLC and starting method to get actual line starting current instantly.">
+<meta property="og:title" content="Motor Starting Current Calculator (LRA &amp; Code Letter)">
+<meta property="og:description" content="Inrush from FLC, kW/HP or NEMA code letter — DOL, star-delta, autotransformer, soft starter, VFD — plus starting kVA and voltage dip.">
 <meta property="og:url" content="https://www.electromechcalc.com/electrical/motor-starting-current">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
 <meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Motor Starting Current Calculator">
-<meta name="twitter:description" content="Free Motor Starting Current Calculator — enter FLC and starting method to get actual line starting current instantly.">
+<meta name="twitter:title" content="Motor Starting Current Calculator (LRA &amp; Code Letter)">
+<meta name="twitter:description" content="Motor inrush from FLC, kW/HP or code letter, with starting kVA, torque and transformer voltage dip. Free.">
 <meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
 
 <!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
@@ -60,6 +62,15 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "featureList": [
+    "Starting current from nameplate full load current",
+    "Starting current from motor rating in kW or HP with efficiency and power factor",
+    "Locked-rotor current from the NEMA code letter and horsepower",
+    "Reverse calculation: full load current from a measured starting current",
+    "DOL, star-delta, autotransformer 80/65/50 percent, soft starter and VFD",
+    "Starting kVA, starting torque as a share of DOL torque and motor winding current in star",
+    "First-order supply voltage dip estimate from transformer kVA and percent impedance"
+  ],
   "description": "Free Motor Starting Current Calculator. Enter motor full load current and starting method (DOL, star-delta, autotransformer) to get actual line starting current instantly, with formula and worked example.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
@@ -85,47 +96,122 @@
     {
       "@type": "Question",
       "name": "What is the formula for DOL (direct-on-line) starting current?",
-      "acceptedAnswer": { "@type": "Answer", "text": "DOL Starting Current = Full Load Current × Starting Current Multiplier, where the multiplier (typically 5-8× FLC for standard induction motors) reflects the motor's locked-rotor current characteristic, ideally sourced from its nameplate or NEMA code letter / IEC design class rather than assumed." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "DOL Starting Current = Full Load Current × Starting Current Multiplier, where the multiplier (typically 5-8× FLC for standard induction motors) reflects the motor's locked-rotor current characteristic, ideally sourced from its nameplate or NEMA code letter / IEC design class rather than assumed."
+      }
     },
     {
       "@type": "Question",
       "name": "Why does star-delta starting reduce starting current to exactly one-third of DOL?",
-      "acceptedAnswer": { "@type": "Answer", "text": "In star (wye) connection during starting, each winding sees line voltage ÷ √3 instead of full line voltage in delta — since current is proportional to voltage (for a given impedance) and the winding connection itself also changes the current relationship, the combined effect reduces line starting current to exactly one-third of what direct-on-line (delta) starting would draw, a well-established result from three-phase motor winding theory." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In star (wye) connection during starting, each winding sees line voltage ÷ √3 instead of full line voltage in delta — since current is proportional to voltage (for a given impedance) and the winding connection itself also changes the current relationship, the combined effect reduces line starting current to exactly one-third of what direct-on-line (delta) starting would draw, a well-established result from three-phase motor winding theory."
+      }
     },
     {
       "@type": "Question",
       "name": "How does autotransformer starting reduce starting current?",
-      "acceptedAnswer": { "@type": "Answer", "text": "An autotransformer starter applies a reduced voltage (a selected tap percentage, commonly 50%, 65%, or 80% of full voltage) to the motor during starting — since motor current is roughly proportional to applied voltage, and the autotransformer's turns ratio also reduces line-side current proportionally, the line starting current reduces by approximately the tap percentage squared (a 65% tap gives roughly 0.65² ≈ 42% of DOL starting current)." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An autotransformer starter applies a reduced voltage (a selected tap percentage, commonly 50%, 65%, or 80% of full voltage) to the motor during starting — since motor current is roughly proportional to applied voltage, and the autotransformer's turns ratio also reduces line-side current proportionally, the line starting current reduces by approximately the tap percentage squared (a 65% tap gives roughly 0.65² ≈ 42% of DOL starting current)."
+      }
     },
     {
       "@type": "Question",
       "name": "Why does reducing starting current also reduce starting torque?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Motor torque is proportional to the square of applied voltage (or, equivalently, roughly proportional to current squared for a given motor at a given slip) — any method that reduces starting voltage or current to limit inrush necessarily reduces available starting torque by roughly the same proportion (squared), which is why reduced-voltage starting methods can only be used where the driven load's actual starting torque requirement is modest enough to tolerate this reduction." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Motor torque is proportional to the square of applied voltage (or, equivalently, roughly proportional to current squared for a given motor at a given slip) — any method that reduces starting voltage or current to limit inrush necessarily reduces available starting torque by roughly the same proportion (squared), which is why reduced-voltage starting methods can only be used where the driven load's actual starting torque requirement is modest enough to tolerate this reduction."
+      }
     },
     {
       "@type": "Question",
       "name": "Which starting method gives the lowest starting current?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Among common methods, star-delta and low-tap autotransformer starting give the most significant starting current reduction (down to roughly a third or less of DOL current), while soft starters offer more flexible, adjustable reduction, and VFDs offer the most current-limited starting of all (often limiting starting current to close to full load current itself, since a VFD ramps frequency and voltage together rather than applying reduced voltage at line frequency)." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Among common methods, star-delta and low-tap autotransformer starting give the most significant starting current reduction (down to roughly a third or less of DOL current), while soft starters offer more flexible, adjustable reduction, and VFDs offer the most current-limited starting of all (often limiting starting current to close to full load current itself, since a VFD ramps frequency and voltage together rather than applying reduced voltage at line frequency)."
+      }
     },
     {
       "@type": "Question",
       "name": "Can I use star-delta starting for any motor?",
-      "acceptedAnswer": { "@type": "Answer", "text": "No — star-delta starting requires a motor specifically wound and wired for a delta connection at its rated running voltage (with all six winding terminals brought out to allow both star and delta connection), and the driven load's required starting torque must be low enough to tolerate the roughly one-third torque reduction that comes with the one-third current reduction. Not every motor or application is suitable for star-delta starting." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No — star-delta starting requires a motor specifically wound and wired for a delta connection at its rated running voltage (with all six winding terminals brought out to allow both star and delta connection), and the driven load's required starting torque must be low enough to tolerate the roughly one-third torque reduction that comes with the one-third current reduction. Not every motor or application is suitable for star-delta starting."
+      }
     },
     {
       "@type": "Question",
       "name": "How much starting current reduction does a soft starter typically provide?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Soft starters offer adjustable starting current limiting, commonly configurable to limit starting current to roughly 2-4 times full load current (compared to 5-8 times for DOL), with the exact figure depending on the specific soft starter's programmed current limit setting and the connected load's actual starting torque requirement — unlike star-delta or autotransformer starting, soft starter reduction isn't fixed by a simple ratio but is adjustable within the device's configuration." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Soft starters offer adjustable starting current limiting, commonly configurable to limit starting current to roughly 2-4 times full load current (compared to 5-8 times for DOL), with the exact figure depending on the specific soft starter's programmed current limit setting and the connected load's actual starting torque requirement — unlike star-delta or autotransformer starting, soft starter reduction isn't fixed by a simple ratio but is adjustable within the device's configuration."
+      }
     },
     {
       "@type": "Question",
       "name": "Does a VFD eliminate starting current concerns entirely?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Largely, yes for the inrush/locked-rotor current concern specifically — a VFD starts the motor by gradually ramping both frequency and voltage from near zero, so the motor never experiences the sudden line-frequency inrush that DOL and reduced-voltage methods produce, typically keeping starting current close to (sometimes even below) full load current throughout the ramp. This is one of several reasons VFDs are increasingly used specifically for starting current management, beyond their speed control capability." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Largely, yes for the inrush/locked-rotor current concern specifically — a VFD starts the motor by gradually ramping both frequency and voltage from near zero, so the motor never experiences the sudden line-frequency inrush that DOL and reduced-voltage methods produce, typically keeping starting current close to (sometimes even below) full load current throughout the ramp. This is one of several reasons VFDs are increasingly used specifically for starting current management, beyond their speed control capability."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I find starting current from the NEMA code letter?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The code letter gives locked-rotor apparent power per horsepower. Multiply the band's kVA/hp by the motor's horsepower for the locked-rotor kVA, then LRA = kVA × 1000 ÷ (√3 × V). A 30 hp code G motor on 415 V gives 6.3 × 30 = 189 kVA and about 263 A. That is far more reliable than assuming a 6× multiple, because the letter is specific to that machine."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is locked-rotor current the same as starting current?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Locked-rotor current is the current drawn with the rotor held stationary at rated voltage — the worst case, and what a direct-on-line start draws at the instant of closing. Starting current is what actually flows during the start: it begins at the locked-rotor value and falls as the motor accelerates, and a reduced-voltage starter cuts the initial value further. The first half-cycle can also carry a DC offset, so the instantaneous peak exceeds the RMS locked-rotor figure."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much voltage dip is acceptable when starting a motor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "There is no universal figure — the limit is set by your supply authority and by what shares the bus. Contactor coils typically drop out somewhere around 65–75% of rated voltage, discharge lighting is sensitive to repeated dips, and other motors lose torque with the square of the voltage. Frequency matters as much as depth: a dip that is fine once a day may not be fine every few minutes. Where the estimate approaches the limit, calculate it properly with the real source and cable impedances."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a VFD draw inrush current when starting a motor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Not in the way a contactor start does. A VFD accelerates the motor from a low frequency, so the motor never sees the locked-rotor condition and line current stays near rated — typically around 1.1–1.5 × FLC depending on the torque demanded. The drive does draw a charging surge on its own DC bus at power-up, which is a separate matter handled by its pre-charge circuit."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I size a generator for motor starting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "On starting kVA, not running kW. A generator has no large fault infeed behind it, so its own subtransient reactance sets the voltage dip, and a starting load of roughly two to three times the set rating is often enough to stall the voltage and the start with it. Take the starting kVA from this calculator, apply the acceptable dip for the site, and check it against the set manufacturer's motor-starting kVA table — reduced-voltage starting or a VFD usually costs far less than the next generator frame size."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What current limit should a soft starter be set to?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Commonly 2.5–4 × FLC, and the setting is a compromise rather than a fixed value: torque falls with the square of the voltage, so limiting current to 3 × FLC on a motor that would otherwise draw 6 × leaves roughly a quarter of the DOL starting torque. Set it as low as the load will accelerate on, then confirm the motor actually reaches full speed within the ramp — a soft starter current-limiting a load it cannot accelerate will trip on start time, or cook the motor trying."
+      }
     },
     {
       "@type": "Question",
       "name": "Why does starting current matter beyond just tripping a breaker?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Beyond nuisance tripping of protective devices, high starting current causes a voltage dip on the supply system (affecting other connected equipment during the start), mechanical shock/stress on the motor and driven equipment from the sudden torque application, and in facilities with billing based partly on peak demand, can contribute to demand charges if frequent starts occur — starting current management is a genuine system-level concern, not just a single motor's protective device coordination issue." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Beyond nuisance tripping of protective devices, high starting current causes a voltage dip on the supply system (affecting other connected equipment during the start), mechanical shock/stress on the motor and driven equipment from the sudden torque application, and in facilities with billing based partly on peak demand, can contribute to demand charges if frequent starts occur — starting current management is a genuine system-level concern, not just a single motor's protective device coordination issue."
+      }
     }
   ]
 }
@@ -472,36 +558,174 @@
       </div>
 
       <div class="space-y-4 mb-5">
+
         <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="inputMode">Motor Data Source</label>
+          <select id="inputMode" class="input-field mt-2" onchange="syncFields();calcStart()">
+            <option value="flc" selected>Nameplate full load current (FLC)</option>
+            <option value="rating">Motor rating — kW or HP</option>
+            <option value="code">NEMA code letter (locked-rotor kVA/hp)</option>
+            <option value="reverse">Reverse — FLC from a measured starting current</option>
+          </select>
+          <p class="text-xs text-gray-400 mt-1">Use the nameplate current where you have it. The code-letter mode gives locked-rotor current straight from the nameplate code, which is the most accurate route when no LRA figure is printed.</p>
+        </div>
+
+        <div class="field-group" id="grpFlc">
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="flc">Motor Full Load Current, FLC (A)</label>
-          <input id="flc" type="number" value="40" step="0.1" min="0" placeholder="e.g. 40" class="input-field mt-2">
+          <input id="flc" type="number" value="40" step="0.1" min="0" placeholder="e.g. 40" class="input-field mt-2" oninput="calcStart()">
         </div>
-        <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="dolMultiplier">DOL Starting Current Multiplier</label>
-          <input id="dolMultiplier" type="number" value="6" step="0.1" min="1" placeholder="e.g. 6" class="input-field mt-2">
+
+        <div class="field-group hidden-field" id="grpRating">
+          <span class="field-group-title">Motor rating</span>
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="power">Rated Output Power</label>
+              <div class="unit-row mt-2">
+                <input id="power" type="number" value="22" step="0.1" min="0" placeholder="e.g. 22" class="input-field" oninput="calcStart()">
+                <select id="powerUnit" class="input-field" aria-label="Power unit" onchange="calcStart()">
+                  <option value="1000" selected>kilowatts (kW)</option>
+                  <option value="745.699872">horsepower (HP)</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="effPct">Efficiency (%)</label>
+                <input id="effPct" type="number" value="92" step="0.1" min="1" max="100" class="input-field mt-2" oninput="calcStart()">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pf">Power Factor</label>
+                <input id="pf" type="number" value="0.86" step="0.01" min="0.1" max="1" class="input-field mt-2" oninput="calcStart()">
+              </div>
+            </div>
+            <p class="text-xs text-amber-700">Rated output is shaft power. Efficiency and power factor must come from the nameplate — assumed values shift the current by several percent.</p>
+          </div>
         </div>
+
+        <div class="field-group hidden-field" id="grpCode">
+          <span class="field-group-title">NEMA code letter</span>
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="codeLetter">Nameplate Code Letter</label>
+              <select id="codeLetter" class="input-field mt-2" onchange="calcStart()">
+                <option value="3.15">A — up to 3.15 kVA/hp</option>
+                <option value="3.55">B — 3.15 to 3.55</option>
+                <option value="4.0">C — 3.55 to 4.0</option>
+                <option value="4.5">D — 4.0 to 4.5</option>
+                <option value="5.0">E — 4.5 to 5.0</option>
+                <option value="5.6">F — 5.0 to 5.6</option>
+                <option value="6.3" selected>G — 5.6 to 6.3</option>
+                <option value="7.1">H — 6.3 to 7.1</option>
+                <option value="8.0">J — 7.1 to 8.0</option>
+                <option value="9.0">K — 8.0 to 9.0</option>
+                <option value="10.0">L — 9.0 to 10.0</option>
+                <option value="11.2">M — 10.0 to 11.2</option>
+                <option value="12.5">N — 11.2 to 12.5</option>
+                <option value="14.0">P — 12.5 to 14.0</option>
+                <option value="16.0">R — 14.0 to 16.0</option>
+                <option value="18.0">S — 16.0 to 18.0</option>
+                <option value="20.0">T — 18.0 to 20.0</option>
+                <option value="22.4">U — 20.0 to 22.4</option>
+                <option value="25.0">V — 22.4 and up</option>
+              </select>
+              <p class="text-xs text-gray-400 mt-1">The calculator uses the upper limit of the band, which gives the worst-case locked-rotor current.</p>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="codeHp">Motor Rating (HP)</label>
+              <input id="codeHp" type="number" value="30" step="0.1" min="0" class="input-field mt-2" oninput="calcStart()">
+            </div>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="codeEff">Efficiency (%)</label>
+                <input id="codeEff" type="number" value="92" step="0.1" min="1" max="100" class="input-field mt-2" oninput="calcStart()">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="codePf">Power Factor</label>
+                <input id="codePf" type="number" value="0.86" step="0.01" min="0.1" max="1" class="input-field mt-2" oninput="calcStart()">
+              </div>
+            </div>
+            <p class="text-xs text-amber-700">The locked-rotor current comes from the code letter alone — the DOL multiplier field is ignored in this mode. Efficiency and power factor are used only to express the motor's full load current, which a soft starter or VFD setting is quoted against.</p>
+          </div>
+        </div>
+
+        <div class="field-group hidden-field" id="grpReverse">
+          <span class="field-group-title">Measured starting current</span>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="measuredStart">Measured Line Starting Current (A)</label>
+          <input id="measuredStart" type="number" value="240" step="0.1" min="0" class="input-field mt-2" oninput="calcStart()">
+          <p class="text-xs text-gray-400 mt-1">Works back to the implied full load current using the starting method and multiplier below — useful for checking a clamp-meter reading against the nameplate.</p>
+        </div>
+
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="startMethod">Starting Method</label>
-          <select id="startMethod" class="input-field mt-2">
+          <select id="startMethod" class="input-field mt-2" onchange="syncFields();calcStart()">
             <option value="dol" selected>Direct-On-Line (DOL)</option>
             <option value="stardelta">Star-Delta</option>
             <option value="auto80">Autotransformer (80% tap)</option>
             <option value="auto65">Autotransformer (65% tap)</option>
             <option value="auto50">Autotransformer (50% tap)</option>
-            <option value="soft">Soft Starter (typical)</option>
+            <option value="soft">Soft Starter (typical current limit)</option>
             <option value="vfd">VFD</option>
           </select>
         </div>
+
+        <div class="field-group hidden-field" id="grpSoft">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="softLimit">Soft Starter Current Limit (× FLC)</label>
+          <input id="softLimit" type="number" value="3" step="0.1" min="1.5" max="6" class="input-field mt-2" oninput="calcStart()">
+          <p class="text-xs text-gray-400 mt-1">Commonly set between 2.5 and 4 × FLC. Torque falls with the square of the applied voltage, so a lower limit leaves less torque to accelerate the load.</p>
+        </div>
+
+        <div class="field-group hidden-field" id="grpVfd">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="vfdMult">VFD Starting Current (× FLC)</label>
+          <input id="vfdMult" type="number" value="1.2" step="0.05" min="1" max="2" class="input-field mt-2" oninput="calcStart()">
+          <p class="text-xs text-gray-400 mt-1">Typically 1.1–1.5 × FLC depending on the torque demanded during the ramp; check the drive's overload rating.</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div id="grpMult">
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="dolMultiplier">DOL Starting Multiplier (× FLC)</label>
+            <input id="dolMultiplier" type="number" value="6" step="0.1" min="1" max="12" placeholder="e.g. 6" class="input-field mt-2" oninput="calcStart()">
+            <p class="text-xs text-gray-400 mt-1">Typically 6–8 for standard cage motors; use the nameplate LRA or code letter where available.</p>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="voltage">Supply Voltage (V)</label>
+            <input id="voltage" type="number" value="415" step="1" min="0" class="input-field mt-2" oninput="calcStart()">
+            <p class="text-xs text-gray-400 mt-1">Line-to-line. Used for starting kVA and the voltage-dip estimate.</p>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-group-title">Supply voltage dip <span class="normal-case">(optional)</span></span>
+          <div class="flex items-center gap-2 flex-wrap mb-3">
+            <input id="dipOn" type="checkbox" class="w-4 h-4 accent-sky-500" onchange="calcStart()">
+            <label for="dipOn" class="text-xs font-semibold text-gray-600">Estimate the dip at the transformer</label>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="txkva">Transformer Rating (kVA)</label>
+              <input id="txkva" type="number" value="500" step="1" min="0" class="input-field mt-2" oninput="calcStart()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="txz">Impedance Z (%)</label>
+              <input id="txz" type="number" value="5" step="0.1" min="0.1" max="20" class="input-field mt-2" oninput="calcStart()">
+            </div>
+          </div>
+          <p class="text-xs text-gray-400 mt-2">First-order estimate only: dip ≈ starting kVA × %Z ÷ transformer kVA, ignoring source impedance, cable impedance, the starting power factor and any other load on the transformer.</p>
+        </div>
+
       </div>
 
       <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
-      <button onclick="calculateMotorStartingCurrent()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+      <button onclick="calcStart()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate
       </button>
 
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
         <span class="formula-chip">I_start = FLC × Multiplier × Reduction Factor</span>
+        <span class="formula-chip">I_FLC = P / (√3·V·η·cosφ)</span>
+        <span class="formula-chip">LRA = 1000 × kVA/hp × hp / (√3·V)</span>
+        <span class="formula-chip">T_start ∝ (V_motor / V_line)²</span>
+        <span class="formula-chip">Dip ≈ kVA_start × %Z / kVA_tx</span>
       </div>
     </div>
 
@@ -522,11 +746,25 @@
             <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Approx. Starting Torque</span>
             <span id="rTorque" class="font-display font-semibold text-lg">—</span>
           </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rT3Label">Full Load Current</span>
+            <span id="rT3" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rT4Label">Starting kVA</span>
+            <span id="rT4" class="font-display font-semibold text-lg">—</span>
+          </div>
         </div>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">What this means</span>
+        <p id="verdictNote" class="text-xs text-gray-500 leading-relaxed">Enter the motor data to see how the starting current was derived.</p>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+
         <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
       </div>
 
@@ -583,8 +821,11 @@
       <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
       <li><a href="#how-it-works" class="hover:underline">2. Understanding starting current reduction by method</a></li>
       <li><a href="#second" class="hover:underline">3. Starting current and torque trade-off by method</a></li>
-      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
-      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+      <li><a href="#code-letter" class="hover:underline">4. NEMA code letters &amp; locked-rotor current</a></li>
+      <li><a href="#kva-dip" class="hover:underline">5. Starting kVA and supply voltage dip</a></li>
+      <li><a href="#reverse" class="hover:underline">6. Checking a clamp-meter reading</a></li>
+      <li><a href="#mistakes" class="hover:underline">7. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">8. FAQs</a></li>
     </ul>
   </div>
 </nav>
@@ -664,6 +905,77 @@
 </section>
 
 <!-- ===================== COMMON MISTAKES ===================== -->
+<!-- ===================== CODE LETTER ===================== -->
+<section id="code-letter" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Nameplate data</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">NEMA Code Letters and Locked-Rotor Current</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Most starting-current calculations begin with an assumed multiple of full load current — six times, eight times — and that assumption is the weakest part of the answer. If the nameplate carries a <strong>code letter</strong>, you do not have to assume anything: the letter states the motor's locked-rotor apparent power per horsepower, and the current follows directly.</p>
+
+    <div class="not-prose eq-box my-5" data-eq="(1)">LRA = (kVA/hp × hp × 1000) ÷ (√3 × V)</div>
+
+    <p>A 30 hp motor with code letter G, on 415 V: the G band tops out at 6.3 kVA/hp, so locked-rotor apparent power is 6.3 × 30 = 189 kVA, and LRA = 189,000 ÷ (1.732 × 415) ≈ <strong>263 A</strong>. Against a full load current of about 44 A that is a ratio of roughly 6 — but you arrived at it from the nameplate rather than from a rule of thumb, and on a motor that happens to be a code J or K machine the real figure would have been far higher.</p>
+
+    <div class="not-prose overflow-x-auto my-5">
+      <table class="ref-table">
+        <thead><tr><th>Code letter</th><th>kVA per hp (locked rotor)</th><th>Typical ratio to FLC</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>0 – 3.15</td><td>≈ 3 × or less</td></tr>
+          <tr><td>B – D</td><td>3.15 – 4.5</td><td>≈ 3 – 4 ×</td></tr>
+          <tr><td>E – G</td><td>4.5 – 6.3</td><td>≈ 4 – 6 ×</td></tr>
+          <tr><td>H – K</td><td>6.3 – 9.0</td><td>≈ 6 – 8 ×</td></tr>
+          <tr><td>L – N</td><td>9.0 – 12.5</td><td>≈ 8 – 11 ×</td></tr>
+          <tr><td>P – V</td><td>12.5 and above</td><td>≈ 11 × and above</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-xs text-gray-400">The ratio column is indicative only — it depends on the motor's rated power factor and efficiency, which is exactly why the kVA/hp figure, not the ratio, is what the standard defines. The calculator uses the upper limit of each band, giving the worst-case locked-rotor current, which is the right side to err on when sizing protection.</p>
+
+    <p><strong>Where the letter is missing</strong>, look for an LRA or I<sub>st</sub>/I<sub>n</sub> figure on the nameplate or datasheet, and only fall back on the 6–8 × assumption when neither is available. High-efficiency IE3 and IE4 motors frequently draw <em>higher</em> inrush than the older machines they replace, so an assumption carried over from a 1990s design can understate the peak badly.</p>
+  </div>
+</section>
+
+<!-- ===================== KVA & DIP ===================== -->
+<section id="kva-dip" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Supply impact</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Starting kVA and the Voltage Dip It Causes</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Starting current matters because of what it does to everything else on the supply. The load the motor throws at the transformer during the start is:</p>
+
+      <div class="not-prose eq-box my-5" data-eq="(2)">kVA<sub>start</sub> = √3 × V × I<sub>start</sub> ÷ 1000</div>
+
+      <p>and the dip that produces at the transformer terminals, to a first approximation, is:</p>
+
+      <div class="not-prose eq-box my-5" data-eq="(3)">Voltage dip (%) ≈ kVA<sub>start</sub> × %Z ÷ kVA<sub>transformer</sub></div>
+
+      <p>So a 172 kVA start on a 500 kVA transformer with 5% impedance gives roughly 1.7% — unnoticeable. The same motor started direct-on-line from a 100 kVA transformer would give about 8.6%, enough to dim lighting and drop out contactor coils elsewhere in the plant.</p>
+
+      <p><strong>Treat that number as a screening estimate.</strong> It ignores the source impedance upstream of the transformer, the cable impedance between transformer and motor, the very low power factor of a locked-rotor start (which makes the dip worse than a simple kVA ratio suggests), and any other load already on the transformer. Where the estimate lands anywhere near the limit, the calculation needs doing properly with the actual impedances.</p>
+
+      <p><strong>What limit applies?</strong> There is no single universal figure — the permitted dip is set by your supply authority and by the equipment on the same bus. Contactor coils typically drop out somewhere around 65–75% of rated voltage, discharge lighting is sensitive to repeated dips, and other motors on the bus lose torque with the square of the voltage. Repeated starting is judged more harshly than a single start, because flicker is a matter of frequency as well as depth.</p>
+
+      <p><strong>On a generator the constraint is different again.</strong> An alternator has no transformer's fault infeed behind it: its own subtransient reactance sets the dip, and starting kVA of roughly 2–3 times the generator rating is often enough to stall the voltage. Generator sets are usually sized on <em>starting kVA</em> rather than running kW for exactly this reason, which is why the figure appears in this calculator's results.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== REVERSE ===================== -->
+<section id="reverse" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">On site</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Checking a Clamp-Meter Reading Against the Nameplate</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>The reverse mode works the calculation backwards: give it the starting current you measured and the method in use, and it returns the full load current that reading implies.</p>
+
+    <div class="not-prose eq-box my-5" data-eq="(4)">I<sub>FLC</sub> = I<sub>measured</sub> ÷ (multiplier × reduction factor)</div>
+
+    <p>Its value is as a sanity check. If a star-delta start measures 240 A and that implies a 40 A motor while the nameplate says 55 A, something does not add up — the timer may be changing over too early, the motor may be starting against more load than expected, or the reading may have caught the transition surge rather than the star step.</p>
+
+    <p><strong>Measure it properly.</strong> A standard clamp meter averages over its sampling window and will read well below the true peak; inrush capture or a power-quality recorder is needed for the actual peak. The first half-cycle of a DOL start also carries a DC offset that can push the instantaneous peak far above the RMS locked-rotor value — which is what asymmetrical peaks and magnetic trip settings are about, and why a magnetic trip set from an RMS starting figure alone can nuisance-trip on the first start.</p>
+  </div>
+</section>
+
 <section id="mistakes" class="bg-white border-y border-gray-100 py-16">
   <div class="max-w-3xl mx-auto px-4">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
@@ -756,6 +1068,54 @@
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I find starting current from the NEMA code letter?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The code letter gives locked-rotor apparent power per horsepower. Multiply the band's kVA/hp by the motor's horsepower for the locked-rotor kVA, then LRA = kVA × 1000 ÷ (√3 × V). A 30 hp code G motor on 415 V gives 6.3 × 30 = 189 kVA and about 263 A. That is far more reliable than assuming a 6× multiple, because the letter is specific to that machine.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is locked-rotor current the same as starting current?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Locked-rotor current is the current drawn with the rotor held stationary at rated voltage — the worst case, and what a direct-on-line start draws at the instant of closing. Starting current is what actually flows during the start: it begins at the locked-rotor value and falls as the motor accelerates, and a reduced-voltage starter cuts the initial value further. The first half-cycle can also carry a DC offset, so the instantaneous peak exceeds the RMS locked-rotor figure.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How much voltage dip is acceptable when starting a motor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">There is no universal figure — the limit is set by your supply authority and by what shares the bus. Contactor coils typically drop out somewhere around 65–75% of rated voltage, discharge lighting is sensitive to repeated dips, and other motors lose torque with the square of the voltage. Frequency matters as much as depth: a dip that is fine once a day may not be fine every few minutes. Where the estimate approaches the limit, calculate it properly with the real source and cable impedances.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does a VFD draw inrush current when starting a motor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Not in the way a contactor start does. A VFD accelerates the motor from a low frequency, so the motor never sees the locked-rotor condition and line current stays near rated — typically around 1.1–1.5 × FLC depending on the torque demanded. The drive does draw a charging surge on its own DC bus at power-up, which is a separate matter handled by its pre-charge circuit.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I size a generator for motor starting?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">On starting kVA, not running kW. A generator has no large fault infeed behind it, so its own subtransient reactance sets the voltage dip, and a starting load of roughly two to three times the set rating is often enough to stall the voltage and the start with it. Take the starting kVA from this calculator, apply the acceptable dip for the site, and check it against the set manufacturer's motor-starting kVA table — reduced-voltage starting or a VFD usually costs far less than the next generator frame size.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What current limit should a soft starter be set to?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Commonly 2.5–4 × FLC, and the setting is a compromise rather than a fixed value: torque falls with the square of the voltage, so limiting current to 3 × FLC on a motor that would otherwise draw 6 × leaves roughly a quarter of the DOL starting torque. Set it as low as the load will accelerate on, then confirm the motor actually reaches full speed within the ramp — a soft starter current-limiting a load it cannot accelerate will trip on start time, or cook the motor trying.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
         Why does starting current matter beyond just tripping a breaker?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
@@ -781,62 +1141,193 @@
       document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
     }
 
-    function calculateMotorStartingCurrent(){
-    const flc = parseFloat(document.getElementById('flc').value);
-    const dolMultiplier = parseFloat(document.getElementById('dolMultiplier').value);
-    const method = document.getElementById('startMethod').value;
+  function val(id){ var el=document.getElementById(id); return el ? parseFloat(el.value) : NaN; }
+  function fac(id){ var el=document.getElementById(id); return el ? parseFloat(el.value) : 1; }
+  function show(id,on){ var el=document.getElementById(id); if(el) el.classList.toggle('hidden-field', !on); }
+  function txt(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+  function fmt(x,n){ return isFinite(x) ? x.toLocaleString('en-US',{maximumFractionDigits:(n===undefined?1:n)}) : '\u2014'; }
 
-    const validationBox = document.getElementById('validationBox');
-    const errors = [];
-    if(isNaN(flc) || flc <= 0){ errors.push('Enter a valid full load current greater than 0.'); }
-    if(isNaN(dolMultiplier) || dolMultiplier <= 1){ errors.push('Enter a valid DOL starting multiplier greater than 1.'); }
+  function syncFields(){
+    var mode = document.getElementById('inputMode').value;
+    var method = document.getElementById('startMethod').value;
+    show('grpFlc', mode === 'flc');
+    show('grpRating', mode === 'rating');
+    show('grpCode', mode === 'code');
+    show('grpReverse', mode === 'reverse');
+    show('grpSoft', method === 'soft');
+    show('grpVfd', method === 'vfd');
+    // In code-letter mode the locked-rotor current comes from the nameplate,
+    // so the assumed DOL multiplier is not used and is hidden to avoid
+    // suggesting it still influences the answer.
+    show('grpMult', mode !== 'code');
+  }
+
+  function calcStart(){
+    var mode = document.getElementById('inputMode').value;
+    var method = document.getElementById('startMethod').value;
+    var mult = val('dolMultiplier');
+    var V = val('voltage');
+    var box = document.getElementById('validationBox');
+    var errors = [];
+
+    var multNeeded = (mode !== 'code');
+    if(multNeeded && (isNaN(mult) || mult < 1 || mult > 12)) errors.push('Enter a DOL starting multiplier between 1 and 12.');
+    if(isNaN(V) || V <= 0) errors.push('Enter a supply voltage greater than 0 V.');
+    if(method === 'soft'){
+      var sChk = val('softLimit');
+      if(isNaN(sChk) || sChk < 1.5 || sChk > 6) errors.push('Soft starter current limit must be between 1.5 and 6 \u00d7 FLC.');
+    }
+    if(method === 'vfd'){
+      var vChk = val('vfdMult');
+      if(isNaN(vChk) || vChk < 1 || vChk > 2) errors.push('VFD starting current must be between 1 and 2 \u00d7 FLC.');
+    }
+    if(document.getElementById('dipOn').checked){
+      var kvaChk = val('txkva'), zChk = val('txz');
+      if(isNaN(kvaChk) || kvaChk <= 0) errors.push('Enter a transformer rating greater than 0 kVA, or clear the voltage-dip checkbox.');
+      if(isNaN(zChk) || zChk <= 0) errors.push('Enter a transformer impedance greater than 0%, or clear the voltage-dip checkbox.');
+    }
+
+    // Reduction factors: line current relative to a DOL start, and the
+    // resulting starting torque as a share of DOL torque.
+    var methodData = {
+      dol:       { f: 1.0,    label: 'Direct-on-line',            torque: 100 },
+      stardelta: { f: 1/3,    label: 'Star-delta',                torque: 33.3 },
+      auto80:    { f: 0.64,   label: 'Autotransformer, 80% tap',  torque: 64 },
+      auto65:    { f: 0.4225, label: 'Autotransformer, 65% tap',  torque: 42.3 },
+      auto50:    { f: 0.25,   label: 'Autotransformer, 50% tap',  torque: 25 },
+      soft:      { f: null,   label: 'Soft starter',              torque: null },
+      vfd:       { f: null,   label: 'VFD',                       torque: null }
+    };
+    var m = methodData[method];
+
+    var flc = 0, source = '', extraRow = '', lraCode = null;
+    if(mode === 'flc'){
+      flc = val('flc');
+      if(isNaN(flc) || flc <= 0) errors.push('Enter a full load current greater than 0 A.');
+      source = 'nameplate FLC';
+    } else if(mode === 'rating'){
+      var P = val('power') * fac('powerUnit');
+      var eff = val('effPct'), pf = val('pf');
+      if(isNaN(P) || P <= 0) errors.push('Enter a motor rating greater than 0.');
+      if(isNaN(eff) || eff <= 0 || eff > 100) errors.push('Efficiency must be between 1 and 100%.');
+      if(isNaN(pf) || pf < 0.1 || pf > 1) errors.push('Power factor must be between 0.1 and 1.');
+      if(!errors.length){
+        flc = P / (Math.sqrt(3) * V * (eff/100) * pf);
+        source = fmt(P/1000,2) + ' kW at ' + fmt(V,0) + ' V';
+        extraRow = '<tr><td>Full load current</td><td>P / (\u221a3\u00b7V\u00b7\u03b7\u00b7pf) = <strong>' + fmt(flc,2) + ' A</strong></td></tr>';
+      }
+    } else if(mode === 'code'){
+      var kvaHp = fac('codeLetter');
+      var hp = val('codeHp');
+      var cEff = val('codeEff'), cPf = val('codePf');
+      if(isNaN(hp) || hp <= 0) errors.push('Enter a motor rating in HP greater than 0.');
+      if(isNaN(cEff) || cEff <= 0 || cEff > 100) errors.push('Efficiency must be between 1 and 100%.');
+      if(isNaN(cPf) || cPf < 0.1 || cPf > 1) errors.push('Power factor must be between 0.1 and 1.');
+      if(!errors.length){
+        // LRA is taken from the nameplate code letter and is NOT derived from
+        // the assumed DOL multiplier. FLC is estimated from the rating only so
+        // that soft-starter and VFD settings, which are quoted as multiples of
+        // FLC, can be applied; it never feeds the DOL figure.
+        lraCode = (kvaHp * hp * 1000) / (Math.sqrt(3) * V);
+        flc = (hp * 745.699872) / (Math.sqrt(3) * V * (cEff/100) * cPf);
+        source = 'code letter ' + fmt(kvaHp,2) + ' kVA/hp \u00d7 ' + fmt(hp,1) + ' hp';
+        extraRow = '<tr><td>Locked-rotor kVA</td><td>' + fmt(kvaHp,2) + ' kVA/hp \u00d7 ' + fmt(hp,1) + ' hp = ' + fmt(kvaHp*hp,1) + ' kVA</td></tr>' +
+                   '<tr><td>Locked-rotor current (LRA)</td><td><strong>' + fmt(lraCode,1) + ' A</strong> at ' + fmt(V,0) + ' V \u2014 from the nameplate code letter</td></tr>' +
+                   '<tr><td>Estimated full load current</td><td>' + fmt(flc,2) + ' A (from hp, \u03b7 and pf \u2014 used only for soft starter / VFD settings)</td></tr>' +
+                   '<tr><td>Implied LRA / FLC ratio</td><td>' + fmt(lraCode/flc,2) + ' \u00d7</td></tr>';
+      }
+    } else {
+      var meas = val('measuredStart');
+      if(isNaN(meas) || meas <= 0) errors.push('Enter a measured starting current greater than 0 A.');
+      if(m.f === null) errors.push('Reverse calculation needs a fixed reduction factor — pick DOL, star-delta or an autotransformer tap.');
+      if(!errors.length){
+        flc = meas / (mult * m.f);
+        source = fmt(meas,1) + ' A measured on ' + m.label.toLowerCase();
+        extraRow = '<tr><td>Measured starting current</td><td>' + fmt(meas,1) + ' A</td></tr>' +
+                   '<tr><td>Implied full load current</td><td><strong>' + fmt(flc,2) + ' A</strong> = measured \u00f7 (' + fmt(mult,1) + ' \u00d7 ' + fmt(m.f,3) + ')</td></tr>';
+      }
+    }
 
     if(errors.length){
-      validationBox.classList.remove('hidden');
-      validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
-      document.getElementById('rResult').textContent = '\u2014';
-      document.getElementById('rDOL').textContent = '\u2014';
-      document.getElementById('rTorque').textContent = '\u2014';
+      box.classList.remove('hidden');
+      box.innerHTML = errors.map(function(e){ return '\u2022 ' + e; }).join('<br>');
+      ['rResult','rDOL','rTorque','rT3','rT4'].forEach(function(id){ txt(id,'\u2014'); });
+      txt('resultSub','Fix the input errors to see a result');
+      txt('verdictNote','Correct the highlighted inputs to see the result.');
       document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
       return;
     }
-    validationBox.classList.add('hidden');
-    validationBox.innerHTML = '';
+    box.classList.add('hidden'); box.innerHTML = '';
 
-    const dolCurrent = flc * dolMultiplier;
-    const methodData = {
-      dol: {factor: 1.0, label: 'Direct-On-Line', torquePct: 100},
-      stardelta: {factor: 1/3, label: 'Star-Delta', torquePct: 33.3},
-      auto80: {factor: 0.64, label: 'Autotransformer (80%)', torquePct: 64},
-      auto65: {factor: 0.4225, label: 'Autotransformer (65%)', torquePct: 42.3},
-      auto50: {factor: 0.25, label: 'Autotransformer (50%)', torquePct: 25},
-      soft: {factor: 0.5, label: 'Soft Starter (typical)', torquePct: 50},
-      vfd: {factor: flc*1.2/dolCurrent, label: 'VFD', torquePct: 100}
-    };
-    const m = methodData[method];
-    const lineCurrent = dolCurrent * m.factor;
+    // In code-letter mode the DOL current IS the locked-rotor current.
+    var dolCurrent = (mode === 'code') ? lraCode : flc * mult;
+    // Soft starters and VFDs are set, not fixed ratios: the soft starter is
+    // shown at its usual current-limit setting and the VFD at its rated output.
+    var softLimit = val('softLimit'), vfdMult = val('vfdMult');
+    var lineCurrent, torquePct, methodNote;
+    if(method === 'soft'){
+      lineCurrent = flc * softLimit;
+      // Torque follows (V_motor / V_line)². This uses the current ratio as a
+      // stand-in for the voltage ratio, which holds while current scales
+      // roughly linearly with applied voltage — an approximation for a
+      // closed-loop current-limiting starter, not an exact relationship.
+      torquePct = Math.pow(lineCurrent / dolCurrent, 2) * 100;
+      methodNote = 'A soft starter is set, not fixed: this shows a typical current-limit setting of ' + softLimit + ' \u00d7 FLC. Torque follows the square of the applied voltage, so it falls to about ' + fmt(torquePct,0) + '% of the DOL value at that setting.';
+    } else if(method === 'vfd'){
+      lineCurrent = flc * vfdMult;
+      torquePct = 100;
+      methodNote = 'A VFD does not draw inrush in the same sense: it accelerates the motor at controlled frequency, so line current stays near rated \u2014 about ' + vfdMult + ' \u00d7 FLC \u2014 while full torque remains available from standstill.';
+    } else {
+      lineCurrent = dolCurrent * m.f;
+      torquePct = m.torque;
+      methodNote = m.label + ' draws ' + fmt(m.f*100,0) + '% of the DOL starting current and develops about ' + fmt(m.torque,0) + '% of the DOL starting torque, because torque follows the square of the voltage across the winding.';
+    }
 
-    document.getElementById('rResult').textContent = lineCurrent.toLocaleString('en-US', {maximumFractionDigits:1}) + ' A';
-    document.getElementById('resultSub').textContent = m.label + ', FLC=' + flc + 'A';
-    document.getElementById('rDOL').textContent = dolCurrent.toFixed(1) + ' A';
-    document.getElementById('rTorque').textContent = m.torquePct.toFixed(1) + '% of DOL';
+    var startKVA = Math.sqrt(3) * V * lineCurrent / 1000;
+    var windingCurrent = (method === 'stardelta') ? lineCurrent : null;
 
-    document.getElementById('breakdownBox').innerHTML = `
-        <table class="breakdown-table">
-            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
-            <tbody>
-                <tr><td>Full Load Current</td><td>${flc} A</td></tr>
-                <tr><td>DOL Starting Multiplier</td><td>${dolMultiplier}×</td></tr>
-                <tr><td>DOL Starting Current</td><td>${dolCurrent.toFixed(1)} A</td></tr>
-                <tr><td>Starting Method</td><td>${m.label}</td></tr>
-                <tr><td><strong>Line Starting Current</strong></td><td><strong>${lineCurrent.toFixed(1)} A</strong></td></tr>
-                <tr><td>Approx. Starting Torque</td><td>${m.torquePct.toFixed(1)}% of DOL torque</td></tr>
-            </tbody>
-        </table>
-    `;
+    // Optional first-order voltage dip at the transformer terminals.
+    var dipOn = document.getElementById('dipOn').checked;
+    var txkva = val('txkva'), txz = val('txz'), dip = null;
+    if(dipOn) dip = (startKVA * txz) / txkva;
+
+    txt('resultLabel', mode === 'reverse' ? 'Implied Full Load Current' : 'Line Starting Current');
+    txt('rResult', mode === 'reverse' ? fmt(flc,2) + ' A' : fmt(lineCurrent,1) + ' A');
+    txt('resultSub', m.label + ' \u00b7 from ' + source);
+    txt('rDOL', fmt(dolCurrent,1) + ' A');
+    txt('rTorque', fmt(torquePct,1) + '% of DOL');
+    txt('rT3Label', mode === 'reverse' ? 'Line Starting Current' : 'Full Load Current');
+    txt('rT3', mode === 'reverse' ? fmt(lineCurrent,1) + ' A' : fmt(flc,2) + ' A');
+    if(dip !== null){ txt('rT4Label','Est. Voltage Dip'); txt('rT4', fmt(dip,1) + ' %'); }
+    else { txt('rT4Label','Starting kVA'); txt('rT4', fmt(startKVA,1) + ' kVA'); }
+
+    var note = methodNote;
+    if(method === 'stardelta') note += ' In star, each winding carries the same current as the line, so the motor windings see ' + fmt(windingCurrent,1) + ' A during the star step.';
+    if(dip !== null){
+      note += ' The estimated dip at the transformer is ' + fmt(dip,1) + '%' +
+        (dip > 15 ? ' \u2014 well above the level most supplies and contactor coils tolerate, so check this against the supply authority limit and consider a softer start.'
+         : dip > 10 ? ' \u2014 high enough to disturb other loads; verify against the supply authority limit.'
+         : ' \u2014 within the range most installations tolerate, though the limit is set by your supply authority and by the other loads on the transformer.');
+    }
+    txt('verdictNote', note);
+
+    document.getElementById('breakdownBox').innerHTML =
+      '<table class="breakdown-table"><thead><tr><th>Quantity</th><th>Value</th></tr></thead><tbody>' +
+        extraRow +
+        '<tr><td>Full load current</td><td>' + fmt(flc,2) + ' A</td></tr>' +
+        '<tr><td>DOL starting multiplier</td><td>' + fmt(mult,1) + ' \u00d7 FLC</td></tr>' +
+        '<tr><td>DOL starting current</td><td>' + fmt(dolCurrent,1) + ' A</td></tr>' +
+        '<tr><td>Starting method</td><td>' + m.label + '</td></tr>' +
+        '<tr><td><strong>Line starting current</strong></td><td><strong>' + fmt(lineCurrent,1) + ' A</strong></td></tr>' +
+        (windingCurrent !== null ? '<tr><td>Motor winding current in star</td><td>' + fmt(windingCurrent,1) + ' A</td></tr>' : '') +
+        '<tr><td>Starting apparent power</td><td>' + fmt(startKVA,1) + ' kVA at ' + fmt(V,0) + ' V</td></tr>' +
+        '<tr><td>Approx. starting torque</td><td>' + fmt(torquePct,1) + '% of DOL torque</td></tr>' +
+        (dip !== null ? '<tr><td>Estimated voltage dip</td><td>' + fmt(dip,1) + '% on a ' + fmt(txkva,0) + ' kVA, ' + fmt(txz,1) + '% Z transformer</td></tr>' : '') +
+      '</tbody></table>';
   }
 
-  calculateMotorStartingCurrent();
+  syncFields();
+  calcStart();
 </script>
 
 <script>
