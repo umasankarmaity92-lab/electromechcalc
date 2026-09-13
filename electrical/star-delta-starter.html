@@ -9,8 +9,9 @@
 <script>
 (function(){
   try {
-    var t = localStorage.getItem('emc-theme') ||
-      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    var saved = localStorage.getItem('emc-theme');
+    var t = (saved === 'dark-theme' || saved === 'light-theme') ? saved
+      : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
     document.documentElement.classList.add(t);
     document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
   } catch(e) {}
@@ -60,9 +61,9 @@
     "Motor full load current from kW or HP, voltage, efficiency and power factor",
     "Main, star and delta contactor current ratings",
     "Thermal overload relay setting for its position between main contactor and motor",
-    "Time-delay fuse and MCCB or MCB maximum ratings",
+    "Preliminary short-circuit protection references on a NEC-style basis",
     "DOL versus star starting current comparison",
-    "Making and breaking capacity check",
+    "Motor current reference for checking contactor AC-3 duty",
     "Rounding to the next commonly available AC-3 contactor rating",
     "Power circuit and control circuit diagrams"
   ],
@@ -169,7 +170,7 @@
     {
       "@type": "Question",
       "name": "What is the making and breaking capacity requirement for these contactors?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Motor-duty contactors to AC-3 must handle a making current of the order of ten times their rated operational current and break several times it, which covers the motor inrush. A contactor selected on running current alone from a resistive AC-1 rating will weld its contacts, so always select against the AC-3 rating at the actual supply voltage." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Utilisation category AC-3 covers the making and breaking duty of a motor-starting contactor, and the values are defined as multiples of the contactor own rated operational current, not of the motor full load current. Published AC-3 data is commonly of the order of ten times rated operational current for making and several times it for breaking, but the figure that matters is the one in the manufacturer table for the frame and supply voltage you are using. AC-1 and AC-3 ratings are not interchangeable: a motor starter must be selected against the manufacturer motor-duty AC-3 rating at the actual supply voltage." }
     },
     {
       "@type": "Question",
@@ -576,8 +577,9 @@
 <script>
 (function(){
   try {
-    var t = localStorage.getItem('emc-theme') ||
-      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    var saved = localStorage.getItem('emc-theme');
+    var t = (saved === 'dark-theme' || saved === 'light-theme') ? saved
+      : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
     document.body.classList.add(t);
   } catch(e) {}
 })();
@@ -642,7 +644,7 @@
 
         <!-- INPUT MODE -->
         <div>
-          <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" id="tgLabelMode">Motor Data Source<button type="button" class="info-icon" aria-label="More information"><span class="info-tooltip">Use the nameplate current whenever you have it &mdash; it is the real machine. Calculate from kW or HP only when the nameplate is missing or unreadable.</span>i</button></span>
+          <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" id="tgLabelMode">Motor Data Source<button type="button" class="info-icon" aria-label="More information" aria-describedby="tip1"><span class="info-tooltip" id="tip1">Use the nameplate current whenever you have it &mdash; it is the real machine. Calculate from kW or HP only when the nameplate is missing or unreadable.</span>i</button></span>
           <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabelMode">
             <button type="button" class="toggle-btn active" id="btnRating" aria-pressed="true" onclick="setMode('rating')">From kW / HP</button>
             <button type="button" class="toggle-btn" id="btnFlc" aria-pressed="false" onclick="setMode('flc')">Enter FLC</button>
@@ -651,7 +653,7 @@
 
         <!-- MOTOR RATING GROUP -->
         <div class="field-group" id="grpRating">
-          <span class="field-group-title inline-flex items-center gap-1.5">Motor rating<button type="button" class="info-icon" aria-label="More information"><span class="info-tooltip">Rated mechanical output at the shaft, as printed on the nameplate. Efficiency and power factor turn that into the line current the motor actually draws.</span>i</button></span>
+          <span class="field-group-title inline-flex items-center gap-1.5">Motor rating<button type="button" class="info-icon" aria-label="More information" aria-describedby="tip2"><span class="info-tooltip" id="tip2">Rated mechanical output at the shaft, as printed on the nameplate. Efficiency and power factor turn that into the line current the motor actually draws.</span>i</button></span>
           <div class="space-y-3">
             <div>
               <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="power">Rated Power (P)</label>
@@ -664,7 +666,7 @@
               </div>
             </div>
             <div>
-              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="voltage">Supply Voltage (V)<button type="button" class="info-icon" aria-label="More information"><span class="info-tooltip">Line-to-line voltage of the three-phase supply &mdash; 415 V in India, 400 V across most of Europe, 380 V and 440 V elsewhere. The motor must be suitable for delta connection at this voltage.</span>i</button></label>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="voltage">Supply Voltage (V)<button type="button" class="info-icon" aria-label="More information" aria-describedby="tip3"><span class="info-tooltip" id="tip3">Line-to-line voltage of the three-phase supply &mdash; 415 V in India, 400 V across most of Europe, 380 V and 440 V elsewhere. The motor must be suitable for delta connection at this voltage.</span>i</button></label>
               <div class="unit-row mt-2">
                 <input id="voltage" type="number" value="415" step="1" min="0" placeholder="e.g. 415" class="input-field" oninput="calcStarDelta()">
                 <select id="voltagePreset" class="input-field" onchange="applyVoltage()">
@@ -680,14 +682,14 @@
             </div>
             <div class="grid sm:grid-cols-2 gap-3">
               <div>
-                <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="effPct">Efficiency (η)<button type="button" class="info-icon" aria-label="More information"><span class="info-tooltip">Full-load efficiency from the nameplate. Typical values run from about 85% on small motors to 95% and above on large IE3 machines.</span>i</button></label>
+                <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="effPct">Efficiency (η)<button type="button" class="info-icon" aria-label="More information" aria-describedby="tip4"><span class="info-tooltip" id="tip4">Full-load efficiency from the nameplate. Typical values run from about 85% on small motors to 95% and above on large IE3 machines.</span>i</button></label>
                 <div class="unit-row mt-2">
                   <input id="effPct" type="number" value="92" step="0.1" min="1" max="100" placeholder="e.g. 92" class="input-field" oninput="calcStarDelta()">
                   <select class="input-field" disabled><option>%</option></select>
                 </div>
               </div>
               <div>
-                <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="pf">Power Factor (cos φ)<button type="button" class="info-icon" aria-label="More information"><span class="info-tooltip">Full-load power factor from the nameplate, usually between 0.80 and 0.90. A lower figure means more current for the same shaft power.</span>i</button></label>
+                <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="pf">Power Factor (cos φ)<button type="button" class="info-icon" aria-label="More information" aria-describedby="tip5"><span class="info-tooltip" id="tip5">Full-load power factor from the nameplate, usually between 0.80 and 0.90. A lower figure means more current for the same shaft power.</span>i</button></label>
                 <input id="pf" type="number" value="0.85" step="0.01" min="0.1" max="1" placeholder="e.g. 0.85" class="input-field mt-2" oninput="calcStarDelta()">
               </div>
             </div>
@@ -696,7 +698,7 @@
 
         <!-- FLC GROUP -->
         <div class="field-group hidden-field" id="grpFlcDirect">
-          <span class="field-group-title inline-flex items-center gap-1.5">Nameplate current<button type="button" class="info-icon" aria-label="More information"><span class="info-tooltip">The rated line current stamped on the motor nameplate, at the delta voltage you are running. Every rating below is derived from this one figure.</span>i</button></span>
+          <span class="field-group-title inline-flex items-center gap-1.5">Nameplate current<button type="button" class="info-icon" aria-label="More information" aria-describedby="tip6"><span class="info-tooltip" id="tip6">The rated line current stamped on the motor nameplate, at the delta voltage you are running. Every rating below is derived from this one figure.</span>i</button></span>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="flc">Full Load Current (I<sub>FLC</sub>)</label>
           <div class="unit-row mt-2">
             <input id="flc" type="number" value="13.3" step="0.1" min="0" placeholder="e.g. 13.3" class="input-field" oninput="calcStarDelta()">
@@ -710,11 +712,11 @@
 
         <!-- STARTER OPTIONS -->
         <div class="field-group">
-          <span class="field-group-title inline-flex items-center gap-1.5">Starter options<button type="button" class="info-icon" aria-label="More information"><span class="info-tooltip">These set the sizing convention. Defaults follow the standard star-delta design practice used in most panel specifications.</span>i</button></span>
+          <span class="field-group-title inline-flex items-center gap-1.5">Starter options<button type="button" class="info-icon" aria-label="More information" aria-describedby="tip7"><span class="info-tooltip" id="tip7">These set the sizing convention. Defaults follow the standard star-delta design practice used in most panel specifications.</span>i</button></span>
 
           <div class="space-y-3">
             <div>
-              <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" id="tgLabelMain">Main Contactor Basis<button type="button" class="info-icon" aria-label="More information"><span class="info-tooltip">Electrically 58% is correct: in delta running the main contactor carries winding current, not line current. Some specifications still call for full line current as a margin, or so the same starter can later be wired direct-on-line.</span>i</button></span>
+              <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" id="tgLabelMain">Main Contactor Basis<button type="button" class="info-icon" aria-label="More information" aria-describedby="tip8"><span class="info-tooltip" id="tip8">Electrically 58% is correct: in delta running the main contactor carries winding current, not line current. Some specifications still call for full line current as a margin, or so the same starter can later be wired direct-on-line.</span>i</button></span>
               <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabelMain">
                 <button type="button" class="toggle-btn active" id="btnMain58" aria-pressed="true" onclick="setMainBasis(0.58)">58% of FLC</button>
                 <button type="button" class="toggle-btn" id="btnMain100" aria-pressed="false" onclick="setMainBasis(1)">100% of FLC</button>
@@ -722,15 +724,15 @@
             </div>
 
             <div>
-              <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" id="tgLabelOlr">Overload Relay Position / Coordination<button type="button" class="info-icon" aria-label="More information"><span class="info-tooltip">Position decides the setting. Between the main contactor and the motor the relay carries winding current, so it is set to 58% of FLC. In the incoming line it sees full line current and is set to 100% of FLC.</span>i</button></span>
+              <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" id="tgLabelOlr">Overload Relay Position / Coordination<button type="button" class="info-icon" aria-label="More information" aria-describedby="tip9"><span class="info-tooltip" id="tip9">Position decides the setting. Between the main contactor and the motor the relay carries winding current, so it is set to 58% of FLC. In the incoming line it sees full line current and is set to 100% of FLC.</span>i</button></span>
               <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabelOlr">
-                <button type="button" class="toggle-btn active" id="btnOlrWind" aria-pressed="true" onclick="setOlrPos('winding')">Inside delta loop</button>
-                <button type="button" class="toggle-btn" id="btnOlrLine" aria-pressed="false" onclick="setOlrPos('line')">Main line</button>
+                <button type="button" class="toggle-btn active" id="btnOlrWind" aria-pressed="true" onclick="setOlrPos('winding')">Winding path — 58%</button>
+                <button type="button" class="toggle-btn" id="btnOlrLine" aria-pressed="false" onclick="setOlrPos('line')">Incoming line — 100%</button>
               </div>
             </div>
 
             <div>
-              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="protBasis">Protection Sizing Basis<button type="button" class="info-icon" aria-label="More information"><span class="info-tooltip">The 175% / 250% ceilings come from NEC-style motor branch-circuit sizing. They are not universal IEC values. For IEC installations, take the short-circuit device from your local code and the manufacturer's coordination tables instead.</span>i</button></label>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="protBasis">Protection Sizing Basis<button type="button" class="info-icon" aria-label="More information" aria-describedby="tip10"><span class="info-tooltip" id="tip10">The 175% / 250% ceilings come from NEC-style motor branch-circuit sizing. They are not universal IEC values. For IEC installations, take the short-circuit device from your local code and the manufacturer's coordination tables instead.</span>i</button></label>
               <select id="protBasis" class="input-field mt-2" onchange="calcStarDelta()">
                 <option value="nec" selected>NEC-style preliminary (fuse ≤ 175%, breaker ≤ 250%)</option>
                 <option value="none">IEC / manufacturer coordination — do not calculate</option>
@@ -739,14 +741,14 @@
 
             <div class="grid sm:grid-cols-2 gap-3">
               <div>
-                <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="dolMult">DOL Starting Current<button type="button" class="info-icon" aria-label="More information"><span class="info-tooltip">Locked-rotor current as a multiple of FLC. Typically 6 to 8 for standard squirrel-cage motors; the nameplate code letter or the datasheet gives the real figure.</span>i</button></label>
+                <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="dolMult">DOL Starting Current<button type="button" class="info-icon" aria-label="More information" aria-describedby="tip11"><span class="info-tooltip" id="tip11">Locked-rotor current as a multiple of FLC. Typically 6 to 8 for standard squirrel-cage motors; the nameplate code letter or the datasheet gives the real figure.</span>i</button></label>
                 <div class="unit-row mt-2">
                   <input id="dolMult" type="number" value="6" step="0.5" min="3" max="12" placeholder="e.g. 6" class="input-field" oninput="calcStarDelta()">
                   <select class="input-field" disabled><option>× FLC</option></select>
                 </div>
               </div>
               <div>
-                <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="marginPct">Selection Margin <span class="normal-case text-gray-400">(preliminary only)</span><button type="button" class="info-icon" aria-label="More information"><span class="info-tooltip">Optional extra margin added to the three contactor ratings before rounding to a standard size. Useful for high ambient temperatures, frequent starting or heavy-duty panels.</span>i</button></label>
+                <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="marginPct">Selection Margin <span class="normal-case text-gray-400">(preliminary only)</span><button type="button" class="info-icon" aria-label="More information" aria-describedby="tip12"><span class="info-tooltip" id="tip12">An optional equipment-selection allowance added to the three calculated contactor currents before rounding. It is not a code requirement or a manufacturer-approved rating adjustment &mdash; for high ambient temperature, frequent starting or heavy duty, use the maker's derating tables rather than a flat percentage.</span>i</button></label>
                 <div class="unit-row mt-2">
                   <input id="marginPct" type="number" value="0" step="5" min="0" max="50" placeholder="e.g. 10" class="input-field" oninput="calcStarDelta()">
                   <select class="input-field" disabled><option>%</option></select>
@@ -919,6 +921,10 @@
 
       <p><strong>Step 4 — overload relay.</strong> In the standard arrangement the thermal relay sits between the main contactor and the motor terminals, in the winding path, so it is set to 0.58 × I<sub>FLC</sub> as well. Fit it in the incoming line instead and it sees full line current, so it is set to 100% of I<sub>FLC</sub>. Getting this backwards is a common star-delta commissioning error, and it leaves the motor with no useful overload protection.</p>
 
+      <p><strong>gG and aM fuses are not sized the same way.</strong> A gG fuse is general purpose, covering overload and short circuit, and must carry the starting current without nuisance operation. An aM fuse is motor-rated <em>back-up</em> protection: it deliberately does not protect against overload and is only valid in combination with an overload relay, so its rating comes from the manufacturer's coordination table rather than a percentage of full load current. Applying one percentage to both, as the quick reference does, is a screening step only.</p>
+
+      <p><strong>What the breaker figure does not decide.</strong> A percentage of full load current sets a ceiling and nothing more. The actual MCCB or MCB still has to be selected for its frame size, trip unit type and setting, an instantaneous setting clear of the star starting current, breaking capacity against the prospective fault level at that point, and coordination with the cable ampacity and the devices upstream.</p>
+
       <p><strong>Step 5 — short-circuit protection.</strong> The 175% and 250% figures used by the calculator come from <strong>NEC-style motor branch-circuit sizing</strong> — they are not universal IEC values, and IEC 60947-4-1, which covers contactors and starters, does not prescribe them. Treat them as <em>maximum calculated references</em>: round to a standard rating without exceeding the ceiling, noting that some codes permit the next higher standard rating where the calculated value falls between sizes. For an IEC installation, switch the calculator's protection basis to <em>IEC / manufacturer coordination</em> and take the device from your local code and the maker's coordination tables instead. These devices provide short-circuit and earth-fault protection as part of the motor branch circuit; they are not a substitute for the overload relay.</p>
 
       <p>The calculator above applies all five steps at once and rounds each contactor result up to the next commonly available AC-3 rating used by the major manufacturers — a starting point for selection, not a substitute for the maker's own star-delta combination table.</p>
@@ -1051,31 +1057,33 @@
       <text x="380" y="592" class="sd-t-sm">W2</text>
       <text x="420" y="592" class="sd-t-sm">U2</text>
       <text x="460" y="592" class="sd-t-sm">V2</text>
-      <text x="294" y="558" class="sd-t-sm">motor terminal box — six leads</text>
+      <text x="20" y="562" class="sd-t-sm">motor terminal box</text>
+      <text x="20" y="578" class="sd-t-sm">— six leads</text>
 
-      <!-- motor -->
-      <path class="sd-wire" d="M 190.0 571.0 V 620 M 230.0 571.0 V 620 M 270.0 571.0 V 620 M 390.0 571.0 V 620 M 430.0 571.0 V 620 M 470.0 571.0 V 620"/>
-      <path class="sd-wire" d="M 190.0 620.0 H 470.0"/>
-      <path class="sd-wire" d="M 330.0 620.0 V 640"/>
-      <circle class="sd-box" cx="330" cy="710" r="70"/>
-      <text x="314" y="706" class="sd-t" style="font-size:20px;font-weight:600">M</text>
-      <text x="312" y="734" class="sd-t-sm">3 ~</text>
+      <!-- motor: three independent windings, U1-U2, V1-V2, W1-W2 -->
+      <rect class="sd-dash" x="158" y="598" width="548" height="164" rx="12"/>
 
-      <!-- winding inset -->
-      <rect class="sd-dash" x="646" y="614" width="300" height="156" rx="10"/>
-      <text x="660" y="638" class="sd-t-sm">Three separate windings inside the motor</text>
-      <path class="sd-wire" d="M 686.0 672.0 H 726.0 M 778.0 672.0 H 818.0"/>
-      <path class="sd-wire" d="M 726.0 672.0 q 10 -16 20 0 q 10 16 20 0 q 10 -16 12 0"/>
-      <text x="660" y="676" class="sd-t-sm">U1</text>
-      <text x="826" y="676" class="sd-t-sm">U2</text>
-      <path class="sd-wire" d="M 686.0 706.0 H 726.0 M 778.0 706.0 H 818.0"/>
-      <path class="sd-wire" d="M 726.0 706.0 q 10 -16 20 0 q 10 16 20 0 q 10 -16 12 0"/>
-      <text x="660" y="710" class="sd-t-sm">V1</text>
-      <text x="826" y="710" class="sd-t-sm">V2</text>
-      <path class="sd-wire" d="M 686.0 740.0 H 726.0 M 778.0 740.0 H 818.0"/>
-      <path class="sd-wire" d="M 726.0 740.0 q 10 -16 20 0 q 10 16 20 0 q 10 -16 12 0"/>
-      <text x="660" y="744" class="sd-t-sm">W1</text>
-      <text x="826" y="744" class="sd-t-sm">W2</text>
+      <path class="sd-wire" d="M 190 571 V 650 H 288"/>
+      <path class="sd-wire" d="M 340 650 H 430 V 571"/>
+      <path class="sd-wire" d="M 288 650 q 10 -17 20 0 q 10 17 20 0 q 10 -17 12 0"/>
+      <text x="292" y="640" class="sd-t-sm">U1 – U2</text>
+
+      <path class="sd-wire" d="M 230 571 V 690 H 308"/>
+      <path class="sd-wire" d="M 360 690 H 470 V 571"/>
+      <path class="sd-wire" d="M 308 690 q 10 -17 20 0 q 10 17 20 0 q 10 -17 12 0"/>
+      <text x="312" y="680" class="sd-t-sm">V1 – V2</text>
+
+      <path class="sd-wire" d="M 270 571 V 730 H 300"/>
+      <path class="sd-wire" d="M 352 730 H 390 V 571"/>
+      <path class="sd-wire" d="M 300 730 q 10 -17 20 0 q 10 17 20 0 q 10 -17 12 0"/>
+      <text x="304" y="720" class="sd-t-sm">W1 – W2</text>
+
+      <circle class="sd-box" cx="616" cy="694" r="46"/>
+      <text x="602" y="690" class="sd-t" style="font-size:20px;font-weight:600">M</text>
+      <text x="600" y="716" class="sd-t-sm">3 ~</text>
+      <text x="510" y="620" class="sd-t-sm">three-phase induction motor</text>
+      <text x="510" y="636" class="sd-t-sm">three separate windings</text>
+      <text x="158" y="782" class="sd-t-sm">The six leads are NOT commoned — each winding has its own pair of ends brought out to the terminal box.</text>
 
       <!-- cross-connection legend -->
       <text x="550" y="212" class="sd-t-sm">L1 → U1 (KM1) and W2 (KM3)</text>
@@ -1283,7 +1291,7 @@ Setting = 1.00 × I<sub>FLC</sub>&nbsp;&nbsp;(relay in the incoming line)</div>
 
       <p>Both figures are ceilings. Round <em>down</em> to the nearest standard rating, then confirm the device's magnetic trip clears the locked-rotor current without nuisance tripping on the star start.</p>
 
-      <p><strong>Making and breaking capacity.</strong> Motor-duty contactors in utilisation category AC-3 are specified to make a current of the order of ten times their <em>rated operational current</em> and to break several times it. The figure below is a reference check on the order of magnitude only — the real duty comes from the manufacturer's AC-3 data for the frame you choose, at your supply voltage. An AC-1 (resistive) rating of the same number will weld shut on the first start.</p>
+      <p><strong>Making and breaking capacity.</strong> Utilisation category AC-3 defines the making and breaking duty for motor starting as multiples of the contactor's own <em>rated operational current</em> — not of the motor's full load current — and published data is commonly of the order of ten times that rating for making and several times it for breaking. The figure below is a reference check on the order of magnitude only — the real duty comes from the manufacturer's AC-3 data for the frame you choose, at your supply voltage. An AC-1 (resistive) rating of the same numerical value is not equivalent and must not be used for motor duty.</p>
 
       <div class="not-prose eq-box my-5" data-eq="(7)">Reference making-current check ≈ 10 × I<sub>FLC</sub></div>
 
@@ -1380,7 +1388,7 @@ Setting = 1.00 × I<sub>FLC</sub>&nbsp;&nbsp;(relay in the incoming line)</div>
 
       <div>
         <p class="text-sm font-semibold text-brandDark mb-2">Example 3 — starting current comparison</p>
-        <p class="text-sm text-gray-600 leading-relaxed">Take the 7.5 kW motor with a locked-rotor current of 6 × FLC. Direct on line it would draw 6 × 13.3 = <strong>79.9 A</strong>. Star-delta starting draws a third of that, <strong>26.6 A</strong> — about 2 × FLC. That reduction is exactly what keeps the supply voltage from dipping and what lets a smaller upstream cable and breaker be used. The trade is torque: 33% of the DOL figure, so the load must be light at start.</p>
+        <p class="text-sm text-gray-600 leading-relaxed">Take the 7.5 kW motor with a locked-rotor current of 6 × FLC. Direct on line it would draw 6 × 13.3 = <strong>79.9 A</strong>. Star-delta starting draws a third of that, <strong>26.6 A</strong> — about 2 × FLC. That reduction can help limit the voltage dip during starting, but cable size and protective-device rating still have to be determined independently from the applicable code and the installation conditions. The trade is torque: 33% of the DOL figure, so the load must be light at start.</p>
       </div>
 
       <div>
@@ -1404,7 +1412,7 @@ Setting = 1.00 × I<sub>FLC</sub>&nbsp;&nbsp;(relay in the incoming line)</div>
     <p><strong>3. Selecting contactors from the AC-1 column.</strong> AC-1 is a resistive rating. Motor duty is AC-3, where the same physical contactor is rated far lower. This is a genuine safety error, not a paperwork one.</p>
     <p><strong>4. Wiring the delta contactor straight across instead of cross-connected.</strong> L1 must reach U1 through KM1 and W2 through KM3. Wire it the obvious way and the motor either runs backwards or shorts out on transition.</p>
     <p><strong>5. Omitting the mechanical interlock.</strong> The electrical interlock cannot help if a contact welds. Use both.</p>
-    <p><strong>6. Using a star-delta starter on a heavy-start load.</strong> A third of the torque is a third of the torque. A loaded conveyor or crusher will stall in star and slam through the transition at near-DOL current.</p>
+    <p><strong>6. Using a star-delta starter on a heavy-start load.</strong> The available starting torque is only about a third of the DOL value, so the load must be able to accelerate on it. A loaded conveyor or crusher will stall in star and slam through the transition at near-DOL current.</p>
     <p><strong>7. Copying a timer setting from another machine.</strong> Run-up time depends on the motor <em>and</em> the load inertia. Commission it on the actual drive with a clamp meter.</p>
     <p><strong>8. Using a motor with only three leads brought out.</strong> Without both ends of each winding at the terminal box, star-delta is impossible — that motor needs a DOL, soft starter or VFD instead.</p>
     <p><strong>9. Treating fuses as overload protection.</strong> Fuses and breakers cover short circuits. Overload protection is the thermal relay's job, and neither substitutes for the other.</p>
@@ -1523,7 +1531,7 @@ Setting = 1.00 × I<sub>FLC</sub>&nbsp;&nbsp;(relay in the incoming line)</div>
           What making and breaking capacity do these contactors need?
           <span class="plus text-sky-500 text-xl">+</span>
         </summary>
-        <p class="text-sm text-gray-500 mt-3 leading-relaxed">Motor-duty contactors to AC-3 must make roughly ten times their rated operational current and break several times it, which covers motor inrush. A contactor picked on running current from an AC-1 resistive table will weld its contacts, so always select from the AC-3 rating at the actual supply voltage.</p>
+        <p class="text-sm text-gray-500 mt-3 leading-relaxed">Utilisation category AC-3 defines the making and breaking duty for motor starting, and those values are multiples of the <em>contactor's own rated operational current</em> — not of the motor's full load current. Published AC-3 data is commonly of the order of ten times rated operational current for making and several times it for breaking, but the number that counts is the one in the manufacturer's table for your frame size at your supply voltage. AC-1 and AC-3 ratings are not interchangeable: a motor starter must be selected against the manufacturer's motor-duty (AC-3) rating.</p>
       </details>
 
       <details class="py-5">
@@ -1587,8 +1595,8 @@ Setting = 1.00 × I<sub>FLC</sub>&nbsp;&nbsp;(relay in the incoming line)</div>
   function protectLabel(list, ceiling){
     var pick = stdDown(list, ceiling);
     if(pick !== null && ceiling <= list[list.length-1]) return pick + ' A';
-    if(pick === null) return '< ' + list[0] + ' A';
-    return '> ' + list[list.length-1] + ' A';
+    if(pick === null) return 'below range';
+    return 'above range';
   }
 
   function setMode(m){
@@ -1690,13 +1698,15 @@ Setting = 1.00 × I<sub>FLC</sub>&nbsp;&nbsp;(relay in the incoming line)</div>
         '<div class="quick-chip"><span class="qval">' + (mainStd ? mainStd + ' A' : 'special') + '</span><span class="qunit">Main AC-3</span></div>' +
         '<div class="quick-chip"><span class="qval">' + (deltaStd ? deltaStd + ' A' : 'special') + '</span><span class="qunit">Delta AC-3</span></div>' +
         '<div class="quick-chip"><span class="qval">' + (starStd ? starStd + ' A' : 'special') + '</span><span class="qunit">Star AC-3</span></div>' +
-        '<div class="quick-chip"><span class="qval">' + fuseStd + '</span><span class="qunit">Fuse (gG/aM)</span></div>' +
-        '<div class="quick-chip"><span class="qval">' + mccbStd + '</span><span class="qunit">MCCB / MCB</span></div>' +
-        '<div class="quick-chip"><span class="qval">' + fmt(making,0) + ' A</span><span class="qunit">Ref. making current</span></div>' +
+        '<div class="quick-chip"><span class="qval">' + (protOn ? fmt(fuseMax,0) + ' A' : 'per code') + '</span><span class="qunit">' + (protOn ? 'Fuse ref. max (175% \u00d7 I)' : 'Fuse \u2014 per code') + '</span></div>' +
+        '<div class="quick-chip"><span class="qval">' + fuseStd + '</span><span class="qunit">' + (protOn ? 'Standard ref. \u2264 ceiling' : 'Fuse \u2014 per code') + '</span></div>' +
+        '<div class="quick-chip"><span class="qval">' + (protOn ? fmt(mccbMax,0) + ' A' : 'per code') + '</span><span class="qunit">' + (protOn ? 'Breaker ref. max (250% \u00d7 I)' : 'Breaker \u2014 per code') + '</span></div>' +
+        '<div class="quick-chip"><span class="qval">' + mccbStd + '</span><span class="qunit">' + (protOn ? 'Standard ref. \u2264 ceiling' : 'Breaker \u2014 per code') + '</span></div>' +
+        '<div class="quick-chip"><span class="qval">' + fmt(making,0) + ' A</span><span class="qunit">Motor current ref. \u2248 10 \u00d7 I</span></div>' +
       '</div>' +
       '<p class="text-xs text-gray-400 mt-3">Preliminary reference sizes only. Contactor figures are the <strong>calculated minimum</strong> rounded up to a commonly available AC-3 rating \u2014 select the actual device from the manufacturer\u2019s star-delta combination table at ' + (inputMode === 'rating' ? fmt(V,0) + ' V' : 'your supply voltage') + '. '
       + (protOn
-          ? 'Fuse and breaker figures are <strong>maximum calculated references</strong> on the NEC-style basis, not a device selection; some codes permit the next higher standard rating where the calculated value does not match one. The final choice must follow your local code, the trip curve, cable ampacity, fault level and coordination.'
+          ? 'The fuse and breaker figures are <strong>maximum calculated references</strong> on the NEC-style basis, each shown with the nearest standard rating that does not exceed it; some codes permit the next higher standard rating where the calculated value falls between sizes. They are not a device selection \u2014 gG and aM fuses are not sized the same way, and a breaker also needs its frame, trip unit, instantaneous setting, cable ampacity, fault level and motor starting characteristic checked. The making-current value is an order-of-magnitude reference for the motor, not a contactor making capacity or a breaker interrupting rating.'
           : 'Short-circuit protection is set to <strong>follow your local code and the manufacturer\u2019s coordination tables</strong>, so no fuse or breaker rating is calculated here.')
       + '</p>';
 
@@ -1713,10 +1723,10 @@ Setting = 1.00 × I<sub>FLC</sub>&nbsp;&nbsp;(relay in the incoming line)</div>
         '<tr><td>Star contactor</td><td>33% \u00d7 I' + (margin>0 ? ' +' + fmt(margin,0) + '%' : '') + '</td><td><strong>' + fmt(starA,1) + ' A</strong> \u2192 ' + (starStd ? starStd + ' A' : 'special') + '</td></tr>' +
         '<tr><td>Overload relay setting</td><td>' + (olrPos === 'winding' ? '58% \u00d7 I (in winding)' : '100% \u00d7 I (in line)') + '</td><td><strong>' + fmt(olrA,2) + ' A</strong></td></tr>' +
         (protOn
-          ? '<tr><td>Time-delay fuse (NEC-style max)</td><td>\u2264 175% \u00d7 I</td><td>' + fmt(fuseMax,1) + ' A max \u2192 ' + fuseStd + '</td></tr>' +
-            '<tr><td>MCCB / MCB (NEC-style max)</td><td>\u2264 250% \u00d7 I</td><td>' + fmt(mccbMax,1) + ' A max \u2192 ' + mccbStd + '</td></tr>'
+          ? '<tr><td>Calculated fuse reference (max)</td><td>175% \u00d7 I</td><td><strong>' + fmt(fuseMax,1) + ' A</strong> \u2192 nearest standard not exceeding it: ' + fuseStd + '</td></tr>' +
+            '<tr><td>Calculated breaker reference (max)</td><td>250% \u00d7 I</td><td><strong>' + fmt(mccbMax,1) + ' A</strong> \u2192 nearest standard not exceeding it: ' + mccbStd + '</td></tr>'
           : '<tr><td>Short-circuit protection</td><td>per local code</td><td>select from code + manufacturer coordination table</td></tr>') +
-        '<tr><td>Reference making current</td><td>\u2248 10 \u00d7 I</td><td>' + fmt(making,0) + ' A \u2014 check against the contactor\u2019s AC-3 data</td></tr>' +
+        '<tr><td>Motor current reference</td><td>\u2248 10 \u00d7 I</td><td>' + fmt(making,0) + ' A \u2014 order-of-magnitude reference for the motor, not a contactor making capacity or a breaker interrupting rating</td></tr>' +
       '</tbody></table>';
   }
 
