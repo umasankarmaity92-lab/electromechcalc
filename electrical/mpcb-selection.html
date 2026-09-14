@@ -29,8 +29,8 @@
      crossorigin="anonymous"></script>
 
 <!-- ===================== [PER-PAGE] SEO META ===================== -->
-<meta name="description" content="Free MPCB Selection Calculator. Enter motor full load current and service factor to get the correct MPCB dial setting and typical instantaneous trip threshold instantly, with formula and worked example.">
-<meta name="keywords" content="mpcb selection calculator, motor protection circuit breaker sizing, mpcb dial setting calculator, motor circuit breaker rating, mpcb overload setting">
+<meta name="description" content="Free MPCB selection calculator — get the dial setting, instantaneous trip threshold and the right adjustment range from motor FLC and service factor.">
+<meta name="keywords" content="mpcb selection calculator, motor protection circuit breaker sizing, mpcb dial setting calculator, mpcb adjustment range, manual motor protector sizing, mpcb trip class, mpcb breaking capacity">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.electromechcalc.com/electrical/mpcb-selection">
 <link rel="icon" href="/favicon.png" type="image/png">
@@ -43,6 +43,10 @@
 <meta property="og:url" content="https://www.electromechcalc.com/electrical/mpcb-selection">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
 <meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="en_IN">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="en_AU">
+<meta property="og:locale:alternate" content="en_CA">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -126,6 +130,26 @@
       "@type": "Question",
       "name": "What happens if the MPCB dial is set too high or too low for the actual motor?",
       "acceptedAnswer": { "@type": "Answer", "text": "Setting it too low causes nuisance tripping under normal load or even during a slightly longer-than-typical start, while setting it too high fails to protect the motor from a genuine sustained overload condition that could overheat and damage the windings — the dial should be set as close as practical to the motor's actual FLC (adjusted for service factor), not deliberately padded high to avoid nuisance tripping, since that padding directly removes real overload protection margin." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is an MPCB sized the same way under IEC practice and the US National Electrical Code?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not quite. Under IEC practice the thermal element is normally set at the motor's rated nameplate current, with the service factor applied where the motor has one above unity, because the trip characteristic is already built to ride through normal starting. Where the NEC applies, separate overload protection for a continuous-duty motor above 1 hp is instead sized as a percentage of nameplate full-load amperes — commonly 125% where the motor is marked with a service factor of 1.15 or greater or a temperature rise of 40°C or less, and 115% otherwise. This calculator multiplies FLC by whatever factor you enter, so enter the actual service factor for IEC-style practice or 1.25 / 1.15 to follow the NEC basis. The edition in force in your jurisdiction and the device manufacturer's instructions always govern." }
+    },
+    {
+      "@type": "Question",
+      "name": "What breaking capacity does my MPCB need, and what is the difference between Icu and Ics?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The device must be able to interrupt the prospective short-circuit current available where it is installed, which depends on the supply transformer rating and impedance, the cable run and the system configuration — not on the motor. Icu is the ultimate breaking capacity: the device clears the fault safely but may not be fit for further service. Ics is the service breaking capacity: it clears the fault and stays serviceable, and is often quoted as a percentage of Icu. Both are declared at a stated operational voltage and fall as voltage rises, so a figure quoted at 400 V does not carry over to 480 V or 690 V. Where the available fault current exceeds these ratings, manufacturer-tested backup protection is required." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I put an MPCB between a VFD and the motor, or set one on the drive input to the motor FLC?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Neither, as a general rule. An MPCB on the drive input carries the drive's input current and protects the feeder while serving as an isolating device — it should be selected for that duty, not set to the motor's full-load current, and it does not give the motor overload protection. Overload protection for a drive-fed motor comes from the drive's own electronic thermal model, configured with the motor nameplate data. Switching a breaker or contactor between a running drive and its motor is a separate hazard and should only be done in an arrangement both manufacturers explicitly support." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I choose the MPCB adjustment range, not just the dial value?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Pick a catalogue band that contains the calculated setting with room on both sides. A band whose minimum sits above the required value cannot be turned down far enough and is unusable. A band whose maximum sits far above leaves the pointer near the bottom stop where adjustment is least repeatable. A band that ends exactly at the required value works but leaves no reserve for a commissioning adjustment or for a replacement motor with a slightly higher nameplate current — where two bands both contain the value, order the one that brackets it." }
     }
   ]
 }
@@ -224,6 +248,42 @@
     color:#fff;
     box-shadow:0 4px 10px rgba(14,165,233,0.35);
   }
+  /* ---- inline SVG figures ---- */
+  .emc-fig{
+    margin:1.5rem 0;
+    padding:14px 10px;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    background:#f8fafc;
+    overflow-x:auto;
+  }
+  .emc-fig svg{ display:block; width:100%; min-width:520px; height:auto; }
+  .emc-fig figcaption{
+    margin-top:8px;
+    font-size:11.5px;
+    line-height:1.5;
+    color:#64748b;
+    text-align:center;
+  }
+  body.dark-theme .emc-fig{ background:#0f1a2c; border-color:#1f2f47; }
+  body.dark-theme .emc-fig figcaption{ color:#94a3b8; }
+
+  .fig-axis{ stroke:#94a3b8; stroke-width:1.2; fill:none; }
+  .fig-grid{ stroke:#e2e8f0; stroke-width:1; fill:none; }
+  .fig-label{ fill:#475569; font-size:11px; font-family:'JetBrains Mono',monospace; }
+  .fig-title{ fill:#0B1220; font-size:12.5px; font-weight:700; }
+  .fig-note{ fill:#64748b; font-size:10.5px; }
+  .fig-box{ fill:#ffffff; stroke:#13284a; stroke-width:1.5; }
+  .fig-boxtext{ fill:#0B1220; font-size:11px; font-weight:600; }
+  .fig-line{ stroke:#13284a; stroke-width:1.6; fill:none; }
+  body.dark-theme .fig-grid{ stroke:#1f2f47; }
+  body.dark-theme .fig-label{ fill:#94a3b8; }
+  body.dark-theme .fig-title{ fill:#e2e8f0; }
+  body.dark-theme .fig-note{ fill:#94a3b8; }
+  body.dark-theme .fig-box{ fill:#15233a; stroke:#38bdf8; }
+  body.dark-theme .fig-boxtext{ fill:#e2e8f0; }
+  body.dark-theme .fig-line{ stroke:#38bdf8; }
+
   .hidden-field{ display:none !important; }
   .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
   .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
@@ -563,9 +623,14 @@
     <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
       <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
       <li><a href="#how-it-works" class="hover:underline">2. Understanding MPCB dial setting</a></li>
-      <li><a href="#second" class="hover:underline">3. MPCB vs MCCB+overload relay vs fuse+contactor</a></li>
-      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
-      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+      <li><a href="#trip-curve" class="hover:underline">3. Reading an MPCB trip curve</a></li>
+      <li><a href="#adjustment-range" class="hover:underline">4. Choosing the adjustment range</a></li>
+      <li><a href="#starting-method" class="hover:underline">5. Selection by starting method</a></li>
+      <li><a href="#breaking-capacity" class="hover:underline">6. Breaking capacity and coordination</a></li>
+      <li><a href="#second" class="hover:underline">7. MPCB vs MCCB+overload relay vs fuse+contactor</a></li>
+      <li><a href="#mpcb-by-region" class="hover:underline">8. Standards and regional practice</a></li>
+      <li><a href="#mistakes" class="hover:underline">9. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">10. FAQs</a></li>
     </ul>
   </div>
 </nav>
@@ -576,7 +641,7 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard motor protection circuit breaker sizing per IEC 60947-4-1</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Calculation method: dial setting = motor FLC &times; service factor; trip-class and coordination terminology follows IEC 60947-4-1, with NEC Article 430 practice noted separately</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How MPCB Dial Setting Is Determined</h2>
@@ -591,7 +656,7 @@
 
       <p><strong>Instantaneous (magnetic) trip &mdash; fixed, not adjustable, on most models:</strong> while the thermal overload element is adjustable via the dial, the instantaneous short-circuit trip threshold on most standard MPCB models is fixed at the factory, commonly in the range of 12-14 times the dial setting for Class 10 motor protection circuit breakers under IEC 60947-4-1. This fixed multiplier is calibrated to comfortably tolerate a motor's normal locked-rotor starting current (typically 5-8&times; FLC) with margin, while still responding quickly to a genuine short-circuit event, which by definition draws current well beyond even a heavy starting surge.</p>
 
-      <p><strong>Star-delta starting and MPCB placement:</strong> where an MPCB sits in a star-delta starting circuit changes what current it actually experiences and therefore how it should be set. An MPCB placed in the main incoming line, ahead of the star/delta contactor arrangement, sees the motor's full line current throughout both starting and running, and should be set to the motor's normal full-load line current as usual. An MPCB placed specifically within the delta-winding branch circuits (a less common but sometimes-used arrangement) sees a different current — related to line current by a factor of &radic;3 — due to the winding configuration, and needs its setting adjusted accordingly. Always confirm exactly where in the starting circuit topology an MPCB is positioned before finalizing its dial setting, since this is a genuinely easy point to get wrong without careful attention to the specific circuit diagram.</p>
+      <p><strong>Star-delta starting and MPCB placement:</strong> where an MPCB sits in a star-delta starting circuit changes what current it actually experiences and therefore how it should be set. An MPCB placed in the main incoming line, ahead of the star/delta contactor arrangement, sees the motor's full line current throughout both starting and running, and should be set to the motor's normal full-load line current as usual. An MPCB placed specifically within the delta-winding branch circuits (a less common but sometimes-used arrangement) carries winding (phase) current rather than line current, which in a delta connection is the line current divided by &radic;3 — about 0.58 times the nameplate line FLC — so the dial must be set on that reduced basis instead. Always confirm exactly where in the starting circuit topology an MPCB is positioned before finalizing its dial setting, since this is a genuinely easy point to get wrong without careful attention to the specific circuit diagram.</p>
 
       <p><strong>Class 10 vs Class 20 vs Class 30 overload tripping characteristics:</strong> MPCBs (and motor overload relays generally) are categorized by trip class, describing how long they'll tolerate a sustained overload before tripping — Class 10 (tripping within roughly 10 seconds at 7.2&times; setting) suits motors with typically fast starting; Class 20 and Class 30 allow progressively longer tolerance, suited to motors with longer, heavier starting duty (high-inertia loads that take longer to accelerate to full speed) that would otherwise nuisance-trip a faster-class device during a legitimately longer, but still normal, starting event. Selecting the correct trip class for your specific motor's starting duty is a separate consideration from the dial current setting calculated here, and getting it wrong (too fast a class for a slow-starting high-inertia load) is a common source of starting-related nuisance tripping even when the current dial setting itself is correct.</p>
 
@@ -615,6 +680,247 @@
     </div>
 
     <p class="text-xs text-gray-400 mt-6">Actual MPCB adjustable current ranges (the specific dial graduations available) vary by manufacturer and model line — this calculator gives the correct dial setting value (motor FLC × service factor) and a typical instantaneous trip multiplier range, but you must select a specific MPCB model whose adjustable range brackets your calculated setting from the manufacturer's catalog. Always verify final selection against the motor manufacturer's nameplate data and the MPCB manufacturer's technical documentation.</p>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] TRIP CURVE ===================== -->
+<section id="trip-curve" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Protection Zones</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Reading an MPCB Trip Curve</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>Every number this calculator produces maps onto one region of the breaker's time&ndash;current characteristic. Reading that characteristic once makes the difference between guessing at a nuisance trip and diagnosing it, because the shape of the curve tells you which element operated and therefore what actually went wrong.</p>
+  </div>
+
+  <figure class="emc-fig">
+    <svg viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="tcTitle tcDesc">
+      <title id="tcTitle">MPCB time-current characteristic</title>
+      <desc id="tcDesc">Schematic trip curve showing the adjustable inverse-time thermal region, the normal motor starting inrush band between five and eight times the dial setting, and the fixed instantaneous magnetic trip region at twelve to fourteen times the dial setting.</desc>
+
+      <rect x="392" y="40" width="91" height="260" fill="#f59e0b" opacity="0.14"/>
+      <rect x="561" y="40" width="30" height="260" fill="#dc2626" opacity="0.12"/>
+
+      <line class="fig-grid" x1="80" y1="248" x2="660" y2="248"/>
+      <line class="fig-grid" x1="80" y1="196" x2="660" y2="196"/>
+      <line class="fig-grid" x1="80" y1="144" x2="660" y2="144"/>
+      <line class="fig-grid" x1="80" y1="92" x2="660" y2="92"/>
+
+      <line class="fig-axis" x1="80" y1="40" x2="80" y2="300"/>
+      <line class="fig-axis" x1="80" y1="300" x2="660" y2="300"/>
+
+      <text class="fig-label" x="72" y="44" text-anchor="end">1000 s</text>
+      <text class="fig-label" x="72" y="96" text-anchor="end">100 s</text>
+      <text class="fig-label" x="72" y="148" text-anchor="end">10 s</text>
+      <text class="fig-label" x="72" y="200" text-anchor="end">1 s</text>
+      <text class="fig-label" x="72" y="252" text-anchor="end">0.1 s</text>
+      <text class="fig-label" x="72" y="304" text-anchor="end">0.01 s</text>
+
+      <text class="fig-label" x="80" y="318" text-anchor="middle">1x</text>
+      <text class="fig-label" x="214" y="318" text-anchor="middle">2x</text>
+      <text class="fig-label" x="392" y="318" text-anchor="middle">5x</text>
+      <text class="fig-label" x="462" y="318" text-anchor="middle">7.2x</text>
+      <text class="fig-label" x="526" y="318" text-anchor="middle">10x</text>
+      <text class="fig-label" x="614" y="318" text-anchor="middle">15x</text>
+      <text class="fig-label" x="370" y="338" text-anchor="middle">Current as a multiple of the dial setting</text>
+
+      <polyline class="fig-line" stroke="#0ea5e9" stroke-width="2.4"
+        points="107,40 158,60 214,80 293,102 392,127 462,144 526,159 577,171"/>
+      <line stroke="#dc2626" stroke-width="2.4" x1="577" y1="171" x2="577" y2="296"/>
+
+      <circle cx="462" cy="144" r="4" fill="#0ea5e9"/>
+      <text class="fig-note" x="470" y="138">Class 10: trips in about 10 s at 7.2x</text>
+
+      <text class="fig-title" x="150" y="64">Thermal overload region</text>
+      <text class="fig-note" x="150" y="78">adjustable &mdash; this is what the dial sets</text>
+
+      <text class="fig-note" x="437" y="290" text-anchor="middle">Normal</text>
+      <text class="fig-note" x="437" y="302" text-anchor="middle">starting</text>
+      <text class="fig-note" x="437" y="256" text-anchor="middle">5&ndash;8x</text>
+
+      <text class="fig-title" x="591" y="205" text-anchor="end">Instantaneous</text>
+      <text class="fig-note" x="591" y="219" text-anchor="end">magnetic, fixed 12&ndash;14x</text>
+    </svg>
+    <figcaption>Schematic only &mdash; not to scale and not a substitute for the manufacturer's published curve. Exact thermal shape, tolerance band and magnetic threshold vary by model and trip class.</figcaption>
+  </figure>
+
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>The sloping blue line is the thermal element. It is inverse-time: the further current rises above the dial setting, the faster it operates. Moving the dial slides this whole curve left or right, which is precisely why the dial value has to match the motor rather than the panel designer's comfort level.</p>
+    <p>The amber band is where a direct-on-line start lives &mdash; commonly five to eight times full-load current for a second or two. The curve passes above that band, so a healthy start finishes long before the thermal element accumulates enough heat to operate. That clearance is the whole design intent, and it is why padding the dial upward buys nothing but lost protection.</p>
+    <p>The red vertical line is the instantaneous magnetic element. On most standard models it is factory-fixed, typically around twelve to fourteen times the dial setting, and it clears a genuine short circuit in milliseconds. A fault current large enough to reach that line is far beyond anything a starting motor draws, which is how one device distinguishes the two events without any setting from you.</p>
+    <p><strong>Diagnosing from the curve:</strong> a trip after several seconds of running, with the thermal indicator showing, points at the sloping region &mdash; genuine overload, phase imbalance, a stalled driven machine, or a dial set below actual FLC. An instant trip at the moment of switching points at the vertical region &mdash; a short circuit, a winding or cable fault, or a magnetic threshold too low for that motor's inrush. The two failure modes look identical from the panel door but sit at opposite ends of this graph.</p>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] ADJUSTMENT RANGE ===================== -->
+<section id="adjustment-range" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Model Selection</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Choosing the Right MPCB Adjustment Range</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Calculating the dial setting is only half the job. An MPCB is ordered as a specific model covering a specific adjustable band, so the second decision is which band to buy &mdash; and a calculated setting that technically falls inside a band is not the same as one that sits comfortably within it.</p>
+      <p>Take the worked example above: a motor at 18 A with unity service factor needs a dial setting of 18 A. Several catalogue bands touch that number, but they are not equally suitable.</p>
+    </div>
+
+    <figure class="emc-fig">
+      <svg viewBox="0 0 780 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="arTitle arDesc">
+        <title id="arTitle">Choosing an MPCB adjustment range for an 18 A motor</title>
+        <desc id="arDesc">Five catalogue adjustment bands compared against an 18 amp dial setting. Bands of 6 to 10 amps and 24 to 32 amps cannot reach the value. The 13 to 18 amp band reaches it only at its extreme top. The 17 to 23 amp band contains it with room on both sides.</desc>
+
+        <line class="fig-axis" x1="60" y1="262" x2="560" y2="262"/>
+        <text class="fig-label" x="60" y="280" text-anchor="middle">5</text>
+        <text class="fig-label" x="143" y="280" text-anchor="middle">10</text>
+        <text class="fig-label" x="227" y="280" text-anchor="middle">15</text>
+        <text class="fig-label" x="310" y="280" text-anchor="middle">20</text>
+        <text class="fig-label" x="393" y="280" text-anchor="middle">25</text>
+        <text class="fig-label" x="477" y="280" text-anchor="middle">30</text>
+        <text class="fig-label" x="560" y="280" text-anchor="middle">35</text>
+        <text class="fig-label" x="310" y="296" text-anchor="middle">Adjustable current (A)</text>
+
+        <line x1="277" y1="28" x2="277" y2="262" stroke="#0B1220" stroke-width="1.6" stroke-dasharray="5 4"/>
+        <text class="fig-title" x="277" y="20" text-anchor="middle">Required setting 18 A</text>
+
+        <rect x="77" y="40" width="66" height="24" rx="4" fill="#dc2626" opacity="0.75"/>
+        <text class="fig-label" x="150" y="57">6&ndash;10 A</text>
+        <text class="fig-note" x="575" y="57">Cannot reach 18 A</text>
+
+        <rect x="127" y="84" width="83" height="24" rx="4" fill="#dc2626" opacity="0.75"/>
+        <text class="fig-label" x="217" y="101">9&ndash;14 A</text>
+        <text class="fig-note" x="575" y="101">Cannot reach 18 A</text>
+
+        <rect x="193" y="128" width="84" height="24" rx="4" fill="#f59e0b" opacity="0.85"/>
+        <text class="fig-label" x="284" y="145">13&ndash;18 A</text>
+        <text class="fig-note" x="575" y="145">Works, but sits at the extreme top</text>
+
+        <rect x="260" y="172" width="100" height="24" rx="4" fill="#16a34a" opacity="0.85"/>
+        <text class="fig-label" x="367" y="189">17&ndash;23 A</text>
+        <text class="fig-note" x="575" y="189">Preferred &mdash; room either side</text>
+
+        <rect x="377" y="216" width="133" height="24" rx="4" fill="#dc2626" opacity="0.75"/>
+        <text class="fig-label" x="517" y="233">24&ndash;32 A</text>
+        <text class="fig-note" x="575" y="233">Minimum setting already too high</text>
+      </svg>
+      <figcaption>Band values are typical catalogue examples only. The exact graduations offered differ between manufacturers and product lines.</figcaption>
+    </figure>
+
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>A band whose minimum sits above the required setting is unusable, however close it looks &mdash; the dial simply cannot be turned down far enough, so the motor would be protected at a current it is not rated to carry. A band whose maximum sits far above leaves the pointer near the bottom stop, where the graduations are coarsest and small adjustments are least repeatable.</p>
+      <p>The band ending exactly at the required value is the more interesting case. It is not wrong, and plenty of installations run that way. But it leaves nothing in reserve: no room to trim the setting upward after commissioning measurements, and no room at all if the motor is later swapped for a nominally equivalent unit whose nameplate reads a little higher. Where two bands both contain the calculated value, the one that brackets it is the safer order.</p>
+
+      <h3 class="font-display font-semibold text-lg text-brandDark mb-1">Why nameplate current beats a power rating every time</h3>
+      <p>Two motors sharing a kilowatt or horsepower rating can draw meaningfully different currents, because current depends on rated voltage, efficiency class, power factor, pole count and the manufacturer's own design choices. A 7.5 kW motor does not have one current; it has a different one at 380 V, 400 V and 415 V, and a higher-efficiency model will typically draw less than an older one of the same output. Power-to-current tables are a reasonable way to narrow down which frame to quote, and nothing more.</p>
+      <p>Where the nameplate genuinely is not available yet &mdash; specifying a panel before the motor is delivered, for instance &mdash; a three-phase motor’s line current can be approximated from its output rating using <strong>I &asymp; P &divide; (&radic;3 &times; V &times; &eta; &times; PF)</strong>, with P in watts, V the line-to-line voltage, &eta; the efficiency as a decimal and PF the power factor. Treat that figure as provisional and re-check the dial against the real nameplate at commissioning, because the estimate inherits the error of every assumed term in it.</p>
+      <p>One more nameplate detail is easy to miss: where a motor lists two voltages and two currents, the figure that matters is the one matching the supply voltage and the winding connection actually used. Wiring for the other connection and setting the dial from the wrong column is a quiet way to end up with protection that is out by a factor of &radic;3.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] STARTING METHOD ===================== -->
+<section id="starting-method" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Circuit Topology</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">MPCB Selection by Starting Method</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>The dial setting depends on what the breaker actually carries, and that depends on where it sits. The same motor, the same nameplate, and the same MPCB can require two different settings purely because of the position chosen in the starter.</p>
+  </div>
+
+  <figure class="emc-fig">
+    <svg viewBox="0 0 780 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="smTitle smDesc">
+      <title id="smTitle">MPCB placement in direct-on-line and star-delta starters</title>
+      <desc id="smDesc">Left: a direct-on-line starter with the MPCB in the incoming line ahead of the contactor, set to the motor line full-load current. Right: a star-delta starter, with the main-line MPCB set to line full-load current and an alternative in-delta position set to about 0.58 times that value.</desc>
+
+      <text class="fig-title" x="180" y="22" text-anchor="middle">Direct-on-line</text>
+      <line class="fig-line" x1="180" y1="34" x2="180" y2="56"/>
+      <rect class="fig-box" x="120" y="56" width="120" height="34" rx="5"/>
+      <text class="fig-boxtext" x="180" y="77" text-anchor="middle">MPCB</text>
+      <line class="fig-line" x1="180" y1="90" x2="180" y2="118"/>
+      <rect class="fig-box" x="120" y="118" width="120" height="34" rx="5"/>
+      <text class="fig-boxtext" x="180" y="139" text-anchor="middle">Contactor</text>
+      <line class="fig-line" x1="180" y1="152" x2="180" y2="182"/>
+      <circle class="fig-box" cx="180" cy="204" r="22"/>
+      <text class="fig-boxtext" x="180" y="209" text-anchor="middle">M</text>
+      <text class="fig-note" x="180" y="252" text-anchor="middle">Breaker carries full line current</text>
+      <text class="fig-note" x="180" y="266" text-anchor="middle">Set dial to nameplate line FLC</text>
+
+      <line class="fig-grid" x1="390" y1="30" x2="390" y2="275" stroke-dasharray="4 5"/>
+
+      <text class="fig-title" x="600" y="22" text-anchor="middle">Star-delta</text>
+      <line class="fig-line" x1="600" y1="34" x2="600" y2="56"/>
+      <rect class="fig-box" x="540" y="56" width="120" height="34" rx="5"/>
+      <text class="fig-boxtext" x="600" y="77" text-anchor="middle">MPCB (main line)</text>
+      <line class="fig-line" x1="600" y1="90" x2="600" y2="118"/>
+      <rect class="fig-box" x="540" y="118" width="120" height="34" rx="5"/>
+      <text class="fig-boxtext" x="600" y="139" text-anchor="middle">Star / delta contactors</text>
+      <line class="fig-line" x1="600" y1="152" x2="600" y2="182"/>
+      <circle class="fig-box" cx="600" cy="204" r="22"/>
+      <text class="fig-boxtext" x="600" y="209" text-anchor="middle">M</text>
+
+      <rect x="686" y="118" width="76" height="34" rx="5" fill="none" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <text class="fig-note" x="724" y="139" text-anchor="middle">in-delta</text>
+      <line x1="660" y1="135" x2="686" y2="135" stroke="#f59e0b" stroke-width="1.4" stroke-dasharray="4 3"/>
+
+      <text class="fig-note" x="600" y="252" text-anchor="middle">Main line: set to nameplate line FLC</text>
+      <text class="fig-note" x="600" y="266" text-anchor="middle">In-delta position: set to about 0.58 x line FLC</text>
+    </svg>
+    <figcaption>Simplified single-line arrangement. Control wiring, isolation and the star-to-delta transition are omitted for clarity.</figcaption>
+  </figure>
+
+  <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Starting Method</th>
+          <th class="text-left px-4 py-2 font-semibold">Dial Setting Basis</th>
+          <th class="text-left px-4 py-2 font-semibold">What to Watch</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">Direct-on-line</td><td class="px-4 py-2">Nameplate line FLC &times; service factor</td><td class="px-4 py-2">Highest inrush of any method; confirm the trip class suits the acceleration time</td></tr>
+        <tr><td class="px-4 py-2">Star-delta, MPCB in main line</td><td class="px-4 py-2">Nameplate line FLC &times; service factor</td><td class="px-4 py-2">Breaker sees line current in both star and delta stages</td></tr>
+        <tr><td class="px-4 py-2">Star-delta, MPCB inside the delta branch</td><td class="px-4 py-2">About 0.58 &times; line FLC (line FLC &divide; &radic;3)</td><td class="px-4 py-2">Easy to set from the wrong column; verify against the actual starter schematic</td></tr>
+        <tr><td class="px-4 py-2">Soft starter, MPCB upstream</td><td class="px-4 py-2">Nameplate line FLC, then check the soft starter maker's coordination table</td><td class="px-4 py-2">Reduced inrush but longer ramp; extended acceleration still heats the motor</td></tr>
+        <tr><td class="px-4 py-2">Variable frequency drive, MPCB on the drive input</td><td class="px-4 py-2">Drive input current rating, not the motor FLC</td><td class="px-4 py-2">Protects the feeder and serves as an isolating device &mdash; it gives the motor no overload protection</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>The drive case is the one most often got wrong. An MPCB ahead of a VFD sees the rectifier's input current, which is shaped by the drive rather than by the motor, so setting it to motor FLC is meaningless. Overload protection for a drive-fed motor comes from the drive's own electronic thermal model, configured with the motor's nameplate data. Switching a contactor or breaker between a running drive and its motor is a separate hazard altogether, and should only be done in an arrangement both manufacturers explicitly support.</p>
+    <p>Soft starters deserve a note too. Limiting starting current does not limit starting <em>heat</em>: a motor ramped gently over twenty seconds can absorb more thermal energy than the same motor slammed across the line for three. If starting duty is heavy or frequent, the trip class matters more than the current limit does.</p>
+
+    <h3 class="font-display font-semibold text-lg text-brandDark mb-1">If it trips during starting, do not turn the dial up</h3>
+    <p>Raising the setting is the fastest way to make the symptom disappear and the underlying fault permanent. Before touching the dial, work through the real candidates: is the trip class matched to how long this machine genuinely takes to reach speed; is the supply sagging under inrush; is the driven equipment stiff, jammed or loaded at the moment of start; are the three phases balanced; how many starts per hour is the motor seeing; and is the magnetic threshold on this particular model simply too low for this motor's inrush. A dial set correctly and tripping repeatedly is telling you something true.</p>
+  </div>
+</section>
+
+<!-- ===================== [PER-PAGE] BREAKING CAPACITY ===================== -->
+<section id="breaking-capacity" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Fault Withstand</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Breaking Capacity: The Check That Current Range Does Not Cover</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>A breaker can be perfectly matched to a motor's running current and still be the wrong device, because current range says nothing about what happens during a fault. The second requirement is that the MPCB can interrupt the prospective short-circuit current available at the point where it is installed &mdash; a figure set by the supply transformer's rating and impedance, the cable run between transformer and panel, and the wider system configuration, not by the motor at all.</p>
+      <p>Two ratings appear on the datasheet and they are not interchangeable:</p>
+    </div>
+
+    <div class="not-prose overflow-x-auto my-4">
+      <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-4 py-2 font-semibold">Rating</th>
+            <th class="text-left px-4 py-2 font-semibold">Meaning</th>
+            <th class="text-left px-4 py-2 font-semibold">Practical Reading</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr><td class="px-4 py-2">Icu</td><td class="px-4 py-2">Ultimate breaking capacity</td><td class="px-4 py-2">The device clears the fault safely, but may not be fit for further service afterwards</td></tr>
+          <tr><td class="px-4 py-2">Ics</td><td class="px-4 py-2">Service breaking capacity</td><td class="px-4 py-2">The device clears the fault and remains serviceable; often quoted as a percentage of Icu</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Both are declared at a stated operational voltage, and both fall as that voltage rises &mdash; a figure quoted at 400 V does not carry over to a 480 V or 690 V installation. Check the rating against the voltage you are actually running.</p>
+      <p>Where the prospective fault current at the panel exceeds what the MPCB can interrupt on its own, the usual answer is backup protection: an upstream fuse or breaker, of a type the manufacturer has tested in that combination, that takes the peak energy out of the fault before the MPCB has to. This is a tested pairing, not an assembled one &mdash; substituting a fuse of the same nominal rating from a different family is not the same device.</p>
+      <p>The related decision is coordination class with the contactor. Type 1 accepts that the contactor may be damaged by a full-rated fault, provided nothing hazardous escapes the enclosure; the starter is expected to be repaired or replaced afterwards. Type 2 requires that both devices remain fit for continued service, with no more than light contact welding that can be separated. Type 2 is the sensible default wherever a fault means production downtime, and it can only be claimed from the manufacturer's tested combination tables &mdash; a pairing of two components that each look adequate in isolation gives no coordination class at all.</p>
+    </div>
   </div>
 </section>
 
@@ -644,6 +950,57 @@
   </div>
 </section>
 
+<!-- ===================== [PER-PAGE] REGIONAL PRACTICE ===================== -->
+<section id="mpcb-by-region" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">International Practice</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">MPCB Selection Across Standards and Regions</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>The physics of motor overload protection is the same everywhere, but the vocabulary, the governing standard and &mdash; importantly &mdash; the sizing basis are not. A setting that is correct under one framework can be non-compliant under another, so it is worth knowing which one applies before turning the dial.</p>
+
+      <h3 class="font-display font-semibold text-lg text-brandDark mb-1">The device has different names in different markets</h3>
+      <p>"MPCB" is IEC-world shorthand. The same device is sold as a manual motor starter, a manual motor protector or a manual motor controller depending on the manufacturer and the market, and in North America a version tested and marked for use without a separate upstream device is described as a self-protected combination motor controller. Searching a supplier catalogue under only one of those terms is a common way to conclude a product does not exist when it plainly does.</p>
+
+      <h3 class="font-display font-semibold text-lg text-brandDark mb-1">The sizing multiplier is not universal</h3>
+      <p>Under IEC practice the thermal element is normally set at the motor's rated nameplate current, with the service factor applied where the motor carries one above unity. The trip characteristic itself is built to absorb normal starting, so no further multiplier is added unless the manufacturer's documentation calls for one.</p>
+      <p>Where the US National Electrical Code applies, separate motor overload protection for a continuous-duty motor above 1 hp is instead sized as a percentage of the motor's nameplate full-load amperes: commonly 125% where the motor has a marked service factor of 1.15 or greater or a marked temperature rise of 40&deg;C or less, and 115% otherwise, with provisions for increasing the value where the motor will not start or run without tripping. Note also that the code distinguishes between the nameplate amperes used for overload sizing and the table values used for conductor and short-circuit device sizing &mdash; they are deliberately different numbers for different jobs.</p>
+      <p>This calculator multiplies FLC by whatever factor you enter, so it serves both conventions: enter the motor's actual service factor for IEC-style practice, or enter 1.25 or 1.15 to follow the NEC percentage basis. Whichever you use, the edition of the code or standard in force in your jurisdiction governs, and the manufacturer's instructions for the specific device take precedence over any general rule.</p>
+
+      <h3 class="font-display font-semibold text-lg text-brandDark mb-1">Supply voltage changes the current, not the method</h3>
+      <p>The same motor output rating produces a different full-load current on every common low-voltage system, which is exactly why the nameplate &mdash; matched to the actual supply &mdash; is the only safe input to this calculation.</p>
+    </div>
+
+    <div class="not-prose overflow-x-auto my-4">
+      <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-4 py-2 font-semibold">Region</th>
+            <th class="text-left px-4 py-2 font-semibold">Typical LV Motor Supply</th>
+            <th class="text-left px-4 py-2 font-semibold">Frequency</th>
+            <th class="text-left px-4 py-2 font-semibold">Usual Framework</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr><td class="px-4 py-2">India</td><td class="px-4 py-2">415 V three-phase</td><td class="px-4 py-2">50 Hz</td><td class="px-4 py-2">IEC-aligned national standards</td></tr>
+          <tr><td class="px-4 py-2">UK &amp; Europe</td><td class="px-4 py-2">400 V three-phase</td><td class="px-4 py-2">50 Hz</td><td class="px-4 py-2">IEC / EN</td></tr>
+          <tr><td class="px-4 py-2">USA</td><td class="px-4 py-2">480 V (208 V in some facilities)</td><td class="px-4 py-2">60 Hz</td><td class="px-4 py-2">NEC Article 430, UL product standards</td></tr>
+          <tr><td class="px-4 py-2">Canada</td><td class="px-4 py-2">600 V (208 V in some facilities)</td><td class="px-4 py-2">60 Hz</td><td class="px-4 py-2">Canadian Electrical Code</td></tr>
+          <tr><td class="px-4 py-2">Australia &amp; New Zealand</td><td class="px-4 py-2">400 V three-phase</td><td class="px-4 py-2">50 Hz</td><td class="px-4 py-2">IEC-aligned national standards</td></tr>
+          <tr><td class="px-4 py-2">Gulf states</td><td class="px-4 py-2">400 V three-phase</td><td class="px-4 py-2">50 Hz</td><td class="px-4 py-2">IEC-aligned</td></tr>
+          <tr><td class="px-4 py-2">Saudi Arabia</td><td class="px-4 py-2">400 V (380 V in older installations)</td><td class="px-4 py-2">60 Hz</td><td class="px-4 py-2">IEC-aligned, 60 Hz equipment</td></tr>
+          <tr><td class="px-4 py-2">South Africa</td><td class="px-4 py-2">400 V three-phase</td><td class="px-4 py-2">50 Hz</td><td class="px-4 py-2">IEC-aligned national standards</td></tr>
+          <tr><td class="px-4 py-2">Japan</td><td class="px-4 py-2">200 V three-phase</td><td class="px-4 py-2">50 Hz east / 60 Hz west</td><td class="px-4 py-2">JIS, broadly IEC-aligned</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>Frequency deserves one clarification, because it is a frequent point of confusion: 50 Hz and 60 Hz do not change the dial-setting arithmetic. They do change the motor &mdash; synchronous speed, and therefore the current a given driven load demands &mdash; which is why a motor moved between the two systems needs its nameplate re-read rather than its old setting re-used. A device rated for one frequency should also be confirmed as rated for the other before being used across markets.</p>
+      <p>Ambient temperature is the last regional variable worth naming. Thermal elements are calibrated at a reference ambient, and a panel in a hot plant room or an un-air-conditioned enclosure will run its thermal element warmer than the calibration assumed, tripping earlier than the dial suggests. Where the installation is genuinely hot, or unusually cold, check whether the manufacturer publishes a temperature compensation table or an ambient-compensated variant for that model.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== COMMON MISTAKES ===================== -->
 <section id="mistakes" class="bg-white border-y border-gray-100 py-16">
   <div class="max-w-3xl mx-auto px-4">
@@ -655,7 +1012,10 @@
       <p><strong>3. Using a generic reference FLC instead of the specific motor's actual nameplate value.</strong> Generic horsepower-to-FLC tables give approximate values that can differ meaningfully from a specific motor's actual tested and rated FLC &mdash; always use the real nameplate figure for the motor actually being installed.</p>
       <p><strong>4. Not confirming MPCB placement relative to star-delta starting contactors before setting the dial.</strong> An MPCB in the main line versus one in the delta-winding branch circuits sees different currents &mdash; using main-line FLC for a branch-circuit-positioned MPCB (or vice versa) gives an incorrect setting.</p>
       <p><strong>5. Assuming the instantaneous trip threshold is adjustable when it typically isn't.</strong> On most standard MPCB models, only the thermal overload dial is field-adjustable; the instantaneous magnetic trip is fixed at manufacture &mdash; don't assume you can fine-tune both independently unless your specific model explicitly offers an adjustable instantaneous setting.</p>
-      <p><strong>6. Selecting an MPCB model whose adjustable range doesn't comfortably bracket the calculated setting.</strong> A calculated setting sitting right at the very edge of a model's minimum or maximum range leaves little room for fine adjustment or for a slightly different motor being substituted later &mdash; where practical, select a model whose range comfortably includes the calculated setting with some margin on either side.</p>
+      <p><strong>6. Checking the current range but never the breaking capacity.</strong> A correctly set dial says nothing about whether the device can interrupt the fault current available at that panel &mdash; verify Icu and Ics at the actual operational voltage, and add tested backup protection where the prospective fault current exceeds them.</p>
+      <p><strong>7. Setting an MPCB on a VFD input to the motor's full load current.</strong> A breaker ahead of a drive carries the drive's input current and protects the feeder; motor overload protection on a drive-fed motor comes from the drive's own thermal model, configured with the motor nameplate data.</p>
+      <p><strong>8. Reusing the old setting after a motor is replaced.</strong> A nominally equivalent replacement can have a different nameplate current &mdash; re-read the nameplate and re-set the dial rather than assuming the previous value still applies.</p>
+      <p><strong>9. Selecting an MPCB model whose adjustable range doesn't comfortably bracket the calculated setting.</strong> A calculated setting sitting right at the very edge of a model's minimum or maximum range leaves little room for fine adjustment or for a slightly different motor being substituted later &mdash; where practical, select a model whose range comfortably includes the calculated setting with some margin on either side.</p>
     </div>
   </div>
 </section>
@@ -739,6 +1099,38 @@
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">Setting it too low causes nuisance tripping under normal load or even during a slightly longer-than-typical start, while setting it too high fails to protect the motor from a genuine sustained overload condition that could overheat and damage the windings — the dial should be set as close as practical to the motor's actual FLC (adjusted for service factor), not deliberately padded high to avoid nuisance tripping, since that padding directly removes real overload protection margin.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is an MPCB sized the same way under IEC practice and the US National Electrical Code?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Not quite. Under IEC practice the thermal element is normally set at the motor's rated nameplate current, with the service factor applied where the motor has one above unity, because the trip characteristic is already built to ride through normal starting. Where the NEC applies, separate overload protection for a continuous-duty motor above 1 hp is instead sized as a percentage of nameplate full-load amperes — commonly 125% where the motor is marked with a service factor of 1.15 or greater or a temperature rise of 40°C or less, and 115% otherwise. This calculator multiplies FLC by whatever factor you enter, so enter the actual service factor for IEC-style practice or 1.25 / 1.15 to follow the NEC basis. The edition in force in your jurisdiction and the device manufacturer's instructions always govern.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What breaking capacity does my MPCB need, and what is the difference between Icu and Ics?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The device must be able to interrupt the prospective short-circuit current available where it is installed, which depends on the supply transformer rating and impedance, the cable run and the system configuration — not on the motor. Icu is the ultimate breaking capacity: the device clears the fault safely but may not be fit for further service. Ics is the service breaking capacity: it clears the fault and stays serviceable, and is often quoted as a percentage of Icu. Both are declared at a stated operational voltage and fall as voltage rises, so a figure quoted at 400 V does not carry over to 480 V or 690 V. Where the available fault current exceeds these ratings, manufacturer-tested backup protection is required.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I put an MPCB between a VFD and the motor, or set one on the drive input to the motor FLC?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Neither, as a general rule. An MPCB on the drive input carries the drive's input current and protects the feeder while serving as an isolating device — it should be selected for that duty, not set to the motor's full-load current, and it does not give the motor overload protection. Overload protection for a drive-fed motor comes from the drive's own electronic thermal model, configured with the motor nameplate data. Switching a breaker or contactor between a running drive and its motor is a separate hazard and should only be done in an arrangement both manufacturers explicitly support.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I choose the MPCB adjustment range, not just the dial value?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Pick a catalogue band that contains the calculated setting with room on both sides. A band whose minimum sits above the required value cannot be turned down far enough and is unusable. A band whose maximum sits far above leaves the pointer near the bottom stop where adjustment is least repeatable. A band that ends exactly at the required value works but leaves no reserve for a commissioning adjustment or for a replacement motor with a slightly higher nameplate current — where two bands both contain the value, order the one that brackets it.</p>
     </details>
   </div>
 </section>
