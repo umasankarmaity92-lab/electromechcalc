@@ -23,13 +23,13 @@
 </script>
 
 <!-- ===================== [PER-PAGE] TITLE ===================== -->
-<title>Electrical Load Calculator (kW & kVA from V, I, PF) | ElectroMechCalc</title>
+<title>Electrical Load Calculator – kW, kVA & kVAR | ElectroMechCalc</title>
 
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
      crossorigin="anonymous"></script>
 
 <!-- ===================== [PER-PAGE] SEO META ===================== -->
-<meta name="description" content="Free Electrical Load Calculator. Enter voltage, current, and power factor for a single-phase or three-phase circuit to get load in kW and kVA instantly, with formula and worked example.">
+<meta name="description" content="Calculate electrical load in kW, kVA and kVAR from voltage, current and power factor for single-phase and three-phase circuits, with formulas and examples.">
 <meta name="keywords" content="electrical load calculator, kw kva calculator, load calculation formula, single phase three phase load calculator, power factor load calculator">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.electromechcalc.com/electrical/electrical-load">
@@ -38,16 +38,20 @@
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ElectroMechCalc">
-<meta property="og:title" content="Electrical Load Calculator">
-<meta property="og:description" content="Free Electrical Load Calculator — enter voltage, current, and power factor to get kW and kVA load instantly.">
+<meta property="og:title" content="Electrical Load Calculator – kW, kVA & kVAR">
+<meta property="og:description" content="Calculate single-phase and three-phase electrical load in kW, kVA and kVAR using voltage, current and power factor.">
 <meta property="og:url" content="https://www.electromechcalc.com/electrical/electrical-load">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
 <meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="en_IN">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="en_AU">
+<meta property="og:locale:alternate" content="en_CA">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Electrical Load Calculator">
-<meta name="twitter:description" content="Free Electrical Load Calculator — enter voltage, current, and power factor to get kW and kVA load instantly.">
+<meta name="twitter:title" content="Electrical Load Calculator – kW, kVA & kVAR">
+<meta name="twitter:description" content="Calculate single-phase and three-phase electrical load in kW, kVA and kVAR using voltage, current and power factor.">
 <meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
 
 <!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
@@ -60,7 +64,7 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "description": "Free Electrical Load Calculator. Enter voltage, current, and power factor for a single-phase or three-phase circuit to get load in kW and kVA instantly, with formula and worked example.",
+  "description": "Calculate electrical load in kW, kVA and kVAR from voltage, current and power factor for single-phase and three-phase circuits, with formulas and examples.",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
 }
 </script>
@@ -126,6 +130,11 @@
       "@type": "Question",
       "name": "Does this calculator account for harmonic distortion in the current reading?",
       "acceptedAnswer": { "@type": "Answer", "text": "No — this calculator assumes a clean, sinusoidal current waveform; for loads with significant harmonic content (VFDs, rectifiers, and other non-linear loads), the relationship between measured RMS current, voltage, and true power can be more complex than this basic formula captures, and a power quality meter capable of true RMS and true power measurement gives a more accurate result for such loads." }
+    },
+    {
+      "@type": "Question",
+      "name": "Which voltage should I enter for my country?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Use the nominal supply voltage actually measured or specified at the load, not a regional average. For single-phase work that is commonly 230 V across India, the UK, Europe, Australia, the Middle East and South Africa, 120 V in the USA and Canada, 127 V in Mexico and parts of Latin America, and 100 V in Japan. For three-phase work, enter the line-to-line voltage: commonly 415 V in India, 400 V across the UK, Europe, Australia, the Middle East and South Africa, 208 V or 480 V in the USA, 208 V or 600 V in Canada, and 200 V in Japan. The quick-preset buttons above the voltage field cover these values, and any custom voltage can be typed in directly since nominal values and permitted tolerances vary by utility and by site." }
     }
   ]
 }
@@ -218,6 +227,9 @@
   .toggle-btn{
     flex:1;
     text-align:center;
+    border:none;
+    background:transparent;
+    font-family:inherit;
     padding:10px 8px;
     font-size:13px;
     font-weight:600;
@@ -231,6 +243,70 @@
     color:#fff;
     box-shadow:0 4px 10px rgba(14,165,233,0.35);
   }
+  /* Quick voltage presets (globalization pass) */
+  .qv-btn{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    font-weight:600;
+    color:#334155;
+    background:#f1f5f9;
+    border:1px solid #e2e8f0;
+    border-radius:6px;
+    padding:5px 9px;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .qv-btn:hover{ background:#e0f2fe; border-color:#0ea5e9; }
+  .qv-btn.active{ background:#0ea5e9; color:#fff; border-color:#0ea5e9; }
+  body.dark-theme .qv-btn{ background:#15233a; border-color:#1f2f47; color:#cbd5e1; }
+  body.dark-theme .qv-btn.active{ background:#0ea5e9; color:#fff; border-color:#0ea5e9; }
+
+  /* Info icon — small green "i" button; tooltip on hover, focus or tap */
+  .info-icon{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:15px;
+    height:15px;
+    border:none;
+    padding:0;
+    border-radius:50%;
+    background:#16a34a;
+    color:#fff;
+    font-family:inherit;
+    font-size:10px;
+    font-weight:700;
+    font-style:italic;
+    line-height:1;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .info-icon .info-tooltip{
+    display:none;
+    position:absolute;
+    left:0;
+    top:135%;
+    z-index:30;
+    width:230px;
+    max-width:60vw;
+    background:#111827;
+    color:#fff;
+    font-size:11px;
+    font-weight:400;
+    font-style:normal;
+    text-transform:none;
+    letter-spacing:normal;
+    line-height:1.45;
+    padding:8px 10px;
+    border-radius:6px;
+    box-shadow:0 6px 16px rgba(0,0,0,.2);
+  }
+  .info-icon:hover .info-tooltip,
+  .info-icon:focus .info-tooltip,
+  .info-icon:focus-visible .info-tooltip,
+  .info-icon.info-open .info-tooltip{ display:block; }
+
   .hidden-field{ display:none !important; }
   .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
   .fund-badge, .tower-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
@@ -442,7 +518,7 @@
     </div>
 
         <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
-          Electrical load in kW and kVA for a single-phase or three-phase circuit, from voltage, current, and power factor — the fundamental load calculation behind panel sizing and demand estimation.
+          Calculate electrical load in kW, kVA and kVAR from voltage, current and power factor for single-phase and three-phase circuits.
         </p>
       </div>
 
@@ -473,20 +549,51 @@
 
       <div class="mb-5">
         <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_electrical_load">System Type</span>
-        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_electrical_load">
-          <div id="typeSingle" class="toggle-btn active" onclick="setLoadPhaseType('single')">Single Phase</div>
-          <div id="typeThree" class="toggle-btn" onclick="setLoadPhaseType('three')">Three Phase</div>
+        <div id="phaseToggleBar" class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_electrical_load">
+          <button type="button" id="typeSingle" class="toggle-btn active" aria-pressed="true" onclick="setLoadPhaseType('single')">Single Phase</button>
+          <button type="button" id="typeThree" class="toggle-btn" aria-pressed="false" onclick="setLoadPhaseType('three')">Three Phase</button>
         </div>
       </div>
 
       <div class="space-y-4 mb-5">
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="voltage">Voltage (V)</label>
-          <input id="voltage" type="number" value="230" step="1" min="0" placeholder="e.g. 230" class="input-field mt-2">
+          <input id="voltage" type="number" value="230" step="1" min="1" max="1000000" placeholder="e.g. 230" class="input-field mt-2" oninput="syncQuickVoltageActive()">
+          <p class="text-[11px] text-gray-400 mt-1.5" id="voltageHint">Single-phase: the supply voltage at the load.</p>
+        </div>
+
+        <div>
+          <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5">
+            Common Voltages
+            <button type="button" class="info-icon" aria-label="Where these voltage presets come from" aria-expanded="false">
+              i
+              <span class="info-tooltip">Common nominal supply voltages used in India, the UK &amp; Europe, North America, Japan, the Middle East, Australia and South Africa &mdash; or type any custom voltage above.</span>
+            </button>
+          </span>
+          <div id="qvSingle" class="flex flex-wrap gap-1.5 mt-2" role="group" aria-label="Quick voltage presets, single phase">
+            <button type="button" class="qv-btn" aria-pressed="false" data-v="100" onclick="setQuickVoltage(100)">100V</button>
+            <button type="button" class="qv-btn" aria-pressed="false" data-v="120" onclick="setQuickVoltage(120)">120V</button>
+            <button type="button" class="qv-btn" aria-pressed="false" data-v="127" onclick="setQuickVoltage(127)">127V</button>
+            <button type="button" class="qv-btn" aria-pressed="false" data-v="208" onclick="setQuickVoltage(208)">208V</button>
+            <button type="button" class="qv-btn" aria-pressed="false" data-v="220" onclick="setQuickVoltage(220)">220V</button>
+            <button type="button" class="qv-btn active" aria-pressed="true" data-v="230" onclick="setQuickVoltage(230)">230V</button>
+            <button type="button" class="qv-btn" aria-pressed="false" data-v="240" onclick="setQuickVoltage(240)">240V</button>
+          </div>
+          <div id="qvThree" class="flex flex-wrap gap-1.5 mt-2 hidden" role="group" aria-label="Quick voltage presets, three phase">
+            <button type="button" class="qv-btn" aria-pressed="false" data-v="200" onclick="setQuickVoltage(200)">200V</button>
+            <button type="button" class="qv-btn" aria-pressed="false" data-v="208" onclick="setQuickVoltage(208)">208V</button>
+            <button type="button" class="qv-btn" aria-pressed="false" data-v="380" onclick="setQuickVoltage(380)">380V</button>
+            <button type="button" class="qv-btn" aria-pressed="false" data-v="400" onclick="setQuickVoltage(400)">400V</button>
+            <button type="button" class="qv-btn" aria-pressed="false" data-v="415" onclick="setQuickVoltage(415)">415V</button>
+            <button type="button" class="qv-btn" aria-pressed="false" data-v="440" onclick="setQuickVoltage(440)">440V</button>
+            <button type="button" class="qv-btn" aria-pressed="false" data-v="460" onclick="setQuickVoltage(460)">460V</button>
+            <button type="button" class="qv-btn" aria-pressed="false" data-v="480" onclick="setQuickVoltage(480)">480V</button>
+            <button type="button" class="qv-btn" aria-pressed="false" data-v="600" onclick="setQuickVoltage(600)">600V</button>
+          </div>
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="current">Current (A)</label>
-          <input id="current" type="number" value="20" step="0.1" min="0" placeholder="e.g. 20" class="input-field mt-2">
+          <input id="current" type="number" value="20" step="0.1" min="0.01" max="1000000" placeholder="e.g. 20" class="input-field mt-2">
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="powerFactor">Power Factor</label>
@@ -494,7 +601,7 @@
         </div>
       </div>
 
-      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+      <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculateElectricalLoad()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate
@@ -506,7 +613,7 @@
     </div>
 
     <!-- RESULT PANEL -->
-    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4" role="status" aria-live="polite">
             <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Real Power</span>
@@ -587,10 +694,11 @@
     <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
     <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
       <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
-      <li><a href="#how-it-works" class="hover:underline">2. Understanding the load formula for single and three phase</a></li>
-      <li><a href="#second" class="hover:underline">3. kW vs kVA — why both numbers matter</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. Electrical load calculation formula (single &amp; three phase)</a></li>
+      <li><a href="#second" class="hover:underline">3. kW, kVA and kVAR explained</a></li>
       <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
-      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+      <li><a href="#el-by-region" class="hover:underline">5. Load by voltage and region</a></li>
+      <li><a href="#faqs" class="hover:underline">6. FAQs</a></li>
     </ul>
   </div>
 </nav>
@@ -601,15 +709,17 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard single-phase and three-phase load formula</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Standards referenced: Standard single-phase and three-phase load formula</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
-    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Electrical Load (kW and kVA) Is Calculated</h2>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Electrical Load Calculation Formula</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
             <p>Electrical load describes how much power a circuit actually draws, and it's usually expressed in two related but distinct ways: kW (real power, the useful working power) and kVA (apparent power, the total power the supply system must be sized to deliver). Both figures matter for different purposes, and both follow directly from voltage, current, and power factor.</p>
 
+      <h3 class="text-lg font-display font-semibold text-brandDark">Single-Phase Electrical Load Formula</h3>
       <p><strong>Formula used (single-phase):</strong> Load (kW) = Voltage (V) &times; Current (A) &times; Power Factor &divide; 1000.</p>
 
+      <h3 class="text-lg font-display font-semibold text-brandDark">Three-Phase Electrical Load Formula</h3>
       <p><strong>Formula used (three-phase):</strong> Load (kW) = &radic;3 &times; Voltage (V) &times; Current (A) &times; Power Factor &divide; 1000, using line-to-line voltage.</p>
 
       <p><strong>Apparent power:</strong> kVA = kW &divide; Power Factor (equivalently, kVA follows the identical formula without the power factor term). Reactive power kVAR = &radic;(kVA&sup2; &minus; kW&sup2;), representing the non-working (reactive) component of apparent power.</p>
@@ -648,7 +758,7 @@
 <!-- ===================== SECOND SECTION ===================== -->
 <section id="second" class="max-w-3xl mx-auto px-4 py-16">
   <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Key Concept</span>
-  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">kW (Real Power) vs kVA (Apparent Power) — What Each Tells You</h2>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">kW, kVA and kVAR Explained</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
     <p>kW (real power) is what your energy meter bills you for and what actually performs useful work &mdash; running a motor, heating an element, lighting a lamp. kVA (apparent power) is what the electrical supply infrastructure &mdash; transformers, cables, switchgear, generators &mdash; must be sized to handle, since these components carry the full current regardless of how much of that current's associated power is "useful" (real) versus "non-useful" (reactive).</p>
     <p>At unity power factor (1.0), kW and kVA are identical &mdash; every amp of current does useful work. As power factor drops (more inductive/reactive load, common with motors, transformers, and fluorescent/discharge lighting ballasts), kVA grows larger than kW for the same real power output, meaning supply infrastructure must be sized for more current than the useful power alone would suggest. This is precisely why utilities often size transformer and service capacity in kVA (matching actual current-carrying requirement) rather than kW alone.</p>
@@ -671,6 +781,39 @@
       <p><strong>7. Estimating power factor from a nameplate rating rather than measuring actual operating conditions.</strong> Nameplate power factor is typically specified at full rated load &mdash; actual operating power factor, especially at partial load, often differs meaningfully from this figure, particularly for motors, where power factor tends to decrease at lighter loading.</p>
       <p><strong>8. Treating this single-point calculation as sufficient for final cable, protective device, or transformer sizing without further checks.</strong> This load calculation is a foundational input, but complete sizing decisions also need ampacity derating, protective device coordination, and demand/diversity factor considerations beyond just this basic kW/kVA figure.</p>
     </div>
+  </div>
+</section>
+
+<section id="el-by-region" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">International Use</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-5">Electrical Load by Voltage and Region</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>The load formula itself is universal &mdash; kW = V &times; I &times; PF &divide; 1000 for single-phase and kW = &radic;3 &times; V &times; I &times; PF &divide; 1000 for three-phase. Only the nominal supply voltage changes from one region to another, which is why this calculator accepts any voltage and offers quick presets for the values most commonly encountered. For three-phase work the value entered must be the <strong>line-to-line</strong> voltage in every region, since the &radic;3 factor already assumes that convention.</p>
+  </div>
+  <div class="not-prose overflow-x-auto my-4">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50 text-gray-600">
+        <tr>
+          <th class="text-left px-4 py-2 font-semibold">Region</th>
+          <th class="text-left px-4 py-2 font-semibold">Single-Phase (V)</th>
+          <th class="text-left px-4 py-2 font-semibold">Three-Phase, Line-to-Line (V)</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr><td class="px-4 py-2">India</td><td class="px-4 py-2">230</td><td class="px-4 py-2">415</td></tr>
+        <tr><td class="px-4 py-2">UK &amp; Europe</td><td class="px-4 py-2">230</td><td class="px-4 py-2">400</td></tr>
+        <tr><td class="px-4 py-2">USA</td><td class="px-4 py-2">120 (240 for large appliances)</td><td class="px-4 py-2">208 or 480 (varies by facility)</td></tr>
+        <tr><td class="px-4 py-2">Canada</td><td class="px-4 py-2">120 (240 for large appliances)</td><td class="px-4 py-2">208 or 600 (varies by facility)</td></tr>
+        <tr><td class="px-4 py-2">Australia &amp; New Zealand</td><td class="px-4 py-2">230</td><td class="px-4 py-2">400</td></tr>
+        <tr><td class="px-4 py-2">Middle East</td><td class="px-4 py-2">230 (220 in some areas)</td><td class="px-4 py-2">400 (380 in some areas)</td></tr>
+        <tr><td class="px-4 py-2">South Africa</td><td class="px-4 py-2">230</td><td class="px-4 py-2">400</td></tr>
+        <tr><td class="px-4 py-2">Japan</td><td class="px-4 py-2">100</td><td class="px-4 py-2">200</td></tr>
+        <tr><td class="px-4 py-2">Mexico &amp; parts of Latin America</td><td class="px-4 py-2">127</td><td class="px-4 py-2">220 or 480</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>These are nominal reference values only. Actual supply voltage varies with utility practice, permitted tolerance bands, transformer tap setting, and voltage drop along the distribution run &mdash; for an accurate load figure, enter the voltage measured at the load rather than the regional nominal value, particularly on long circuits or at the far end of a plant distribution system.</p>
   </div>
 </section>
 
@@ -754,6 +897,14 @@
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">No — this calculator assumes a clean, sinusoidal current waveform; for loads with significant harmonic content (VFDs, rectifiers, and other non-linear loads), the relationship between measured RMS current, voltage, and true power can be more complex than this basic formula captures, and a power quality meter capable of true RMS and true power measurement gives a more accurate result for such loads.</p>
     </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Which voltage should I enter for my country?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Use the nominal supply voltage actually measured or specified at the load, not a regional average. For single-phase work that is commonly 230 V across India, the UK, Europe, Australia, the Middle East and South Africa, 120 V in the USA and Canada, 127 V in Mexico and parts of Latin America, and 100 V in Japan. For three-phase work, enter the line-to-line voltage: commonly 415 V in India, 400 V across the UK, Europe, Australia, the Middle East and South Africa, 208 V or 480 V in the USA, 208 V or 600 V in Canada, and 200 V in Japan. The quick-preset buttons above the voltage field cover these values, and any custom voltage can be typed in directly since nominal values and permitted tolerances vary by utility and by site.</p>
+    </details>
   </div>
 </section>
 
@@ -764,13 +915,54 @@
 
 <!-- ===================== [PER-PAGE] CALCULATOR LOGIC ===================== -->
 <script>
-    let loadPhaseType = 'single';
+  let loadPhaseType = 'single';
+
+  const PHASE_DEFAULT_VOLTAGE = { single: 230, three: 415 };
+  // Last voltage this page filled in by itself. The system-type toggle only
+  // replaces the voltage field while it still holds that untouched auto value,
+  // so a voltage the user typed or picked is never silently overwritten.
+  let lastAutoVoltage = PHASE_DEFAULT_VOLTAGE.single;
 
   function setLoadPhaseType(type){
     loadPhaseType = type;
     document.getElementById('typeSingle').classList.toggle('active', type === 'single');
     document.getElementById('typeThree').classList.toggle('active', type === 'three');
+    document.getElementById('typeSingle').setAttribute('aria-pressed', type === 'single' ? 'true' : 'false');
+    document.getElementById('typeThree').setAttribute('aria-pressed', type === 'three' ? 'true' : 'false');
     document.getElementById('formulaChip').textContent = type === 'single' ? 'kW = V × I × PF ÷ 1000' : 'kW = √3 × V × I × PF ÷ 1000';
+
+    const vEl = document.getElementById('voltage');
+    const currentV = parseFloat(vEl.value);
+    if (!Number.isFinite(currentV) || currentV === lastAutoVoltage){
+      vEl.value = PHASE_DEFAULT_VOLTAGE[type];
+      lastAutoVoltage = PHASE_DEFAULT_VOLTAGE[type];
+    }
+
+    document.getElementById('voltageHint').textContent = type === 'single'
+      ? 'Single-phase: the supply voltage at the load.'
+      : 'Three-phase: use the line-to-line voltage, not line-to-neutral.';
+
+    document.getElementById('qvSingle').classList.toggle('hidden', type !== 'single');
+    document.getElementById('qvThree').classList.toggle('hidden', type !== 'three');
+    syncQuickVoltageActive();
+    calculateElectricalLoad();
+  }
+
+  function setQuickVoltage(v){
+    // An explicit preset click counts as a user-chosen voltage, so it is not
+    // recorded as an auto value and survives a later system-type switch.
+    document.getElementById('voltage').value = v;
+    syncQuickVoltageActive();
+    calculateElectricalLoad();
+  }
+
+  function syncQuickVoltageActive(){
+    const current = parseFloat(document.getElementById('voltage').value);
+    document.querySelectorAll('.qv-btn').forEach(function(btn){
+      const on = parseFloat(btn.dataset.v) === current;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
   }
 
   // ===== Share / Feedback / Like-Dislike bar =====
@@ -790,9 +982,13 @@
 
     const validationBox = document.getElementById('validationBox');
     const errors = [];
-    if(isNaN(voltage) || voltage <= 0){ errors.push('Enter a valid voltage greater than 0.'); }
-    if(isNaN(current) || current <= 0){ errors.push('Enter a valid current greater than 0.'); }
-    if(isNaN(pf) || pf <= 0 || pf > 1){ errors.push('Power factor must be between 0 and 1.'); }
+    // Number.isFinite (not isNaN) so Infinity from an extreme entry like 1e999
+    // is rejected instead of propagating into the result tile.
+    if(!Number.isFinite(voltage) || voltage <= 0){ errors.push('Enter a valid voltage greater than 0.'); }
+    else if(voltage > 1000000){ errors.push('Voltage must be 1,000,000 V or less.'); }
+    if(!Number.isFinite(current) || current <= 0){ errors.push('Enter a valid current greater than 0.'); }
+    else if(current > 1000000){ errors.push('Current must be 1,000,000 A or less.'); }
+    if(!Number.isFinite(pf) || pf < 0.1 || pf > 1){ errors.push('Power factor must be between 0.1 and 1.'); }
 
     if(errors.length){
       validationBox.classList.remove('hidden');
@@ -800,6 +996,7 @@
       document.getElementById('rResult').textContent = '\u2014';
       document.getElementById('rKVA').textContent = '\u2014';
       document.getElementById('rKVAR').textContent = '\u2014';
+      document.getElementById('resultSub').textContent = 'Fix the input errors to see a result';
       document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
       return;
     }
@@ -812,7 +1009,7 @@
     const kVAR = Math.sqrt(Math.max(kVA*kVA - kW*kW, 0));
 
     document.getElementById('rResult').textContent = kW.toLocaleString('en-US', {maximumFractionDigits:2}) + ' kW';
-    document.getElementById('resultSub').textContent = (loadPhaseType === 'single' ? 'Single-phase' : 'Three-phase') + ', ' + voltage + 'V, ' + current + 'A';
+    document.getElementById('resultSub').textContent = (loadPhaseType === 'single' ? 'Single-phase' : 'Three-phase, line-to-line') + ', ' + voltage + 'V, ' + current + 'A';
     document.getElementById('rKVA').textContent = kVA.toFixed(2) + ' kVA';
     document.getElementById('rKVAR').textContent = kVAR.toFixed(2) + ' kVAR';
 
@@ -821,7 +1018,7 @@
             <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
             <tbody>
                 <tr><td>System Type</td><td>${loadPhaseType === 'single' ? 'Single-phase' : 'Three-phase'}</td></tr>
-                <tr><td>Voltage</td><td>${voltage} V</td></tr>
+                <tr><td>${loadPhaseType === 'single' ? 'Voltage' : 'Voltage (line-to-line)'}</td><td>${voltage} V</td></tr>
                 <tr><td>Current</td><td>${current} A</td></tr>
                 <tr><td>Power Factor</td><td>${pf}</td></tr>
                 <tr><td><strong>Real Power</strong></td><td><strong>${kW.toFixed(2)} kW</strong></td></tr>
@@ -832,7 +1029,59 @@
     `;
   }
 
+  // ===== Live recalculation =====
+  // Without these, editing a field left the previous result on screen, and the
+  // shared number-input clamp net (which re-fires "input" after correcting a
+  // value) had nothing listening to it.
+  ['voltage','current','powerFactor'].forEach(function(id){
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', calculateElectricalLoad);
+    el.addEventListener('change', calculateElectricalLoad);
+  });
+
+  // Enter anywhere in the calculator triggers the page's own Calculate button.
+  document.querySelectorAll('#calculator input[type="number"]').forEach(function(el){
+    el.addEventListener('keydown', function(ev){
+      if (ev.key === 'Enter'){
+        ev.preventDefault();
+        const btn = document.querySelector('#calculator button[onclick^="calculate"]');
+        if (btn) btn.click();
+      }
+    });
+  });
+
+  // ===== Info tooltip =====
+  // Hover/focus alone never fires on touch devices, so the icon is a real
+  // button that also toggles its tooltip on tap.
+  (function(){
+    const icons = document.querySelectorAll('.info-icon');
+    icons.forEach(function(icon){
+      icon.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        const open = icon.classList.toggle('info-open');
+        icon.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    });
+    document.addEventListener('click', function(){
+      icons.forEach(function(icon){
+        icon.classList.remove('info-open');
+        icon.setAttribute('aria-expanded', 'false');
+      });
+    });
+    document.addEventListener('keydown', function(ev){
+      if (ev.key === 'Escape'){
+        icons.forEach(function(icon){
+          icon.classList.remove('info-open');
+          icon.setAttribute('aria-expanded', 'false');
+        });
+      }
+    });
+  })();
+
+  syncQuickVoltageActive();
   calculateElectricalLoad();
+
 </script>
 
 <script>
