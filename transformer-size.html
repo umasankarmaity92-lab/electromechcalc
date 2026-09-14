@@ -16,17 +16,20 @@
 <script>
 (function(){
   try {
-    var t = localStorage.getItem('emc-theme') ||
+    var stored = localStorage.getItem('emc-theme');
+    var t = (stored === 'dark-theme' || stored === 'light-theme') ? stored :
       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
     document.documentElement.classList.add(t);
     document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+    var tc = document.querySelector('meta[name="theme-color"]');
+    if (tc) tc.setAttribute('content', t === 'dark-theme' ? '#0B1220' : '#ffffff');
   } catch(e) {}
 })();
 </script>
 <title>Transformer Size Calculator (kVA) | ElectroMechCalc</title>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
      crossorigin="anonymous"></script>
-<meta name="description" content="Free transformer size calculator — find the right transformer kVA rating from load in Amp, HP, or kW. Get kVA demand, line current, reactive power (kVAR) & the nearest reference transformer rating instantly.">
+<meta name="description" content="Free transformer size calculator — get required kVA, line current, kVAR and the nearest reference transformer rating from load in Amp, HP or kW.">
 <meta name="keywords" content="transformer size calculator, transformer kVA calculator, kW to kVA transformer, transformer sizing, distribution transformer calculator, transformer rating reference, kVAR calculator">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.electromechcalc.com/transformer-size">
@@ -40,6 +43,7 @@
 <meta property="og:url" content="https://www.electromechcalc.com/transformer-size">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
 <meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="en_IN">
 <meta property="og:locale:alternate" content="en_GB">
 <meta property="og:locale:alternate" content="en_AU">
 <meta property="og:locale:alternate" content="en_CA">
@@ -50,7 +54,7 @@
 <meta name="twitter:description" content="Free tool to size a transformer in kVA from your load in Amp, HP, or kW, with the nearest reference transformer rating.">
 <meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
 
-<!-- Structured data: WebApplication -->
+<!-- Structured data: SoftwareApplication -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -65,7 +69,7 @@
 }
 </script>
 
-<!-- Structured data: FAQPage -->
+<!-- Structured data: BreadcrumbList -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -73,11 +77,12 @@
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
     { "@type": "ListItem", "position": 2, "name": "Electrical Calculators", "item": "https://www.electromechcalc.com/electrical-calculators" },
-    { "@type": "ListItem", "position": 3, "name": "Transformer Size Calculator (kVA) — Load, kVAR &amp; Standard Rating", "item": "https://www.electromechcalc.com/transformer-size" }
+    { "@type": "ListItem", "position": 3, "name": "Transformer Size Calculator (kVA)", "item": "https://www.electromechcalc.com/transformer-size" }
   ]
 }
 </script>
 
+<!-- Structured data: FAQPage -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -86,42 +91,66 @@
     {
       "@type": "Question",
       "name": "Why is a transformer rated in kVA and not kW?",
-      "acceptedAnswer": { "@type": "Answer", "text": "A transformer's windings and core have to carry the full apparent power the load draws, real power plus reactive power, regardless of how much of that power actually does useful work. kVA captures this total demand, while kW only reflects the useful portion, so sizing on kW alone can leave a transformer undersized for loads with a poor power factor." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A transformer's windings and core have to carry the full apparent power the load draws — real power plus reactive power — regardless of how much of that power actually does useful work. kVA captures this total demand, while kW only reflects the useful portion, so sizing on kW alone can leave a transformer undersized for loads with a poor power factor."
+      }
     },
     {
       "@type": "Question",
       "name": "How much safety margin should I add when sizing a transformer?",
-      "acceptedAnswer": { "@type": "Answer", "text": "There is no universal transformer-sizing margin. A planning allowance such as 10 to 25 percent may be used for expected future load growth, but the appropriate value depends on the specific project. Motor starting, harmonics, ambient temperature, altitude, duty cycle, and utility requirements should each be assessed separately rather than assumed to be covered by one blanket percentage." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "There is no universal transformer-sizing margin. A planning allowance such as 10–25% may be used for expected future load growth, but the appropriate value depends on the specific project. Motor starting, harmonics, ambient temperature, altitude, duty cycle, and utility requirements should each be assessed separately rather than assumed to be covered by one blanket percentage."
+      }
     },
     {
       "@type": "Question",
       "name": "How do I convert horsepower (HP) to kW for transformer sizing?",
-      "acceptedAnswer": { "@type": "Answer", "text": "For motor loads, 1 HP is approximately 0.746 kW of mechanical shaft output. To estimate the electrical input power the transformer actually supplies, divide this value by the motor's efficiency, since a motor draws more electrical power than it delivers mechanically. This calculator uses the entered motor efficiency automatically when HP is selected as the input type." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For motor loads, 1 HP is approximately 0.746 kW of mechanical shaft output. To estimate the electrical input power the transformer actually supplies, divide this value by the motor's efficiency, since a motor draws more electrical power than it delivers mechanically. This calculator uses the entered motor efficiency automatically when you select HP as the input type — just enter the nameplate HP and motor efficiency directly."
+      }
     },
     {
       "@type": "Question",
       "name": "What happens if I undersize or oversize a transformer?",
-      "acceptedAnswer": { "@type": "Answer", "text": "An undersized transformer runs hot under real load, suffers voltage drop, and fails prematurely, sometimes within months under sustained overload. An oversized transformer is safe but wastes capital, has higher no-load losses, and often runs at a poor efficiency point since transformers are most efficient near 50 to 80 percent of rated load." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An undersized transformer runs hot under real load, suffers voltage drop, and fails prematurely — sometimes within months under sustained overload. An oversized transformer is safe but wastes capital, has higher no-load losses, and often runs at a poor efficiency point since transformers are most efficient near 50–80% of rated load."
+      }
     },
     {
       "@type": "Question",
       "name": "Can this calculator be used for a transformer serving multiple loads?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes, add up the connected kW of all loads on the transformer first, applying a diversity factor if not all loads run simultaneously, then enter that combined figure along with the overall system power factor. For loads with very different power factors, it is more accurate to sum the individual kVA and kVAR values separately before combining them." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes — add up the connected kW of all loads on the transformer first (applying a diversity factor if not all loads run simultaneously), then enter that combined figure along with the overall system power factor. For loads with very different power factors, it's more accurate to sum the individual kVA and kVAR values separately before combining them."
+      }
     },
     {
       "@type": "Question",
       "name": "What is the standard kVA rating for a distribution transformer?",
-      "acceptedAnswer": { "@type": "Answer", "text": "There is no single global standard — the exact series varies by country, utility, and manufacturer. A commonly cited reference series for smaller distribution use includes ratings such as 10, 16, 25, 63, 100, 160, 250, 315, 400, 500, 630, 800, and 1000 kVA, extending up to 2500 kVA and beyond for larger industrial substations, though local availability differs. A calculated demand is typically rounded up to the nearest size your local supplier stocks rather than custom-built to an exact figure, which is why this calculator returns a reference rating rather than the raw calculated value." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "There is no single global standard — the exact series varies by country, utility, and manufacturer. This calculator rounds up to a reference series of 5, 10, 15, 25, 50, 63, 75, 100, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600, 2000 and 2500 kVA; other catalogues list intermediate sizes (16 kVA, 350 kVA and similar) that are not part of this series, and availability above 2500 kVA is usually project-specific. A calculated demand is typically rounded up to the nearest size your local supplier stocks rather than custom-built to an exact figure, which is why this calculator returns a reference rating rather than the raw calculated value."
+      }
     },
     {
       "@type": "Question",
       "name": "Why is a transformer most efficient at 50-80% load rather than 100%?",
-      "acceptedAnswer": { "@type": "Answer", "text": "A transformer has fixed no-load (core) losses that occur simply from being energised, plus load-dependent (copper) losses that rise with the square of current. At very light load, fixed core losses dominate as a percentage of throughput; at very heavy load, copper losses climb sharply. Efficiency is often high over a broad mid-load range — commonly cited as roughly 50-80% of rated capacity — but the exact optimum depends on the specific transformer's design and loss characteristics, which is also why oversizing a transformer well beyond actual load isn't automatically the \"safer\" choice — it often means running permanently in a less efficient zone." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A transformer has fixed no-load (core) losses that occur simply from being energised, plus load-dependent (copper) losses that rise with the square of current. At very light load, fixed core losses dominate as a percentage of throughput; at very heavy load, copper losses climb sharply. Efficiency is often high over a broad mid-load range — commonly cited as roughly 50–80% of rated capacity — but the exact optimum depends on the specific transformer's design and loss characteristics, which is also why oversizing a transformer well beyond actual load isn't automatically the \"safer\" choice — it often means running permanently in a less efficient zone."
+      }
     },
     {
       "@type": "Question",
       "name": "Do I need a diversity factor when adding up multiple loads?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes, for a realistic estimate. Simply summing the full-load rating of every connected device usually overstates actual demand, since not everything runs at full load simultaneously — applying a diversity factor (commonly 0.7-0.9 for mixed commercial/industrial loads) to the summed connected load gives a more realistic input for this calculator than the raw nameplate total." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, for a realistic estimate. Simply summing the full-load rating of every connected device usually overstates actual demand, since not everything runs at full load simultaneously — applying a diversity factor (commonly 0.7-0.9 for mixed commercial/industrial loads) to the summed connected load gives a more realistic input for this calculator than the raw nameplate total."
+      }
     }
   ]
 }
@@ -177,6 +206,9 @@
   .toggle-btn{
     flex:1;
     text-align:center;
+    border:none;
+    background:transparent;
+    font-family:inherit;
     padding:10px 8px;
     font-size:13px;
     font-weight:600;
@@ -275,6 +307,9 @@
   .info-icon{
     position:relative;
     display:inline-flex;
+    border:none;
+    padding:0;
+    font-family:inherit;
     align-items:center;
     justify-content:center;
     width:15px;
@@ -311,32 +346,15 @@
   }
   .info-icon:hover .info-tooltip,
   .info-icon:focus .info-tooltip,
-  .info-icon:focus-visible .info-tooltip{
+  .info-icon:focus-visible .info-tooltip,
+  .info-icon.info-open .info-tooltip{
     display:block;
   }
 
   /* ===== calculator.net-style compact override — LIGHT MODE ONLY,
      scoped to #calculator so it never touches header/hero/other pages or dark theme ===== */
-  body:not(.dark-theme) #calculator.max-w-6xl{ max-width:800px !important; }
-  body:not(.dark-theme) #calculator.py-14{ padding-top:1.25rem !important; padding-bottom:1.25rem !important; }
-  body:not(.dark-theme) #calculator .gap-6{ gap:0.6rem !important; }
-  body:not(.dark-theme) #calculator .gap-4{ gap:0.4rem !important; }
-  body:not(.dark-theme) #calculator .p-6,
-  body:not(.dark-theme) #calculator .md\:p-8{ padding:0.85rem !important; }
-  body:not(.dark-theme) #calculator .p-4{ padding:0.5rem !important; }
-  body:not(.dark-theme) #calculator .mb-5{ margin-bottom:0.5rem !important; }
-  body:not(.dark-theme) #calculator .mb-6{ margin-bottom:0.6rem !important; }
-  body:not(.dark-theme) #calculator .mt-6{ margin-top:0.6rem !important; }
-  body:not(.dark-theme) #calculator .pt-5{ padding-top:0.6rem !important; }
-  body:not(.dark-theme) #calculator label + .input-field,
-  body:not(.dark-theme) #calculator label + select.input-field,
-  body:not(.dark-theme) #calculator .mt-2{ margin-top:0.3rem !important; }
-  body:not(.dark-theme) #calculator .mt-1\.5{ margin-top:0.25rem !important; }
-  body:not(.dark-theme) #calculator .input-field{ padding:7px 10px !important; font-size:13px !important; }
-  body:not(.dark-theme) #calculator button[onclick="calculateTransformer()"].py-3\.5{ padding-top:0.65rem !important; padding-bottom:0.65rem !important; }
-  body:not(.dark-theme) #calculator .rounded-2xl,
-  body:not(.dark-theme) #calculator .rounded-xl,
-  body:not(.dark-theme) #calculator .rounded-lg{ border-radius:4px !important; }
+  /* Sizing/spacing/radius for this panel is declared once, theme-agnostically,
+     further down — only light-mode-specific colour and shadow rules live here. */
   body:not(.dark-theme) #calculator .shadow,
   body:not(.dark-theme) #calculator .shadow-sm{ box-shadow:none !important; }
 
@@ -359,8 +377,9 @@
   /* body text stays plain dark gray/black for readability (Reference
      Transformer Rating card is excluded — it keeps its own white/slate text) */
   body:not(.dark-theme) #calculator label,
-  body:not(.dark-theme) #calculator p:not(.result-tile *),
+  body:not(.dark-theme) #calculator p,
   body:not(.dark-theme) #calculator .formula-chip{ color:#1f2937 !important; }
+  body:not(.dark-theme) #calculator .result-tile p{ color:#cbd5e1 !important; }
   body:not(.dark-theme) #calculator input,
   body:not(.dark-theme) #calculator select{ color:#111827 !important; }
 
@@ -381,7 +400,7 @@
   body:not(.dark-theme) #calculator .result-tile [class*="text-amber-"]{ color:#fbbf24 !important; }
 
   /* Phase-type tabs: mimic the blue tab bar (inactive=blue bg/white text, active=white bg/blue text) */
-  body:not(.dark-theme) #calculator .bg-gray-100:has(.toggle-btn){ background:#0B1220 !important; border:none !important; padding:3px !important; }
+  body:not(.dark-theme) #calculator #phaseToggleBar{ background:#0B1220 !important; border:none !important; padding:3px !important; }
   body:not(.dark-theme) #calculator .toggle-btn{ color:#fff !important; }
   body:not(.dark-theme) #calculator .toggle-btn.active{ background:#fff !important; color:#0B1220 !important; box-shadow:none !important; font-weight:700; }
 
@@ -501,7 +520,8 @@
 <script>
 (function(){
   try {
-    var t = localStorage.getItem('emc-theme') ||
+    var stored = localStorage.getItem('emc-theme');
+    var t = (stored === 'dark-theme' || stored === 'light-theme') ? stored :
       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
     document.body.classList.add(t);
   } catch(e) {}
@@ -571,9 +591,9 @@
 
       <div class="mb-5">
         <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_transformer_size">Phase Type</span>
-        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_transformer_size">
-          <div id="phase1" class="toggle-btn" onclick="setPhase('single')">Single Phase</div>
-          <div id="phase3" class="toggle-btn active" onclick="setPhase('three')">Three Phase</div>
+        <div id="phaseToggleBar" class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_transformer_size">
+          <button type="button" id="phase1" class="toggle-btn" aria-pressed="false" onclick="setPhase('single')">Single Phase</button>
+          <button type="button" id="phase3" class="toggle-btn active" aria-pressed="true" onclick="setPhase('three')">Three Phase</button>
         </div>
       </div>
 
@@ -588,7 +608,7 @@
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="loadValueLabel" for="loadValue">Load Value (kW)</label>
-          <input id="loadValue" type="number" value="11" step="0.1" min="0.01" class="input-field mt-2">
+          <input id="loadValue" type="number" value="11" step="0.1" min="0.01" max="1000000" class="input-field mt-2">
         </div>
       </div>
 
@@ -596,10 +616,10 @@
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="motorEff">
             Motor Efficiency (%)
-            <span class="info-icon" tabindex="0" role="button" aria-label="Why motor efficiency is needed">
+            <button type="button" class="info-icon" aria-label="Why motor efficiency is needed" aria-expanded="false">
               i
               <span class="info-tooltip">For motor loads, enter the nameplate HP and actual motor efficiency when available — this converts shaft output power to the electrical input power the transformer actually supplies.</span>
-            </span>
+            </button>
           </label>
           <input id="motorEff" type="number" value="90" step="1" min="1" max="100" class="input-field mt-2">
         </div>
@@ -609,7 +629,7 @@
       <div class="grid grid-cols-2 gap-4 mb-5">
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="voltage">Voltage (V)</label>
-          <input id="voltage" type="number" value="415" step="1" min="1" class="input-field mt-2" oninput="syncQuickVoltageActive()">
+          <input id="voltage" type="number" value="415" step="1" min="1" max="1000000" class="input-field mt-2" oninput="syncQuickVoltageActive()">
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pf">Power Factor</label>
@@ -620,37 +640,50 @@
       <div class="mb-5">
         <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5">
           Common Voltages
-          <span class="info-icon" tabindex="0" role="button" aria-label="Where these voltage presets come from">
+          <button type="button" class="info-icon" aria-label="Where these voltage presets come from" aria-expanded="false">
             i
             <span class="info-tooltip">Includes common voltage presets used in India, the UK &amp; Europe, North America, the Middle East, Australia and South Africa — or enter any custom voltage above.</span>
-          </span>
+          </button>
         </span>
         <div id="qvSingle" class="flex flex-wrap gap-1.5 mt-2" role="group" aria-label="Quick voltage presets, single phase">
-          <button type="button" class="qv-btn" data-v="120" onclick="setQuickVoltage(120)">120V</button>
-          <button type="button" class="qv-btn" data-v="208" onclick="setQuickVoltage(208)">208V</button>
-          <button type="button" class="qv-btn" data-v="220" onclick="setQuickVoltage(220)">220V</button>
-          <button type="button" class="qv-btn active" data-v="230" onclick="setQuickVoltage(230)">230V</button>
-          <button type="button" class="qv-btn" data-v="240" onclick="setQuickVoltage(240)">240V</button>
+          <button type="button" class="qv-btn" aria-pressed="false" data-v="120" onclick="setQuickVoltage(120)">120V</button>
+          <button type="button" class="qv-btn" aria-pressed="false" data-v="208" onclick="setQuickVoltage(208)">208V</button>
+          <button type="button" class="qv-btn" aria-pressed="false" data-v="220" onclick="setQuickVoltage(220)">220V</button>
+          <button type="button" class="qv-btn active" aria-pressed="true" data-v="230" onclick="setQuickVoltage(230)">230V</button>
+          <button type="button" class="qv-btn" aria-pressed="false" data-v="240" onclick="setQuickVoltage(240)">240V</button>
         </div>
         <div id="qvThree" class="flex flex-wrap gap-1.5 mt-2 hidden" role="group" aria-label="Quick voltage presets, three phase">
-          <button type="button" class="qv-btn" data-v="208" onclick="setQuickVoltage(208)">208V</button>
-          <button type="button" class="qv-btn" data-v="380" onclick="setQuickVoltage(380)">380V</button>
-          <button type="button" class="qv-btn" data-v="400" onclick="setQuickVoltage(400)">400V</button>
-          <button type="button" class="qv-btn active" data-v="415" onclick="setQuickVoltage(415)">415V</button>
-          <button type="button" class="qv-btn" data-v="440" onclick="setQuickVoltage(440)">440V</button>
-          <button type="button" class="qv-btn" data-v="460" onclick="setQuickVoltage(460)">460V</button>
-          <button type="button" class="qv-btn" data-v="480" onclick="setQuickVoltage(480)">480V</button>
-          <button type="button" class="qv-btn" data-v="600" onclick="setQuickVoltage(600)">600V</button>
+          <button type="button" class="qv-btn" aria-pressed="false" data-v="208" onclick="setQuickVoltage(208)">208V</button>
+          <button type="button" class="qv-btn" aria-pressed="false" data-v="380" onclick="setQuickVoltage(380)">380V</button>
+          <button type="button" class="qv-btn" aria-pressed="false" data-v="400" onclick="setQuickVoltage(400)">400V</button>
+          <button type="button" class="qv-btn active" aria-pressed="true" data-v="415" onclick="setQuickVoltage(415)">415V</button>
+          <button type="button" class="qv-btn" aria-pressed="false" data-v="440" onclick="setQuickVoltage(440)">440V</button>
+          <button type="button" class="qv-btn" aria-pressed="false" data-v="460" onclick="setQuickVoltage(460)">460V</button>
+          <button type="button" class="qv-btn" aria-pressed="false" data-v="480" onclick="setQuickVoltage(480)">480V</button>
+          <button type="button" class="qv-btn" aria-pressed="false" data-v="600" onclick="setQuickVoltage(600)">600V</button>
         </div>
       </div>
 
 
-      <label class="flex items-center gap-2.5 mb-6 cursor-pointer select-none">
-        <input id="marginToggle" type="checkbox" checked class="w-4 h-4 accent-brandBlue">
-        <span class="text-xs font-semibold text-gray-600">Add 20% Safety Margin for future load growth</span>
-      </label>
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="marginPct">Planning Margin</label>
+          <select id="marginPct" class="input-field mt-2">
+            <option value="0">No margin</option>
+            <option value="10">10% for future load growth</option>
+            <option value="15">15% for future load growth</option>
+            <option value="20" selected>20% for future load growth</option>
+            <option value="25">25% for future load growth</option>
+            <option value="custom">Custom %</option>
+          </select>
+        </div>
+        <div id="marginCustomWrap" class="hidden">
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="marginCustom">Custom Margin (%)</label>
+          <input id="marginCustom" type="number" value="20" step="1" min="0" max="100" class="input-field mt-2">
+        </div>
+      </div>
 
-      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+      <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculateTransformer()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate Transformer Size
@@ -665,7 +698,7 @@
     </div>
 
     <!-- RESULT PANEL -->
-    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4" role="status" aria-live="polite">
 
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full spark-badge opacity-20"></div>
@@ -684,7 +717,7 @@
           <div id="rLoadKW" class="font-display font-bold text-xl text-brandDark mt-1">— kW</div>
         </div>
         <div class="bg-white rounded-xl border border-gray-100 p-4">
-          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Equivalent HP</span>
+          <span id="rHPLabel" class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Equivalent HP (direct kW conversion)</span>
           <div id="rHP" class="font-display font-bold text-xl text-brandDark mt-1">— HP</div>
         </div>
         <div class="bg-white rounded-xl border border-gray-100 p-4">
@@ -696,14 +729,14 @@
           <div id="rKVAR" class="font-display font-bold text-xl text-brandDark mt-1">— kVAR</div>
         </div>
         <div class="bg-white rounded-xl border border-gray-100 p-4">
-          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Rating Headroom</span>
+          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Headroom vs Sizing Basis</span>
           <div id="rSpare" class="font-display font-bold text-xl text-brandDark mt-1">— %</div>
         </div>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
-        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500">Sizing Recommendation</span>
-        <p id="rSuggest" class="text-sm text-gray-600 mt-1.5 leading-relaxed">Enter your values and hit calculate to see the recommended transformer rating and a short explanation.</p>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500">Sizing Summary</span>
+        <p id="rSuggest" class="text-sm text-gray-600 mt-1.5 leading-relaxed">Enter your values and hit calculate to see the nearest reference transformer rating and a short explanation.</p>
       </div>
 
     </div>
@@ -748,7 +781,7 @@
         Voltage Regulation Calculator <span class="text-sky-500">→</span>
       </a>
       <a href="/common-transformer-sizing-mistakes" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
-        Common Transformer Sizing Mistakes and… <span class="text-sky-500">→</span>
+        Common Transformer Sizing Mistakes <span class="text-sky-500">→</span>
       </a>
       <a href="/blog/electrical/transformer-maintenance-guide" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
         Power Transformer Maintenance Guide <span class="text-sky-500">→</span>
@@ -781,12 +814,12 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: IEC / IEEE / BIS / NEC</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Calculation method: kVA = kW ÷ PF, with line current from the standard single-phase and three-phase relations</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding Transformer Sizing</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-      <p><strong>Transformer sizing rule of thumb:</strong> kVA = kW ÷ PF — for example, a 315 kW load at PF 0.9 needs kVA = 315 ÷ 0.9 = 350 kVA, which is a common reference transformer rating. Choosing the right transformer capacity is one of the first decisions in designing any electrical distribution system, whether for an industrial plant, a commercial building, or a standby power setup. This calculator estimates the required transformer size in kVA from a known load, entered either as kW, HP, or the load current in Amps, along with the supply voltage, phase configuration, and power factor. Once the equivalent kVA demand is known, the calculator rounds it up to the nearest reference transformer rating, giving a practical starting point for specifying equipment rather than an odd, unavailable value.</p>
+      <p><strong>Transformer sizing rule of thumb:</strong> kVA = kW ÷ PF — for example, a 315 kW load at PF 0.9 gives kVA = 315 ÷ 0.9 = 350 kVA, which this calculator rounds up to the nearest rating in its reference series, 400 kVA. Choosing the right transformer capacity is one of the first decisions in designing any electrical distribution system, whether for an industrial plant, a commercial building, or a standby power setup. This calculator estimates the required transformer size in kVA from a known load, entered either as kW, HP, or the load current in Amps, along with the supply voltage, phase configuration, and power factor. Once the equivalent kVA demand is known, the calculator rounds it up to the nearest reference transformer rating, giving a practical starting point for specifying equipment rather than an odd, unavailable value.</p>
 
       <p>A transformer's rating is always expressed in kVA rather than kW because it must be sized for the total apparent power the connected load can draw, not just the real power that does useful work. Apparent power includes both the real power and the reactive power drawn by inductive loads such as motors, transformers, and chokes. This is why power factor plays such a central role: a load with a poor power factor draws significantly more current, and hence more kVA, for the same amount of real kW delivered. The relationship is simple but critical: <strong>kVA = kW ÷ PF</strong>. Undersizing a transformer against actual kVA demand — rather than just kW — is one of the most common design mistakes, and it leads to overheating, voltage drop, and premature transformer failure under real operating conditions.</p>
 
@@ -794,12 +827,12 @@
 
       <p>Alongside the headline kVA figure, the calculator also reports the reactive power component in kVAR, found from <strong>kVAR = √(kVA² − kW²)</strong>. This is the portion of apparent power that does no real work but still has to be supplied and carried by the transformer windings and the upstream cabling — it's the same quantity that power factor correction capacitors are sized to offset. A large gap between kVA and kW usually signals a poor power factor that is worth correcting with an APFC panel, since it frees up transformer and cable capacity without adding a single extra kilowatt of real load.</p>
 
-      <p>An optional margin can be added on top of the calculated kVA demand as a simplified planning allowance for future load growth — a common practice among field engineers when the connected load is expected to expand over the transformer's service life. This margin does not account for motor-starting voltage dip, inrush current, harmonics, ambient temperature, altitude, or ageing derating; those require separate engineering checks, since a steady-state kVA margin doesn't by itself prevent a large motor's starting inrush from causing a voltage dip. After the margin is applied, the result is rounded up to the nearest rating from a reference series: 5, 10, 15, 25, 50, 63, 75, 100, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600, 2000, and 2500 kVA — illustrative reference sizes, since actual standard availability varies by country, utility, voltage class, and manufacturer. The calculator also shows the rating headroom this rounding gives you as a percentage, so you know how much unused capacity is built into the reference rating.</p>
+      <p>An optional margin — selectable at 10%, 15%, 20%, 25% or a custom value — can be added on top of the calculated kVA demand as a simplified planning allowance for future load growth — a common practice among field engineers when the connected load is expected to expand over the transformer's service life. This margin does not account for motor-starting voltage dip, inrush current, harmonics, ambient temperature, altitude, or ageing derating; those require separate engineering checks, since a steady-state kVA margin doesn't by itself prevent a large motor's starting inrush from causing a voltage dip. After the margin is applied, the result is rounded up to the nearest rating from a reference series: 5, 10, 15, 25, 50, 63, 75, 100, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600, 2000, and 2500 kVA — illustrative reference sizes, since actual standard availability varies by country, utility, voltage class, and manufacturer. The calculator also shows the rating headroom this rounding gives you as a percentage, so you know how much unused capacity is built into the reference rating.</p>
 
       <p>As always with sizing calculators, treat the output as an engineering starting point rather than a final purchase order. Harmonic loads, ambient temperature, altitude derating, duty cycle, and inrush current from large motors starting direct-on-line can all shift the practical requirement by a meaningful margin. Always get your final transformer selection reviewed by a licensed electrical engineer or your utility before purchase and installation, especially for grid-connected industrial supplies that must meet local sanctioned-load and metering requirements.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Distribution vs Power Transformers: Which One Are You Sizing?</h3>
-      <p>The term "transformer" covers a wide range of equipment, but for most facility and building sizing work the relevant category is a <strong>distribution transformer</strong> — typically ranging from a few kVA up to 2500 kVA, used to step utility supply voltage down to the 415V/230V level used within a building or plant. Larger <strong>power transformers</strong>, used at grid substations and major industrial intake points, are sized using the same underlying kVA principle but involve additional considerations like impedance matching, parallel operation, and protection coordination that go beyond a simple load calculation. This calculator is aimed at distribution-transformer sizing for a building, panel, or plant feeder — the kind of decision an electrical contractor or facility engineer makes when specifying a new transformer for a defined connected load.</p>
+      <p>The term "transformer" covers a wide range of equipment, but for most facility and building sizing work the relevant category is a <strong>distribution transformer</strong> — typically ranging from a few kVA up to 2500 kVA, used to step utility supply voltage down to the low-voltage distribution level used within a building or plant (commonly 400V/230V or 415V/230V, or 480V/240V and 600V/347V in North America, depending on the region). Larger <strong>power transformers</strong>, used at grid substations and major industrial intake points, are sized using the same underlying kVA principle but involve additional considerations like impedance matching, parallel operation, and protection coordination that go beyond a simple load calculation. This calculator is aimed at distribution-transformer sizing for a building, panel, or plant feeder — the kind of decision an electrical contractor or facility engineer makes when specifying a new transformer for a defined connected load.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Why Transformers Are Most Efficient Between 50–80% Load</h3>
       <p>A transformer has two main loss components: no-load (core/iron) losses, which are roughly constant regardless of load and occur simply because the transformer is energised, and load (copper) losses, which increase with the square of the current and therefore the square of the load. At very light load, the fixed core losses dominate the total loss as a percentage of power delivered, so efficiency is poor. At very heavy load, copper losses rise sharply and again reduce efficiency, while also generating more heat that shortens insulation life. Transformer efficiency is often high over a broad mid-load range — commonly cited as roughly 50–80% of rated capacity for many standard distribution transformers — but the exact optimum loading point depends on the specific transformer's design and loss characteristics. This is one of the practical reasons oversizing a transformer well beyond the actual load, "just to be safe," isn't free: it often means running permanently in a less efficient, higher-core-loss region.</p>
@@ -880,7 +913,7 @@
   <div class="text-center mb-10">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
-    <p class="text-xs text-gray-400 mt-2">Content last reviewed: July 2026</p>
+    <p class="text-xs text-gray-400 mt-2">Content last reviewed: September 2026</p>
   </div>
 
   <div class="divide-y divide-gray-200">
@@ -929,7 +962,7 @@
         What is the standard kVA rating for a distribution transformer?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">There is no single global standard — the exact series varies by country, utility, and manufacturer. A commonly cited reference series for smaller distribution use includes ratings such as 10, 16, 25, 63, 100, 160, 250, 315, 400, 500, 630, 800, and 1000 kVA, extending up to 2500 kVA and beyond for larger industrial substations, though local availability differs. A calculated demand is typically rounded up to the nearest size your local supplier stocks rather than custom-built to an exact figure, which is why this calculator returns a reference rating rather than the raw calculated value.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">There is no single global standard — the exact series varies by country, utility, and manufacturer. This calculator rounds up to a reference series of 5, 10, 15, 25, 50, 63, 75, 100, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600, 2000 and 2500 kVA; other catalogues list intermediate sizes (16 kVA, 350 kVA and similar) that are not part of this series, and availability above 2500 kVA is usually project-specific. A calculated demand is typically rounded up to the nearest size your local supplier stocks rather than custom-built to an exact figure, which is why this calculator returns a reference rating rather than the raw calculated value.</p>
     </details>
 
     <details class="py-5">
@@ -969,20 +1002,49 @@
   }
 
   // ===== Transformer Calculator Logic =====
+  const HP_TO_KW = 0.746;                       // matches the formula chip shown on this page
+  const SQRT3 = 1.732;
+  const REF_KVA_SIZES = [5,10,15,25,50,63,75,100,160,200,250,315,400,500,630,800,1000,1250,1600,2000,2500];
+  const MAX_REF_KVA = REF_KVA_SIZES[REF_KVA_SIZES.length - 1];
+  const PHASE_DEFAULT_VOLTAGE = { single: 230, three: 415 };
+  const BLANK = { rKVA:'— kVA', rCalcKVA:'— kVA', rLoadKW:'— kW', rHP:'— HP', rAmp:'— A', rKVAR:'— kVAR', rSpare:'— %' };
+
   let currentPhase = 'three';
+  // Last voltage this page filled in by itself. The phase toggle only
+  // replaces the voltage field while it still holds that untouched auto
+  // value — a voltage the user typed or picked is never silently overwritten.
+  let lastAutoVoltage = PHASE_DEFAULT_VOLTAGE.three;
+
+  function blankResults(msg){
+    Object.keys(BLANK).forEach(function(id){
+      document.getElementById(id).textContent = BLANK[id];
+    });
+    document.getElementById('rSuggest').textContent = msg;
+  }
 
   function setPhase(p){
     currentPhase = p;
-    document.getElementById('phase1').classList.toggle('active', p==='single');
-    document.getElementById('phase3').classList.toggle('active', p==='three');
-    document.getElementById('voltage').value = p==='three' ? 415 : 230;
-    document.getElementById('qvSingle').classList.toggle('hidden', p!=='single');
-    document.getElementById('qvThree').classList.toggle('hidden', p!=='three');
+    document.getElementById('phase1').classList.toggle('active', p === 'single');
+    document.getElementById('phase3').classList.toggle('active', p === 'three');
+    document.getElementById('phase1').setAttribute('aria-pressed', p === 'single' ? 'true' : 'false');
+    document.getElementById('phase3').setAttribute('aria-pressed', p === 'three' ? 'true' : 'false');
+
+    const vEl = document.getElementById('voltage');
+    const currentV = parseFloat(vEl.value);
+    if (!Number.isFinite(currentV) || currentV === lastAutoVoltage){
+      vEl.value = PHASE_DEFAULT_VOLTAGE[p];
+      lastAutoVoltage = PHASE_DEFAULT_VOLTAGE[p];
+    }
+
+    document.getElementById('qvSingle').classList.toggle('hidden', p !== 'single');
+    document.getElementById('qvThree').classList.toggle('hidden', p !== 'three');
     syncQuickVoltageActive();
     calculateTransformer();
   }
 
   function setQuickVoltage(v){
+    // An explicit preset click counts as a user-chosen voltage, so it is not
+    // recorded as an auto value and will survive a later phase switch.
     document.getElementById('voltage').value = v;
     syncQuickVoltageActive();
     calculateTransformer();
@@ -991,7 +1053,9 @@
   function syncQuickVoltageActive(){
     const current = parseFloat(document.getElementById('voltage').value);
     document.querySelectorAll('.qv-btn').forEach(function(btn){
-      btn.classList.toggle('active', parseFloat(btn.dataset.v) === current);
+      const on = parseFloat(btn.dataset.v) === current;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
   }
 
@@ -1000,25 +1064,41 @@
     const label = document.getElementById('loadValueLabel');
     const input = document.getElementById('loadValue');
     const effField = document.getElementById('motorEffField');
+    const hpLabel = document.getElementById('rHPLabel');
     if(type === 'hp'){
       label.textContent = 'Load Value (HP)';
       input.placeholder = 'Enter value in HP';
       effField.classList.remove('hidden');
+      // In HP mode the figure shown back is the nameplate shaft rating that
+      // was entered — not the electrical input power, which is higher.
+      hpLabel.textContent = 'Nameplate HP (shaft)';
     } else if(type === 'amp'){
       label.textContent = 'Load Value (Amp)';
       input.placeholder = 'Enter value in Amp';
       effField.classList.add('hidden');
+      hpLabel.textContent = 'Equivalent HP (direct kW conversion)';
     } else {
       label.textContent = 'Load Value (kW)';
       input.placeholder = 'Enter value in kW';
       effField.classList.add('hidden');
+      hpLabel.textContent = 'Equivalent HP (direct kW conversion)';
     }
     calculateTransformer();
   }
 
+  function toggleMarginCustom(){
+    const isCustom = document.getElementById('marginPct').value === 'custom';
+    document.getElementById('marginCustomWrap').classList.toggle('hidden', !isCustom);
+    calculateTransformer();
+  }
+
+  function getMarginPct(){
+    const sel = document.getElementById('marginPct').value;
+    return parseFloat(sel === 'custom' ? document.getElementById('marginCustom').value : sel);
+  }
+
   function getRecommendedKVA(kva){
-    const sizes = [5,10,15,25,50,63,75,100,160,200,250,315,400,500,630,800,1000,1250,1600,2000,2500];
-    for(let s of sizes){
+    for(let s of REF_KVA_SIZES){
       if(kva <= s) return s;
     }
     return null; // above the reference series — needs engineering/utility-specific selection
@@ -1026,75 +1106,86 @@
 
   function calculateTransformer(){
     const inputType   = document.getElementById('inputType').value;
-    const loadValue   = parseFloat(document.getElementById('loadValue').value) || 0;
-    const voltage     = parseFloat(document.getElementById('voltage').value) || 0;
-    let   pf          = parseFloat(document.getElementById('pf').value);
-    const marginOn    = document.getElementById('marginToggle').checked;
+    const loadValue   = parseFloat(document.getElementById('loadValue').value);
+    const voltage     = parseFloat(document.getElementById('voltage').value);
+    const pf          = parseFloat(document.getElementById('pf').value);
     const motorEffPct = parseFloat(document.getElementById('motorEff').value);
+    const marginSel   = document.getElementById('marginPct').value;
+    const marginPct   = getMarginPct();
 
-    // ---- Input validation ----
+    // ---- Input validation (Number.isFinite, so Infinity/NaN from extreme
+    //      entries like 1e999 are rejected instead of propagating) ----
     const errors = [];
-    if (loadValue <= 0){ errors.push('Load Value must be greater than 0.'); }
-    if (voltage <= 0){ errors.push('Voltage must be greater than 0.'); }
-    if (isNaN(pf) || pf <= 0 || pf > 1){ errors.push('Power Factor must be between 0.01 and 1.00. Please enter a valid value.'); }
-    const effInvalid = inputType === 'hp' && (isNaN(motorEffPct) || motorEffPct <= 0 || motorEffPct > 100);
-    if (effInvalid){ errors.push('Motor Efficiency must be between 1% and 100%. Please enter a valid value.'); }
+    if (!Number.isFinite(loadValue) || loadValue < 0.01){
+      errors.push('Load Value must be a number of 0.01 or more.');
+    } else if (loadValue > 1000000){
+      errors.push('Load Value must be 1,000,000 or less.');
+    }
+    if (!Number.isFinite(voltage) || voltage < 1){
+      errors.push('Voltage must be a number of 1 V or more.');
+    } else if (voltage > 1000000){
+      errors.push('Voltage must be 1,000,000 V or less.');
+    }
+    if (!Number.isFinite(pf) || pf < 0.01 || pf > 1){
+      errors.push('Power Factor must be between 0.01 and 1.00.');
+    }
+    if (inputType === 'hp' && (!Number.isFinite(motorEffPct) || motorEffPct < 1 || motorEffPct > 100)){
+      errors.push('Motor Efficiency must be between 1% and 100%.');
+    }
+    if (marginSel === 'custom' && (!Number.isFinite(marginPct) || marginPct < 0 || marginPct > 100)){
+      errors.push('Custom margin must be between 0% and 100%.');
+    }
 
     const validationBox = document.getElementById('validationBox');
     if (errors.length){
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
-      if (loadValue <= 0 || voltage <= 0 || isNaN(pf) || pf <= 0 || pf > 1 || effInvalid){
-        document.getElementById('rKVA').textContent = '— kVA';
-        document.getElementById('rCalcKVA').textContent = '— kVA';
-        document.getElementById('rLoadKW').textContent = '— kW';
-        document.getElementById('rHP').textContent = '— HP';
-        document.getElementById('rAmp').textContent = '— A';
-        document.getElementById('rKVAR').textContent = '— kVAR';
-        document.getElementById('rSpare').textContent = '— %';
-        document.getElementById('rSuggest').textContent = 'Fix the input errors above to see a valid result.';
-        return;
-      }
-    } else {
-      validationBox.classList.add('hidden');
-      validationBox.innerHTML = '';
+      blankResults('Fix the input errors above to see a valid result.');
+      return;
     }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
 
     // ---- Load in kW, HP, Amp ----
     let kw = 0, hp = 0, amp = 0;
 
     if (inputType === 'kw'){
       kw  = loadValue;
-      hp  = kw * 1.341;
+      hp  = kw / HP_TO_KW;
       amp = currentPhase === 'single'
           ? (kw * 1000) / (voltage * pf)
-          : (kw * 1000) / (1.732 * voltage * pf);
+          : (kw * 1000) / (SQRT3 * voltage * pf);
     } else if (inputType === 'hp'){
       hp  = loadValue;
-      const eff = motorEffPct / 100;
-      kw  = (hp / 1.341) / eff;
+      kw  = (hp * HP_TO_KW) / (motorEffPct / 100);
       amp = currentPhase === 'single'
           ? (kw * 1000) / (voltage * pf)
-          : (kw * 1000) / (1.732 * voltage * pf);
+          : (kw * 1000) / (SQRT3 * voltage * pf);
     } else {
       amp = loadValue;
       kw  = currentPhase === 'single'
           ? (voltage * amp * pf) / 1000
-          : (1.732 * voltage * amp * pf) / 1000;
-      hp  = kw * 1.341;
+          : (SQRT3 * voltage * amp * pf) / 1000;
+      hp  = kw / HP_TO_KW;
     }
 
-    // ---- kVA, kVAR, margin, standard size ----
+    // ---- kVA, kVAR, margin, reference size ----
     const calcKVA = kw / pf;
     const kvar = Math.sqrt(Math.max(calcKVA * calcKVA - kw * kw, 0));
+    const sizingKVA = calcKVA * (1 + marginPct / 100);
 
-    let sizingKVA = calcKVA;
-    if (marginOn) sizingKVA *= 1.2;
+    if (![kw, hp, amp, calcKVA, kvar, sizingKVA].every(Number.isFinite)){
+      document.getElementById('validationBox').classList.remove('hidden');
+      document.getElementById('validationBox').innerHTML = '• The entered values produce a result outside the range this calculator can display. Please check the load, voltage and power factor.';
+      blankResults('Fix the input errors above to see a valid result.');
+      return;
+    }
 
     const recommended = getRecommendedKVA(sizingKVA);
+    const marginNote = marginPct > 0 ? ' (' + sizingKVA.toFixed(2) + ' kVA including the ' + marginPct + '% planning margin)' : '';
 
     if (recommended === null){
-      document.getElementById('rKVA').textContent = 'Above 2500 kVA';
+      document.getElementById('rKVA').textContent = 'Above ' + MAX_REF_KVA + ' kVA';
       document.getElementById('rCalcKVA').textContent = calcKVA.toFixed(2) + ' kVA';
       document.getElementById('rLoadKW').textContent = kw.toFixed(2) + ' kW';
       document.getElementById('rHP').textContent = hp.toFixed(2) + ' HP';
@@ -1102,14 +1193,15 @@
       document.getElementById('rKVAR').textContent = kvar.toFixed(2) + ' kVAR';
       document.getElementById('rSpare').textContent = '—';
       document.getElementById('rSuggest').textContent =
-        `The sizing basis (${sizingKVA.toFixed(0)} kVA) is above the ${'2500'} kVA reference series used by this calculator. Transformers this large are typically custom or utility-specific — engineering review with your manufacturer or utility is required rather than reading off a standard table.`;
+        'The sizing basis (' + sizingKVA.toFixed(0) + ' kVA) is above the ' + MAX_REF_KVA +
+        ' kVA reference series used by this calculator. Transformers this large are typically custom or utility-specific — engineering review with your manufacturer or utility is required rather than reading off a standard table.';
       return;
     }
 
     const sparePct = ((recommended - sizingKVA) / recommended) * 100;
 
     // ---- Output ----
-    document.getElementById('rKVA').textContent = recommended + ' kVA' + (marginOn ? ' (incl. margin)' : '');
+    document.getElementById('rKVA').textContent = recommended + ' kVA' + (marginPct > 0 ? ' (incl. ' + marginPct + '% margin)' : '');
     document.getElementById('rCalcKVA').textContent = calcKVA.toFixed(2) + ' kVA';
     document.getElementById('rLoadKW').textContent = kw.toFixed(2) + ' kW';
     document.getElementById('rHP').textContent = hp.toFixed(2) + ' HP';
@@ -1119,12 +1211,75 @@
 
     const phaseLabel = currentPhase === 'three' ? 'three-phase' : 'single-phase';
     document.getElementById('rSuggest').textContent =
-      `For a ${phaseLabel} load of ${kw.toFixed(2)} kW at ${voltage} V and ${pf.toFixed(2)} PF, the calculated demand is ${calcKVA.toFixed(2)} kVA` +
-      (marginOn ? ` (${sizingKVA.toFixed(2)} kVA including the planning margin)` : '') +
-      `. Rounding up to the nearest reference rating gives ${recommended} kVA, with about ${sparePct.toFixed(0)}% rating headroom above the sizing basis. Confirm the final rating and standard availability with your electrical engineer and local manufacturer/utility before purchase.`;
+      'For a ' + phaseLabel + ' load of ' + kw.toFixed(2) + ' kW at ' + voltage + ' V and ' + pf.toFixed(2) +
+      ' PF, the calculated demand is ' + calcKVA.toFixed(2) + ' kVA' + marginNote +
+      '. Rounding up to the nearest reference rating gives ' + recommended + ' kVA, with about ' + sparePct.toFixed(0) +
+      '% headroom above that sizing basis' + (marginPct > 0 ? ' (the margin itself is additional headroom over the present load)' : '') +
+      '. Confirm the final rating and standard availability with your electrical engineer and local manufacturer/utility before purchase.';
   }
 
+  // ===== Live recalculation =====
+  // Without these, editing a field left the previous result sitting on screen,
+  // and the shared number-input clamp net (which re-fires "input" after
+  // correcting a value) had nothing listening to it.
+  ['loadValue','voltage','pf','motorEff','marginCustom'].forEach(function(id){
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', calculateTransformer);
+    el.addEventListener('change', calculateTransformer);
+  });
+  document.getElementById('marginPct').addEventListener('change', toggleMarginCustom);
+
+  // Enter anywhere in the calculator triggers the page's own Calculate button.
+  document.querySelectorAll('#calculator input[type="number"]').forEach(function(el){
+    el.addEventListener('keydown', function(ev){
+      if (ev.key === 'Enter'){
+        ev.preventDefault();
+        const btn = document.querySelector('#calculator button[onclick^="calculate"]');
+        if (btn) btn.click();
+      }
+    });
+  });
+
+  // ===== Info tooltips =====
+  // Hover/focus alone never fires on touch devices, so the icons are real
+  // buttons that also toggle their tooltip on tap.
+  (function(){
+    const icons = document.querySelectorAll('.info-icon');
+    icons.forEach(function(icon){
+      icon.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        const open = icon.classList.toggle('info-open');
+        icon.setAttribute('aria-expanded', open ? 'true' : 'false');
+        icons.forEach(function(other){
+          if (other !== icon){
+            other.classList.remove('info-open');
+            other.setAttribute('aria-expanded', 'false');
+          }
+        });
+      });
+    });
+    document.addEventListener('click', function(){
+      icons.forEach(function(icon){
+        icon.classList.remove('info-open');
+        icon.setAttribute('aria-expanded', 'false');
+      });
+    });
+    document.addEventListener('keydown', function(ev){
+      if (ev.key === 'Escape'){
+        icons.forEach(function(icon){
+          icon.classList.remove('info-open');
+          icon.setAttribute('aria-expanded', 'false');
+        });
+      }
+    });
+  })();
+
   // run once on load with default values
+  document.getElementById('qvSingle').classList.toggle('hidden', currentPhase !== 'single');
+  document.getElementById('qvThree').classList.toggle('hidden', currentPhase !== 'three');
+  syncQuickVoltageActive();
+  toggleMarginCustom();
   toggleInputFields();
   calculateTransformer();
 </script>
@@ -1135,7 +1290,17 @@
     var panel = document.getElementById('resultPanel') || document.querySelector('[class*="lg:col-span-2"][class*="flex-col"]');
     var btn = document.getElementById('copyResultBtn');
     if (!panel || !btn) return;
-    var text = panel.innerText.trim();
+    // Honour data-copy-exclude markers (same behaviour as the shared helper):
+    // hide those blocks on the live DOM, read the text, then restore them.
+    var excluded = panel.querySelectorAll('[data-copy-exclude]');
+    var prevDisplay = [];
+    var text = '';
+    try {
+      excluded.forEach(function(el, i){ prevDisplay[i] = el.style.display; el.style.display = 'none'; });
+      text = panel.innerText.trim();
+    } finally {
+      excluded.forEach(function(el, i){ el.style.display = prevDisplay[i]; });
+    }
     function restore(){ btn.textContent = '📋 Copy Result'; }
     if (!text) { btn.textContent = 'Nothing to copy'; setTimeout(restore, 1500); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
