@@ -123,7 +123,7 @@
       "name": "Should I round the calculated fuse rating up or down to the nearest standard size?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Always round up to the next available standard fuse size at or above the calculated value — rounding down would undersize the fuse below its calculated required rating, risking nuisance blowing under normal starting or continuous-duty conditions that the calculation was specifically designed to accommodate."
+        "text": "Within this preliminary calculation, yes: the result is rounded up to the next available rating in the series selected, because rounding down puts the fuse below the value the calculation asked for and invites nuisance blowing during normal starting or continuous duty. That rounded value is a starting point, not a final selection — the fuse actually installed still has to satisfy the applicable code, the conductor ampacity, the equipment rating, the voltage and interrupting ratings, and the manufacturer’s data."
       }
     },
     {
@@ -564,7 +564,7 @@
     </div>
 
         <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
-          Required fuse rating for a general or motor circuit, from full load current and circuit type, using standard sizing multipliers.
+          Preliminary fuse rating for general, continuous and motor circuits on AC or DC supplies — from load current, or from power and voltage — with derating, a choice of rating series and a reference conductor check.
         </p>
       </div>
 
@@ -594,24 +594,34 @@
       </div>
 
       <div class="mb-5">
-        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_fuse_size">Circuit Type</span>
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" id="tgLabel1_fuse_size">
+          Circuit Type
+          <span class="info-icon" tabindex="0" role="button" aria-label="What each circuit type means">
+            i
+            <span class="info-tooltip" id="circuitHint">General (non-continuous) load: no continuous-use multiplier applied.</span>
+          </span>
+        </span>
         <div class="toggle-bar" role="group" aria-labelledby="tgLabel1_fuse_size">
           <button type="button" id="typeGeneral" class="toggle-btn active" aria-pressed="true" onclick="setCircuitType('general')">General</button>
           <button type="button" id="typeContinuous" class="toggle-btn" aria-pressed="false" onclick="setCircuitType('continuous')">Continuous</button>
           <button type="button" id="typeMotor" class="toggle-btn" aria-pressed="false" onclick="setCircuitType('motor')">Motor</button>
         </div>
-        <p class="field-hint" id="circuitHint">General (non-continuous) load: no continuous-use multiplier applied.</p>
       </div>
 
       <div class="space-y-4 mb-5">
 
         <div id="fuseTypeField" class="hidden-field">
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="fuseType">Motor Fuse Type</label>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="fuseType">
+            Motor Fuse Type
+            <span class="info-icon" tabindex="0" role="button" aria-label="Where the motor percentages come from">
+              i
+              <span class="info-tooltip">Percentages follow the NEC 430.52 maximums for motor branch-circuit short-circuit and ground-fault protection. This fuse does not give the motor overload protection &mdash; that is a separate device.</span>
+            </span>
+          </label>
           <select id="fuseType" class="input-field mt-2">
             <option value="175" selected>Time-delay / dual-element (175%)</option>
             <option value="300">Non-time-delay (300%)</option>
           </select>
-          <p class="field-hint">Percentages follow the NEC 430.52 maximums for motor branch-circuit short-circuit and ground-fault protection. This fuse does not give the motor overload protection &mdash; that is a separate device.</p>
         </div>
 
         <div>
@@ -650,7 +660,13 @@
           </div>
 
           <div class="mt-4">
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="voltage">Voltage (V)</label>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="voltage">
+              Voltage (V)
+              <span class="info-icon" tabindex="0" role="button" aria-label="Which voltage to enter">
+                i
+                <span class="info-tooltip" id="voltageHint">Single-phase AC: supply voltage at the load.</span>
+              </span>
+            </label>
             <input id="voltage" type="number" value="230" step="1" min="1" max="1000000" placeholder="e.g. 230" class="input-field mt-2" oninput="syncQuickVoltageActive()">
             <div id="qvDc" class="flex flex-wrap gap-1.5 mt-2 hidden-field" role="group" aria-label="Quick voltage presets, DC">
               <button type="button" class="qv-btn" aria-pressed="false" data-v="12" onclick="setQuickVoltage(12)">12V</button>
@@ -671,48 +687,67 @@
               <button type="button" class="qv-btn" aria-pressed="false" data-v="415" onclick="setQuickVoltage(415)">415V</button>
               <button type="button" class="qv-btn" aria-pressed="false" data-v="480" onclick="setQuickVoltage(480)">480V</button>
             </div>
-            <p class="field-hint" id="voltageHint">Single-phase AC: supply voltage at the load.</p>
           </div>
 
           <div id="pfField" class="mt-4">
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pf">Power Factor</label>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="pf">
+              Power Factor
+            <span class="info-icon" tabindex="0" role="button" aria-label="How to choose power factor">
+              i
+              <span class="info-tooltip">1.0 for resistive loads such as heating and incandescent lighting. Use the nameplate value for motors and electronic loads. For a motor, enter the <em>electrical input</em> power &mdash; a nameplate kW or hp figure is usually shaft output, so divide it by the efficiency first, or enter the nameplate current instead.</span>
+            </span>
+            </label>
             <input id="pf" type="number" value="1" step="0.01" min="0.1" max="1" placeholder="e.g. 0.85" class="input-field mt-2">
-            <p class="field-hint">1.0 for resistive loads such as heating and incandescent lighting. Use the nameplate value for motors and electronic loads.</p>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="derate">Fuse Derating (%)</label>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="derate">
+              Fuse Derating (%)
+            <span class="info-icon" tabindex="0" role="button" aria-label="What derating does here">
+              i
+              <span class="info-tooltip">For high ambient temperature or closely grouped fuse holders. Entering a derating <em>increases</em> the required rating, because the fuse can carry less than its marked value under those conditions. Use the manufacturer&rsquo;s derating curve for a real design.</span>
+            </span>
+            </label>
             <input id="derate" type="number" value="0" step="1" min="0" max="50" placeholder="e.g. 0" class="input-field mt-2">
-            <p class="field-hint">For high ambient temperature or closely grouped fuse holders. Entering a derating <em>increases</em> the required rating, because the fuse can carry less than its marked value under those conditions. Use the manufacturer&rsquo;s derating curve for a real design.</p>
           </div>
           <div>
-            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="fuseSeries">Fuse Rating Series</label>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="fuseSeries">
+              Fuse Rating Series
+            <span class="info-icon" tabindex="0" role="button" aria-label="What the rating series does">
+              i
+              <span class="info-tooltip">Which preferred series the result is rounded up to. Availability differs by region and product family. The DC option pools the ratings commonly available across several families &mdash; blade up to about 40 A, MIDI and ANL above that &mdash; so the calculator names which families a given rating could come from. It is a rounding series, not a single product family.</span>
+            </span>
+            </label>
             <select id="fuseSeries" class="input-field mt-2">
               <option value="iec" selected>IEC / BS 88 gG (industrial)</option>
               <option value="nec">NEC 240.6(A) standard ampere ratings</option>
-              <option value="auto">Automotive &amp; DC bolt-down (blade, MIDI, ANL)</option>
+              <option value="auto">Automotive / DC common ratings (blade, MIDI, ANL)</option>
             </select>
-            <p class="field-hint">Which preferred series the result is rounded up to. Availability differs by region and product family. The DC option spans several families &mdash; blade up to about 40 A, MIDI and ANL above that &mdash; and the calculator names which one the result lands in.</p>
           </div>
         </div>
 
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="conductor">Conductor Check (optional)</label>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="conductor">
+            Reference Conductor Check (optional)
+            <span class="info-icon" tabindex="0" role="button" aria-label="What this check does and does not cover">
+              i
+              <span class="info-tooltip">A reference sanity check, not a code-compliant ampacity calculation. Values are copper at the NEC 60&nbsp;&deg;C column, with the small-conductor limits of 240.4(D) applied to 14, 12 and 10 AWG; metric figures are the nearest standard size, not exact equivalents. Ambient temperature, grouping, insulation type, installation method and the number of loaded conductors all change the real ampacity.</span>
+            </span>
+          </label>
           <select id="conductor" class="input-field mt-2">
             <option value="0" selected>Not checked</option>
-            <option value="15">14 AWG (2.5 mm&sup2;) &mdash; 15 A</option>
-            <option value="20">12 AWG (4 mm&sup2;) &mdash; 20 A</option>
-            <option value="30">10 AWG (6 mm&sup2;) &mdash; 30 A</option>
-            <option value="40">8 AWG (10 mm&sup2;) &mdash; 40 A</option>
-            <option value="55">6 AWG (16 mm&sup2;) &mdash; 55 A</option>
-            <option value="70">4 AWG (25 mm&sup2;) &mdash; 70 A</option>
-            <option value="95">2 AWG (35 mm&sup2;) &mdash; 95 A</option>
-            <option value="125">1/0 AWG (50 mm&sup2;) &mdash; 125 A</option>
-            <option value="195">4/0 AWG (95 mm&sup2;) &mdash; 195 A</option>
+            <option value="15">14 AWG (~2.1 mm&sup2;; 2.5 mm&sup2; nearest metric) &mdash; 15 A</option>
+            <option value="20">12 AWG (~3.3 mm&sup2;; 4 mm&sup2; nearest metric) &mdash; 20 A</option>
+            <option value="30">10 AWG (~5.3 mm&sup2;; 6 mm&sup2; nearest metric) &mdash; 30 A</option>
+            <option value="40">8 AWG (~8.4 mm&sup2;; 10 mm&sup2; nearest metric) &mdash; 40 A</option>
+            <option value="55">6 AWG (~13.3 mm&sup2;; 16 mm&sup2; nearest metric) &mdash; 55 A</option>
+            <option value="70">4 AWG (~21.2 mm&sup2;; 25 mm&sup2; nearest metric) &mdash; 70 A</option>
+            <option value="95">2 AWG (~33.6 mm&sup2;; 35 mm&sup2; nearest metric) &mdash; 95 A</option>
+            <option value="125">1/0 AWG (~53.5 mm&sup2;; 50 mm&sup2; nearest metric) &mdash; 125 A</option>
+            <option value="195">4/0 AWG (~107 mm&sup2;; 95 mm&sup2; nearest metric) &mdash; 195 A</option>
           </select>
-          <p class="field-hint">Reference ampacities for copper at the NEC 60&nbsp;&deg;C column, with the small-conductor limits of 240.4(D) applied to 14, 12 and 10 AWG. Metric equivalents are nearest-size only. Your own installation conditions &mdash; ambient temperature, grouping, insulation and method &mdash; decide the real ampacity.</p>
         </div>
       </div>
 
@@ -723,7 +758,7 @@
       </button>
 
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
-        <span class="formula-chip" id="formulaChip">Fuse = FLC × 1.25</span>
+        <span class="formula-chip" id="formulaChip">Fuse ≥ I × 1.00</span>
       </div>
     </div>
 
@@ -755,8 +790,16 @@
         </div>
       </div>
 
+      <div id="codeWarn" class="warn-box hidden-field"></div>
       <div id="dcWarn" class="warn-box hidden-field"></div>
       <div id="conductorWarn" class="warn-box hidden-field"></div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Scope of this result</span>
+        <p class="field-hint">This is a <strong>preliminary fuse rating</strong>, not a final selection. The fuse actually installed must satisfy the applicable code, the conductor ampacity, the equipment rating, and the voltage and interrupting ratings for the circuit.</p>
+        <p class="field-hint hidden-field" id="motorScopeNote">For motor circuits the 175% and 300% figures are the NEC 430.52 <em>maximums</em> for branch-circuit short-circuit and ground-fault protection &mdash; they are not a final motor protection selection. Verify against the motor nameplate, the manufacturer&rsquo;s coordination table and the overload device sized separately.</p>
+        <p class="field-hint">The suggested characteristic is indicative only. Take the actual fuse class and curve from the equipment or fuse manufacturer&rsquo;s data.</p>
+      </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
@@ -851,7 +894,7 @@
 
       <p><strong>Coordination with upstream and downstream protective devices:</strong> fuse selection doesn't happen in isolation &mdash; a properly coordinated protection scheme ensures that when a fault occurs, the protective device closest to the fault (not further upstream) operates first, isolating only the affected circuit rather than tripping a larger upstream device and taking down more of the system than necessary. This coordination, sometimes called selective coordination or discrimination, requires comparing the time-current curves of fuses (and any breakers) at different levels of the distribution system, not just confirming each device individually meets its own basic sizing calculation.</p>
 
-      <p><strong>Summary:</strong> use Fuse Rating = circuit current &times; 1.00 for general non-continuous loads, &times; 1.25 for continuous loads, or &times; 1.75 (time-delay) to &times; 3.00 (non-time-delay) for motor branch circuits, always round up to the nearest standard size, pair motor circuit fuses with a properly sized overload relay for genuine overload protection, and verify final selection against protection coordination requirements and the applicable electrical code.</p>
+      <p><strong>Summary:</strong> use Fuse Rating = circuit current &times; 1.00 for general non-continuous loads, &times; 1.25 for continuous loads, or &times; 1.75 (time-delay) to &times; 3.00 (non-time-delay) for motor branch circuits, round up to the next rating in the series in use, pair motor circuit fuses with a properly sized overload relay for genuine overload protection, and verify final selection against protection coordination requirements and the applicable electrical code.</p>
 
       <p><strong>Why this matters beyond just avoiding nuisance blowing:</strong> correct fuse sizing sits at the intersection of reliability (avoiding unnecessary trips that disrupt operations) and safety (ensuring genuine faults are cleared quickly enough to prevent damage or hazard). Both an undersized fuse (nuisance blowing, operational disruption) and an oversized fuse (inadequate protection, safety risk) represent real, distinct failure modes &mdash; getting the sizing calculation right, rather than simply guessing conservatively high "to be safe," is what actually delivers both reliable operation and genuine protection simultaneously.</p>
 
@@ -861,10 +904,10 @@
     <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
     <div id="cs-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
             <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
-      <p class="text-sm text-gray-600 leading-relaxed"><strong>General circuit</strong>, FLC=20A: Fuse = 20 &times; 1.25 = <strong>25 A</strong>. <strong>Motor circuit</strong> (time-delay fuse), FLC=20A: Fuse = 20 &times; 1.75 = <strong>35 A</strong> &rarr; next standard size.</p>
+      <p class="text-sm text-gray-600 leading-relaxed">Same 20 A circuit, three different answers:<br><strong>General (non-continuous)</strong>: 20 &times; 1.00 = <strong>20 A</strong><br><strong>Continuous</strong> (three hours or more at full load): 20 &times; 1.25 = <strong>25 A</strong><br><strong>Motor branch circuit</strong>, time-delay fuse: 20 &times; 1.75 = <strong>35 A</strong><br>Each is then rounded up to the next rating in the series being bought from.</p>
     </div>
 
-    <p class="text-xs text-gray-400 mt-6">The multipliers used here (125% for general/continuous loads, 300% for non-time-delay motor fuses, 175% for time-delay/dual-element motor fuses) are widely referenced general guidelines. Motor circuit fuse selection in particular has additional code-specific rules and maximum percentage limits that can vary by motor type, code letter, and application — always verify final fuse selection against the applicable electrical code and the motor/equipment manufacturer's specific recommendation before installation.</p>
+    <p class="text-xs text-gray-400 mt-6">The multipliers used here &mdash; 100% for general non-continuous loads, 125% for continuous loads, and 175% (time-delay) or 300% (non-time-delay) as the motor branch-circuit basis &mdash; follow NEC practice and are widely referenced beyond it, but they are not an IEC rule. Motor circuit fuse selection in particular has additional code-specific rules and maximum percentage limits that can vary by motor type, code letter, and application — always verify final fuse selection against the applicable electrical code and the motor/equipment manufacturer's specific recommendation before installation.</p>
   </div>
 </section>
 
@@ -969,7 +1012,7 @@
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
             <p><strong>1. Using the general-circuit 125% multiplier for a motor circuit.</strong> This will cause the fuse to blow every time the motor starts, since 125% of running current is far below the normal starting current a motor draws &mdash; motor circuits need their own, much higher multiplier specifically for this reason.</p>
       <p><strong>2. Relying on fuse sizing alone for motor overload protection.</strong> Fuses sized for motor starting current (175-300% of full load current) are far too insensitive to catch a moderate, sustained overload &mdash; always pair motor circuit fuses with a properly sized, more sensitive overload relay for genuine overload protection.</p>
-      <p><strong>3. Rounding the calculated fuse size down to a more "convenient" standard size.</strong> Always round up to the next available standard size at or above the calculated value &mdash; rounding down undersizes the fuse below its calculated requirement, risking nuisance blowing under normal conditions the calculation was designed to accommodate.</p>
+      <p><strong>3. Rounding the calculated fuse size down to a more "convenient" standard size.</strong> Round up to the next available rating at or above the calculated value &mdash; rounding down undersizes the fuse below its calculated requirement, risking nuisance blowing under normal conditions the calculation was designed to accommodate.</p>
       <p><strong>4. Using the maximum allowed motor multiplier by default without checking if a lower value works.</strong> The maximum percentage is a ceiling, not a mandatory target &mdash; if a lower-rated fuse reliably handles a specific motor's actual starting characteristics, using it provides tighter, more sensitive protection than defaulting to the maximum every time.</p>
       <p><strong>5. Oversizing a fuse on a non-motor circuit to stop nuisance blowing.</strong> Nuisance blowing on a properly-loaded general circuit is more often a sign of an actual problem (an intermittent fault, an underestimated load, a degraded connection) than simply an undersized fuse &mdash; oversizing the fuse to make the symptom go away removes real protection and can mask an underlying issue that needs proper diagnosis.</p>
       <p><strong>6. Sizing the fuse without checking it against the protected cable's ampacity.</strong> For general circuits, the fuse rating should generally not exceed the protected cable's safe ampacity &mdash; motor circuits are a specific, code-recognized exception to this general rule, not a precedent for other circuit types.</p>
@@ -1025,7 +1068,7 @@
         Should I round the calculated fuse rating up or down to the nearest standard size?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Always round up to the next available standard fuse size at or above the calculated value — rounding down would undersize the fuse below its calculated required rating, risking nuisance blowing under normal starting or continuous-duty conditions that the calculation was specifically designed to accommodate.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Within this preliminary calculation, yes: the result is rounded up to the next available rating in the series selected, because rounding down puts the fuse below the value the calculation asked for and invites nuisance blowing during normal starting or continuous duty. That rounded value is a starting point, not a final selection — the fuse actually installed still has to satisfy the applicable code, the conductor ampacity, the equipment rating, the voltage and interrupting ratings, and the manufacturer’s data.</p>
     </details>
 
     <details class="py-5">
@@ -1117,7 +1160,7 @@
     // Blade, MIDI/AMI and ANL/MEGA ratings, spanning several DC families
     auto: [1,2,3,4,5,7.5,10,15,20,25,30,35,40,50,60,70,80,100,125,150,200,250,300]
   };
-  const SERIES_LABEL = { iec:'IEC / BS 88 gG', nec:'NEC 240.6(A)', auto:'Automotive / DC bolt-down' };
+  const SERIES_LABEL = { iec:'IEC / BS 88 gG', nec:'NEC 240.6(A)', auto:'Automotive / DC common ratings' };
 
   // Which DC family a rating actually falls in. The page's own DC table lists
   // these separately because their current and DC voltage ratings differ; a
@@ -1130,10 +1173,10 @@
     return 'ANL, MEGA or Class T bolt-down';
   }
 
-  // Typical maximum DC voltage rating of each family. Blade-type fuses are
-  // commonly rated only to about 32 V, which is why a 110 V or 220 V DC system
-  // needs a different family entirely.
-  function dcVoltageCeiling(rating){
+  // Typical family-level DC voltage rating, used only to decide whether to warn.
+  // The real limit depends on the specific fuse's construction, interrupting
+  // rating and manufacturer, so this is a warning threshold, not a spec.
+  function typicalDcVoltageWarning(rating){
     if(rating <= 40) return 32;
     if(rating <= 200) return 58;
     return 125;
@@ -1157,6 +1200,7 @@
       el.setAttribute('aria-pressed', p[0] === type ? 'true' : 'false');
     });
     document.getElementById('fuseTypeField').classList.toggle('hidden-field', type !== 'motor');
+    document.getElementById('motorScopeNote').classList.toggle('hidden-field', type !== 'motor');
     document.getElementById('circuitHint').textContent =
       type === 'general' ? 'General (non-continuous) load: no continuous-use multiplier applied.' :
       type === 'continuous' ? 'A load expected to run at its maximum for three hours or more: 125% applied, following NEC 210.20(A).' :
@@ -1299,6 +1343,7 @@
       document.getElementById('resultSub').textContent = 'Fix the input errors to see a result';
       document.getElementById('conductorWarn').classList.add('hidden-field');
       document.getElementById('dcWarn').classList.add('hidden-field');
+      document.getElementById('codeWarn').classList.add('hidden-field');
       document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
       return;
     }
@@ -1315,9 +1360,12 @@
     const aboveRange = !stdSize;
     if(aboveRange) stdSize = sizes[sizes.length - 1];
 
+    // A general or continuous circuit does not imply a fast-acting fuse: the
+    // characteristic depends on the load's inrush, the equipment and the fuse
+    // class, none of which this calculator asks for.
     const characteristic = fuseCircuitType === 'motor'
       ? (document.getElementById('fuseType').value === '175' ? 'Time-delay' : 'Non-time-delay')
-      : 'Fast-acting';
+      : 'Application-dependent';
 
     document.getElementById('rResult').textContent = aboveRange
       ? 'Above ' + sizes[sizes.length - 1] + ' A'
@@ -1330,18 +1378,33 @@
     document.getElementById('rCurrent').textContent = current.toFixed(2) + ' A';
     document.getElementById('rCharacteristic').textContent = characteristic;
 
+    // Code-basis cross-check. The multipliers are NEC-derived; selecting an IEC
+    // series does not change them, so say so rather than letting the two
+    // choices look like one coherent standard.
+    const codeWarnEl = document.getElementById('codeWarn');
+    if(seriesKey === 'iec' && fuseCircuitType !== 'general'){
+      codeWarnEl.classList.remove('hidden-field');
+      codeWarnEl.innerHTML = '<strong>Sizing basis:</strong> the ' + (multiplier * 100).toFixed(0) +
+        '% multiplier used here comes from NEC practice, while the rating series selected is IEC / BS 88. ' +
+        (fuseCircuitType === 'motor'
+          ? 'Under IEC practice a motor circuit is normally protected by a manufacturer-published coordination combination \u2014 a specific gG or aM fuse tested with a specific contactor and overload relay \u2014 rather than by a percentage. Where that table exists it takes precedence over this result.'
+          : 'IEC installations size the device from the design current and the conductor\u2019s ampacity under the local wiring rules rather than from a fixed 125% figure. Treat this as an indicative value.');
+    } else {
+      codeWarnEl.classList.add('hidden-field');
+    }
+
     // DC voltage-rating cross-check. The page tells readers that an AC rating
     // does not transfer to DC; the calculator has to apply the same test.
     const dcWarnEl = document.getElementById('dcWarn');
     const notes = [];
     if(inputMode === 'power' && supplyType === 'dc' && Number.isFinite(voltage)){
       if(seriesKey === 'auto' && !aboveRange){
-        const ceiling = dcVoltageCeiling(stdSize);
+        const ceiling = typicalDcVoltageWarning(stdSize);
         if(voltage > ceiling){
           notes.push('<strong>DC voltage rating:</strong> a ' + stdSize + ' A fuse in the ' + dcFamily(stdSize) +
-            ' range is commonly rated only to about ' + ceiling + ' V DC, below your ' + voltage +
+            ' range is typically rated only to around ' + ceiling + ' V DC, below your ' + voltage +
             ' V system. Blade and most bolt-down families will not do here \u2014 look at a family with an explicit DC rating at or above ' +
-            voltage + ' V, such as Class T or a DC-rated cylindrical fuse, and check the holder\u2019s rating too.');
+            voltage + ' V, such as Class T or a DC-rated cylindrical fuse, and check the holder\u2019s rating too. This is a typical family-level warning only \u2014 confirm the exact fuse\u2019s DC voltage and interrupting rating on its datasheet.');
         }
       }
       if(seriesKey !== 'auto'){
@@ -1392,7 +1455,7 @@
           '<tr><td>After multiplier</td><td>' + designCurrent.toFixed(2) + ' A</td></tr>' +
           derateRow +
           '<tr><td>Rating Series</td><td>' + SERIES_LABEL[seriesKey] +
-            (seriesKey === 'auto' && !aboveRange ? ' (' + dcFamily(stdSize) + ')' : '') + '</td></tr>' +
+            (seriesKey === 'auto' && !aboveRange ? '</td></tr><tr><td>Possible families at this rating</td><td>' + dcFamily(stdSize) : '') + '</td></tr>' +
           '<tr><td><strong>Preliminary Fuse Rating</strong></td><td><strong>' + (aboveRange ? 'Above ' + sizes[sizes.length-1] + ' A \u2014 confirm with the manufacturer' : stdSize + ' A') + '</strong></td></tr>' +
           '<tr><td>Suggested Characteristic</td><td>' + characteristic + '</td></tr>' +
         '</tbody>' +
