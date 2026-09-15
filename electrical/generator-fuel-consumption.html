@@ -474,7 +474,6 @@
      site.min.css only contains classes already used elsewhere). The same
      six step colours are shared by the load-profile rows, the pie chart
      and the breakdown table so each load step reads the same everywhere. */
-  .gf-toprow{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
   .gf-sec{ margin-top:22px; padding-top:18px; border-top:1px solid #eef2f7; }
   .gf-grid2{ display:grid; grid-template-columns:1fr; gap:16px; }
   @media (min-width:640px){ .gf-grid2{ grid-template-columns:1fr 1fr; } }
@@ -486,13 +485,10 @@
   .gf-suffix{ display:inline-flex; align-items:center; padding:0 10px; font-size:12px; font-weight:600; color:#64748b; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:8px; white-space:nowrap; }
   .gf-help{ font-size:11.5px; color:#64748b; margin-top:6px; line-height:1.45; }
 
-  .seg-group{ display:inline-flex; gap:4px; padding:4px; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:10px; }
-  .seg-group .toggle-btn{ border:none; background:transparent; font-family:inherit; flex:0 0 auto; padding:7px 14px; }
-  .seg-group .toggle-btn.active{ background:#0ea5e9; color:#fff; }
-  .seg-group .toggle-btn:focus-visible, .mini-btn:focus-visible{ outline:2px solid #0ea5e9; outline-offset:2px; }
-  .seg-group.seg-wide{ display:flex; width:100%; margin-top:8px; }
-  .seg-group.seg-wide .toggle-btn{ flex:1 1 0; }
-  .seg-group.seg-sm .toggle-btn{ padding:4px 10px; font-size:12px; }
+  /* Toggle groups use the exact cable-size.html pattern:
+     a "flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" track div + .toggle-btn buttons
+     (track colour themed by theme.css). Only a keyboard focus ring is added. */
+  .toggle-btn:focus-visible, .mini-btn:focus-visible{ outline:2px solid #0ea5e9; outline-offset:2px; }
 
   .lp-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
   .lp-head select.input-field{ width:auto; max-width:100%; }
@@ -522,7 +518,7 @@
   .gf-warn ul{ margin:0; padding-left:16px; list-style:disc; }
   .gf-warn li + li{ margin-top:4px; }
 
-  .gf-card-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+  .gf-card-head{ margin-bottom:12px; }
   .pie-wrap{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
   .pie-svg-box{ width:190px; max-width:100%; flex:0 0 auto; margin:0 auto; }
   .pie-svg-box svg{ display:block; width:100%; height:auto; }
@@ -546,9 +542,6 @@
   body.dark-theme .gf-sec{ border-top-color:#1f2f47; }
   body.dark-theme .gf-suffix{ background:#111c2e; border-color:#1f2f47; color:#94a3b8; }
   body.dark-theme .gf-help, body.dark-theme .gf-note{ color:#94a3b8; }
-  body.dark-theme .seg-group{ background:#0B1220; border-color:#1f2f47; }
-  body.dark-theme .seg-group .toggle-btn{ color:#94a3b8; }
-  body.dark-theme .seg-group .toggle-btn.active{ background:#0ea5e9; color:#fff; }
   body.dark-theme .lp-row{ border-bottom-color:#1f2f47; }
   body.dark-theme .lp-step{ color:#e2e8f0; }
   body.dark-theme .lp-hint{ color:#94a3b8; }
@@ -645,9 +638,9 @@
         <p class="text-xs text-gray-500 mb-6">Describe the site demand, how long the gensets run and how the load changes over that time.</p>
       </div>
 
-      <div class="gf-toprow">
+      <div>
         <span id="gfModeLabel" class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Input detail</span>
-        <div class="seg-group" role="group" aria-labelledby="gfModeLabel">
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="gfModeLabel">
           <button type="button" id="modeBasic" class="toggle-btn active" aria-pressed="true" onclick="gfSetMode('basic')">Simple</button>
           <button type="button" id="modeExpert" class="toggle-btn" aria-pressed="false" onclick="gfSetMode('expert')">Advanced</button>
         </div>
@@ -809,7 +802,7 @@
 
           <div>
             <span id="gfDispatchLabel" class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Load sharing</span>
-            <div class="seg-group seg-wide" role="group" aria-labelledby="gfDispatchLabel">
+            <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="gfDispatchLabel">
               <button type="button" id="dispAll" class="toggle-btn active" aria-pressed="true" onclick="gfSetDispatch('allrun')">Keep every unit online</button>
               <button type="button" id="dispStart" class="toggle-btn" aria-pressed="false" onclick="gfSetDispatch('startstop')">Start/stop to match load</button>
             </div>
@@ -909,8 +902,8 @@
       <!-- SVG PIE CHART (fuel / hours share by load step) -->
       <div class="bg-white rounded-xl border border-gray-100 p-4">
         <div class="gf-card-head">
-          <span id="pieTitle" class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Fuel Split by Load Level</span>
-          <div class="seg-group seg-sm" role="group" aria-labelledby="pieTitle" data-copy-exclude>
+          <span id="pieTitle" class="font-mono text-[10px] uppercase tracking-wider text-sky-600 block">Fuel Split by Load Level</span>
+          <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="pieTitle" data-copy-exclude>
             <button type="button" id="pieFuel" class="toggle-btn active" aria-pressed="true" onclick="gfSetPieMode('fuel')">Fuel</button>
             <button type="button" id="pieHours" class="toggle-btn" aria-pressed="false" onclick="gfSetPieMode('hours')">Time</button>
           </div>
