@@ -83,52 +83,82 @@
     {
       "@type": "Question",
       "name": "What are the common operating configurations of a 555 timer?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Monostable (one-shot): a trigger produces a single output pulse of a fixed width set by R1 and C1, then the output returns low until the next trigger. Astable (free-running): the timer continuously oscillates between high and low with no external trigger needed, producing a repeating square-wave-like output whose frequency and duty cycle are set by R1, R2 and C1. Bistable: with the timing resistor and capacitor removed, the 555 behaves as a simple set-reset (SR) latch — the output holds whichever state (high or low) it was last driven to by the trigger or reset pins. External pull-up resistors may still be used on those input pins, but no timing components are involved." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Monostable (one-shot): a trigger produces a single output pulse of fixed width set by R1 and C1. Astable (free-running): the timer continuously oscillates with no external trigger, at a frequency and duty cycle set by R1, R2 and C1. Bistable: with the timing resistor and capacitor removed, the 555 acts as a simple set-reset latch, holding whichever state the trigger or reset pin last drove it to. External pull-up resistors may still be used on those pins, but no timing components are involved."
+      }
     },
     {
       "@type": "Question",
       "name": "What is the formula for 555 timer monostable pulse width?",
-      "acceptedAnswer": { "@type": "Answer", "text": "T = 1.1 x R1 x C1, where T is the output pulse width in seconds, R1 is in ohms, and C1 is in farads. The constant 1.1 comes from the RC charging time needed for the capacitor voltage to reach 2/3 of the supply voltage, which is the internal threshold that ends the pulse." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "T = 1.1 × R1 × C1, with R1 in ohms and C1 in farads giving T in seconds. The constant 1.1 comes from the RC charging time needed to reach the 2/3-Vcc internal threshold that ends the pulse."
+      }
     },
     {
       "@type": "Question",
       "name": "What is the formula for 555 timer astable frequency and duty cycle?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Time high: Th = 0.693 x (R1 + R2) x C1. Time low: Tl = 0.693 x R2 x C1. Frequency: f = 1.44 / ((R1 + 2 x R2) x C1). Duty cycle: D = (R1 + R2) / (R1 + 2 x R2) x 100%. All resistances in ohms and capacitance in farads give the times in seconds and frequency in hertz." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Th = 0.693 × (R1+R2) × C1. Tl = 0.693 × R2 × C1. f = 1.44 ÷ ((R1+2R2) × C1). Duty Cycle = (R1+R2) ÷ (R1+2R2) × 100%. All resistances in ohms and capacitance in farads."
+      }
     },
     {
       "@type": "Question",
       "name": "Why is the duty cycle of a standard 555 astable circuit always above 50%?",
-      "acceptedAnswer": { "@type": "Answer", "text": "In the standard two-resistor astable topology, the capacitor charges through R1 + R2 (giving Th) but discharges through only R2 (giving Tl), and since R1 is always a positive value, Th is always greater than Tl — pushing duty cycle above 50% no matter how R1 and R2 are chosen. Getting a duty cycle at or below 50% requires a diode placed across R2 to give the charge and discharge paths separate resistances, a common circuit modification for applications needing a genuinely variable or sub-50% duty cycle." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The capacitor charges through R1+R2 (giving Th) but discharges through only R2 (giving Tl), and since R1 is always positive, Th is always greater than Tl. Getting duty cycle at or below 50% needs a diode across R2 to give the charge and discharge paths separate resistances."
+      }
     },
     {
       "@type": "Question",
       "name": "What is 555 timer bistable mode, and why doesn't it need a timing resistor or capacitor?",
-      "acceptedAnswer": { "@type": "Answer", "text": "In bistable mode, the timing resistor and capacitor are removed entirely and the 555 is wired as a simple SR (set-reset) latch: pulling the trigger pin (pin 2) low sets the output high, and pulling the reset pin (pin 4) low resets the output low. External pull-up resistors on the trigger and reset pins are common in this configuration, but they play no role in timing — the output simply holds its state indefinitely until the opposite input is pulsed, with no RC timing network involved and no pulse width or frequency to calculate." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In bistable mode, the 555 is wired as a simple SR latch: pulling trigger (pin 2) low sets the output high, and pulling reset (pin 4) low resets it low. External pull-up resistors on those pins are common but play no role in timing. The output then holds that state indefinitely until the opposite pin is pulsed — there's no RC timing network, so there's no pulse width or frequency to calculate."
+      }
     },
     {
       "@type": "Question",
       "name": "What resistor and capacitor value ranges give the most accurate 555 timing?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Most 555 datasheets recommend keeping timing resistors roughly between 1 k\u03a9 and 1 M\u03a9. For practical timing designs, many engineers also avoid very small timing capacitors (for example, below roughly 100 pF), since stray capacitance becomes significant relative to them; check the specific device datasheet for recommended ranges. Resistors much below 1 k\u03a9 can push the IC's internal discharge transistor and output stage beyond their comfortable current range, while very high resistances make the timing more sensitive to the chip's own leakage currents and to circuit-board leakage/humidity effects \u2014 both of which degrade timing accuracy from the ideal formula." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most datasheets recommend timing resistors roughly between 1 kΩ and 1 MΩ. For practical designs, many engineers also avoid very small timing capacitors (for example, below roughly 100 pF), since stray capacitance becomes significant relative to them — check the specific datasheet for recommended ranges. Values outside these ranges can push the IC's discharge stage beyond a comfortable current range or make timing overly sensitive to leakage effects, degrading accuracy from the ideal formula."
+      }
     },
     {
       "@type": "Question",
       "name": "Why doesn't my built 555 timer circuit match the calculated pulse width or frequency exactly?",
-      "acceptedAnswer": { "@type": "Answer", "text": "The formulas assume ideal, exact resistor and capacitor values, but real components have tolerance \u2014 a common electrolytic capacitor can be off by \u00b120% or more from its printed value, and standard resistors are typically \u00b15%. Supply voltage variation and the specific 555 variant (bipolar NE555 vs. CMOS versions like the TLC555) also shift threshold voltages slightly. For timing-critical designs, use tighter-tolerance components (film capacitors, 1% resistors) and verify the actual output on an oscilloscope rather than relying on the formula alone." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The formulas assume exact component values, but real capacitors (especially electrolytics) can be off by ±20% or more, and resistors are typically ±5%. Supply voltage and the specific 555 variant also shift thresholds slightly. Use tighter-tolerance components for critical designs, and verify actual output on an oscilloscope."
+      }
     },
     {
       "@type": "Question",
       "name": "Can a 555 timer's astable output be used as a PWM signal?",
-      "acceptedAnswer": { "@type": "Answer", "text": "The basic astable circuit only gives a fixed duty cycle set by the resistor ratio, not a continuously adjustable one, so it isn't inherently a PWM generator in the usual sense. With the diode-across-R2 modification (or by replacing one resistor with a potentiometer), the duty cycle becomes adjustable, letting the 555 serve as a simple PWM source for tasks like LED dimming or basic DC motor speed control \u2014 see this site's Duty Cycle &amp; PWM Calculator for the duty-cycle math once you have a target Th/Tl in mind." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The basic astable circuit gives only a fixed duty cycle set by the resistor ratio, not a continuously adjustable one. With a diode across R2 (or a potentiometer in place of a resistor), the duty cycle becomes adjustable, letting the 555 serve as a simple PWM source for LED dimming or basic motor speed control."
+      }
     },
     {
       "@type": "Question",
       "name": "What is the difference between a retriggerable and non-retriggerable monostable?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Retriggering behavior depends on the specific 555 device and circuit configuration, so it isn't safe to call the standard monostable universally non-retriggerable. In many basic NE555 monostable circuits, a suitable trigger applied during the timing interval can extend or reinitiate the cycle, and the sequence only ends once the trigger pin has been held high for a short period before the interval expires \u2014 consult the specific device datasheet for exact behavior. Some ICs and configurations are explicitly designed as retriggerable, where a new trigger restarts the timing period from zero \u2014 useful for applications like a watchdog or motion-sensor light that should stay on continuously as long as retriggering pulses keep arriving." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Retriggering depends on the specific 555 device and circuit configuration. In many standard NE555 monostable circuits, a suitable trigger applied during the timing interval can extend or reinitiate the cycle, ending only once the trigger pin has been held high briefly before the interval expires — consult the specific datasheet for exact behavior. Devices or configurations explicitly built as retriggerable restart the timing period from zero on every new trigger — useful for something like a motion-sensor light that should stay on as long as retriggering pulses keep arriving."
+      }
     },
     {
       "@type": "Question",
       "name": "Should I pick a larger resistor or a larger capacitor to hit a target 555 timing value?",
-      "acceptedAnswer": { "@type": "Answer", "text": "The same T, frequency, or Th/Tl value can come from many different R and C combinations, so favor a resistor in the low-to-mid range (roughly a few k\u03a9 to a few hundred k\u03a9) and let the capacitor value fall out of the formula, rather than the reverse. As a practical guideline, many engineers avoid very small capacitors (under about 100 pF) since they become sensitive to the circuit's own stray capacitance; check the specific datasheet for recommended ranges. Very large electrolytic capacitors bring wide tolerance and leakage current \u2014 both degrade timing accuracy. For timing-critical work, choose a capacitor with suitable tolerance and temperature/voltage stability: C0G/NP0 ceramic or film capacitors are often preferable to general-purpose electrolytics where their capacitance range is practical, while other ceramic dielectrics such as X7R or Y5V can vary significantly with applied voltage and temperature." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The same T, frequency, or Th/Tl value can come from many R and C combinations, so favor a resistor in the low-to-mid range (roughly a few kΩ to a few hundred kΩ) and let the capacitor value fall out of the formula, rather than the reverse. As a practical guideline, many engineers avoid very small capacitors (under about 100 pF) since they become sensitive to the circuit's own stray capacitance; check the specific datasheet for recommended ranges. Very large electrolytics bring wide tolerance and leakage current — both degrade timing accuracy. C0G/NP0 ceramic or film capacitors are often preferable to general-purpose electrolytics where their capacitance range is practical, since other ceramic dielectrics (X7R, Y5V) can vary significantly with voltage and temperature."
+      }
     }
   ]
 }

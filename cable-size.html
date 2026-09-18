@@ -39,7 +39,102 @@ if(themeColorMeta) themeColorMeta.setAttribute('content', t === 'dark-theme' ? '
 <meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Cable Size Calculator","url":"https://www.electromechcalc.com/cable-size","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free online calculator to calculate cable size (mm²), estimated voltage drop, and indicative protective-device rating for single-phase and three-phase electrical loads.","publisher":{"@type":"Organization","name":"ElectroMechCalc","url":"https://www.electromechcalc.com/"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.electromechcalc.com/"},{"@type":"ListItem","position":2,"name":"Electrical Calculators","item":"https://www.electromechcalc.com/electrical-calculators"},{"@type":"ListItem","position":3,"name":"Cable Size Calculator","item":"https://www.electromechcalc.com/cable-size"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does cable length affect the recommended size?","acceptedAnswer":{"@type":"Answer","text":"Longer cable runs have more resistance, which causes a larger voltage drop for the same current. Even if a smaller cable can technically carry the current safely, a long run may cause the voltage at the load end to drop too much. The calculator increases cable size only when the estimated voltage drop exceeds its fixed 3% preliminary screening target, and shows the voltage drop percentage that supports that choice."}},{"@type":"Question","name":"What does the estimated voltage drop % actually tell me?","acceptedAnswer":{"@type":"Answer","text":"It is an approximate percentage of supply voltage that is lost to cable resistance over the given run length, calculated using a typical resistance-per-km value for the chosen conductor and size. This calculator uses 3% as a conservative preliminary screening target; applicable local codes and equipment requirements may permit different limits, so treat it as a useful sanity check rather than a universal regulatory value."}},{"@type":"Question","name":"Why does aluminium need a larger cable size than copper for the same load?","acceptedAnswer":{"@type":"Answer","text":"Aluminium has substantially lower electrical conductivity than copper for the same cross-sectional area, so a larger conductor is generally required for comparable current-carrying and voltage-drop performance."}},{"@type":"Question","name":"How is the indicative protective-device rating chosen?","acceptedAnswer":{"@type":"Answer","text":"The calculator picks a predefined indicative protective-device rating that is at or above the planning sizing current and at or below the selected cable's own reference capacity (a simplified Ib ≤ In ≤ reference capacity check), from this calculator's predefined indicative rating list. Individual ratings in this list may or may not be available across MCB, MCCB, and RCBO product families depending on manufacturer and jurisdiction — this is a starting point only; actual device selection (MCB, MCCB, RCBO, or fuse) should be verified against the applicable derated cable capacity, fault level, breaking capacity, trip characteristics, and coordination with upstream and downstream protection."}},{"@type":"Question","name":"What size cable do I need for a given current?","acceptedAnswer":{"@type":"Answer","text":"As a rough guide, using representative illustrative reference values with the metric mm² sizing convention commonly used across India, the UK and Europe, the Middle East, Australia, and South Africa, in this calculator's simplified reference table, 4 sq.mm copper is assigned a preliminary reference capacity of around 25 A, 6 sq.mm around 32 A, and 10 sq.mm around 40 A, but the exact figure depends on insulation type, installation method, ambient temperature, and grouping, which is why this calculator also runs a voltage-drop check at your entered length. The USA and Canada use a different, AWG-based sizing system instead of mm²."}},{"@type":"Question","name":"Does this replace a full cable sizing and voltage-drop study?","acceptedAnswer":{"@type":"Answer","text":"No, this is a preliminary, educational estimate using standard formulas and typical resistance values. A final installation design should also account for ambient temperature derating, grouping of multiple cables, installation method such as conduit, tray, or buried, harmonic loading, and the specific requirements of your local electrical code, ideally reviewed by a qualified electrical engineer."}},{"@type":"Question","name":"Can I use this calculator for domestic house wiring?","acceptedAnswer":{"@type":"Answer","text":"Yes, for a preliminary estimate, but not as a substitute for the applicable domestic wiring rules, protective-device requirements, installation method and final circuit design. Select single phase, enter your supply voltage, typically 230 V, your connected load in kW, and the cable run length from the distribution board to the point of use. As a preliminary screening approach, keeping the estimated voltage drop under the 3% preliminary screening target and choosing the next standard cable size above the calculated minimum is useful groundwork, but always have the final wiring plan checked against your local wiring code."}},{"@type":"Question","name":"Does this calculator apply ambient temperature or grouping derating automatically?","acceptedAnswer":{"@type":"Answer","text":"No — this calculator's reference capacity values are simplified baseline figures for preliminary screening, and do not represent an installation-specific 30°C IEC/IS ampacity table. If your installation runs at higher ambient temperature or has multiple loaded cables grouped together, apply the applicable correction factors to the reference capacity and select the next standard size that satisfies the resulting derated condition. Do not assume that moving up one or two standard sizes automatically compensates for derating."}},{"@type":"Question","name":"How should parallel single-core cables be arranged for balanced phase currents?","acceptedAnswer":{"@type":"Answer","text":"Cables of the same phase should be grouped and positioned according to the arrangement diagram in the applicable installation standard (such as AS/NZS 3008.1 or IEC 60364-5-52) for the number of parallel cables per phase in your design, rather than an arbitrary layout — mutual inductance between an uneven arrangement of parallel cables and phases can otherwise leave some cables carrying meaningfully more current than others, and this calculator does not model or check parallel-cable arrangement."}},{"@type":"Question","name":"What size should the neutral conductor be?","acceptedAnswer":{"@type":"Answer","text":"By default, size the neutral the same as the phase conductors — the calculator's result panel shows this default value alongside the active conductor size. For predominantly balanced multiphase loads with low harmonic content, a reduced neutral may be permitted under the applicable standard, but it must still carry the expected out-of-balance current; the calculator does not check for or apply that reduction. Where a substantial population of nonlinear single-phase loads is expected (such as electronic lighting drivers, switched-mode power supplies, and IT/data equipment on a three-phase four-wire system), the neutral may need to be sized equal to or larger than the phase conductors, since the triplen harmonics from these loads can add together in the neutral rather than cancelling — the calculator does not detect harmonic loading, so increase the neutral size manually if this applies to your installation."}},{"@type":"Question","name":"How is the preliminary earth (CPC) conductor size calculated?","acceptedAnswer":{"@type":"Answer","text":"The calculator uses a simplified, widely-cited rule of thumb: the earth/CPC conductor is sized the same as the active conductor up to 16 sq.mm, held at 16 sq.mm for active sizes from 16 to 35 sq.mm, and sized at half the active conductor's cross-section (rounded up to the next standard size) above 35 sq.mm. This is a preliminary approximation only, not the adiabatic calculation (based on fault current and disconnection time) that most wiring standards require for a final design — use the dedicated Earthing Conductor Size Calculator for a properly calculated value."}}]}</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why does cable length affect the recommended size?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Longer cable runs have more resistance, which causes a larger voltage drop for the same current. Even if a smaller cable can technically carry the current safely, a long run may cause the voltage at the load end to drop too much. This calculator increases cable size only when the estimated voltage drop exceeds its fixed 3% preliminary screening target, and shows the voltage drop percentage that supports that choice."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does the estimated voltage drop % actually tell me?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It's an approximate percentage of your supply voltage that is \"lost\" to cable resistance over the given run length, calculated using a typical resistance-per-km value for the chosen conductor and size. This calculator uses 3% as a conservative preliminary screening target — applicable local codes and equipment requirements may permit different limits, so treat it as a useful sanity check rather than a universal regulatory value. Actual drop can also vary with cable construction, temperature, and installation method."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does aluminium need a larger cable size than copper for the same load?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Aluminium has substantially lower electrical conductivity than copper for the same cross-sectional area, so a larger conductor is generally required for comparable current-carrying and voltage-drop performance — which is why the two materials use separate sizing tables here."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the indicative protective-device rating chosen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The calculator picks a predefined indicative protective-device rating that sits at or above your planning sizing current and at or below the selected cable's own reference capacity — a simplified Ib ≤ In ≤ reference capacity check — from this calculator's predefined indicative rating list, and labels it \"indicative\" rather than a final selection. Individual ratings in this list may or may not be available across MCB, MCCB, and RCBO product families depending on manufacturer and jurisdiction. Proper protective-device selection (MCB, MCCB, RCBO, or fuse) requires verification against the actual derated cable capacity, fault level, breaking capacity, trip characteristics and coordination with upstream/downstream protection, and any short-circuit or coordination study required for the installation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this replace a full cable sizing and voltage-drop study?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No — this is a preliminary, educational estimate using standard formulas and typical resistance values. A final installation design should also account for ambient temperature derating, grouping of multiple cables, installation method (conduit, tray, buried, etc.), harmonic loading, and the specific requirements of your local electrical code, ideally reviewed by a qualified electrical engineer."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What size cable do I need for a given current?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "As a rough guide, using representative illustrative reference values with the metric mm² sizing convention commonly used across India, the UK and Europe, the Middle East, Australia, and South Africa, in this calculator's simplified reference table, 4 sq.mm copper is assigned a preliminary reference capacity of around 25 A, 6 sq.mm around 32 A, and 10 sq.mm around 40 A. The exact figure depends on insulation type, installation method, ambient temperature, and grouping with other cables, which is why this calculator also runs a voltage-drop check at your entered length rather than relying on ampacity alone. The USA and Canada use AWG-based sizing instead — see the reference chart above for the mm² range covered here."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use this calculator for domestic house wiring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, for a preliminary estimate, but not as a substitute for the applicable domestic wiring rules, protective-device requirements, installation method and final circuit design. Select single phase, enter your supply voltage (typically 230 V), your connected load in kW, and the cable run length from the distribution board to the point of use. As a preliminary screening approach, keeping the estimated voltage drop under the 3% preliminary screening target and choosing the next standard cable size above the calculated minimum is useful groundwork — but always have the final wiring plan checked against your local wiring code."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this calculator apply ambient temperature or grouping derating automatically?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No — this calculator's reference capacity values are simplified baseline figures for preliminary screening, and do not represent an installation-specific 30°C IEC/IS ampacity table. If your installation runs at higher ambient temperature or has multiple loaded cables grouped together, apply the applicable correction factors to the reference capacity shown above and select the next standard size that satisfies the resulting derated condition. Do not assume that moving up one or two standard sizes automatically compensates for derating."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How should parallel single-core cables be arranged for balanced phase currents?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Cables of the same phase should be grouped and positioned according to the arrangement diagram in the applicable installation standard (such as AS/NZS 3008.1 or IEC 60364-5-52) for the number of parallel cables per phase in your design, rather than an arbitrary layout — mutual inductance between an uneven arrangement of parallel cables and phases can otherwise leave some cables carrying meaningfully more current than others, and this calculator does not model or check parallel-cable arrangement."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What size should the neutral conductor be?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "By default, size the neutral the same as the phase conductors — the calculator's result panel shows this default value alongside the active conductor size. For predominantly balanced multiphase loads with low harmonic content, a reduced neutral may be permitted under the applicable standard, but it must still carry the expected out-of-balance current; the calculator does not check for or apply that reduction. Where a substantial population of nonlinear single-phase loads is expected (such as electronic lighting drivers, switched-mode power supplies, and IT/data equipment on a three-phase four-wire system), the neutral may need to be sized equal to or larger than the phase conductors, since the triplen harmonics from these loads can add together in the neutral rather than cancelling — the calculator does not detect harmonic loading, so increase the neutral size manually if this applies to your installation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the preliminary earth (CPC) conductor size calculated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The calculator uses a simplified, widely-cited rule of thumb: the earth/CPC conductor is sized the same as the active conductor up to 16 sq.mm, held at 16 sq.mm for active sizes from 16 to 35 sq.mm, and sized at half the active conductor's cross-section (rounded up to the next standard size) above 35 sq.mm. This is a preliminary approximation only, not the adiabatic calculation (based on fault current and disconnection time) that most wiring standards require for a final design — use the dedicated Earthing Conductor Size Calculator for a properly calculated value."
+      }
+    }
+  ]
+}
+</script>
 <link rel="stylesheet" href="/assets/site.min.css?v=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
