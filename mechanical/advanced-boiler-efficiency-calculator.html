@@ -190,13 +190,10 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
 
-<link rel="preload" as="style" href="/assets/site.min.css?v=1">
-<link rel="stylesheet" href="/assets/site.min.css?v=1" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="/assets/site.min.css?v=1"></noscript>
+<link rel="stylesheet" href="/assets/site.min.css?v=1">
 
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional"></noscript>
 
 <style>
   body{font-family:'Inter',system-ui,sans-serif;}
@@ -329,9 +326,13 @@
   .fld:last-child{ border-bottom:none; }
   .fld > label{ font-size:13.5px; font-weight:600; color:#334155; line-height:1.35; }
   .fld > label small{ display:block; font-weight:400; font-size:11.5px; color:#64748b; margin-top:2px; }
-  .fld .input-field{ margin:0; }
+  .fld > *{ min-width:0; }                       /* number inputs/selects have an intrinsic width — without this they push the grid wider than the phone viewport */
+  .fld .input-field{ margin:0; width:100%; max-width:100%; }
   .fld select.input-field{ padding:10px 8px; cursor:pointer; }
   .fld .unit-fixed{ font-size:13px; color:#64748b; padding-left:4px; }
+  #calculator .formula-chip{ white-space:normal; overflow-wrap:anywhere; max-width:100%; }
+  #resultPanel .quick-chip .qval, #resultPanel .breakdown-table td, #resultPanel .breakdown-table th{ overflow-wrap:anywhere; }
+  #calculator, #resultPanel, #calculator .calc-input-panel{ max-width:100%; }
   @media (max-width:640px){
     .fld{ grid-template-columns:minmax(0,1fr) minmax(0,7.5rem); }
     .fld > label{ grid-column:1 / -1; }
@@ -373,18 +374,19 @@
   .sub-h{ font-family:'Space Grotesk',system-ui,sans-serif; font-size:18px; font-weight:700; color:#0B1220; margin:30px 0 12px; }
 
   .dg-figure{ margin:24px 0; border:1px solid #e2e8f0; border-radius:14px; background:#fff; padding:14px; }
-  .dg-scroll{ overflow-x:auto; }
+  .dg-scroll{ overflow-x:auto; min-width:0; max-width:100%; }
   .dg-figure svg{ display:block; width:100%; min-width:560px; height:auto; }
   .dg-figure figcaption{ font-size:12.5px; color:#64748b; margin-top:8px; line-height:1.5; }
   .dg-ink{ fill:#0B1220; } .dg-muted{ fill:#64748b; }
   .dg-line{ stroke:#475569; } .dg-surface{ fill:#f8fafc; } .dg-water{ fill:#e0f2fe; }
   .dg-furnace{ fill:#fff7ed; } .dg-feedfill{ fill:#cbd5e1; } .dg-white{ fill:#ffffff; }
 
-  .fx-grid{ display:grid; gap:14px; margin-top:18px; }
+  .fx-grid{ display:grid; grid-template-columns:minmax(0,1fr); gap:14px; margin-top:18px; }
+  .fx-card, .loss-card{ min-width:0; max-width:100%; }
   .fx-card{ border:1px solid #e2e8f0; border-radius:14px; background:#f8fafc; padding:16px 18px; }
   .fx-card h3{ font-size:15px; font-weight:700; color:#0B1220; margin:0; }
   .fx-card .fx-note{ font-size:13px; color:#64748b; margin:6px 0 0; line-height:1.5; }
-  .fx-scroll{ overflow-x:auto; }
+  .fx-scroll{ overflow-x:auto; min-width:0; max-width:100%; }
   .fx{ font-family:"Cambria Math","STIX Two Math","Latin Modern Math","Times New Roman",Georgia,serif; font-size:clamp(1.3rem,3.4vw,1.9rem); color:#0B1220; display:flex; align-items:center; gap:.35em; white-space:nowrap; padding:.45em 0 .2em; }
   .fx.sm{ font-size:clamp(1.05rem,2.6vw,1.4rem); }
   .fx i{ font-style:italic; }
@@ -392,7 +394,10 @@
   .frac{ display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; }
   .frac > span:first-child{ border-bottom:2px solid currentColor; padding:0 .3em .12em; }
   .frac > span:last-child{ padding:.12em .3em 0; }
-  .sym-table-wrap, .ref-table-wrap{ overflow-x:auto; margin-top:16px; }
+  .fx.wrap{ white-space:normal; flex-wrap:wrap; }
+  @media (max-width:640px){ .fx{ font-size:1.05rem; } .fx.sm{ font-size:.95rem; } }
+  @media (max-width:400px){ .fx{ font-size:.95rem; } .fx.sm{ font-size:.88rem; } }
+  .sym-table-wrap, .ref-table-wrap{ overflow-x:auto; min-width:0; max-width:100%; margin-top:16px; }
   .ref-table{ width:100%; border-collapse:collapse; font-size:13.5px; }
   .ref-table th, .ref-table td{ text-align:left; padding:9px 10px; border-bottom:1px solid #e5e7eb; vertical-align:top; }
   .ref-table th{ font-size:11.5px; color:#475569; background:#f1f5f9; font-weight:700; }
@@ -451,6 +456,41 @@
   body.dark-theme .wx-box{ background:#0b1d30; border-color:#0369a1; }
   body.dark-theme .wx-steps li{ color:#cbd5e1; }
   body.dark-theme .wx-steps code, body.dark-theme .wx-answer{ color:#f1f5f9; }
+  #faqs summary{ gap:12px; }
+  #faqs summary .plus{ flex:none; }
+  #calculator .breakdown-wrap, #resultPanel .breakdown-wrap{ overflow-x:auto; }
+
+  /* ===== Toggle buttons + calculator header bar — same treatment as transformer-size.html ===== */
+  .toggle-btn{
+    flex:1; text-align:center; border:none; background:transparent; font-family:inherit;
+    padding:10px 8px; font-size:13px; font-weight:600; border-radius:8px; cursor:pointer;
+    color:#64748b; transition:.15s ease;
+  }
+  .toggle-btn.active{ background:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  body:not(.dark-theme) #calculator #basisToggleBar{ background:#0B1220 !important; border:none !important; padding:3px !important; }
+  body:not(.dark-theme) #calculator .toggle-btn{ color:#fff !important; }
+  body:not(.dark-theme) #calculator .toggle-btn.active{ background:#fff !important; color:#0B1220 !important; box-shadow:none !important; font-weight:700; }
+  #calculator #unitToggleBar{ background:rgba(255,255,255,0.10) !important; border:none !important; padding:3px !important; }
+  #calculator #unitToggleBar{ flex:1 1 300px; max-width:520px; }
+  #calculator .toggle-btn{ white-space:nowrap; }
+  #calculator #unitToggleBar .toggle-btn{ color:#fff !important; }
+  #calculator #unitToggleBar .toggle-btn.active{ background:#fff !important; color:#0B1220 !important; box-shadow:none !important; font-weight:700; }
+  body.dark-theme #calculator #basisToggleBar{ background:#0f1c30 !important; padding:3px !important; }
+  body.dark-theme #calculator #basisToggleBar .toggle-btn{ color:#cbd5e1; }
+  body.dark-theme #calculator #basisToggleBar .toggle-btn.active{ background:#0ea5e9; color:#fff; }
+
+  #calculator #calcHeaderBar{
+    background:#0B1220; margin:-1.5rem -1.5rem 1.25rem; padding:0.85rem 1.25rem; border-radius:12px 12px 0 0;
+  }
+  @media (min-width:768px){
+    #calculator #calcHeaderBar{ margin:-2rem -2rem 1.5rem; padding:1rem 2rem; }
+  }
+  #calculator #calcHeaderBar h2{ color:#fff !important; margin-bottom:0.25rem !important; }
+  #calculator #calcHeaderBar p{ color:#94a3b8 !important; margin-bottom:0.75rem !important; }
+  #calculator #calcHeaderBar .unit-bar{ background:transparent; border:none; padding:0; margin:0; }
+  #calculator #calcHeaderBar .unit-bar-label{ color:#fff; }
+  #calculator #calcHeaderBar .unit-bar-label small{ color:#94a3b8; }
+  body.dark-theme #calculator #calcHeaderBar{ background:#16233a; }
 
 </style>
 </head>
@@ -517,9 +557,11 @@
     <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
 
       <div id="calcHeaderBar">
+        <h2 id="calcTitle" class="font-display font-semibold text-lg text-brandDark mb-1">Direct Method with Blowdown &amp; Load Factor</h2>
+        <p id="calcSubtitle" class="text-xs text-gray-500">Fuel-to-steam efficiency from estimated net steam (feed water − blowdown). Blowdown heat is reported separately as a loss. Enthalpies from IAPWS-IF97.</p>
         <div class="unit-bar">
           <span class="unit-bar-label" id="unitSysLabel">Unit system<small>Sets every field unit and the result units</small></span>
-          <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="unitSysLabel">
+          <div id="unitToggleBar" class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="unitSysLabel">
             <button type="button" class="toggle-btn" data-sys="si" aria-pressed="false" onclick="setSystem('si')">SI</button>
             <button type="button" class="toggle-btn" data-sys="sibar" aria-pressed="true" onclick="setSystem('sibar')">SI (bar)</button>
             <button type="button" class="toggle-btn" data-sys="mks" aria-pressed="false" onclick="setSystem('mks')">MKS</button>
@@ -530,8 +572,6 @@
 
       <!-- DIRECT METHOD -->
       <div class="calc-panel active" id="panel-direct">
-        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Direct Method with Blowdown &amp; Load Factor</h2>
-        <p class="text-xs text-gray-500" style="margin-bottom:.5rem;">Fuel-to-steam efficiency from estimated net steam (feed water − blowdown). Blowdown heat is reported separately as a loss. Enthalpies from IAPWS-IF97.</p>
         <p class="calc-note">Saturated steam only — not for superheated-steam or supercritical boilers.</p>
         <div>
           <div class="fld">
@@ -561,7 +601,7 @@
           </div>
           <div class="fld" style="padding-top:2px;">
             <span class="unit-bar-label" id="cvBasisLabel" style="font-weight:500;font-size:12.5px;">CV basis</span>
-            <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="cvBasisLabel" style="grid-column:span 2;margin-top:0;">
+            <div id="basisToggleBar" class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="cvBasisLabel" style="grid-column:span 2;margin-top:0;">
               <button type="button" class="toggle-btn" data-basis="GCV" aria-pressed="true" onclick="setBasis('GCV')">GCV / HHV</button>
               <button type="button" class="toggle-btn" data-basis="NCV" aria-pressed="false" onclick="setBasis('NCV')">NCV / LHV</button>
             </div>
@@ -598,8 +638,6 @@
 
       <!-- INDIRECT METHOD -->
       <div class="calc-panel" id="panel-indirect">
-        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Indirect (Heat Loss) Method — L1–L3 Calculated</h2>
-        <p class="text-xs text-gray-500" style="margin-bottom:.5rem;">Efficiency = 100 − (L1 + … + L7 + blowdown + other). L4 onward are user-entered loss allowances — for a formal performance test, derive them from the applicable test procedure, fuel analysis and flue gas analysis.</p>
         <div class="calc-badges"><span class="badge-calc">Calculated: L1–L3</span><span class="badge-user">User / test-data input: L4–L7, blowdown, other</span><span class="badge-user">GCV basis only</span></div>
         <p class="whatif-note" style="margin:0 0 10px;">L1–L7 labels follow this calculator's simplified presentation; exact loss numbering varies by standard.</p>
         <div>
@@ -974,7 +1012,7 @@
     </div>
     <div class="fx-card">
       <h3>4. Indirect (heat loss) method</h3>
-      <div class="fx-scroll"><div class="fx"><i>η</i> = 100 − (<i>L</i><sub>1</sub> + <i>L</i><sub>2</sub> + <i>L</i><sub>3</sub> + <i>L</i><sub>4</sub> + <i>L</i><sub>5</sub> + <i>L</i><sub>6</sub> + <i>L</i><sub>7</sub> + <i>L</i><sub>BD</sub> + <i>L</i><sub>other</sub>)</div></div>
+      <div class="fx-scroll"><div class="fx wrap"><i>η</i> = 100 − (<i>L</i><sub>1</sub> + <i>L</i><sub>2</sub> + <i>L</i><sub>3</sub> + <i>L</i><sub>4</sub> + <i>L</i><sub>5</sub> + <i>L</i><sub>6</sub> + <i>L</i><sub>7</sub> + <i>L</i><sub>BD</sub> + <i>L</i><sub>other</sub>)</div></div>
       <p class="fx-note">Each loss is a percentage of fuel heat input (GCV basis only). L1–L3 are calculated using the kcal/°C constants below; L4–L7, blowdown and other are user-entered allowances — for a formal test, derive them from the applicable test procedure and measurements.</p>
     </div>
   </div>
@@ -1769,7 +1807,13 @@ Boiler Efficiency: ${fmt(efficiency, 2)} %`;
   function activeKey(){ const a = document.querySelector('.tab-pill.active'); return a ? a.dataset.cat : 'direct'; }
   function calculateActive(){ calcFns[activeKey()](); }
 
+  const PANEL_TEXT = {
+    direct: ['Direct Method with Blowdown &amp; Load Factor', 'Fuel-to-steam efficiency from estimated net steam (feed water − blowdown). Blowdown heat is reported separately as a loss. Enthalpies from IAPWS-IF97.'],
+    indirect: ['Indirect (Heat Loss) Method — L1–L3 Calculated', 'Efficiency = 100 − (L1 + … + L7 + blowdown + other). L4 onward are user-entered loss allowances — for a formal performance test, derive them from the applicable test procedure, fuel analysis and flue gas analysis.']
+  };
   function switchCalc(key){
+    el('calcTitle').innerHTML = PANEL_TEXT[key][0];
+    el('calcSubtitle').textContent = PANEL_TEXT[key][1];
     document.querySelectorAll('.tab-pill').forEach(btn => {
       const on = btn.dataset.cat === key;
       btn.classList.toggle('active', on);
