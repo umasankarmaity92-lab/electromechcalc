@@ -111,9 +111,28 @@ class InsertAfter {
 // same localStorage key / matchMedia fallback that site-nav.js uses.
 const EARLY_THEME_SCRIPT = `<script>(function(){try{var t=localStorage.getItem("emc-theme")||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark-theme":"light-theme");var r=document.documentElement;r.classList.remove("dark-theme","light-theme");r.classList.add(t);}catch(e){}})();</script>`;
 
+// Preconnect hints for the two ad origins PageSpeed Insights flags as
+// "Preconnect candidates" on every page (est. LCP savings: ~260 ms for
+// fundingchoicesmessages, ~90 ms for pagead2). The AdSense tag in each
+// page's <head> is async, so the browser only starts the DNS + TLS
+// handshake for these origins once that script begins loading; hinting
+// them here gets the connection open earlier, which matters most on
+// mobile where the ad payload (~250 KiB) is competing with the page's
+// own CSS/JS for bandwidth.
+//
+// crossorigin on pagead2 matches how adsbygoogle.js is actually
+// requested (its <script> tag carries crossorigin="anonymous") —
+// without it the browser would warm a connection it can't reuse.
+// Together with the two Google Fonts preconnects already in each
+// page's <head> this makes 4, which is the limit Lighthouse
+// recommends — do not add more.
+const AD_PRECONNECT_TAGS =
+  '<link rel="preconnect" href="https://fundingchoicesmessages.google.com">' +
+  '<link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>';
+
 class PrependToHead {
   element(element) {
-    element.prepend(EARLY_THEME_SCRIPT, { html: true });
+    element.prepend(AD_PRECONNECT_TAGS + EARLY_THEME_SCRIPT, { html: true });
   }
 }
 

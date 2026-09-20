@@ -480,20 +480,34 @@ document.addEventListener("DOMContentLoaded", () => {
       return searchIndexPromise;
     }
 
-    // Warm the cache once the browser is idle (falls back to window
-    // "load" on browsers without requestIdleCallback, e.g. Safari)
-    // instead of firing synchronously on every page load. The eager
-    // version sat on the critical rendering path — PageSpeed's network
-    // dependency tree showed this single fetch (search-index.json,
-    // ~12 KiB) accounting for the page's entire "maximum critical path
-    // latency," directly hurting FCP/LCP on every page, even for
-    // visitors who never touch the search box. Deferring to idle keeps
-    // the original goal (index warm before the first keystroke, for
-    // most users) without blocking first paint.
-    if (window.requestIdleCallback) {
-      requestIdleCallback(getSearchIndex, { timeout: 3000 });
+    // Warm the cache once the page has fully loaded AND the browser is
+    // idle, instead of firing synchronously on every page load. The
+    // eager version sat on the critical rendering path — PageSpeed's
+    // network dependency tree showed this single fetch
+    // (search-index.json, ~13 KiB) as the LAST node of the critical
+    // chain, i.e. the page's entire "maximum critical path latency,"
+    // directly hurting FCP/LCP on every page, even for visitors who
+    // never touch the search box.
+    //
+    // Scheduling the idle callback at DOMContentLoaded (the previous
+    // version) wasn't enough: on a slow connection the browser can go
+    // idle while the page's own CSS/JS are still in flight, so the
+    // fetch still landed inside the critical window. Waiting for
+    // "load" first takes it off that path entirely. The index is still
+    // warm well before a realistic first keystroke — and getSearchIndex
+    // is called again on input anyway, so a user who types instantly
+    // just waits for this same fetch, never for a missing index.
+    const warmSearchIndexWhenIdle = () => {
+      if (window.requestIdleCallback) {
+        requestIdleCallback(getSearchIndex, { timeout: 3000 });
+      } else {
+        setTimeout(getSearchIndex, 200);
+      }
+    };
+    if (document.readyState === "complete") {
+      warmSearchIndexWhenIdle();
     } else {
-      window.addEventListener("load", getSearchIndex);
+      window.addEventListener("load", warmSearchIndexWhenIdle, { once: true });
     }
 
     function escapeHTML(str) {
