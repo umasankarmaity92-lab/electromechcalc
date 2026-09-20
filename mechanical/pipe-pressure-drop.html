@@ -1021,7 +1021,34 @@
   const deleteSpeed = 55;
   const pauseAfterTyping = 1800;
   const pauseAfterDeleting = 500;
+
+  // Pause while the hero text is scrolled out of view or the tab is in
+  // the background (nobody can see it), resume from the same letter when
+  // it's visible again. Text, speed and cursor are unchanged — this only
+  // stops the text/layout update every 55-90 ms while the user is
+  // further down the page.
+  let inView = true;
+  let waiting = false;
+  const isActive = () => inView && !document.hidden;
+  const resumeIfWaiting = () => {
+    if (waiting && isActive()) {
+      waiting = false;
+      animate();
+    }
+  };
+  if (window.IntersectionObserver) {
+    new IntersectionObserver((entries) => {
+      inView = entries[entries.length - 1].isIntersecting;
+      resumeIfWaiting();
+    }).observe(el.closest(".hero-typing-box") || el);
+  }
+  document.addEventListener("visibilitychange", resumeIfWaiting);
+
   function animate() {
+    if (!isActive()) {
+      waiting = true;
+      return;
+    }
     const word = words[wordIndex];
     if (deleting) {
       if (charIndex > 0) {

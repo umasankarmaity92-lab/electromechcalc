@@ -56,13 +56,32 @@ document.addEventListener("DOMContentLoaded", () => {
       // Clear the static SVG poster right before Lottie takes over the
       // container, so there's no double-render flash.
       heroLottieEl.innerHTML = "";
-      lottie.loadAnimation({
+      const heroAnim = lottie.loadAnimation({
         container: heroLottieEl,
         renderer: "svg",
         loop: true,
         autoplay: !prefersReducedMotion,
         path: "/assets/electromechcalc-hero.json"
       });
+
+      // Pause the looping animation whenever nobody can see it — hero
+      // scrolled out of view, or the tab in the background — and resume
+      // it when it's visible again. Looks identical to the user; it just
+      // stops the SVG re-rendering every frame (main-thread work) while
+      // they're using a calculator further down the page.
+      if (prefersReducedMotion) return;
+      let heroInView = true;
+      const syncHeroPlayback = () => {
+        if (heroInView && !document.hidden) heroAnim.play();
+        else heroAnim.pause();
+      };
+      if (window.IntersectionObserver) {
+        new IntersectionObserver(entries => {
+          heroInView = entries[entries.length - 1].isIntersecting;
+          syncHeroPlayback();
+        }).observe(heroLottieEl);
+      }
+      document.addEventListener("visibilitychange", syncHeroPlayback);
     };
 
     const loadLottieScript = () => {
@@ -81,17 +100,25 @@ document.addEventListener("DOMContentLoaded", () => {
       document.head.appendChild(lottieScript);
     };
 
-    // A static SVG poster is already painted inside #hero-lottie by the
-    // server-rendered HTML, so it's safe to push the real animation off
-    // the critical path entirely — start it once the browser is idle
-    // (falls back to window "load" on browsers without
-    // requestIdleCallback, e.g. Safari) instead of on DOMContentLoaded.
-    // This stops the CDN script fetch + JSON fetch chain from competing
-    // with LCP-critical resources on first paint.
-    if (window.requestIdleCallback) {
-      requestIdleCallback(loadLottieScript, { timeout: 3000 });
+    // Push the animation fully off the critical path: wait for the
+    // window "load" event (every image/CSS/script the page itself needs
+    // is done), THEN wait for the browser to go idle before fetching
+    // lottie-light.min.js + the animation JSON. Previously the idle
+    // callback was scheduled at DOMContentLoaded, so on slow mobile
+    // connections the ~150 KB library download could start while the
+    // page's own resources were still loading. setTimeout fallback
+    // covers browsers without requestIdleCallback (e.g. Safari).
+    const startHeroLottieWhenIdle = () => {
+      if (window.requestIdleCallback) {
+        requestIdleCallback(loadLottieScript, { timeout: 3000 });
+      } else {
+        setTimeout(loadLottieScript, 200);
+      }
+    };
+    if (document.readyState === "complete") {
+      startHeroLottieWhenIdle();
     } else {
-      window.addEventListener("load", loadLottieScript);
+      window.addEventListener("load", startHeroLottieWhenIdle, { once: true });
     }
   }
 

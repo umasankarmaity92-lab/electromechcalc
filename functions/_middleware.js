@@ -129,10 +129,54 @@ class PrependToHead {
 // <script src="/assets/common.js"> (holds scrollToResult()) — appended
 // once to <head> on every page. `defer` means load order relative to
 // other head tags doesn't matter.
-const COMMON_JS_TAG = '<script src="/assets/common.js" defer></script>';
+// The tag is built per request (see onRequest) so it can carry the same
+// ?v=<deploy id> cache-buster as every other /assets/ file — this tag is
+// appended AFTER HTMLRewriter's own scan, so VersionAssetURL below never
+// sees it and cannot version it on its own.
+const COMMON_JS_PATH = "/assets/common.js";
 class AppendCommonScriptToHead {
+  constructor(src) {
+    this.tag = `<script src="${src}" defer></script>`;
+  }
   element(element) {
-    element.append(COMMON_JS_TAG, { html: true });
+    element.append(this.tag, { html: true });
+  }
+}
+
+// ---------------------------------------------------------------------
+// Automatic cache-busting for /assets/ files.
+//
+// _headers serves /assets/* with "max-age=31536000, immutable", so a
+// browser that already has e.g. /assets/site-nav.js will NOT re-request
+// it for a year — editing the file without renaming it would leave
+// returning visitors on the old copy. This rewrites every
+// <script src="/assets/..."> and <link href="/assets/..."> on every page
+// to carry ?v=<first 8 chars of the Cloudflare Pages commit SHA>, so
+// every deploy produces new URLs automatically. An existing ?v=
+// (e.g. site.min.css?v=1) is replaced; other query params are kept.
+// With no commit SHA (local dev) nothing is rewritten.
+//
+// NOT covered: files loaded from inside JS at runtime
+// (/assets/lottie-light.min.js, /assets/electromechcalc-hero.json via
+// site-nav.js; /assets/share-modal.js via common.js). If one of those
+// ever changes, rename the file instead.
+// ---------------------------------------------------------------------
+function withAssetVersion(path, version) {
+  if (!version || !path || !path.startsWith("/assets/")) return path;
+  const u = new URL(path, "https://v.invalid");
+  u.searchParams.set("v", version);
+  return u.pathname + u.search + u.hash;
+}
+
+class VersionAssetURL {
+  constructor(attr, version) {
+    this.attr = attr;
+    this.version = version;
+  }
+  element(element) {
+    const val = element.getAttribute(this.attr);
+    const next = withAssetVersion(val, this.version);
+    if (next !== val) element.setAttribute(this.attr, next);
   }
 }
 
@@ -516,15 +560,58 @@ function getSearchIndexResponse(context, origin) {
   return getCachedJSON(context, origin, "/search-index.json", SEARCH_INDEX_CACHE_TTL_SECONDS);
 }
 
+// ---------------------------------------------------------------------
+// Edge cache for the FINAL rewritten HTML.
+//
+// Everything this middleware injects depends only on the URL path and
+// on files from the same deploy (partials, search-index.json,
+// nav-order.json) — theme is applied client-side, and nothing varies
+// per visitor. So the finished page can be stored in Cloudflare's
+// per-location cache and served straight from there, skipping the 4
+// sub-fetches + JSON parse + HTMLRewriter pass on every repeat hit.
+//
+// - Key = origin + path + deploy commit SHA: a new deploy can never
+//   serve the previous build's HTML. Query strings are ignored in the
+//   key because the rewritten HTML never depends on them.
+// - Only GET, status 200, text/html, no Set-Cookie is stored.
+//   404 pages, redirects and HEAD requests are never cached.
+// - Browsers still get "max-age=0, must-revalidate" (Pages' HTML
+//   default), so they always come back to the edge for HTML.
+// - Response header X-EMC-Edge-Cache: HIT / MISS for checking in
+//   DevTools. No commit SHA (local dev) = cache fully disabled.
+// ---------------------------------------------------------------------
+const HTML_EDGE_CACHE_TTL_SECONDS = 86400; // 1 day; a deploy invalidates it anyway (key includes the build)
+const BROWSER_HTML_CACHE_CONTROL = "public, max-age=0, must-revalidate";
+
+function htmlCacheKey(url, buildId) {
+  return new Request(`${url.origin}${url.pathname}?__html_build=${buildId}`, { method: "GET" });
+}
+
+function withCacheStatus(response, status) {
+  const out = new Response(response.body, response);
+  out.headers.set("Cache-Control", BROWSER_HTML_CACHE_CONTROL);
+  out.headers.set("X-EMC-Edge-Cache", status);
+  return out;
+}
+
 export async function onRequest(context) {
+  const url = new URL(context.request.url);
+  const buildId = (context.env && context.env.CF_PAGES_COMMIT_SHA) || "";
+  const assetVersion = buildId.slice(0, 8);
+  const edgeCache = typeof caches !== "undefined" && caches.default ? caches.default : null;
+  const canUseHtmlCache = !!(edgeCache && buildId && context.request.method === "GET");
+
+  if (canUseHtmlCache) {
+    const hit = await edgeCache.match(htmlCacheKey(url, buildId));
+    if (hit) return withCacheStatus(hit, "HIT");
+  }
+
   const response = await context.next();
 
   const contentType = response.headers.get("content-type") || "";
   if (!contentType.includes("text/html")) {
     return response;
   }
-
-  const url = new URL(context.request.url);
 
   const [headerRes, footerRes, searchIndexRes, navOrderRes] = await Promise.all([
     context.env.ASSETS.fetch(new URL("/partials/header.html", url.origin)),
@@ -587,9 +674,11 @@ export async function onRequest(context) {
   const exploreMoreHTML = buildExploreMoreHTML(url.pathname, searchIndex);
   const breadcrumbHTML = buildBreadcrumbHTML(url.pathname, searchIndex);
 
-  return new HTMLRewriter()
+  const transformed = new HTMLRewriter()
     .on("head", new PrependToHead())
-    .on("head", new AppendCommonScriptToHead())
+    .on("head", new AppendCommonScriptToHead(withAssetVersion(COMMON_JS_PATH, assetVersion)))
+    .on('script[src^="/assets/"]', new VersionAssetURL("src", assetVersion))
+    .on('link[href^="/assets/"]', new VersionAssetURL("href", assetVersion))
     .on('div[class*="lg:col-span-3"][class*="border-gray-100"]', new AddCalcInputPanelClass())
     .on('div[class*="lg:col-span-2"][class*="flex-col"][class*="gap-4"]', new AddResultPanelId())
     .on('button[onclick^="calculate"]', new AddScrollToResultOnClick())
@@ -602,4 +691,16 @@ export async function onRequest(context) {
     .on("#site-footer", new InsertBefore("</main>"))
     .on("#site-footer", new InjectHTML(footerHTML))
     .transform(response);
+
+  const cacheable =
+    canUseHtmlCache &&
+    response.status === 200 &&
+    !response.headers.has("Set-Cookie");
+
+  if (!cacheable) return transformed;
+
+  const toStore = new Response(transformed.body, transformed);
+  toStore.headers.set("Cache-Control", `public, s-maxage=${HTML_EDGE_CACHE_TTL_SECONDS}`);
+  context.waitUntil(edgeCache.put(htmlCacheKey(url, buildId), toStore.clone()));
+  return withCacheStatus(toStore, "MISS");
 }
