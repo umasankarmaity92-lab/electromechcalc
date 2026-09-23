@@ -412,6 +412,22 @@ function buildExploreMoreHTML(pathname, index) {
 </section>`;
 }
 
+// Breadcrumb link targets. Category hubs must be the REAL hub pages
+// (bare /electrical, /mechanical, /financial URLs do not exist).
+const BREADCRUMB_CATEGORY_HUBS = {
+  Electrical: "/electrical-calculators",
+  Mechanical: "/mechanical-calculators",
+  Financial: "/financial-calculators",
+  Blog: "/blog-guides",
+};
+
+// Sub-level crumbs, keyed by a search-index.json entry's "subcategory".
+// Add a new key here (and the matching section id on the hub page)
+// before tagging pages with it.
+const BREADCRUMB_SUBCATEGORY_LINKS = {
+  Instrumentation: { label: "Instrumentation", href: "/electrical-calculators#instrumentation" },
+};
+
 // Builds the breadcrumb HTML block for the current page from the
 // same /search-index.json used by search and Related Calculators.
 // Returns "" (nothing gets injected, div stays empty) for:
@@ -431,10 +447,28 @@ function buildBreadcrumbHTML(pathname, index) {
 
   // "General" pages (About, Contact, Privacy, etc.) skip the category
   // segment since it isn't a real nav dropdown — go straight to the
-  // page title.
+  // page title. The category crumb links to its real hub page when one
+  // exists (bare /electrical etc. are 404s, so never link those).
   if (current.category && current.category !== "General") {
+    const hub = BREADCRUMB_CATEGORY_HUBS[current.category];
+    const label = escapeHTML(current.category);
     crumbs.push(
-      `<span class="breadcrumb-sep">&rarr;</span><span class="breadcrumb-category">${escapeHTML(current.category)}</span>`
+      hub
+        ? `<span class="breadcrumb-sep">&rarr;</span><a href="${hub}" class="breadcrumb-category breadcrumb-link">${label}</a>`
+        : `<span class="breadcrumb-sep">&rarr;</span><span class="breadcrumb-category">${label}</span>`
+    );
+  }
+
+  // Optional sub-level from the index entry's "subcategory" field, e.g.
+  // RTD / thermocouple pages carry "subcategory": "Instrumentation" and
+  // get Home → Electrical → Instrumentation → Page, where
+  // "Instrumentation" jumps to that section of the Electrical hub. Only
+  // subcategories listed in BREADCRUMB_SUBCATEGORY_LINKS are rendered,
+  // so a typo in search-index.json can never produce a broken link.
+  const sub = current.subcategory && BREADCRUMB_SUBCATEGORY_LINKS[current.subcategory];
+  if (sub) {
+    crumbs.push(
+      `<span class="breadcrumb-sep">&rarr;</span><a href="${sub.href}" class="breadcrumb-category breadcrumb-link">${escapeHTML(sub.label)}</a>`
     );
   }
 
@@ -442,7 +476,7 @@ function buildBreadcrumbHTML(pathname, index) {
     `<span class="breadcrumb-sep">&rarr;</span><span class="breadcrumb-current">${escapeHTML(current.title)}</span>`
   );
 
-  return `<!-- BREADCRUMB_BUILD_v2 --><nav class="breadcrumb-nav" aria-label="Breadcrumb">${crumbs.join("")}</nav>`;
+  return `<!-- BREADCRUMB_BUILD_v3 --><nav class="breadcrumb-nav" aria-label="Breadcrumb">${crumbs.join("")}</nav>`;
 }
 
 // ---------------------------------------------------------------------

@@ -375,6 +375,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (normalizePath(href) === currentPath) {
         link.classList.add("active");
         link.setAttribute("aria-current", "page");
+        // Blog dropdown groups (<details class="nav-group">): open every
+        // group that contains the current page, so the active link is
+        // visible as soon as the panel / mobile accordion opens.
+        let group = link.closest("details.nav-group");
+        while (group) {
+          group.open = true;
+          group = group.parentElement && group.parentElement.closest("details.nav-group");
+        }
       }
     });
 
