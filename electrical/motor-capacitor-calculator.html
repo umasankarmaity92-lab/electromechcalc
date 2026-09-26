@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.colorScheme = t === 'dark-theme' ? 'dark' : 'light';
+  } catch(e) {}
+})();
+</script>
+
+<title>Motor Capacitor Calculator – Start &amp; Run Capacitor Size (µF) | ElectroMechCalc</title>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7925875010930786"
+     crossorigin="anonymous"></script>
+
+<meta name="description" content="Free motor capacitor calculator: estimate start &amp; run capacitor size (µF) for single-phase motors by HP or kW, test µF from volts &amp; amps, and check replacements.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.electromechcalc.com/electrical/motor-capacitor-calculator">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroMechCalc">
+<meta property="og:title" content="Motor Capacitor Calculator – Start &amp; Run Capacitor Size">
+<meta property="og:description" content="Estimate start and run capacitor size (µF) for single-phase motors from HP or kW, test a capacitor from measured volts and amps, and check if a replacement is suitable.">
+<meta property="og:url" content="https://www.electromechcalc.com/electrical/motor-capacitor-calculator">
+<meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Motor Capacitor Calculator">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="en_AU">
+<meta property="og:locale:alternate" content="en_CA">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Motor Capacitor Calculator – Start &amp; Run Capacitor Size">
+<meta name="twitter:description" content="Estimate start and run capacitor size (µF) for single-phase motors, test µF from volts and amps, and check replacements.">
+<meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Motor Capacitor Calculator",
+  "url": "https://www.electromechcalc.com/electrical/motor-capacitor-calculator",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "Free motor capacitor calculator for single-phase motors: estimate typical start and run capacitor size (µF) from HP or kW, supply voltage and frequency; calculate a capacitor's actual µF from measured voltage and current; and check whether a replacement capacitor's µF and voltage rating are suitable.",
+  "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.electromechcalc.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Electrical Calculators", "item": "https://www.electromechcalc.com/electrical-calculators" },
+    { "@type": "ListItem", "position": 3, "name": "Motor Capacitor Calculator", "item": "https://www.electromechcalc.com/electrical/motor-capacitor-calculator" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I find the right capacitor size for a single-phase motor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Check the motor nameplate or the label on the old capacitor first — they give the exact µF value and voltage rating the manufacturer designed for. If both are unreadable, use a typical range based on HP, supply voltage and frequency, as this calculator gives, then confirm with the motor manufacturer or by checking the running current against the nameplate after fitting."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What size run and start capacitor does a 1 HP motor need?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It depends on the design, but for a 1 HP capacitor-start capacitor-run motor on 208–240 V at 60 Hz, run capacitors are typically around 15–25 µF and start capacitors around 189–227 µF. On 50 Hz supplies, values roughly 20% higher are typical (about 18–30 µF run and a 233–280 µF start marking), because capacitive reactance rises as frequency falls. Motors for 110–120 V use noticeably larger capacitors. The nameplate value always takes priority over these typical ranges."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What capacitor size do I need for a 1.5 HP motor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For a 1.5 HP capacitor-start capacitor-run motor on 208–240 V, typical values are a run capacitor of about 20–30 µF with a 216–259 µF start capacitor at 60 Hz, or about 24–36 µF run with a 270–324 µF start capacitor at 50 Hz. These are illustrative typical ranges, not a manufacturer specification — the value on the motor nameplate or the original capacitor always takes priority."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I calculate motor capacitor size in µF?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The exact value depends on the design of the motor's auxiliary winding, so it can only be calculated from the manufacturer's design data — which is why the nameplate value is the reference. Without it, estimate from a typical range by HP, supply voltage and frequency, as this calculator does. To find the actual µF of a capacitor already fitted, use C (µF) = I × 10⁶ ÷ (2π × f × V) with the measured capacitor current and voltage."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between a start capacitor and a run capacitor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A start capacitor is a high-value electrolytic capacitor rated for intermittent duty; it is in circuit for only a second or two during starting and is then disconnected by a centrifugal switch or start relay. A run capacitor is a lower-value film capacitor rated for continuous duty; it stays connected while the motor runs to improve running torque, efficiency and power factor. The two are not interchangeable."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use a 440 V capacitor instead of a 370 V capacitor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Generally yes, as long as the µF value, the type (run or start) and the physical fit are the same, and the equipment manufacturer does not specify otherwise. The voltage rating is a maximum, so a higher rating adds margin without changing the capacitance value. Never go the other way — a lower voltage rating than the original can fail early."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How close does the replacement µF value need to be?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For run capacitors, match the original value as closely as possible — most are labelled ±5% or ±6%, and a value outside that tolerance changes the auxiliary-winding current and can make the motor run hotter. Start capacitors are marked as a range, such as 189–227 µF, so choose a replacement with the same marked range or one that overlaps it closely."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I test a motor run capacitor with a clamp meter?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "With the motor running, measure the current in one capacitor lead and the voltage directly across the capacitor terminals, then calculate C (µF) = I × 10⁶ ÷ (2π × f × V). At 50 Hz this is about 3183 × A ÷ V, and at 60 Hz about 2652 × A ÷ V. Compare the result with the rated µF. Live measurements should only be taken by a qualified person using properly rated meters and PPE."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When should a motor capacitor be replaced?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Replace it if the case is bulging, cracked or leaking, if it measures outside its rated tolerance, or if the motor hums without starting, starts slowly, or runs hot with a higher-than-normal current. A run capacitor that has drifted well below its rating — for example more than about 10% low — is a common cause of weak starting and overheating."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if I use the wrong size capacitor on a motor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Too little capacitance reduces starting torque, so the motor may hum, start slowly or trip its overload. Too much run capacitance increases auxiliary-winding current and heating, which can shorten winding life even if the motor seems to run normally. An oversized start capacitor can also overheat if the start switch is slow to open."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do 50 Hz motors need more µF than 60 Hz motors?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A capacitor's reactance is Xc = 1 ÷ (2π × f × C), so at 50 Hz the same capacitor has about 20% more reactance than at 60 Hz. To give the auxiliary winding a similar current and phase shift, 50 Hz designs typically use roughly 20% more capacitance. This calculator applies that 60 ÷ 50 ratio to its 60 Hz typical ranges as an estimate; actual 50 Hz values depend on the motor's winding design and the manufacturer."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is a motor capacitor the same as a power factor correction capacitor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. A motor start or run capacitor is part of a single-phase motor's own starting and running circuit and is sized in µF for that winding. Power factor correction capacitors are connected across the supply to offset the reactive power of inductive loads and are sized in kVAr — use the APFC calculator for that."
+      }
+    }
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="/assets/site.min.css?v=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="fetch" href="/assets/electromechcalc-hero.json" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional"></noscript>
+
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+
+  .blueprint-grid{
+    background-image:
+      linear-gradient(#1f2f47 1px, transparent 1px),
+      linear-gradient(90deg, #1f2f47 1px, transparent 1px);
+    background-size:42px 42px;
+  }
+
+  .calc-card{ transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+  .calc-card:hover{ transform:translateY(-3px); box-shadow:0 14px 28px rgba(11,18,32,0.10); border-color:#0ea5e9; }
+
+  .formula-chip{
+    font-family:'JetBrains Mono',monospace; font-size:11px; background:#eaf6fd; color:#0369a1;
+    padding:3px 9px; border-radius:6px; display:inline-block;
+  }
+
+  details summary::-webkit-details-marker{display:none;}
+  details summary{list-style:none;cursor:pointer;}
+  details summary .plus{transition:transform .2s ease;}
+  details[open] summary .plus{transform:rotate(45deg);}
+
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+
+  .hero-typing-box{ display:flex; align-items:center; justify-content:center; min-height:2.75em; max-width:640px; margin:0 auto 0.5rem; padding:0.4rem 1rem; box-sizing:border-box; }
+  .hero-typing{ display:inline-flex; color:#d4af37; align-items:center; justify-content:center; text-align:center; white-space:normal; word-break:break-word; line-height:1.3; margin:0; }
+  .hero-cursor{ display:inline-block; width:2px; height:1em; margin-left:4px; flex-shrink:0; background:currentColor; animation:heroCursorBlink 0.8s steps(1) infinite; }
+  @keyframes heroCursorBlink{ 50%{ opacity:0; } }
+  @media (prefers-reduced-motion: reduce){ .hero-cursor{ animation:none; } }
+
+  .nav-dropdown .nav-dropdown-panel{ display:none; }
+  .nav-dropdown.nav-dropdown-open .nav-dropdown-panel{ display:block; }
+  .nav-dropdown-panel{ padding-top:10px; margin-top:-10px; }
+
+  .input-field{
+    width:100%; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;
+    padding:10px 12px; font-size:14px; color:#0B1220; outline:none;
+  }
+  .input-field:focus{ border-color:#0ea5e9; background:#fff; box-shadow:0 0 0 3px rgba(14,165,233,0.12); }
+  .unit-select{ max-width:96px; flex-shrink:0; }
+  .toggle-btn{
+    flex:1; text-align:center; padding:10px 8px; font-size:13px; font-weight:600;
+    border-radius:8px; cursor:pointer; color:#64748b; transition:.15s ease;
+  }
+  .toggle-btn.active{ background:#0ea5e9; color:#fff; box-shadow:0 4px 10px rgba(14,165,233,0.35); }
+  .toggle-btn:focus-visible, .action-icon-btn:focus-visible{ outline:3px solid #0ea5e9; outline-offset:2px; }
+  .hidden-field{ display:none !important; }
+  .result-tile{ background:linear-gradient(160deg,#0B1220,#15233a); }
+  .fund-badge{ background:conic-gradient(from 0deg,#0ea5e9,#38bdf8,#0ea5e9); }
+
+  .breakdown-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  .breakdown-table th, .breakdown-table td{
+    padding:7px 8px; text-align:right; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+  }
+  .breakdown-table th:first-child, .breakdown-table td:first-child{ text-align:left; }
+  .breakdown-table th{
+    color:#6b7280; font-weight:600; text-transform:uppercase; font-size:10.5px;
+    letter-spacing:0.4px; background:#f8fafc; position:sticky; top:0;
+  }
+  .breakdown-table td{ color:#111827; }
+  .breakdown-wrap{ max-height:320px; overflow-y:auto; overflow-x:auto; margin-top:4px; border-radius:8px; border:1px solid #e5e7eb; min-width:0; }
+
+  .calc-panel{ display:none; }
+  .calc-panel.active{ display:block; }
+
+  .nav-icon-badge{ display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:9999px; flex-shrink:0; box-shadow:0 2px 5px rgba(0,0,0,0.25); }
+  .nav-dropdown-link{ display:block; padding:8px 12px; border-radius:8px; font-size:13px; color:#0B1220; }
+  .nav-dropdown-link:hover{ background:rgba(14,165,233,.10); color:#0ea5e9; }
+  .mobile-sublink{ display:block; padding:6px 10px; border-radius:6px; font-size:13px; color:#e2e8f0; opacity:0.85; }
+  .mobile-sublink:hover{ background:rgba(14,165,233,.12); color:#0ea5e9; opacity:1; }
+  .mobile-dropdown summary::-webkit-details-marker{ display:none; }
+  .mobile-dropdown summary{ list-style:none; }
+  .mobile-dropdown summary .plus{ transition:transform .2s ease; }
+  .mobile-dropdown[open] summary .plus{ transform:rotate(45deg); }
+
+  body{ transition:background-color .2s ease, color .2s ease; }
+  body.dark-theme{ background:#0B1220 !important; color:#e2e8f0 !important; }
+  body.dark-theme .input-field{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .breakdown-table th{ background:#0f1c30; color:#94a3b8; }
+  body.dark-theme .breakdown-table td{ color:#e2e8f0; border-bottom-color:#1f2f47; }
+  body.dark-theme .breakdown-wrap{ border-color:#1f2f47; }
+
+  .action-icon-btn{
+    display:inline-flex; align-items:center; gap:6px; border:1px solid #e2e8f0; border-radius:8px;
+    padding:8px 12px; font-size:13px; color:#334155; background:#fff; cursor:pointer; transition:.15s ease;
+  }
+  .action-icon-btn:hover{ background:#f1f5f9; }
+  .action-icon-btn.active-like{ color:#059669; border-color:#059669; }
+  .action-icon-btn.active-dislike{ color:#dc2626; border-color:#dc2626; }
+  body.dark-theme .action-icon-btn{ background:#0B1220; border-color:#1f2f47; color:#e2e8f0; }
+
+  .author-box{ border:2px solid #000000; }
+  body.dark-theme .author-box{ border-color:#ffffff; background:#0B1220; color:#e2e8f0; }
+  .lg\:col-span-2.flex.flex-col.gap-4{ min-width:0; }
+  .lg\:col-span-2.flex.flex-col.gap-4 > div{ min-width:0; }
+
+  body.dark-theme #cs-example-box{ background:rgba(14,165,233,0.07); border-color:#164e63; }
+  body.dark-theme #cs-example-box .text-gray-500{ color:#7dd3fc; }
+  body.dark-theme #cs-example-box .text-gray-600{ color:#cbd5e1; }
+  body.dark-theme #cs-example-box .text-gray-700{ color:#e2e8f0; }
+
+  .info-icon{
+    position:relative; display:inline-flex; align-items:center; justify-content:center;
+    width:15px; height:15px; border-radius:50%; background:#16a34a; color:#fff;
+    font-size:10px; font-weight:700; font-style:italic; line-height:1; cursor:pointer; flex-shrink:0;
+  }
+  .info-icon .info-tooltip{
+    display:none; position:absolute; left:0; top:135%; z-index:30; width:230px; max-width:60vw;
+    background:#111827; color:#fff; font-size:11px; font-weight:400; font-style:normal;
+    text-transform:none; letter-spacing:normal; line-height:1.45; padding:8px 10px; border-radius:6px;
+    box-shadow:0 6px 16px rgba(0,0,0,.2);
+  }
+  .info-icon:hover .info-tooltip, .info-icon:focus .info-tooltip, .info-icon:focus-visible .info-tooltip{ display:block; }
+
+  /* Page-scoped helpers (kept local so no new Tailwind utility is needed) */
+  .mc-label-row{ display:inline-flex; align-items:center; gap:6px; }
+  .mc-hint{ font-size:11px; color:#94a3b8; margin-top:6px; line-height:1.45; }
+  .mc-steps{ list-style:none; counter-reset:mcst; padding-left:0; margin:0; }
+  .mc-steps > li{ counter-increment:mcst; position:relative; padding-left:2.4rem; margin-bottom:.75rem; }
+  .mc-steps > li::before{
+    content:counter(mcst); position:absolute; left:0; top:0; width:1.6rem; height:1.6rem; border-radius:9999px;
+    background:#0ea5e9; color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .mc-table-wrap{ overflow-x:auto; }
+  .mc-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  .mc-table th, .mc-table td{ padding:8px 10px; border:1px solid #e5e7eb; text-align:left; vertical-align:top; line-height:1.45; }
+  .mc-table th{ background:#0B1220; color:#fff; font-weight:600; font-size:12.5px; }
+  .mc-table tbody tr:nth-child(even){ background:#f8fafc; }
+  body.dark-theme .mc-table th{ background:#0B1220; color:#7dd3fc; }
+  body.dark-theme .mc-table td{ border-color:#1f2f47; color:#e2e8f0; }
+  body.dark-theme .mc-table tbody tr:nth-child(even){ background:#0f172a; }
+  body.dark-theme .mc-hint{ color:#94a3b8; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('emc-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme');
+    document.body.classList.add(t);
+  } catch(e) {}
+})();
+</script>
+
+<div id="site-header"></div>
+<div id="breadcrumb"></div>
+
+<section class="bg-brandDark blueprint-grid relative overflow-hidden border-b border-brandLine">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-4 py-14 relative z-10">
+    <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+      <div class="flex-1 text-center lg:text-left order-2 lg:order-1">
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-sky-400 bg-sky-400/10 border border-sky-400/30 px-3 py-1.5 rounded-full mb-5">
+          <span class="w-1.5 h-1.5 bg-sky-400 rounded-full"></span>
+          Electrical &middot; Motors &amp; Capacitors
+        </span>
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
+          Motor Capacitor <span class="text-sky-400">Calculator</span>
+        </h1>
+        <div class="hero-typing-box">
+          <p class="hero-typing text-[#d4af37] text-sm font-mono font-bold justify-center" aria-label="Calculate Smarter. Work Faster. Practical Calculators & Maintenance Guides.">
+            <span id="heroTypingText">Calculate Smarter. Work Faster.</span><span class="hero-cursor" aria-hidden="true"></span>
+          </p>
+        </div>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto lg:mx-0">
+          Free motor capacitor calculator &mdash; estimate start and run capacitor size (µF) for a single-phase motor from HP or kW, voltage and frequency, find a capacitor's real µF from measured volts and amps, and check whether a replacement is suitable.
+        </p>
+      </div>
+
+      <div class="flex-shrink-0 order-1 lg:order-2" style="width:280px;max-width:65%;aspect-ratio:800/450;overflow:hidden;">
+        <div id="hero-lottie" style="width:100%;aspect-ratio:800/600;transform:translateY(-15%);">
+          <svg viewBox="0 0 800 600" width="100%" height="100%" aria-hidden="true" style="opacity:.9">
+            <circle cx="400" cy="300" r="120" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.35"/>
+            <path d="M420 190 340 330h60l-20 90 110-140h-60l30-90z" fill="#f59e0b" opacity="0.85"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="calculator" class="max-w-6xl mx-auto px-4 py-14">
+  <div class="grid lg:grid-cols-5 gap-6">
+
+    <!-- INPUT PANEL -->
+    <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 calc-input-panel p-6 md:p-8">
+      <div id="calcHeaderBar">
+        <h2 class="font-display font-semibold text-lg text-brandDark mb-1">Motor &amp; Capacitor Details</h2>
+        <p class="text-xs text-gray-500 mb-6">Pick a tool: estimate capacitor size from motor rating, test a capacitor's actual µF, or check a replacement.</p>
+      </div>
+
+      <div class="mb-5">
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_motor-capacitor-calculator">Choose Tool</span>
+        <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_motor-capacitor-calculator">
+          <button type="button" id="toolSize" class="toggle-btn active" aria-pressed="true" onclick="setTool('size')">Size by HP</button>
+          <button type="button" id="toolTest" class="toggle-btn" aria-pressed="false" onclick="setTool('test')">Test µF (V &amp; A)</button>
+          <button type="button" id="toolRep" class="toggle-btn" aria-pressed="false" onclick="setTool('rep')">Replacement Check</button>
+        </div>
+      </div>
+
+      <!-- TOOL 1: SIZE BY HP -->
+      <div id="panelSize" class="calc-panel active">
+        <div class="space-y-4 mb-5">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="szRating">Motor Rating</label>
+            <div class="flex gap-2 mt-2">
+              <input id="szRating" type="number" value="1" step="any" min="0.01" max="50" placeholder="e.g. 1" class="input-field" oninput="calculateMotorCap()">
+              <select id="szUnit" class="input-field unit-select" onchange="onSizeUnitChange()" aria-label="Motor rating unit">
+                <option value="hp" selected>HP</option>
+                <option value="kw">kW</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel2_motor-capacitor-calculator">Supply Voltage</span>
+            <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel2_motor-capacitor-calculator">
+              <button type="button" id="szVoltLv" class="toggle-btn" aria-pressed="false" onclick="setSizeVolt('lv')">110&ndash;120 V</button>
+              <button type="button" id="szVoltHv" class="toggle-btn active" aria-pressed="true" onclick="setSizeVolt('hv')">208&ndash;240 V</button>
+            </div>
+          </div>
+
+          <div>
+            <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel3_motor-capacitor-calculator">Supply Frequency</span>
+            <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel3_motor-capacitor-calculator">
+              <button type="button" id="szF50" class="toggle-btn active" aria-pressed="true" onclick="setSizeFreq(50)">50 Hz</button>
+              <button type="button" id="szF60" class="toggle-btn" aria-pressed="false" onclick="setSizeFreq(60)">60 Hz</button>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide mc-label-row" for="szType">Motor Type
+              <span class="info-icon" tabindex="0" role="button" aria-label="About motor types">i<span class="info-tooltip">PSC fans, blowers and many compressors keep one run capacitor. Capacitor-start motors use a start capacitor switched out by a centrifugal switch. CSCR motors (pumps, compressors, workshop machines) use both.</span></span>
+            </label>
+            <select id="szType" class="input-field mt-2" onchange="calculateMotorCap()">
+              <option value="cscr" selected>Capacitor-start capacitor-run (CSCR) &mdash; both</option>
+              <option value="psc">Permanent split capacitor (PSC) &mdash; run only</option>
+              <option value="cs">Capacitor-start induction-run (CSIR) &mdash; start only</option>
+              <option value="split">Split-phase (no capacitor)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOOL 2: TEST µF FROM V & A -->
+      <div id="panelTest" class="calc-panel">
+        <div class="bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-lg px-4 py-3 mb-5" role="note">
+          <strong>&#9888;&#65039; Live measurement warning:</strong> measuring capacitor current and voltage on an energised motor circuit involves shock and arc-flash hazards. This test is for qualified electrical personnel using appropriately rated test equipment and PPE.
+        </div>
+        <div class="space-y-4 mb-5">
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tsVolt">Voltage Across Capacitor (V)</label>
+              <input id="tsVolt" type="number" value="330" step="any" min="1" max="1000" placeholder="e.g. 330" class="input-field mt-2" oninput="calculateMotorCap()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tsAmp">Current Through Capacitor (A)</label>
+              <input id="tsAmp" type="number" value="1.6" step="any" min="0.001" max="100" placeholder="e.g. 1.6" class="input-field mt-2" oninput="calculateMotorCap()">
+            </div>
+          </div>
+          <p class="mc-hint">Measure the voltage across the capacitor terminals and the current in one capacitor lead (clamp meter). On a running PSC or CSCR motor, the voltage across the run capacitor is usually higher than the supply voltage.</p>
+
+          <div>
+            <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel4_motor-capacitor-calculator">Supply Frequency</span>
+            <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel4_motor-capacitor-calculator">
+              <button type="button" id="tsF50" class="toggle-btn active" aria-pressed="true" onclick="setTestFreq(50)">50 Hz</button>
+              <button type="button" id="tsF60" class="toggle-btn" aria-pressed="false" onclick="setTestFreq(60)">60 Hz</button>
+            </div>
+          </div>
+
+          <div>
+            <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel5_motor-capacitor-calculator">Capacitor Role</span>
+            <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel5_motor-capacitor-calculator">
+              <button type="button" id="tsRoleRun" class="toggle-btn active" aria-pressed="true" onclick="setTestRole('run')">Run Capacitor</button>
+              <button type="button" id="tsRoleStart" class="toggle-btn" aria-pressed="false" onclick="setTestRole('start')">Start Capacitor</button>
+            </div>
+          </div>
+
+          <div id="tsRatedRunWrap" class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tsRated">Rated Value (µF) &mdash; optional</label>
+              <input id="tsRated" type="number" value="16" step="any" min="0.1" max="2000" placeholder="e.g. 16" class="input-field mt-2" oninput="calculateMotorCap()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tsTol">Label Tolerance</label>
+              <select id="tsTol" class="input-field mt-2" onchange="calculateMotorCap()">
+                <option value="5">&plusmn;5%</option>
+                <option value="6" selected>&plusmn;6%</option>
+                <option value="10">&plusmn;10%</option>
+              </select>
+            </div>
+          </div>
+
+          <p id="tsStartHint" class="mc-hint hidden">A start capacitor is only in circuit for a second or two, so live readings are hard to capture. A bench test with a capacitance meter, after safely discharging the capacitor, is usually more practical &mdash; enter readings here if you have them.</p>
+
+          <div id="tsRatedStartWrap" class="grid sm:grid-cols-2 gap-4 hidden">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tsRatedLo">Marked Range &mdash; Low (µF)</label>
+              <input id="tsRatedLo" type="number" value="189" step="any" min="0.1" max="2000" placeholder="e.g. 189" class="input-field mt-2" oninput="calculateMotorCap()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tsRatedHi">Marked Range &mdash; High (µF)</label>
+              <input id="tsRatedHi" type="number" value="227" step="any" min="0.1" max="2000" placeholder="e.g. 227" class="input-field mt-2" oninput="calculateMotorCap()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOOL 3: REPLACEMENT CHECK -->
+      <div id="panelRep" class="calc-panel">
+        <div class="space-y-4 mb-5">
+          <div>
+            <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel6_motor-capacitor-calculator">Capacitor Role</span>
+            <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel6_motor-capacitor-calculator">
+              <button type="button" id="rpRoleRun" class="toggle-btn active" aria-pressed="true" onclick="setRepRole('run')">Run Capacitor</button>
+              <button type="button" id="rpRoleStart" class="toggle-btn" aria-pressed="false" onclick="setRepRole('start')">Start Capacitor</button>
+            </div>
+          </div>
+          <div id="rpRunWrap" class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="rpOrigUF">Original Capacitance (µF)</label>
+              <input id="rpOrigUF" type="number" value="25" step="any" min="0.1" max="2000" placeholder="e.g. 25" class="input-field mt-2" oninput="calculateMotorCap()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="rpNewUF">Replacement Capacitance (µF)</label>
+              <input id="rpNewUF" type="number" value="25" step="any" min="0.1" max="2000" placeholder="e.g. 25" class="input-field mt-2" oninput="calculateMotorCap()">
+            </div>
+          </div>
+          <div id="rpStartWrap" class="grid sm:grid-cols-2 gap-4 hidden">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="rpOrigLo">Original Range &mdash; Low (µF)</label>
+              <input id="rpOrigLo" type="number" value="189" step="any" min="0.1" max="2000" placeholder="e.g. 189" class="input-field mt-2" oninput="calculateMotorCap()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="rpOrigHi">Original Range &mdash; High (µF)</label>
+              <input id="rpOrigHi" type="number" value="227" step="any" min="0.1" max="2000" placeholder="e.g. 227" class="input-field mt-2" oninput="calculateMotorCap()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="rpNewLo">Replacement Range &mdash; Low (µF)</label>
+              <input id="rpNewLo" type="number" value="189" step="any" min="0.1" max="2000" placeholder="e.g. 189" class="input-field mt-2" oninput="calculateMotorCap()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="rpNewHi">Replacement Range &mdash; High (µF)</label>
+              <input id="rpNewHi" type="number" value="227" step="any" min="0.1" max="2000" placeholder="e.g. 227" class="input-field mt-2" oninput="calculateMotorCap()">
+            </div>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="rpOrigV">Original Voltage Rating (VAC)</label>
+              <input id="rpOrigV" type="number" value="370" step="any" min="1" max="1000" placeholder="e.g. 370" class="input-field mt-2" oninput="calculateMotorCap()">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="rpNewV">Replacement Voltage Rating (VAC)</label>
+              <input id="rpNewV" type="number" value="440" step="any" min="1" max="1000" placeholder="e.g. 440" class="input-field mt-2" oninput="calculateMotorCap()">
+            </div>
+          </div>
+          <p class="mc-hint" id="rpHint">Enter the single µF value printed on each run capacitor (e.g. 25 µF &plusmn;5%).</p>
+        </div>
+      </div>
+
+      <div id="validationBox" class="hidden text-xs rounded-lg px-4 py-3 mb-5" role="alert" aria-live="polite"></div>
+
+      <button type="button" id="calcBtn" onclick="calculateMotorCap()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
+        Calculate
+      </button>
+
+      <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
+        <span class="formula-chip" id="formulaChip">C₅₀ ≈ C₆₀ × 60 ÷ 50</span>
+        <span class="formula-chip" id="formulaChip2">1 HP = 0.746 kW</span>
+      </div>
+      <p class="text-[11px] text-gray-400 mt-3" id="calcDisclaimer">Typical estimate for common single-phase induction motor designs &mdash; not a manufacturer specification. The value on the motor nameplate or the original capacitor label always takes priority.</p>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+      <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden" role="status" aria-live="polite" aria-atomic="true">
+        <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Typical Run Capacitor Range</span>
+        <div id="rResult" class="font-display font-bold text-3xl mt-1">&mdash;</div>
+        <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+
+        <div id="rGridBlock" class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rGrid1Label">Start Capacitor</span>
+            <span id="rGrid1" class="font-display font-semibold text-lg">&mdash;</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rGrid2Label">Run Cap V (typical)</span>
+            <span id="rGrid2" class="font-display font-semibold text-lg">&mdash;</span>
+          </div>
+        </div>
+        <div id="rExtraBlock" class="mt-3 pt-3 border-t border-white/10 hidden">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block" id="rExtraLabel">Standard Values in Range</span>
+          <span id="rExtra" class="font-display font-semibold text-lg">&mdash;</span>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-3 pt-3 border-t border-white/10" id="rNote">Rough screening reference &mdash; not a calculated manufacturer value. Use the nameplate or original capacitor marking first.</p>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
+        <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<span id="shareFeedbackAnchor"></span>
+<section id="shareFeedbackBar" class="max-w-6xl mx-auto px-4 mb-14">
+  <div class="flex flex-wrap items-center gap-6 border border-gray-200 rounded-xl bg-white px-5 py-4">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button type="button" class="share-result-btn" onclick="loadShareModal()"><span aria-hidden="true">&#128279;</span> Share Result</button>
+      <button type="button" class="action-icon-btn" id="copyResultBtn" onclick="copyResultGeneric()"><span aria-hidden="true">&#128203;</span> Copy Result</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="text-xs font-medium text-gray-500">Did this solve your problem?</span>
+      <button type="button" id="fbYes" class="action-icon-btn" aria-pressed="false" onclick="setFeedback('yes')"><span aria-hidden="true">&#128077;</span> Yes</button>
+      <button type="button" id="fbNo" class="action-icon-btn" aria-pressed="false" onclick="setFeedback('no')"><span aria-hidden="true">&#128078;</span> No</button>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a class="action-icon-btn" href="mailto:support@electromechcalc.com?subject=Feedback%20on%20Motor%20Capacitor%20Calculator"><span aria-hidden="true">&#9993;&#65039;</span> Feedback</a>
+    </div>
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 mb-6">
+  <div id="relatedCalculatorsBox" class="bg-white rounded-xl border border-gray-100 p-4" data-copy-exclude>
+    <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Related Calculators</span>
+    <div class="grid sm:grid-cols-2 gap-1.5">
+      <a href="/motor-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        Motor Current Calculator <span class="text-sky-500">&rarr;</span>
+      </a>
+      <a href="/electrical/motor-starting-current" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        Motor Starting Current Calculator <span class="text-sky-500">&rarr;</span>
+      </a>
+      <a href="/hp-kw" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        HP to kW Converter <span class="text-sky-500">&rarr;</span>
+      </a>
+      <a href="/power-factor" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        Power Factor Calculator <span class="text-sky-500">&rarr;</span>
+      </a>
+      <a href="/apfc" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        APFC Capacitor Bank Calculator <span class="text-sky-500">&rarr;</span>
+      </a>
+      <a href="/electrical-calculators" class="calc-card flex items-center justify-between px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 text-sm font-medium text-brandDark">
+        Explore All Electrical Calculators <span class="text-sky-500">&rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<nav class="max-w-3xl mx-auto px-4 mb-12" aria-label="Table of contents">
+  <div class="border border-gray-200 rounded-xl bg-white p-5">
+    <h2 class="font-display font-semibold text-brandDark text-sm uppercase tracking-wide mb-3">Table of Contents</h2>
+    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
+      <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
+      <li><a href="#how-it-works" class="hover:underline">2. How motor capacitor sizing works</a></li>
+      <li><a href="#second" class="hover:underline">3. Sizes by HP &amp; replacement</a></li>
+      <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
+      <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section id="how-it-works" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
+      <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> &mdash; B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
+      <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Method: typical single-phase motor capacitor ranges (nameplate governs); capacitive reactance X<sub>C</sub> = 1 &divide; (2&pi;fC).</p>
+    </div>
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Motor Capacitor Sizing Works</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p>A 1 HP capacitor-start capacitor-run motor on a 230 V, 50 Hz supply typically uses a run capacitor of about 18&ndash;30 µF and a start capacitor marked around 233&ndash;280 µF &mdash; that is the kind of starting point this calculator gives when the nameplate is missing. The reason a capacitor is needed at all: a single-phase supply creates a pulsating magnetic field, not a rotating one, so a single-phase induction motor cannot start on its own. Most designs add a second, auxiliary winding placed at an angle to the main winding. A capacitor in series with that auxiliary winding pushes its current ahead of the main-winding current, producing a rotating field that gives starting torque &mdash; and, in motors that keep a capacitor in circuit, better running torque, efficiency and power factor.</p>
+      <p>The correct value is chosen by the motor designer to suit that particular auxiliary winding. That is why the motor nameplate, or the label on the original capacitor, is always the first reference. When both are missing or unreadable, a typical range by horsepower, supply voltage and frequency is a sensible place to start &mdash; which is what the <strong>Size by HP</strong> tool provides.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">How the Estimate Is Built</h3>
+      <p>The calculator converts kW to HP (1 HP = 0.746 kW) and picks the next table row at or above your rating, starting from typical ranges for 220&ndash;240 V, 60 Hz motors. It then adjusts for your supply. For 110&ndash;120 V, this calculator applies illustrative factors of 1.5&times; for run and 1.9&times; for start capacitance, reflecting the larger capacitor current needed at half the voltage &mdash; these are not design rules, and actual motor designs vary. For 50 Hz, a 1.2&times; adjustment (the 60 &divide; 50 ratio, from X<sub>C</sub> = 1 &divide; 2&pi;fC) is used only as a rough screening estimate; actual 50 Hz capacitor values depend on the motor's winding design and must follow the nameplate or manufacturer specification. The run result is shown as a range, together with standard capacitor values that fall inside it; the start result is shown as the nearest standard start-capacitor marking, as a reference range rather than a calculated value.</p>
+
+      <div class="not-prose my-8" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:20px 12px 14px;">
+        <svg viewBox="0 0 1200 600" role="img" aria-labelledby="mcwTitle mcwDesc" style="width:100%;height:auto;display:block;">
+  <title id="mcwTitle">Capacitor-Start Capacitor-Run Single-Phase Motor Wiring</title>
+  <desc id="mcwDesc">
+    Single-phase supply feeding a main winding and, in parallel, an auxiliary winding in series with a run capacitor.
+    A start capacitor and centrifugal switch are connected in parallel with the run capacitor and drop out near full speed.
+  </desc>
+
+  <defs>
+    <style>
+      .mcw-w{fill:none;stroke:#263238;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+      .mcw-coil{fill:none;stroke:#1565c0;stroke-width:3.5;stroke-linecap:round}
+      .mcw-run{fill:none;stroke:#0277bd;stroke-width:5;stroke-linecap:round}
+      .mcw-start{fill:none;stroke:#ef6c00;stroke-width:5;stroke-linecap:round}
+      .mcw-sw{fill:none;stroke:#2e7d32;stroke-width:3;stroke-linecap:round}
+      .mcw-dot{fill:#263238}
+      .mcw-term{fill:#ffffff;stroke:#263238;stroke-width:3}
+      .mcw-t{font-family:Inter,system-ui,sans-serif;font-size:16px;fill:#263238}
+      .mcw-tb{font-family:Inter,system-ui,sans-serif;font-size:16px;font-weight:700;fill:#263238}
+      .mcw-sm{font-family:Inter,system-ui,sans-serif;font-size:14px;fill:#546e7a}
+      .mcw-title{font-family:Inter,system-ui,sans-serif;font-size:22px;font-weight:700;fill:#0d47a1}
+      .mcw-lt{font-family:Inter,system-ui,sans-serif;font-size:17px;font-weight:700}
+    </style>
+  </defs>
+
+  <!-- Frame + title -->
+  <rect x="12" y="12" width="1176" height="576" rx="18" fill="#ffffff" stroke="#90caf9" stroke-width="2"/>
+  <rect x="30" y="28" width="710" height="56" rx="10" fill="#e3f2fd"/>
+  <text x="50" y="64" class="mcw-title">Capacitor-Start Capacitor-Run (CSCR) Motor Wiring</text>
+
+  <!-- Supply terminals -->
+  <circle cx="90" cy="170" r="10" class="mcw-term"/>
+  <text x="70" y="176" text-anchor="end" class="mcw-tb">L</text>
+  <circle cx="90" cy="440" r="10" class="mcw-term"/>
+  <text x="70" y="446" text-anchor="end" class="mcw-tb">N</text>
+  <text x="180" y="300" text-anchor="middle" class="mcw-t">1-phase AC</text>
+  <text x="180" y="322" text-anchor="middle" class="mcw-t">supply</text>
+
+  <!-- Supply buses -->
+  <path d="M100 170 H520" class="mcw-w"/>
+  <path d="M100 440 H800" class="mcw-w"/>
+
+  <!-- Main winding -->
+  <path d="M280 170 V250" class="mcw-w"/>
+  <path d="M280 250 a14 14 0 0 1 0 28 a14 14 0 0 1 0 28 a14 14 0 0 1 0 28 a14 14 0 0 1 0 28 a14 14 0 0 1 0 28" class="mcw-coil"/>
+  <path d="M280 390 V440" class="mcw-w"/>
+  <circle cx="280" cy="170" r="5" class="mcw-dot"/>
+  <circle cx="280" cy="440" r="5" class="mcw-dot"/>
+  <text x="312" y="312" class="mcw-tb">Main (run)</text>
+  <text x="312" y="334" class="mcw-tb">winding</text>
+
+  <!-- Capacitor network: node P (520,230), node Q (740,230) -->
+  <path d="M520 170 V230" class="mcw-w"/>
+  <circle cx="520" cy="230" r="5" class="mcw-dot"/>
+  <circle cx="740" cy="230" r="5" class="mcw-dot"/>
+
+  <!-- Run capacitor (upper path) -->
+  <path d="M520 230 H612" class="mcw-w"/>
+  <path d="M612 206 V254" class="mcw-run"/>
+  <path d="M628 206 V254" class="mcw-run"/>
+  <path d="M628 230 H740" class="mcw-w"/>
+  <text x="620" y="192" text-anchor="middle" class="mcw-tb" style="fill:#0277bd">C run</text>
+
+  <!-- Start capacitor + centrifugal switch (lower path) -->
+  <path d="M520 230 V330 H572" class="mcw-w"/>
+  <path d="M572 306 V354" class="mcw-start"/>
+  <path d="M592 306 Q580 330 592 354" class="mcw-start"/>
+  <path d="M586 330 H640" class="mcw-w"/>
+  <circle cx="644" cy="330" r="4" class="mcw-term"/>
+  <path d="M648 328 L688 304" class="mcw-sw"/>
+  <circle cx="692" cy="330" r="4" class="mcw-term"/>
+  <path d="M696 330 H740 V230" class="mcw-w"/>
+  <text x="582" y="296" text-anchor="middle" class="mcw-tb" style="fill:#ef6c00">C start</text>
+  <text x="668" y="378" text-anchor="middle" class="mcw-sm">Centrifugal switch</text>
+  <text x="668" y="397" text-anchor="middle" class="mcw-sm">opens at ~70–80% speed</text>
+
+  <!-- Auxiliary winding -->
+  <path d="M740 230 H800 V260" class="mcw-w"/>
+  <path d="M800 260 a14 14 0 0 1 0 28 a14 14 0 0 1 0 28 a14 14 0 0 1 0 28 a14 14 0 0 1 0 28" class="mcw-coil"/>
+  <path d="M800 372 V440" class="mcw-w"/>
+  <text x="832" y="306" class="mcw-tb">Auxiliary (start)</text>
+  <text x="832" y="328" class="mcw-tb">winding</text>
+  <text x="832" y="352" class="mcw-sm">current leads the main</text>
+  <text x="832" y="370" class="mcw-sm">winding → rotating field</text>
+
+  <!-- Legend -->
+  <rect x="30" y="480" width="370" height="92" rx="12" fill="#e1f5fe" stroke="#81d4fa" stroke-width="1.5"/>
+  <text x="48" y="510" class="mcw-lt" style="fill:#0277bd">Run capacitor</text>
+  <text x="48" y="534" class="mcw-sm">Film, continuous duty, ±5–6%</text>
+  <text x="48" y="556" class="mcw-sm">Typically 370 or 440 VAC</text>
+
+  <rect x="415" y="480" width="370" height="92" rx="12" fill="#fff3e0" stroke="#ffcc80" stroke-width="1.5"/>
+  <text x="433" y="510" class="mcw-lt" style="fill:#ef6c00">Start capacitor</text>
+  <text x="433" y="534" class="mcw-sm">Electrolytic, a few seconds per start</text>
+  <text x="433" y="556" class="mcw-sm">Marked as a µF range, e.g. 189–227 µF</text>
+
+  <rect x="800" y="480" width="370" height="92" rx="12" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1.5"/>
+  <text x="818" y="510" class="mcw-lt" style="fill:#2e7d32">Other motor types</text>
+  <text x="818" y="534" class="mcw-sm">PSC: run capacitor only (no start branch)</text>
+  <text x="818" y="556" class="mcw-sm">Capacitor-start: start branch only</text>
+</svg>
+        <p class="text-xs text-gray-500 text-center mt-2">CSCR wiring: the run capacitor stays in series with the auxiliary winding at all times; the start capacitor adds extra capacitance in parallel for starting and is switched out by the centrifugal switch (or a start relay on many compressors) as the motor nears full speed. Simplified conceptual schematic &mdash; overload protection and terminal markings are omitted, and actual motor terminal connections vary by manufacturer and motor design.</p>
+      </div>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Start Capacitor vs Run Capacitor</h3>
+      <div class="not-prose mc-table-wrap my-4">
+        <table class="mc-table">
+          <thead><tr><th>Property</th><th>Start capacitor</th><th>Run capacitor</th></tr></thead>
+          <tbody>
+            <tr><td>Construction</td><td>Non-polarised electrolytic, usually in a black plastic case</td><td>Metallised polypropylene film, often in a metal or plastic can</td></tr>
+            <tr><td>Duty</td><td>Intermittent &mdash; in circuit for a second or two per start</td><td>Continuous &mdash; connected whenever the motor runs</td></tr>
+            <tr><td>Typical value</td><td>Tens to hundreds of µF, marked as a range (e.g. 189&ndash;227 µF)</td><td>About 1.5&ndash;80 µF, marked as one value with a tolerance (&plusmn;5% or &plusmn;6%)</td></tr>
+            <tr><td>Typical voltage rating</td><td>110&ndash;125 VAC (115 V motors); 250 or 330 VAC (230 V motors)</td><td>250, 370 or 440 VAC</td></tr>
+            <tr><td>Switched out by</td><td>Centrifugal switch or start relay at roughly 70&ndash;80% of full speed</td><td>Not switched &mdash; stays in circuit</td></tr>
+            <tr><td>Typical failure signs</td><td>Motor hums but won't start; bulged, vented or cracked case</td><td>Weak or slow starting, motor runs hot or draws extra current; value drifts low</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The two are not interchangeable. A start capacitor left in circuit continuously will overheat within minutes, and a film run capacitor is far too small in µF to give the starting torque a capacitor-start motor needs.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Testing a Capacitor from Volts and Amps</h3>
+      <p>A capacitor's current is set by its reactance: I = V &divide; X<sub>C</sub> = 2&pi;fCV. Rearranged, the actual capacitance is <strong>C (µF) = I &times; 10<sup>6</sup> &divide; (2&pi; &times; f &times; V)</strong>. At 50 Hz this reduces to about <strong>3183 &times; A &divide; V</strong>, and at 60 Hz to about <strong>2652 &times; A &divide; V</strong>. With a running motor, clamp the current in one run-capacitor lead and measure the voltage directly across the capacitor terminals &mdash; not at the supply, because in a running PSC or CSCR motor the capacitor voltage is usually higher than line voltage.</p>
+      <p><strong>Worked example:</strong> on a 50 Hz motor the run capacitor carries 1.6 A with 330 V across it. C = 1.6 &times; 10<sup>6</sup> &divide; (2&pi; &times; 50 &times; 330) = 1,600,000 &divide; 103,673 &asymp; <strong>15.4 µF</strong>. Against a 16 µF &plusmn;6% label that is &minus;3.5%, so the capacitor is within tolerance. The <strong>Test µF</strong> tool does this calculation and the tolerance check for you.</p>
+      <p>Live measurements on motor circuits must only be taken by a qualified person using properly rated test instruments and PPE. If you prefer not to measure live, isolate the motor, discharge the capacitor and use a meter with a capacitance range instead.</p>
+    </div>
+
+    <div id="cs-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
+      <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
+      <p class="text-sm text-gray-600 leading-relaxed">1 HP CSCR motor, 208&ndash;240 V, 50 Hz &rarr; 1 HP table row: run 15&ndash;25 µF &times; 1.2 = <strong>18&ndash;30 µF</strong> (standard values 20, 25, 30 µF); start 208 µF &times; 1.2 &asymp; 250 µF &rarr; estimated start-capacitor range &asymp; <strong>233&ndash;280 µF</strong> (nearest standard marking &mdash; verify against the motor or capacitor nameplate). Run capacitor 370 or 440 VAC; start capacitor 250 or 330 VAC.</p>
+    </div>
+
+    <h3 class="text-lg font-display font-semibold text-brandDark mt-10 mb-2">Engineering References</h3>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-3">
+      <p><strong>IEC 60252-1</strong> &mdash; AC motor capacitors, Part 1: general, performance, testing and rating (the standard covering motor run capacitors, including their rated voltage and capacitance tolerance marking).</p>
+      <p><strong>IEC 60252-2</strong> &mdash; AC motor capacitors, Part 2: motor start capacitors (intermittent-duty start capacitors and their marking).</p>
+      <p><strong>Motor nameplate data and capacitor manufacturers' datasheets</strong> &mdash; the authoritative source for the capacitance, tolerance, voltage and duty rating of a specific motor.</p>
+      <p>The capacitance formula C = I &divide; (2&pi;fV) follows directly from capacitive reactance, X<sub>C</sub> = 1 &divide; (2&pi;fC). The typical HP ranges and the voltage and frequency factors used in this calculator are compiled estimates for common designs &mdash; they are not taken from the standards above.</p>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-6">Sizing results are typical ranges for common single-phase induction motor designs; individual manufacturers' values can differ. Use the nameplate or original-capacitor data wherever it is available, and have live electrical measurements carried out only by a qualified person.</p>
+  </div>
+</section>
+
+<section id="second" class="max-w-3xl mx-auto px-4 py-16">
+  <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Sizing Chart &amp; Replacement</span>
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Typical Motor Capacitor Ranges by HP, and How to Replace One</h2>
+  <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+    <p>The chart below uses the same data and adjustments as the calculator, for 208&ndash;240 V motors at both 60 Hz and 50 Hz. Run values are typical ranges; start values are the nearest standard start-capacitor marking. Motors for 110&ndash;120 V use larger values &mdash; select that voltage in the calculator to see them.</p>
+    <div class="not-prose mc-table-wrap my-4">
+      <table class="mc-table">
+        <thead><tr><th>Motor HP</th><th>Run µF (60 Hz)</th><th>Run µF (50 Hz)</th><th>Start µF (60 Hz)</th><th>Start µF (50 Hz)</th></tr></thead>
+        <tbody>
+          <tr><td>1/8 HP</td><td>2–4</td><td>2.4–4.8</td><td>43–48</td><td>53–64</td></tr>
+          <tr><td>1/6 HP</td><td>3–5</td><td>3.6–6</td><td>53–64</td><td>64–77</td></tr>
+          <tr><td>1/4 HP</td><td>4–7.5</td><td>4.8–9</td><td>72–88</td><td>88–106</td></tr>
+          <tr><td>1/3 HP</td><td>5–10</td><td>6–12</td><td>88–106</td><td>108–130</td></tr>
+          <tr><td>1/2 HP</td><td>7.5–15</td><td>9–18</td><td>130–156</td><td>145–174</td></tr>
+          <tr><td>3/4 HP</td><td>10–20</td><td>12–24</td><td>161–193</td><td>189–227</td></tr>
+          <tr><td>1 HP</td><td>15–25</td><td>18–30</td><td>189–227</td><td>233–280</td></tr>
+          <tr><td>1.5 HP</td><td>20–30</td><td>24–36</td><td>216–259</td><td>270–324</td></tr>
+          <tr><td>2 HP</td><td>25–35</td><td>30–42</td><td>243–292</td><td>270–324</td></tr>
+          <tr><td>3 HP</td><td>30–45</td><td>36–54</td><td>270–324</td><td>324–389</td></tr>
+          <tr><td>5 HP</td><td>40–60</td><td>48–72</td><td>340–408</td><td>400–480</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-gray-400">These are illustrative typical ranges for 208&ndash;240 V single-phase induction motors, not IEC, NEMA or manufacturer sizing tables. Not every motor type uses both capacitors: PSC motors use only the run value, capacitor-start motors only the start value. The motor nameplate and original capacitor specifications take precedence.</p>
+
+    <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Run Capacitor Voltage: 370 V or 440 V?</h3>
+    <p>The voltage rating on a capacitor is a maximum, not an operating value. For the same capacitance and the correct capacitor type, a 440 VAC run capacitor is generally an acceptable replacement for a 370 VAC one, unless the motor or equipment manufacturer specifies otherwise. The higher rating does not change the capacitance value and gives additional voltage margin, but service life also depends on temperature, current, construction and the manufacturer's specifications. The reverse is not safe: fitting a 370 VAC part where 440 VAC was specified can lead to early failure, because the voltage across a run capacitor on a running motor is often well above the supply voltage. The only practical catch with a higher rating is size: 440 VAC cans are often slightly larger, so check that the replacement fits the mounting bracket or terminal box.</p>
+
+    <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Dual Run Capacitors (C, HERM, FAN)</h3>
+    <p>Air-conditioner and heat-pump outdoor units often use a dual run capacitor: two capacitors in one can, sharing a common terminal. <strong>C</strong> is the common, <strong>HERM</strong> feeds the hermetic compressor, and <strong>FAN</strong> feeds the condenser fan motor. It is marked with two values, such as 35/5 µF &mdash; the first for the compressor, the second for the fan. A replacement must match both values; a higher voltage rating is generally acceptable. Where the equipment manufacturer or a qualified technician permits substitution, separate correctly rated capacitors can be used to reproduce the required C&ndash;HERM and C&ndash;FAN values &mdash; follow the equipment wiring diagram and the manufacturer's requirements.</p>
+
+    <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Replacing a Failed Motor Capacitor Safely</h3>
+    <ol class="mc-steps">
+      <li><strong>Isolate and lock off the supply.</strong> Switching the motor off at a local control is not enough &mdash; open the isolator and prove the circuit dead.</li>
+      <li><strong>Discharge the capacitor.</strong> A capacitor can hold a dangerous charge after power is removed. Discharge it through an appropriately rated discharge resistor following the equipment manufacturer's or your site's service procedure &mdash; do not short the terminals &mdash; then verify zero voltage with a properly rated meter before touching.</li>
+      <li><strong>Record the wiring and the label.</strong> Photograph the connections and note the µF value, voltage rating, tolerance and whether it is a start or run type.</li>
+      <li><strong>Choose the replacement.</strong> Same type, same µF (same range for a start capacitor), equal or higher voltage rating, and a size that fits. The <strong>Replacement Check</strong> tool above runs the basic numerical check.</li>
+      <li><strong>If a start capacitor failed, check what switches it.</strong> A centrifugal switch or start relay that sticks closed keeps the start capacitor in circuit and destroys it &mdash; a new capacitor will fail the same way unless the switch is fixed.</li>
+      <li><strong>Test after fitting.</strong> Run the motor, check that it starts cleanly, and compare the running current with the nameplate full-load current.</li>
+    </ol>
+    <p>For wider motor care &mdash; bearings, insulation resistance, alignment and vibration &mdash; see the <a href="/blog/electrical/electric-motor-maintenance-guide" class="text-sky-600 underline">Electric Motor Maintenance Guide</a>.</p>
+  </div>
+</section>
+
+<section id="mistakes" class="bg-white border-y border-gray-100 py-16">
+  <div class="max-w-3xl mx-auto px-4">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Sizing or Replacing Motor Capacitors</h2>
+    <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
+      <p><strong>1. Sizing from a chart when the nameplate is readable.</strong> Charts and calculators give typical ranges across many designs. The nameplate or original capacitor label gives the value for your motor &mdash; always use it when you have it.</p>
+      <p><strong>2. Using a start capacitor in a run position, or the reverse.</strong> Electrolytic start capacitors are built for a few seconds of use per start and overheat if left in circuit. Film run capacitors are too small in µF to start a capacitor-start motor. Match the type as well as the value.</p>
+      <p><strong>3. Fitting a lower voltage rating than the original.</strong> Equal or higher is fine; lower is not. Remember that the voltage across a run capacitor on a running motor is often higher than the supply voltage.</p>
+      <p><strong>4. "Upsizing" a run capacitor for more torque.</strong> Extra run capacitance raises auxiliary-winding current and heating. The motor may seem to start better but run hotter, shortening winding life.</p>
+      <p><strong>5. Using a 60 Hz chart for a 50 Hz motor (or the reverse).</strong> Capacitive reactance depends on frequency, so 50 Hz designs typically need about 20% more capacitance than 60 Hz designs. Many published charts are for 60 Hz only.</p>
+      <p><strong>6. Handling a capacitor without discharging it.</strong> Motor capacitors can hold a charge after the supply is off. Discharge through a resistor and verify with a meter before touching the terminals.</p>
+      <p><strong>7. Replacing a start capacitor without checking the start switch or relay.</strong> A switch that sticks closed is a common reason start capacitors fail. Replacing only the capacitor leads to a repeat failure.</p>
+      <p><strong>8. Confusing motor capacitors with power factor correction capacitors.</strong> Motor capacitors are part of the motor's own starting and running circuit and are sized in µF for its winding. Power factor correction capacitors are connected across the supply and sized in kVAr &mdash; a different job entirely.</p>
+    </div>
+  </div>
+</section>
+
+<section id="faqs" class="max-w-3xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
+  </div>
+
+  <div class="divide-y divide-gray-200">
+    <details class="py-5" open>
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I find the right capacitor size for a single-phase motor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Check the motor nameplate or the label on the old capacitor first — they give the exact µF value and voltage rating the manufacturer designed for. If both are unreadable, use a typical range based on HP, supply voltage and frequency, as this calculator gives, then confirm with the motor manufacturer or by checking the running current against the nameplate after fitting.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What size run and start capacitor does a 1 HP motor need?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It depends on the design, but for a 1 HP capacitor-start capacitor-run motor on 208–240 V at 60 Hz, run capacitors are typically around 15–25 µF and start capacitors around 189–227 µF. On 50 Hz supplies, values roughly 20% higher are typical (about 18–30 µF run and a 233–280 µF start marking), because capacitive reactance rises as frequency falls. Motors for 110–120 V use noticeably larger capacitors. The nameplate value always takes priority over these typical ranges.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What capacitor size do I need for a 1.5 HP motor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For a 1.5 HP capacitor-start capacitor-run motor on 208–240 V, typical values are a run capacitor of about 20–30 µF with a 216–259 µF start capacitor at 60 Hz, or about 24–36 µF run with a 270–324 µF start capacitor at 50 Hz. These are illustrative typical ranges, not a manufacturer specification — the value on the motor nameplate or the original capacitor always takes priority.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I calculate motor capacitor size in µF?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The exact value depends on the design of the motor's auxiliary winding, so it can only be calculated from the manufacturer's design data — which is why the nameplate value is the reference. Without it, estimate from a typical range by HP, supply voltage and frequency, as this calculator does. To find the actual µF of a capacitor already fitted, use C (µF) = I × 10⁶ ÷ (2π × f × V) with the measured capacitor current and voltage.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the difference between a start capacitor and a run capacitor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A start capacitor is a high-value electrolytic capacitor rated for intermittent duty; it is in circuit for only a second or two during starting and is then disconnected by a centrifugal switch or start relay. A run capacitor is a lower-value film capacitor rated for continuous duty; it stays connected while the motor runs to improve running torque, efficiency and power factor. The two are not interchangeable.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I use a 440 V capacitor instead of a 370 V capacitor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Generally yes, as long as the µF value, the type (run or start) and the physical fit are the same, and the equipment manufacturer does not specify otherwise. The voltage rating is a maximum, so a higher rating adds margin without changing the capacitance value. Never go the other way — a lower voltage rating than the original can fail early.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How close does the replacement µF value need to be?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For run capacitors, match the original value as closely as possible — most are labelled ±5% or ±6%, and a value outside that tolerance changes the auxiliary-winding current and can make the motor run hotter. Start capacitors are marked as a range, such as 189–227 µF, so choose a replacement with the same marked range or one that overlaps it closely.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I test a motor run capacitor with a clamp meter?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">With the motor running, measure the current in one capacitor lead and the voltage directly across the capacitor terminals, then calculate C (µF) = I × 10⁶ ÷ (2π × f × V). At 50 Hz this is about 3183 × A ÷ V, and at 60 Hz about 2652 × A ÷ V. Compare the result with the rated µF. Live measurements should only be taken by a qualified person using properly rated meters and PPE.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        When should a motor capacitor be replaced?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Replace it if the case is bulging, cracked or leaking, if it measures outside its rated tolerance, or if the motor hums without starting, starts slowly, or runs hot with a higher-than-normal current. A run capacitor that has drifted well below its rating — for example more than about 10% low — is a common cause of weak starting and overheating.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What happens if I use the wrong size capacitor on a motor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Too little capacitance reduces starting torque, so the motor may hum, start slowly or trip its overload. Too much run capacitance increases auxiliary-winding current and heating, which can shorten winding life even if the motor seems to run normally. An oversized start capacitor can also overheat if the start switch is slow to open.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why do 50 Hz motors need more µF than 60 Hz motors?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A capacitor's reactance is Xc = 1 ÷ (2π × f × C), so at 50 Hz the same capacitor has about 20% more reactance than at 60 Hz. To give the auxiliary winding a similar current and phase shift, 50 Hz designs typically use roughly 20% more capacitance. This calculator applies that 60 ÷ 50 ratio to its 60 Hz typical ranges as an estimate; actual 50 Hz values depend on the motor's winding design and the manufacturer.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is a motor capacitor the same as a power factor correction capacitor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No. A motor start or run capacitor is part of a single-phase motor's own starting and running circuit and is sized in µF for that winding. Power factor correction capacitors are connected across the supply to offset the reactive power of inductive loads and are sized in kVAr — use the <a href="/apfc" class="text-sky-600 underline">APFC calculator</a> for that.</p>
+    </details>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="/assets/site-nav.js"></script>
+
+<script>
+  let mcTool = 'size';
+  let sizeVolt = 'hv';
+  let sizeFreq = 50;
+  let testFreq = 50;
+  let testRole = 'run';
+  let repRole = 'run';
+
+  // Typical ranges for 220-240 V, 60 Hz single-phase induction motors:
+  // [HP, label, run low µF, run high µF, start centre µF]
+  const MC_ROWS = [[0.125, "1/8", 2, 4, 50], [0.1667, "1/6", 3, 5, 60], [0.25, "1/4", 4, 7.5, 80], [0.3333, "1/3", 5, 10, 97], [0.5, "1/2", 7.5, 15, 140], [0.75, "3/4", 10, 20, 175], [1, "1", 15, 25, 208], [1.5, "1.5", 20, 30, 240], [2, "2", 25, 35, 265], [3, "3", 30, 45, 300], [5, "5", 40, 60, 370]];
+  // Standard start-capacitor markings (µF)
+  const START_STD = [[21, 25], [25, 30], [30, 36], [36, 43], [43, 48], [53, 64], [64, 77], [72, 88], [88, 106], [108, 130], [124, 149], [130, 156], [145, 174], [161, 193], [189, 227], [216, 259], [233, 280], [243, 292], [270, 324], [324, 389], [340, 408], [378, 454], [400, 480], [430, 516], [460, 553], [540, 648], [590, 708], [708, 850], [815, 978], [1000, 1200]];
+  // Common standard run-capacitor values (µF)
+  const RUN_STD = [1.5, 2, 2.5, 3, 3.15, 3.5, 4, 5, 6, 7.5, 8, 10, 12, 12.5, 15, 16, 20, 25, 30, 35, 36, 40, 45, 50, 55, 60, 65, 70, 80, 90, 100];
+  const V_FACTOR = { lv: { run: 1.5, start: 1.9 }, hv: { run: 1, start: 1 } };
+  const F_FACTOR = { 50: 1.2, 60: 1 };
+  const V_LABEL = { lv: '110\u2013120 V', hv: '208\u2013240 V' };
+  const RUN_V = { lv: '250 / 370 VAC', hv: '370 / 440 VAC' };
+  const START_V = { lv: '110\u2013125 VAC', hv: '250 or 330 VAC' };
+  const TYPE_LABEL = { cscr: 'Capacitor-start capacitor-run (CSCR)', psc: 'Permanent split capacitor (PSC)', cs: 'Capacitor-start induction-run (CSIR)', split: 'Split-phase' };
+  const UF = '\u00b5F';
+
+  const DEFAULTS = {
+    size: { szRating: '1', szUnit: 'hp', szType: 'cscr' },
+    test: { tsVolt: '330', tsAmp: '1.6', tsRated: '16', tsTol: '6', tsRatedLo: '189', tsRatedHi: '227' },
+    rep:  { rpOrigUF: '25', rpNewUF: '25', rpOrigLo: '189', rpOrigHi: '227', rpNewLo: '189', rpNewHi: '227', rpOrigV: '370', rpNewV: '440' }
+  };
+
+  function setPressed(activeId, ids){
+    ids.forEach(function(id){
+      const el = document.getElementById(id);
+      const on = id === activeId;
+      el.classList.toggle('active', on);
+      el.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  function fmt(x){
+    if (!Number.isFinite(x)) return '\u2014';
+    const d = Math.abs(x) < 10 ? 2 : 1;
+    return String(parseFloat(x.toFixed(d)));
+  }
+
+  function pickStart(c){
+    if (!Number.isFinite(c) || c > START_STD[START_STD.length - 1][1]) return null;
+    let best = null, bestDiff = Infinity;
+    START_STD.forEach(function(r){
+      if (c >= r[0] && c <= r[1]){
+        const diff = Math.abs((r[0] + r[1]) / 2 - c);
+        if (diff < bestDiff){ bestDiff = diff; best = r; }
+      }
+    });
+    if (best) return best;
+    START_STD.forEach(function(r){
+      const diff = Math.abs((r[0] + r[1]) / 2 - c);
+      if (diff < bestDiff){ bestDiff = diff; best = r; }
+    });
+    return best;
+  }
+
+  function sizeFor(hp, volt, freq){
+    const row = MC_ROWS.find(function(r){ return r[0] >= hp - 1e-9; });
+    if (!row) return null;
+    const vf = V_FACTOR[volt], ff = F_FACTOR[freq];
+    const runLo = row[2] * vf.run * ff;
+    const runHi = row[3] * vf.run * ff;
+    const stdRun = RUN_STD.filter(function(v){ return v >= runLo - 1e-9 && v <= runHi + 1e-9; });
+    const startC = row[4] * vf.start * ff;
+    return { row: row, runLo: runLo, runHi: runHi, stdRun: stdRun, startC: startC, start: pickStart(startC), vf: vf, ff: ff };
+  }
+
+  function setTool(mode){
+    mcTool = mode;
+    setPressed(mode === 'size' ? 'toolSize' : (mode === 'test' ? 'toolTest' : 'toolRep'), ['toolSize','toolTest','toolRep']);
+    document.getElementById('panelSize').classList.toggle('active', mode === 'size');
+    document.getElementById('panelTest').classList.toggle('active', mode === 'test');
+    document.getElementById('panelRep').classList.toggle('active', mode === 'rep');
+
+    // Load this tool's default values
+    const d = DEFAULTS[mode];
+    Object.keys(d).forEach(function(id){ document.getElementById(id).value = d[id]; });
+    if (mode === 'size'){ sizeVolt = 'hv'; sizeFreq = 50; setPressed('szVoltHv', ['szVoltLv','szVoltHv']); setPressed('szF50', ['szF50','szF60']); }
+    if (mode === 'test'){ testFreq = 50; testRole = 'run'; setPressed('tsF50', ['tsF50','tsF60']); applyTestRole(); }
+    if (mode === 'rep'){ repRole = 'run'; applyRepRole(); }
+
+    const chip = document.getElementById('formulaChip');
+    const chip2 = document.getElementById('formulaChip2');
+    const disc = document.getElementById('calcDisclaimer');
+    if (mode === 'size'){
+      chip.textContent = 'C\u2085\u2080 \u2248 C\u2086\u2080 \u00d7 60 \u00f7 50';
+      chip2.textContent = '1 HP = 0.746 kW';
+      disc.textContent = 'Typical estimate for common single-phase induction motor designs \u2014 not a manufacturer specification. The value on the motor nameplate or the original capacitor label always takes priority.';
+    } else if (mode === 'test'){
+      chip.textContent = 'C (\u00b5F) = I \u00d7 10\u2076 \u00f7 (2\u03c0 \u00d7 f \u00d7 V)';
+      chip2.textContent = 'Xc = V \u00f7 I';
+      disc.textContent = 'Live measurements must only be taken by a qualified person with properly rated instruments. Meter accuracy and a distorted supply waveform can shift the result by a few percent.';
+    } else {
+      chip.textContent = '\u0394C % = (new \u2212 original) \u00f7 original \u00d7 100';
+      chip2.textContent = 'V rating: new \u2265 original';
+      disc.textContent = 'Electrical compatibility check only. Always match the manufacturer\u2019s specified capacitance, tolerance and duty rating; the replacement must also be the same type (film run or electrolytic start), fit the mounting space, and suit the ambient temperature.';
+    }
+    showValidationBox(document.getElementById('validationBox'), [], null);
+    calculateMotorCap();
+  }
+
+  function setSizeVolt(v){ sizeVolt = v; setPressed(v === 'lv' ? 'szVoltLv' : 'szVoltHv', ['szVoltLv','szVoltHv']); calculateMotorCap(); }
+  function setSizeFreq(f){ sizeFreq = f; setPressed(f === 50 ? 'szF50' : 'szF60', ['szF50','szF60']); calculateMotorCap(); }
+  function setTestFreq(f){ testFreq = f; setPressed(f === 50 ? 'tsF50' : 'tsF60', ['tsF50','tsF60']); calculateMotorCap(); }
+  function applyTestRole(){
+    setPressed(testRole === 'run' ? 'tsRoleRun' : 'tsRoleStart', ['tsRoleRun','tsRoleStart']);
+    document.getElementById('tsRatedRunWrap').classList.toggle('hidden', testRole !== 'run');
+    document.getElementById('tsRatedStartWrap').classList.toggle('hidden', testRole !== 'start');
+    document.getElementById('tsStartHint').classList.toggle('hidden', testRole !== 'start');
+  }
+  const ROLE_READINGS = { run: { tsVolt: '330', tsAmp: '1.6' }, start: { tsVolt: '230', tsAmp: '15' } };
+  function setTestRole(r){
+    if (r !== testRole){
+      const rd = ROLE_READINGS[r];
+      Object.keys(rd).forEach(function(id){ document.getElementById(id).value = rd[id]; });
+    }
+    testRole = r; applyTestRole(); calculateMotorCap();
+  }
+  const REP_V = { run: { rpOrigV: '370', rpNewV: '440' }, start: { rpOrigV: '250', rpNewV: '330' } };
+  function applyRepRole(){
+    setPressed(repRole === 'run' ? 'rpRoleRun' : 'rpRoleStart', ['rpRoleRun','rpRoleStart']);
+    document.getElementById('rpRunWrap').classList.toggle('hidden', repRole !== 'run');
+    document.getElementById('rpStartWrap').classList.toggle('hidden', repRole !== 'start');
+    document.getElementById('rpHint').textContent = repRole === 'run'
+      ? 'Enter the single \u00b5F value printed on each run capacitor (e.g. 25 \u00b5F \u00b15%).'
+      : 'Enter both ends of the \u00b5F range printed on each start capacitor (e.g. 189\u2013227 \u00b5F).';
+  }
+  function setRepRole(r){
+    if (r !== repRole){
+      const rv = REP_V[r];
+      Object.keys(rv).forEach(function(id){ document.getElementById(id).value = rv[id]; });
+    }
+    repRole = r; applyRepRole(); calculateMotorCap();
+  }
+
+  function onSizeUnitChange(){
+    const el = document.getElementById('szRating');
+    const unit = document.getElementById('szUnit').value;
+    const v = parseFloat(el.value);
+    if (Number.isFinite(v) && v > 0){
+      el.value = unit === 'kw' ? String(parseFloat((v * 0.746).toFixed(3))) : String(parseFloat((v / 0.746).toFixed(3)));
+    }
+    el.max = unit === 'kw' ? '37' : '50';
+    calculateMotorCap();
+  }
+
+  function setFeedback(val){
+    const fbYes = document.getElementById('fbYes');
+    const fbNo = document.getElementById('fbNo');
+    fbYes.classList.toggle('active-like', val === 'yes');
+    fbNo.classList.toggle('active-dislike', val === 'no');
+    fbYes.setAttribute('aria-pressed', val === 'yes' ? 'true' : 'false');
+    fbNo.setAttribute('aria-pressed', val === 'no' ? 'true' : 'false');
+  }
+
+  function showValidationBox(box, messages, severity){
+    box.classList.remove('hidden','bg-red-50','border','border-red-200','text-red-600','bg-amber-50','border-amber-200','text-amber-700');
+    if (!messages.length){ box.classList.add('hidden'); box.innerHTML = ''; return; }
+    if (severity === 'error'){ box.classList.add('bg-red-50','border','border-red-200','text-red-600'); }
+    else { box.classList.add('bg-amber-50','border','border-amber-200','text-amber-700'); }
+    box.innerHTML = messages.map(function(m){ return '\u2022 ' + m; }).join('<br>');
+  }
+
+  function setTile(o){
+    document.getElementById('resultLabel').textContent = o.label;
+    document.getElementById('rResult').textContent = o.result;
+    document.getElementById('resultSub').textContent = o.sub;
+    document.getElementById('rGrid1Label').textContent = o.g1l;
+    document.getElementById('rGrid1').textContent = o.g1;
+    document.getElementById('rGrid2Label').textContent = o.g2l;
+    document.getElementById('rGrid2').textContent = o.g2;
+    const extra = document.getElementById('rExtraBlock');
+    if (o.exl){
+      document.getElementById('rExtraLabel').textContent = o.exl;
+      document.getElementById('rExtra').textContent = o.ex;
+      extra.classList.remove('hidden');
+    } else {
+      extra.classList.add('hidden');
+    }
+    document.getElementById('rNote').textContent = o.note;
+  }
+
+  function setBreakdown(rows){
+    let html = '<table class="breakdown-table"><thead><tr><th>Quantity</th><th>Value</th></tr></thead><tbody>';
+    rows.forEach(function(r){ html += '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>'; });
+    html += '</tbody></table>';
+    document.getElementById('breakdownBox').innerHTML = html;
+  }
+
+  function resetResultUI(msg){
+    document.getElementById('rResult').textContent = '\u2014';
+    document.getElementById('resultSub').textContent = 'Fix the input errors to see a result';
+    document.getElementById('rGrid1').textContent = '\u2014';
+    document.getElementById('rGrid2').textContent = '\u2014';
+    document.getElementById('rExtra').textContent = '\u2014';
+    document.getElementById('rExtraBlock').classList.add('hidden');
+    document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">' + (msg || 'Fix the input errors above to see a valid result.') + '</p>';
+  }
+
+  function readNum(id){
+    const raw = document.getElementById(id).value;
+    if (raw === '' || raw === null) return NaN;
+    return parseFloat(raw);
+  }
+
+  function fail(errors){
+    showValidationBox(document.getElementById('validationBox'), errors, 'error');
+    resetResultUI();
+  }
+
+  function calculateMotorCap(){
+    if (mcTool === 'size') return calcSize();
+    if (mcTool === 'test') return calcTest();
+    return calcRep();
+  }
+
+  function calcSize(){
+    const box = document.getElementById('validationBox');
+    const val = readNum('szRating');
+    const unit = document.getElementById('szUnit').value;
+    const type = document.getElementById('szType').value;
+    const maxVal = unit === 'kw' ? 37 : 50;
+    if (!Number.isFinite(val) || val <= 0){ return fail(['Enter a motor rating greater than 0.']); }
+    if (val > maxVal){ return fail(['Enter a motor rating up to ' + maxVal + (unit === 'kw' ? ' kW.' : ' HP.')]); }
+
+    const hp = unit === 'kw' ? val / 0.746 : val;
+    const inputText = fmt(val) + (unit === 'kw' ? ' kW (' + fmt(hp) + ' HP)' : ' HP');
+    const baseRows = [
+      ['Motor rating', inputText],
+      ['Motor type', TYPE_LABEL[type]],
+      ['Supply', V_LABEL[sizeVolt] + ', ' + sizeFreq + ' Hz']
+    ];
+
+    if (type === 'split'){
+      showValidationBox(box, [], null);
+      setTile({ label: 'Capacitor Required', result: 'None', sub: 'Split-phase motors start without a capacitor',
+        g1l: 'Start Capacitor', g1: 'Not used', g2l: 'Run Capacitor', g2: 'Not used',
+        note: 'If your motor has a capacitor fitted, it is not a split-phase motor \u2014 choose another type.' });
+      setBreakdown(baseRows.concat([['Starting method', 'High-resistance auxiliary winding; some designs use a centrifugal switch or relay'], ['Capacitor', 'None']]));
+      return;
+    }
+    if (hp < 0.125 - 1e-9){
+      showValidationBox(box, ['Below 1/8 HP, small fan and blower motors vary too widely for a typical range \u2014 use the nameplate or the original capacitor label.'], 'warning');
+      setTile({ label: 'Estimated Capacitor', result: 'See nameplate', sub: 'Below 1/8 HP \u2014 no typical range given',
+        g1l: 'Start Capacitor', g1: '\u2014', g2l: 'Run Capacitor', g2: '\u2014',
+        note: 'Typical-range estimate \u2014 the motor nameplate value always governs.' });
+      setBreakdown(baseRows.concat([['Table range covered', '1/8 HP to 5 HP']]));
+      return;
+    }
+    if (hp > 5 + 1e-9){
+      showValidationBox(box, ['Above 5 HP, single-phase motors are uncommon and capacitor values are design-specific \u2014 use the nameplate or manufacturer data.'], 'warning');
+      setTile({ label: 'Estimated Capacitor', result: 'Above 5 HP', sub: 'Design-specific \u2014 no typical range given',
+        g1l: 'Start Capacitor', g1: '\u2014', g2l: 'Run Capacitor', g2: '\u2014',
+        note: 'Typical-range estimate \u2014 the motor nameplate value always governs.' });
+      setBreakdown(baseRows.concat([['Table range covered', '1/8 HP to 5 HP']]));
+      return;
+    }
+
+    const warnings = [];
+    if (sizeVolt === 'lv' && hp > 2 + 1e-9){
+      warnings.push('Single-phase motors above about 2 HP are rarely built for 110\u2013120 V. Check that the motor really runs on this voltage.');
+    }
+    showValidationBox(box, warnings, 'warning');
+
+    const s = sizeFor(hp, sizeVolt, sizeFreq);
+    const runText = fmt(s.runLo) + ' \u2013 ' + fmt(s.runHi) + ' ' + UF;
+    const startText = s.start ? s.start[0] + '\u2013' + s.start[1] + ' ' + UF : 'See nameplate';
+    const stdText = s.stdRun.length ? s.stdRun.join(', ') + ' ' + UF : 'None \u2014 use nearest value';
+    const rowText = s.row[1] + ' HP' + (Math.abs(s.row[0] - hp) > 1e-6 ? ' (next size \u2265 ' + fmt(hp) + ' HP)' : '');
+    const note = 'Rough screening reference \u2014 not a calculated manufacturer value. Voltage and frequency adjustments are illustrative, not design rules. Use the nameplate or original capacitor marking first.';
+
+    if (type === 'cs'){
+      setTile({ label: 'Typical Start Capacitor Range', result: startText, sub: 'Intermittent-duty electrolytic \u00b7 ' + START_V[sizeVolt],
+        g1l: 'Run Capacitor', g1: 'Not used', g2l: 'Start Cap V (typical)', g2: START_V[sizeVolt],
+        exl: 'Table Row Used', ex: rowText, note: note });
+    } else {
+      setTile({ label: 'Typical Run Capacitor Range', result: runText, sub: 'Continuous-duty film \u00b7 ' + RUN_V[sizeVolt],
+        g1l: 'Start Capacitor', g1: type === 'psc' ? 'Not used' : startText,
+        g2l: 'Run Cap V (typical)', g2: RUN_V[sizeVolt],
+        exl: 'Standard Values in Range', ex: stdText, note: note });
+    }
+
+    const rows = baseRows.concat([
+      ['Table row used', rowText],
+      ['Voltage adjustment (illustrative, run / start)', '\u00d7' + s.vf.run + ' / \u00d7' + s.vf.start],
+      ['Frequency adjustment (rough estimate)', '\u00d7' + s.ff + (sizeFreq === 50 ? ' (60 \u00f7 50)' : '')]
+    ]);
+    if (type !== 'cs'){
+      rows.push(['Run range (60 Hz, 230 V base)', s.row[2] + ' \u2013 ' + s.row[3] + ' ' + UF]);
+      rows.push(['Run range (adjusted)', runText]);
+      rows.push(['Standard run values', stdText]);
+      rows.push(['Run capacitor voltage (typical \u2014 verify original marking)', RUN_V[sizeVolt]]);
+    }
+    if (type !== 'psc'){
+      rows.push(['Start centre (adjusted)', fmt(s.startC) + ' ' + UF]);
+      rows.push(['Nearest start marking', startText]);
+      rows.push(['Start capacitor voltage (typical \u2014 verify original marking)', START_V[sizeVolt]]);
+    }
+    setBreakdown(rows);
+  }
+
+  function calcTest(){
+    const box = document.getElementById('validationBox');
+    const V = readNum('tsVolt');
+    const I = readNum('tsAmp');
+    const errors = [];
+    if (!Number.isFinite(V) || V < 1 || V > 1000) errors.push('Enter the voltage across the capacitor, between 1 and 1000 V.');
+    if (!Number.isFinite(I) || I < 0.001 || I > 100) errors.push('Enter the capacitor current, between 0.001 and 100 A.');
+
+    let rated = NaN, tol = parseFloat(document.getElementById('tsTol').value), lo = NaN, hi = NaN;
+    if (testRole === 'run'){
+      const raw = document.getElementById('tsRated').value;
+      if (raw !== ''){
+        rated = parseFloat(raw);
+        if (!Number.isFinite(rated) || rated < 0.1 || rated > 2000) errors.push('Rated value must be between 0.1 and 2000 \u00b5F, or leave it blank.');
+      }
+    } else {
+      const rawLo = document.getElementById('tsRatedLo').value;
+      const rawHi = document.getElementById('tsRatedHi').value;
+      if (rawLo !== '' || rawHi !== ''){
+        lo = parseFloat(rawLo); hi = parseFloat(rawHi);
+        if (!Number.isFinite(lo) || !Number.isFinite(hi) || lo < 0.1 || hi > 2000){ errors.push('Enter both ends of the marked range (0.1 to 2000 \u00b5F), or leave both blank.'); }
+        else if (lo >= hi){ errors.push('The low end of the marked range must be smaller than the high end.'); }
+      }
+    }
+    if (errors.length) return fail(errors);
+
+    const twoPiF = 2 * Math.PI * testFreq;
+    const C = I * 1e6 / (twoPiF * V);
+    const Xc = V / I;
+    const Q = V * I;
+    if (!Number.isFinite(C)) return fail(['Values are too large or too small to calculate.']);
+
+    let ratedText = 'Not entered', devText = '\u2014', verdict = 'Measured value \u2014 enter the rated value to compare';
+    const rows = [
+      ['Voltage across capacitor', fmt(V) + ' V'],
+      ['Capacitor current', fmt(I) + ' A'],
+      ['Frequency', testFreq + ' Hz'],
+      ['2\u03c0f', fmt(twoPiF) + ' rad/s'],
+      ['Estimated C = I \u00d7 10\u2076 \u00f7 (2\u03c0fV)', fmt(C) + ' ' + UF],
+      ['Reactance Xc = V \u00f7 I', fmt(Xc) + ' \u03a9'],
+      ['Capacitor VA \u2248 V \u00d7 I', fmt(Q) + ' VA']
+    ];
+
+    if (testRole === 'run' && Number.isFinite(rated)){
+      const dev = (C - rated) / rated * 100;
+      ratedText = fmt(rated) + ' ' + UF + ' \u00b1' + tol + '%';
+      devText = (dev >= 0 ? '+' : '\u2212') + fmt(Math.abs(dev)) + '%';
+      if (Math.abs(dev) <= tol) verdict = 'Within rated tolerance (\u00b1' + tol + '%)';
+      else if (dev < 0 && dev >= -10) verdict = 'Below tolerance \u2014 weak, plan a replacement';
+      else if (dev < -10) verdict = 'More than 10% low \u2014 replace the capacitor';
+      else verdict = 'Above tolerance \u2014 recheck readings and the fitted part';
+      rows.push(['Rated value', ratedText]);
+      rows.push(['Deviation', devText]);
+    } else if (testRole === 'start' && Number.isFinite(lo)){
+      ratedText = fmt(lo) + '\u2013' + fmt(hi) + ' ' + UF;
+      if (C >= lo && C <= hi){ verdict = 'Within the marked range'; devText = 'In range'; }
+      else if (C < lo){
+        const below = (lo - C) / lo * 100;
+        devText = '\u2212' + fmt(below) + '% below low end';
+        verdict = below <= 10 ? 'Slightly below range \u2014 weak, plan a replacement' : 'Well below range \u2014 replace the capacitor';
+      } else {
+        const above = (C - hi) / hi * 100;
+        devText = '+' + fmt(above) + '% above high end';
+        verdict = 'Above the marked range \u2014 recheck readings and the fitted part';
+      }
+      rows.push(['Marked range', ratedText]);
+      rows.push(['Deviation', devText]);
+    }
+    rows.push(['Result', verdict]);
+
+    showValidationBox(box, [], null);
+    setTile({ label: 'Estimated Capacitance (from readings)', result: fmt(C) + ' ' + UF, sub: verdict,
+      g1l: testRole === 'run' ? 'Rated Value' : 'Marked Range', g1: ratedText,
+      g2l: 'Deviation', g2: devText,
+      exl: 'Capacitive Reactance (Xc)', ex: fmt(Xc) + ' \u03a9',
+      note: 'Calculated from your readings \u2014 accuracy depends on the meters used.' });
+    setBreakdown(rows);
+  }
+
+  function calcRep(){
+    const box = document.getElementById('validationBox');
+    const oV = readNum('rpOrigV'), nV = readNum('rpNewV');
+    const errors = [];
+    const ufOK = function(v){ return Number.isFinite(v) && v >= 0.1 && v <= 2000; };
+    let oUF, nUF, oLo, oHi, nLo, nHi;
+    if (repRole === 'run'){
+      oUF = readNum('rpOrigUF'); nUF = readNum('rpNewUF');
+      if (!ufOK(oUF)) errors.push('Original capacitance must be between 0.1 and 2000 \u00b5F.');
+      if (!ufOK(nUF)) errors.push('Replacement capacitance must be between 0.1 and 2000 \u00b5F.');
+    } else {
+      oLo = readNum('rpOrigLo'); oHi = readNum('rpOrigHi'); nLo = readNum('rpNewLo'); nHi = readNum('rpNewHi');
+      if (!ufOK(oLo) || !ufOK(oHi)) errors.push('Enter both ends of the original range, between 0.1 and 2000 \u00b5F.');
+      else if (oLo >= oHi) errors.push('Original range: the low end must be smaller than the high end.');
+      if (!ufOK(nLo) || !ufOK(nHi)) errors.push('Enter both ends of the replacement range, between 0.1 and 2000 \u00b5F.');
+      else if (nLo >= nHi) errors.push('Replacement range: the low end must be smaller than the high end.');
+    }
+    if (!Number.isFinite(oV) || oV < 1 || oV > 1000) errors.push('Original voltage rating must be between 1 and 1000 VAC.');
+    if (!Number.isFinite(nV) || nV < 1 || nV > 1000) errors.push('Replacement voltage rating must be between 1 and 1000 VAC.');
+    if (errors.length) return fail(errors);
+
+    const vOK = nV >= oV;
+    const vText = fmt(nV) + (vOK ? ' \u2265 ' : ' < ') + fmt(oV) + ' VAC';
+    const CHECK_SUB = '\u00b5F and voltage rating pass the basic numerical check \u2014 verify manufacturer specifications before replacement';
+    let result, sub, g1l, g1, rows;
+
+    if (repRole === 'run'){
+      const d = (nUF - oUF) / oUF * 100;
+      const dText = (d >= 0 ? '+' : '\u2212') + fmt(Math.abs(d)) + '%';
+      if (!vOK){ result = 'Not suitable'; sub = 'Voltage rating is lower than the original'; }
+      else if (Math.abs(d) > 10){ result = 'Not a direct match'; sub = '\u00b5F differs by more than 10% from the original'; }
+      else if (Math.abs(d) > 5){ result = 'Check manufacturer spec'; sub = '\u00b5F differs by ' + fmt(Math.abs(d)) + '% \u2014 outside a typical \u00b15% run-capacitor tolerance'; }
+      else { result = 'Passes numerical check'; sub = CHECK_SUB; }
+      g1l = '\u00b5F Difference'; g1 = dText;
+      rows = [
+        ['Capacitor role', 'Run'],
+        ['Original', fmt(oUF) + ' ' + UF + ', ' + fmt(oV) + ' VAC'],
+        ['Replacement', fmt(nUF) + ' ' + UF + ', ' + fmt(nV) + ' VAC'],
+        ['\u0394C = (new \u2212 orig) \u00f7 orig', dText],
+        ['Numerical match band', '\u00b15% (check spec up to \u00b110%)']
+      ];
+    } else {
+      const inside = nLo >= oLo - 1e-9 && nHi <= oHi + 1e-9;
+      const nMid = (nLo + nHi) / 2;
+      const midInside = nMid >= oLo && nMid <= oHi;
+      const dist = nMid < oLo ? (oLo - nMid) / oLo * 100 : (nMid > oHi ? (nMid - oHi) / oHi * 100 : 0);
+      let rangeText;
+      if (inside){ rangeText = 'Within original range'; }
+      else if (midInside){ rangeText = 'Overlaps original range'; }
+      else if (dist <= 10){ rangeText = 'Slightly outside (' + fmt(dist) + '%)'; }
+      else { rangeText = 'Outside (' + fmt(dist) + '%)'; }
+      if (!vOK){ result = 'Not suitable'; sub = 'Voltage rating is lower than the original'; }
+      else if (inside){ result = 'Passes numerical check'; sub = CHECK_SUB; }
+      else if (midInside || dist <= 10){ result = 'Check manufacturer spec'; sub = 'Replacement range does not sit fully inside the original marked range'; }
+      else { result = 'Not a direct match'; sub = 'Replacement range is well outside the original marked range'; }
+      g1l = 'Range Check'; g1 = rangeText;
+      rows = [
+        ['Capacitor role', 'Start'],
+        ['Original', fmt(oLo) + '\u2013' + fmt(oHi) + ' ' + UF + ', ' + fmt(oV) + ' VAC'],
+        ['Replacement', fmt(nLo) + '\u2013' + fmt(nHi) + ' ' + UF + ', ' + fmt(nV) + ' VAC'],
+        ['Replacement range centre', fmt(nMid) + ' ' + UF],
+        ['Range check', rangeText]
+      ];
+    }
+    rows.push(['Voltage check', vOK ? 'Equal or higher \u2014 OK' : 'Lower than original \u2014 not OK']);
+    rows.push(['Verdict', result]);
+
+    const typeText = repRole === 'run' ? 'Continuous-duty film (run)' : 'Intermittent-duty electrolytic (start)';
+    showValidationBox(box, [], null);
+    setTile({ label: 'Replacement Check', result: result, sub: sub,
+      g1l: g1l, g1: g1, g2l: 'Voltage Rating', g2: vText,
+      exl: 'Type Required', ex: typeText,
+      note: 'Electrical compatibility check only \u2014 always match the manufacturer\u2019s specified capacitance, tolerance and duty rating, plus the physical size and terminals.' });
+    setBreakdown(rows);
+  }
+
+  applyTestRole();
+  calculateMotorCap();
+</script>
+
+<script>
+  function copyResultGeneric(){
+    var btn = document.getElementById('copyResultBtn');
+    if (!btn) return;
+    function restore(){ btn.textContent = '\ud83d\udccb Copy Result'; }
+
+    var currentResult = document.getElementById('rResult').textContent.trim();
+    if (currentResult === '' || currentResult === '\u2014'){
+      btn.textContent = 'Nothing to copy \u2014 calculate a result first';
+      setTimeout(restore, 2000);
+      return;
+    }
+
+    var toolLabel = mcTool === 'size' ? 'Size by HP' : (mcTool === 'test' ? 'Test \u00b5F (V & A)' : 'Replacement Check');
+    var lines = ['Motor Capacitor Calculator Result', '', 'Tool: ' + toolLabel, ''];
+    lines.push(document.getElementById('resultLabel').textContent.trim() + ': ' + currentResult);
+    lines.push(document.getElementById('resultSub').textContent.trim());
+    lines.push(document.getElementById('rGrid1Label').textContent.trim() + ': ' + document.getElementById('rGrid1').textContent.trim());
+    lines.push(document.getElementById('rGrid2Label').textContent.trim() + ': ' + document.getElementById('rGrid2').textContent.trim());
+    if (!document.getElementById('rExtraBlock').classList.contains('hidden')){
+      lines.push(document.getElementById('rExtraLabel').textContent.trim() + ': ' + document.getElementById('rExtra').textContent.trim());
+    }
+    lines.push('', document.getElementById('rNote').textContent.trim());
+    lines.push('', 'Source: electromechcalc.com/electrical/motor-capacitor-calculator');
+    var text = lines.join('\n');
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = '\u2705 Copied';
+        setTimeout(restore, 1800);
+      }).catch(function(){ btn.textContent = '\u26a0\ufe0f Copy failed'; setTimeout(restore, 1800); });
+    } else {
+      var ok = false;
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch (e) { ok = false; }
+      btn.textContent = ok ? '\u2705 Copied' : '\u26a0\ufe0f Not supported';
+      setTimeout(restore, 1800);
+    }
+  }
+
+  (function(){
+    function clampNumberInput(el){
+      if (el.type !== 'number' || el.value === '') return;
+      var hasMin = el.hasAttribute('min');
+      var hasMax = el.hasAttribute('max');
+      var min = hasMin ? parseFloat(el.min) : null;
+      var max = hasMax ? parseFloat(el.max) : null;
+      var v = parseFloat(el.value);
+      var corrected = null;
+      if (!isFinite(v)) { corrected = (min !== null ? min : 0); }
+      else if (min !== null && v < min) { corrected = min; }
+      else if (max !== null && v > max) { corrected = max; }
+      if (corrected !== null && corrected !== v) {
+        el.value = corrected;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    document.querySelectorAll('.calc-input-panel input[type="number"]').forEach(function(el){
+      el.addEventListener('blur', function(){ clampNumberInput(el); calculateMotorCap(); });
+      el.addEventListener('keydown', function(e){
+        if (e.key === 'Enter'){
+          e.preventDefault();
+          var b = document.querySelector('button[onclick^="calculate"]');
+          if (b) b.click();
+        }
+      });
+    });
+  })();
+</script>
+
+<script>
+  var __shareModalLoading = false;
+  function loadShareModal(){
+    if (typeof openShareModal === 'function'){ openShareModal(); return; }
+    if (__shareModalLoading) return;
+    __shareModalLoading = true;
+    var shareBtn = document.querySelector('.share-result-btn');
+    var prevLabel = shareBtn ? shareBtn.innerHTML : null;
+    var s = document.createElement('script');
+    s.src = '/assets/share-modal.js';
+    s.onload = function(){ __shareModalLoading = false; openShareModal(); };
+    s.onerror = function(){
+      __shareModalLoading = false;
+      if (shareBtn){
+        shareBtn.innerHTML = '<span aria-hidden="true">\u26a0\ufe0f</span> Unable to load \u2014 try again';
+        setTimeout(function(){ if (prevLabel !== null) shareBtn.innerHTML = prevLabel; }, 2500);
+      }
+    };
+    document.head.appendChild(s);
+  }
+</script>
+<script>
+  (function(){
+    function positionShareBar(){
+      var bar = document.getElementById('shareFeedbackBar');
+      var related = document.getElementById('relatedCalculatorsBox');
+      var anchor = document.getElementById('shareFeedbackAnchor');
+      if(!bar || !related || !anchor) return;
+      var isMobile = window.matchMedia('(max-width: 1023px)').matches;
+      if(isMobile){
+        if(bar.nextElementSibling !== related){
+          related.parentElement.insertBefore(bar, related);
+        }
+      } else {
+        if(bar.previousElementSibling !== anchor){
+          anchor.parentElement.insertBefore(bar, anchor.nextSibling);
+        }
+      }
+    }
+    window.addEventListener('resize', positionShareBar);
+    document.addEventListener('DOMContentLoaded', positionShareBar);
+    positionShareBar();
+  })();
+</script>
+
+<script>
+(() => {
+  const el = document.getElementById("heroTypingText");
+  if (!el) return;
+  const words = [
+    "Calculate Smarter. Work Faster.",
+    "Practical Calculators & Maintenance Guides."
+  ];
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion) { el.textContent = words[0]; return; }
+  let wordIndex = 0;
+  let charIndex = words[0].length;
+  let deleting = true;
+  const typeSpeed = 90;
+  const deleteSpeed = 55;
+  const pauseAfterTyping = 1800;
+  const pauseAfterDeleting = 500;
+
+  // Pause while the hero text is scrolled out of view or the tab is in
+  // the background (nobody can see it), resume from the same letter when
+  // it's visible again. Text, speed and cursor are unchanged — this only
+  // stops the text/layout update every 55-90 ms while the user is
+  // further down the page.
+  let inView = true;
+  let waiting = false;
+  const isActive = () => inView && !document.hidden;
+  const resumeIfWaiting = () => {
+    if (waiting && isActive()) {
+      waiting = false;
+      animate();
+    }
+  };
+  if (window.IntersectionObserver) {
+    new IntersectionObserver((entries) => {
+      inView = entries[entries.length - 1].isIntersecting;
+      resumeIfWaiting();
+    }).observe(el.closest(".hero-typing-box") || el);
+  }
+  document.addEventListener("visibilitychange", resumeIfWaiting);
+
+  function animate() {
+    if (!isActive()) {
+      waiting = true;
+      return;
+    }
+    const word = words[wordIndex];
+    if (deleting) {
+      if (charIndex > 0) {
+        charIndex--;
+        el.textContent = word.substring(0, charIndex);
+        setTimeout(animate, deleteSpeed);
+      } else {
+        deleting = false;
+        wordIndex = (wordIndex + 1) % words.length;
+        charIndex = 0;
+        setTimeout(animate, pauseAfterDeleting);
+      }
+    } else {
+      const nextWord = words[wordIndex];
+      if (charIndex < nextWord.length) {
+        charIndex++;
+        el.textContent = nextWord.substring(0, charIndex);
+        setTimeout(animate, typeSpeed);
+      } else {
+        deleting = true;
+        setTimeout(animate, pauseAfterTyping);
+      }
+    }
+  }
+  setTimeout(() => {
+    wordIndex = 0;
+    charIndex = words[0].length;
+    deleting = true;
+    animate();
+  }, 1500);
+})();
+</script>
+</body>
+</html>
