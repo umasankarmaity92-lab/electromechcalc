@@ -145,7 +145,7 @@
       "name": "What is a typical voltage regulation for a distribution transformer?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "It depends mainly on %Z and the load power factor. A distribution transformer with an impedance of about 4–6% typically shows a full-load regulation of roughly 3–5% at 0.8 power factor lagging, and around 1–2% at unity power factor. Check the actual figure with the transformer's own %R and %X."
+        "text": "It depends mainly on %Z and the load power factor. A distribution transformer with an impedance of about 4–6% typically shows a full-load regulation of roughly 3–5% at 0.8 power factor lagging, and around 1–2% at unity power factor. This calculator labels results as low (0–2%), typical (2–5%), high (5–8%) or very high (above 8%), with negative values shown as a voltage rise — a practical guide from typical transformer behaviour, not a standard limit. Check the actual figure with the transformer's own %R and %X."
       }
     },
     {
@@ -320,6 +320,8 @@
   body.dark-theme .vr-table td{ border-color:#1f2f47; color:#e2e8f0; }
   body.dark-theme .vr-table tbody tr:nth-child(even){ background:#0f172a; }
   body.dark-theme .vr-hint{ color:#94a3b8; }
+  .vr-band{ display:inline-block; font-size:11px; font-weight:700; padding:2px 9px; border-radius:9999px; border:1px solid transparent; letter-spacing:.02em; }
+  .vr-band-dot{ display:inline-block; width:9px; height:9px; border-radius:9999px; margin-right:6px; vertical-align:middle; }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -527,6 +529,7 @@
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Voltage Regulation (Exact)</span>
         <div id="rResult" class="font-display font-bold text-3xl mt-1">&mdash;</div>
         <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
+        <p class="mt-2 hidden" id="rBandWrap"><span id="rBand" class="vr-band"></span><span id="rBandNote" class="text-[11px] text-gray-400 ml-2"></span></p>
 
         <div id="rGridBlock" class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
           <div>
@@ -621,7 +624,7 @@
     <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-sky-700">
       <li><a href="#calculator" class="hover:underline">1. Use the calculator</a></li>
       <li><a href="#how-it-works" class="hover:underline">2. Formulas &amp; phasor diagram</a></li>
-      <li><a href="#second" class="hover:underline">3. Power factor, load &amp; %Z</a></li>
+      <li><a href="#second" class="hover:underline">3. PF, load, %Z &amp; result bands</a></li>
       <li><a href="#mistakes" class="hover:underline">4. Common mistakes</a></li>
       <li><a href="#faqs" class="hover:underline">5. FAQs</a></li>
     </ul>
@@ -834,6 +837,22 @@
       </table>
     </div>
 
+    <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Reading the Result: Regulation Bands</h3>
+    <p>A regulation figure only means something against what the load can tolerate, so the calculator adds a plain-language band to every result. The bands come from how real distribution and power transformers usually behave on load &mdash; they are a practical guide, not limits taken from a standard.</p>
+    <div class="not-prose vr-table-wrap my-4">
+      <table class="vr-table">
+        <thead><tr><th>Result</th><th>Band</th><th>What it usually means</th><th>What to check</th></tr></thead>
+        <tbody>
+          <tr><td>Below 0%</td><td><span class="vr-band-dot" style="background:#14b8a6"></span>Voltage rise</td><td>Leading (capacitive) load &mdash; the secondary voltage goes <em>up</em> as load is applied.</td><td>Capacitor banks left in service at light load; fixed compensation larger than the inductive load.</td></tr>
+          <tr><td>0 &ndash; 2%</td><td><span class="vr-band-dot" style="background:#0ea5e9"></span>Low</td><td>A stiff supply: unity or near-unity power factor, light load, or a transformer that is large for its load.</td><td>Usually nothing. If %Z is unusually low, confirm switchgear fault ratings.</td></tr>
+          <tr><td>2 &ndash; 5%</td><td><span class="vr-band-dot" style="background:#22c55e"></span>Typical</td><td>What most distribution transformers show near full load at 0.8&ndash;0.9 power factor.</td><td>Add the cable voltage drop to see what the load terminals receive.</td></tr>
+          <tr><td>5 &ndash; 8%</td><td><span class="vr-band-dot" style="background:#f59e0b"></span>High</td><td>Low lagging power factor, a higher-impedance transformer, or operation above rated load.</td><td>The total voltage budget, the tap position, and whether power factor correction is worthwhile.</td></tr>
+          <tr><td>Above 8%</td><td><span class="vr-band-dot" style="background:#ef4444"></span>Very high</td><td>Heavy overload, very poor power factor or a very high %Z &mdash; or an input error.</td><td>Re-check the %R/%X or ohm values first, then consider a larger or lower-impedance transformer, load sharing, or an on-load tap changer.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>What finally matters is the voltage at the equipment, which is the supply voltage minus the transformer regulation and the cable drop together. Supply-voltage tolerances are set by the applicable standard and your utility &mdash; for example, IEC 60038 gives &plusmn;10% for 230/400 V systems at the supply terminals, and ANSI C84.1 Range A allows &plusmn;5% on 120 V-base service voltage &mdash; so a &ldquo;High&rdquo; transformer regulation may still be acceptable with short cables, while a &ldquo;Typical&rdquo; one can be a problem at the end of a long feeder.</p>
+
     <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Worst-Case and Zero-Regulation Power Factor</h3>
     <p>Regulation is highest at the lagging power factor where the load current is in phase with the transformer's impedance, tan&phi; = %X &divide; %R, i.e. <strong>cos&phi; = %R &divide; %Z</strong>. There the whole impedance drop lines up with the terminal voltage, so in the exact solution the regulation at 100% load equals %Z on the rated-voltage basis; at a load fraction a it equals a &times; %Z. For the example at full load that is cos&phi; &asymp; 0.24 lagging, with 4.95% of the rated voltage, or 5.21% of the on-load voltage. Regulation passes through zero at approximately <strong>cos&phi; = %X &divide; %Z</strong> leading (the first-order condition tan&phi; = %R &divide; %X) &mdash; about 0.97 leading for the example; the exact crossing is slightly more leading, at about 0.964. Beyond that point the secondary voltage rises as load increases, the same mechanism that causes voltage rise on an over-compensated power factor correction bank or on a lightly loaded long cable or line (the Ferranti effect).</p>
 
@@ -954,7 +973,7 @@
         What is a typical voltage regulation for a distribution transformer?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It depends mainly on %Z and the load power factor. A distribution transformer with an impedance of about 4–6% typically shows a full-load regulation of roughly 3–5% at 0.8 power factor lagging, and around 1–2% at unity power factor. Check the actual figure with the transformer's own %R and %X.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It depends mainly on %Z and the load power factor. A distribution transformer with an impedance of about 4–6% typically shows a full-load regulation of roughly 3–5% at 0.8 power factor lagging, and around 1–2% at unity power factor. This calculator labels results as low (0–2%), typical (2–5%), high (5–8%) or very high (above 8%), with negative values shown as a voltage rise — a practical guide from typical transformer behaviour, not a standard limit. Check the actual figure with the transformer's own %R and %X.</p>
     </details>
 
     <details class="py-5">
@@ -1083,10 +1102,39 @@
   function resetResultUI(){
     ['rResult','rGrid1','rGrid2','rExtra','rExtra2'].forEach(function(id){ document.getElementById(id).textContent = '\u2014'; });
     document.getElementById('resultSub').textContent = 'Fix the input errors to see a result';
+    document.getElementById('rBandWrap').classList.add('hidden');
     document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
     document.getElementById('pfBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see the table.</p>';
   }
   function fail(errors){ showValidationBox(document.getElementById('validationBox'), errors, 'error'); resetResultUI(); }
+
+  // Practical interpretation bands (a guide from typical transformer data, not a standard limit)
+  const BANDS = [
+    { max: 0,        label: 'Voltage rise', color: '#2dd4bf', note: 'Voltage goes up on load \u2014 check for over-compensation' },
+    { max: 2,        label: 'Low',          color: '#38bdf8', note: 'Very stiff \u2014 little voltage change' },
+    { max: 5,        label: 'Typical',      color: '#4ade80', note: 'Normal for a loaded distribution transformer' },
+    { max: 8,        label: 'High',         color: '#fbbf24', note: 'Check the voltage budget with cable drop' },
+    { max: Infinity, label: 'Very high',    color: '#f87171', note: 'Review taps, pf, size or %Z' }
+  ];
+  function bandFor(vr){
+    if (!Number.isFinite(vr)) return null;
+    if (vr < -0.005) return BANDS[0];
+    for (let i = 1; i < BANDS.length; i++){ if (vr <= BANDS[i].max) return BANDS[i]; }
+    return BANDS[BANDS.length - 1];
+  }
+  function setBand(vr){
+    const wrap = document.getElementById('rBandWrap');
+    const b = bandFor(vr);
+    if (!b){ wrap.classList.add('hidden'); return null; }
+    const el = document.getElementById('rBand');
+    el.textContent = b.label;
+    el.style.color = b.color;
+    el.style.borderColor = b.color;
+    el.style.background = 'rgba(255,255,255,0.06)';
+    document.getElementById('rBandNote').textContent = b.note;
+    wrap.classList.remove('hidden');
+    return b;
+  }
 
   function setTile(o){
     document.getElementById('resultLabel').textContent = o.label;
@@ -1105,6 +1153,7 @@
       ex.classList.remove('hidden');
     } else { ex.classList.add('hidden'); }
     document.getElementById('rNote').textContent = o.note;
+    setBand(o.band);
   }
 
   function calculateVR(){
@@ -1131,13 +1180,14 @@
       setTile({ label: 'Voltage Regulation', result: pctText(vr), sub: basisText + (vr < 0 ? ' \u2014 voltage rises on load' : ''),
         g1l: 'Voltage Change', g1: fmt(vnl - vfl, 2) + ' V', g2l: 'Per Unit', g2: fmt(vr / 100, 4) + ' pu',
         e1l: '% of No-Load V', e1: pctText(vrNL), e2l: '% of Full-Load V', e2: pctText(vrFL),
-        note: 'Calculated directly from your readings.' });
+        note: 'Calculated directly from your readings.', band: vr });
       document.getElementById('breakdownBox').innerHTML = table([
         ['No-load voltage V<sub>NL</sub>', fmt(vnl) + ' V'],
         ['Full-load voltage V<sub>FL</sub>', fmt(vfl) + ' V'],
         ['Voltage change V<sub>NL</sub> \u2212 V<sub>FL</sub>', fmt(vnl - vfl) + ' V'],
         ['VR, % of V<sub>FL</sub>', pctText(vrFL)],
-        ['VR, % of V<sub>NL</sub>', pctText(vrNL)]
+        ['VR, % of V<sub>NL</sub>', pctText(vrNL)],
+        ['Regulation band (guide)', bandFor(vr).label]
       ], ['Quantity','Value']);
       return;
     }
@@ -1196,7 +1246,7 @@
       g1l: 'Load Terminal Voltage', g1: fmt(vflLL) + ' V',
       g2l: 'Voltage Change', g2: (v2 - vflLL < 0 ? '\u2212' : '') + fmt(Math.abs(v2 - vflLL), 2) + ' V',
       e1l: 'IEC 60076-8 (% of Vnl)', e1: pctText(iec), e2l: 'Approx. (% of Vnl)', e2: pctText(approx),
-      note: vr < 0 ? 'Negative regulation: the secondary voltage rises on load (leading power factor).' : 'IEC and approximate values are on the rated (no-load) voltage basis.' });
+      note: vr < 0 ? 'Negative regulation: the secondary voltage rises on load (leading power factor).' : 'IEC and approximate values are on the rated (no-load) voltage basis.', band: vr });
 
     // PF table (exact, chosen basis, same load)
     const pfRows = PF_LIST.map(function(p){
@@ -1225,6 +1275,7 @@
     rows.push(['VR exact, % of V<sub>NL</sub>', pctText(vrNL)]);
     rows.push(['VR, IEC 60076-8 second-order approximation (% of V<sub>NL</sub>)', pctText(iec)]);
     rows.push(['VR approximate (% of V<sub>NL</sub>)', pctText(approx)]);
+    rows.push(['Regulation band (guide)', bandFor(vr).label]);
     if (pZ > 0){
       rows.push(['Max positive-regulation pf (lagging) = %R \u00f7 %Z', fmt(pR / pZ, 3)]);
       rows.push(['Max regulation there = load fraction \u00d7 %Z (% of V<sub>NL</sub>)', pctText(a * pZ)]);
@@ -1251,6 +1302,9 @@
     var lines = ['Transformer Voltage Regulation Result', '', 'Input method: ' + modeLabel, ''];
     lines.push(document.getElementById('resultLabel').textContent.trim() + ': ' + currentResult);
     lines.push(document.getElementById('resultSub').textContent.trim());
+    if (!document.getElementById('rBandWrap').classList.contains('hidden')){
+      lines.push('Band (guide): ' + document.getElementById('rBand').textContent.trim() + ' \u2014 ' + document.getElementById('rBandNote').textContent.trim());
+    }
     lines.push(document.getElementById('rGrid1Label').textContent.trim() + ': ' + document.getElementById('rGrid1').textContent.trim());
     lines.push(document.getElementById('rGrid2Label').textContent.trim() + ': ' + document.getElementById('rGrid2').textContent.trim());
     if (!document.getElementById('rExtraBlock').classList.contains('hidden')){
