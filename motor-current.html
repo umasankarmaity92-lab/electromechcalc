@@ -103,6 +103,14 @@
     },
     {
       "@type": "Question",
+      "name": "Why is my calculated current different from the motor nameplate FLA?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Because the formula depends on the efficiency and power factor you assume, and real values vary with rating, pole count and design. Small motors typically have lower PF and efficiency than the 0.85 / 90% defaults, so their nameplate current is higher than the estimate. Enter the nameplate FLA in the cross-check field to see the efficiency × PF it implies; a value far outside roughly 0.6–0.9 usually points to a wrong voltage column, an HP/kW mix-up or a service-factor amps value. The nameplate always takes priority."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "Should I enter the motor's output kW or input kW?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -194,7 +202,7 @@
       "name": "Does power factor correction change the motor's FLC?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Capacitors reduce the reactive current drawn upstream of the correction point, lowering line current and kVA seen by the supply. They do not change the current the motor itself draws at its terminals. Use the APFC Capacitor Calculator to size correction."
+        "text": "Capacitors reduce the reactive current drawn upstream of the correction point, lowering line current and kVA seen by the supply. They do not change the current in the motor windings. One practical consequence: if capacitors are connected at the motor terminals on the load side of the overload relay, the relay sees the reduced current, so its setting must be based on the winding current (per the manufacturer's or code's adjustment rules), not simply on the nameplate FLA. Use the APFC Capacitor Calculator to size correction."
       }
     },
     {
@@ -662,6 +670,12 @@
         </select>
       </div>
 
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="nameplateFLA">Nameplate FLA for Cross-Check (A) &mdash; optional</label>
+        <input id="nameplateFLA" type="number" value="" step="any" min="0" max="100000" placeholder="blank = skip" class="input-field mt-2">
+        <p class="text-xs text-gray-500 mt-1">Enter the rated current printed on the motor nameplate at this voltage to compare it with the formula estimate and see the efficiency &times; PF it implies.</p>
+      </div>
+
       <div class="border-t border-gray-100 pt-5 mb-5">
         <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="margin">Optional Planning Headroom (%)</label>
         <input id="margin" type="number" value="0" step="1" min="0" max="100" class="input-field mt-2">
@@ -729,6 +743,10 @@
         <p id="rNote" class="text-sm text-gray-600 mt-1.5 leading-relaxed" style="overflow-x:auto;">Enter your values and hit calculate to see the full breakdown.</p>
       </div>
 
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500">Estimate Checks</span>
+        <div id="rChecks" class="text-sm text-gray-600 mt-1.5 leading-relaxed space-y-2"><p>Enter your values and hit calculate.</p></div>
+      </div>
       <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
         <span class="font-mono text-[10px] uppercase tracking-wider text-amber-600">Protection Sizing Note</span>
         <p class="text-xs text-amber-800 mt-1.5 leading-relaxed">Protection sizing is not derived from this planning reference current. Use the motor nameplate FLC and applicable local electrical code to select conductor, overload, and branch-circuit overcurrent protection — starting current must also be considered.</p>
@@ -940,6 +958,10 @@
         <div class="def"><b>No-load current</b>Mostly magnetising current when running unloaded. Varies widely by design and size.</div>
       </div>
 
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Why a Formula Estimate Differs from the Nameplate FLA</h3>
+      <p>The formula is exact physics, but its inputs are assumptions. Current is inversely proportional to efficiency &times; power factor, and both vary with rating, pole count, design and efficiency class: small and low-speed motors run at noticeably lower power factor and efficiency than large two- and four-pole machines, so a single PF 0.85 / 90% assumption underestimates small-motor current and can slightly overestimate large-motor current. For reference, the IE3 minimum efficiencies in IEC 60034-30-1 for four-pole 50 Hz motors rise from about 82.5% at 0.75 kW to about 91.4% at 11 kW and 95% at 75 kW; the calculator shows the IE3 figure for your rating when a three-phase shaft-output rating is entered, so you can see how far your efficiency assumption is from it. Power factor has no equivalent standard minimum and must come from the data sheet.</p>
+      <p>If you enter the nameplate FLA in the cross-check field, the calculator back-calculates the efficiency &times; power factor product the nameplate implies: &eta;&middot;PF = P &divide; (&radic;3 &times; V &times; I) for three-phase. A plausible result (roughly 0.6&ndash;0.9 depending on size) confirms the reading; a result far outside that range usually means the wrong voltage column of a dual-voltage nameplate, an HP/kW mix-up, or a service-factor amps value read as FLA. Whenever the nameplate is available, it &mdash; not the formula &mdash; is the value for overload settings and equipment selection under IEC practice; under the US NEC, conductors and short-circuit protection use the code table FLC instead, as explained below.</p>
+
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Why FLC Drives Every Downstream Choice</h3>
       <p><strong>Cable:</strong> needs enough ampacity for the installation method, ambient temperature, grouping and voltage drop — size it with the <a href="/cable-size" class="text-sky-600 underline">Cable Size Calculator</a>, then check the run with the <a href="/electrical/voltage-drop" class="text-sky-600 underline">Voltage Drop Calculator</a>.</p>
       <p><strong>Contactor:</strong> rated for the motor current under AC-3 duty.</p>
@@ -1087,6 +1109,14 @@
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is my calculated current different from the motor nameplate FLA?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Because the formula depends on the efficiency and power factor you assume, and real values vary with rating, pole count and design. Small motors typically have lower PF and efficiency than the 0.85 / 90% defaults, so their nameplate current is higher than the estimate. Enter the nameplate FLA in the cross-check field to see the efficiency × PF it implies; a value far outside roughly 0.6–0.9 usually points to a wrong voltage column, an HP/kW mix-up or a service-factor amps value. The nameplate always takes priority.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
         Should I enter the motor's output kW or input kW?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
@@ -1178,7 +1208,7 @@
         Does power factor correction change the motor's FLC?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Capacitors reduce the reactive current drawn upstream of the correction point, lowering line current and kVA seen by the supply. They do not change the current the motor itself draws at its terminals. Use the APFC Capacitor Calculator to size correction.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Capacitors reduce the reactive current drawn upstream of the correction point, lowering line current and kVA seen by the supply. They do not change the current in the motor windings. One practical consequence: if capacitors are connected at the motor terminals on the load side of the overload relay, the relay sees the reduced current, so its setting must be based on the winding current (per the manufacturer's or code's adjustment rules), not simply on the nameplate FLA. Use the APFC Capacitor Calculator to size correction.</p>
     </details>
 
     <details class="py-5">
@@ -1217,6 +1247,8 @@
   // Power is capped at 100000 kW; the HP-side cap is the same physical
   // limit expressed in HP, so it scales with the active unit.
   const POWER_MAX_KW = 100000;
+  // IEC 60034-30-1 IE3 minimum efficiency (%), 4-pole, 50 Hz — reference for the estimate check
+  const IE3_4P_50 = [[0.75,82.5],[1.1,84.1],[1.5,85.3],[2.2,86.7],[3,87.7],[4,88.6],[5.5,89.6],[7.5,90.4],[11,91.4],[15,92.1],[18.5,92.6],[22,93.0],[30,93.6],[37,93.9],[45,94.2],[55,94.6],[75,95.0],[90,95.2],[110,95.4],[132,95.6],[160,95.8],[200,96.0]];
   const HP_PER_KW = 1 / 0.746;
   // Typical inrush ranges (× FLC) — same figures as the starting-method table.
   const START_RANGE = { dol:[5,8], sd:[2,3], at:[1.7,4], soft:[2,4], vfd:[1,1.5] };
@@ -1296,6 +1328,7 @@
     document.getElementById('rKVA').textContent = '\u2014 kVA';
     document.getElementById('rInputKW').textContent = '\u2014 kW';
     document.getElementById('rNote').textContent = msg;
+    document.getElementById('rChecks').innerHTML = '<p>' + msg + '</p>';
   }
 
   function calculateCurrent(){
@@ -1305,6 +1338,8 @@
     const effRaw   = parseFloat(document.getElementById('eff').value);
     const margin   = parseFloat(document.getElementById('margin').value);
     const method   = document.getElementById('startMethod').value;
+    const rawNp    = document.getElementById('nameplateFLA').value;
+    const npFLA    = rawNp === '' ? null : parseFloat(rawNp);
     const isDC = motorType === 'dc';
     const useEff = powerBasis === 'output';
 
@@ -1326,6 +1361,7 @@
     }
     if (!Number.isFinite(margin)){ errors.push('Planning Headroom is required.'); }
     else if (margin < 0 || margin > 100){ errors.push('Planning Headroom must be between 0% and 100%.'); }
+    if (npFLA !== null && (!Number.isFinite(npFLA) || npFLA <= 0 || npFLA > 100000)){ errors.push('Nameplate FLA must be greater than 0, or left blank.'); }
 
     const validationBox = document.getElementById('validationBox');
     if (errors.length){
@@ -1375,13 +1411,54 @@
     if (isDC){
       document.getElementById('rStart').textContent = 'Depends on DC starter';
     } else {
-      const r = START_RANGE[method] || START_RANGE.dol;
-      document.getElementById('rStart').textContent = (current * r[0]).toFixed(0) + ' – ' + (current * r[1]).toFixed(0) + ' A';
+      if (motorType === 'single' && (method === 'sd' || method === 'at')){
+        document.getElementById('rStart').textContent = 'N/A for single-phase';
+      } else {
+        const r = START_RANGE[method] || START_RANGE.dol;
+        const base = npFLA !== null ? npFLA : current;
+        document.getElementById('rStart').textContent = (base * r[0]).toFixed(0) + ' – ' + (base * r[1]).toFixed(0) + ' A' + (npFLA !== null ? ' (from nameplate)' : '');
+      }
     }
+
+    // ---- Estimate checks ----
+    const checks = [];
+    if (npFLA !== null){
+      const dev = (current - npFLA) / npFLA * 100;
+      const inputW = powerWatts;
+      let implied = null, impliedTxt = '';
+      if (isDC){
+        implied = powerWatts / (voltage * npFLA);
+        impliedTxt = useEff ? 'efficiency \u2248 ' + (implied * 100).toFixed(1) + '%' : 'input-power check ratio \u2248 ' + implied.toFixed(2);
+      } else {
+        implied = inputW / (k * voltage * npFLA);
+        impliedTxt = useEff ? 'efficiency \u00d7 PF \u2248 ' + implied.toFixed(3) : 'PF \u2248 ' + implied.toFixed(3);
+      }
+      const plausible = isDC ? (implied > 0.5 && implied <= 1) : (useEff ? (implied > 0.5 && implied < 0.95) : (implied > 0.5 && implied <= 1));
+      checks.push((Math.abs(dev) <= 10 && plausible ? '\u2705 ' : '\u26a0\ufe0f ') + 'Nameplate FLA ' + npFLA + ' A vs estimate ' + current.toFixed(2) + ' A (' + (dev >= 0 ? '+' : '') + dev.toFixed(1) + '%). The nameplate implies ' + impliedTxt + '.' +
+        (plausible ? ' Use the nameplate value for overload settings and equipment selection.' : ' That is outside the usual range \u2014 check the voltage column of a dual-voltage nameplate, HP vs kW, and that the figure is FLA rather than service-factor amps.'));
+    } else {
+      checks.push('\u2139\ufe0f Formula estimate only \u2014 enter the nameplate FLA above to cross-check it. The nameplate value governs overload settings.');
+    }
+    if (motorType === 'three' && useEff && powerKW >= 0.75 - 1e-9){
+      let ref = null;
+      for (let i = 0; i < IE3_4P_50.length; i++){ if (IE3_4P_50[i][0] <= powerKW + 1e-9) ref = IE3_4P_50[i]; }
+      if (ref){
+        const diff = effRaw - ref[1];
+        checks.push('\u2139\ufe0f IE3 reference (IEC 60034-30-1, 4-pole, 50 Hz) for ' + ref[0] + ' kW' + (Math.abs(ref[0] - powerKW) > 1e-6 ? ' (nearest standard rating below ' + powerKW.toFixed(2) + ' kW)' : '') + ': ' + ref[1].toFixed(1) + '% minimum. Entered ' + effRaw + '%' +
+          (diff < -3 ? ' \u2014 lower than IE3, which is plausible for older IE1/IE2 or special motors.' : (diff > 2 ? ' \u2014 above IE3; plausible for IE4 motors, otherwise optimistic.' : ' \u2014 consistent.') ) + ' 2-pole, 6-pole and 60 Hz values differ.');
+      }
+    }
+    if (!isDC && powerKW < 4 && pf >= 0.85){
+      checks.push('\u2139\ufe0f Small motors often run below PF 0.85 at full load, so the real current is usually higher than this estimate \u2014 use the data-sheet PF where available.');
+    }
+    if (!isDC && pf < 0.5){
+      checks.push('\u26a0\ufe0f PF below 0.5 is unusual at full load \u2014 it is typical of a lightly loaded or no-load motor, not of rated output.');
+    }
+    document.getElementById('rChecks').innerHTML = checks.map(function(c){ return '<p>' + c + '</p>'; }).join('');
   }
 
   // Live recalculation + Enter key triggers the Calculate button.
-  ['powerVal','voltage','pf','eff','margin'].forEach(function(id){
+  ['powerVal','voltage','pf','eff','margin','nameplateFLA'].forEach(function(id){
     var el = document.getElementById(id);
     el.addEventListener('input', calculateCurrent);
     el.addEventListener('keydown', function(e){

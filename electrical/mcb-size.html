@@ -87,7 +87,7 @@
       "name": "What is the formula for MCB sizing?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "MCB Rating = Full Load Current × 1.25, rounded up to the next rating available. A 12 A load gives 15 A, which becomes a 16 A device. Where the local wiring rules set a different factor for that circuit type, use theirs."
+        "text": "Choose the smallest standard rating In that satisfies Ib ≤ In ≤ Iz — at least the design current Ib and no more than the cable capacity Iz. Many designers apply In ≥ 1.25 × Ib for continuous loads (North American practice) or as a planning margin: a 12 A load gives 15 A, which becomes a 16 A device. IEC 60364 itself only requires In ≥ Ib. Where the local wiring rules set a different factor, use theirs."
       }
     },
     {
@@ -112,6 +112,22 @@
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "It stops nuisance trips and weakens protection at the same time. A higher curve raises the current needed for an instantaneous trip, so on a long circuit the magnetic element may not operate during an earth fault at all, leaving disconnection to the much slower thermal element. Re-check the earth fault loop impedance against the disconnection time your wiring rules require."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the maximum earth fault loop impedance for an MCB?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For the magnetic element to disconnect an earth fault, the fault current must reach the top of the curve band: 5 × In for Type B, 10 × In for Type C, 20 × In for Type D. With a 0.95 voltage factor, Zs max = 0.95 × U0 ÷ (k × In). On a 230 V system that gives 1.37 Ω for a 32 A Type B and 0.68 Ω for a 32 A Type C, matching the tables in BS 7671. Enter the measured Zs in the calculator to check it."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What breaking capacity should an MCB have?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At least the prospective fault current at the board where it is installed. IEC 60898-1 MCBs are marked with a rated short-circuit capacity Icn — commonly 6 kA for domestic and 10 kA for commercial and industrial boards. Near a large transformer the fault level can exceed this, and then an MCCB or a tested back-up combination is needed."
       }
     },
     {
@@ -549,7 +565,7 @@
               <span class="info-tooltip">The steady running current of the circuit. For a motor, use the nameplate full load current rather than a figure worked back from kW, since efficiency and power factor both affect it.</span>
             </span>
           </label>
-          <input id="flc" type="number" value="12" step="0.1" min="0" placeholder="e.g. 12" class="input-field mt-2">
+          <input id="flc" type="number" value="12" step="any" min="0.1" max="125" placeholder="e.g. 12" class="input-field mt-2">
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="loadType">
@@ -585,6 +601,39 @@
             <option value="FP">4P &mdash; four pole (three phases + switched neutral)</option>
           </select>
         </div>
+
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="basis">Sizing Basis</label>
+          <select id="basis" class="input-field mt-2">
+            <option value="125" selected>Continuous load / planning: In &ge; 1.25 &times; Ib</option>
+            <option value="100">IEC 60364 / BS 7671: In &ge; Ib</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-5 pt-5 border-t border-gray-100">
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Cable, Fault &amp; Disconnection Checks (optional)</span>
+        <div class="grid grid-cols-2 gap-4 mt-3">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="iz">Cable Capacity Iz (A)</label>
+            <input id="iz" type="number" value="" step="any" min="0.1" max="1000" placeholder="blank = skip" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pfc">Fault Level at Board (kA)</label>
+            <input id="pfc" type="number" value="" step="any" min="0.1" max="100" placeholder="blank = skip" class="input-field mt-2">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="zs">Earth Fault Loop Zs (&Omega;)</label>
+            <input id="zs" type="number" value="" step="any" min="0.01" max="50" placeholder="blank = skip" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="u0">Voltage to Earth U0 (V)</label>
+            <input id="u0" type="number" value="230" step="1" min="50" max="400" class="input-field mt-2">
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-2">Iz = derated current-carrying capacity of the cable. Zs = measured or calculated earth fault loop impedance at the far end of the circuit.</p>
       </div>
 
       <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
@@ -594,7 +643,9 @@
       </button>
 
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
-        <span class="formula-chip">MCB = FLC × 1.25</span>
+        <span class="formula-chip">Ib ≤ In ≤ Iz</span>
+        <span class="formula-chip">Planning: In ≥ 1.25 × Ib</span>
+        <span class="formula-chip">Zs max = 0.95 × U0 ÷ (k × In)</span>
       </div>
     </div>
 
@@ -629,6 +680,11 @@
       <div class="bg-white rounded-xl border border-gray-100 p-4">
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
         <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500 mb-2 block">Ib &le; In &le; Iz, Breaking Capacity &amp; Disconnection</span>
+        <div id="rChecks" class="text-sm text-gray-600 leading-relaxed space-y-2"><p>Enter values and hit calculate.</p></div>
       </div>
 
     </div>
@@ -703,19 +759,23 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Calculation method: rating = full load current &times; 1.25 rounded up to the next available rating; instantaneous trip band = rating &times; the curve multiplier, with B/C/D per IEC 60898-1 and K/Z per IEC 60947-2</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Calculation method: rating from the design current Ib (with an optional 1.25 continuous-load factor) rounded up to the next available rating, checked against Ib &le; In &le; Iz (IEC 60364-4-43); disconnection check Zs &le; 0.95 U0 &divide; (k &times; In) using the upper edge of the magnetic band; instantaneous trip band = rating &times; the curve multiplier, with B/C/D per IEC 60898-1 and K/Z per IEC 60947-2</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How MCB Size and Curve Type Are Selected</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-            <p><strong>Rule of thumb:</strong> MCB Rating = Full Load Current &times; 1.25, rounded up to the nearest standard size &mdash; a 12 A load needs a 16 A MCB.</p>
+            <p><strong>Rule of thumb:</strong> choose the smallest standard MCB rating In that is at least the design current Ib &mdash; or at least 1.25 &times; Ib for a continuous load or as a planning margin &mdash; and no larger than the cable&rsquo;s current-carrying capacity Iz: <strong>Ib &le; In &le; Iz</strong>. A 12 A load needs a 16 A MCB either way, on a cable rated at least 16 A.</p>
 
-      <p><strong>Formula:</strong> MCB Rating = Full Load Current &times; 1.25, rounded up to the next rating available. The 1.25 gives headroom above the steady load so the thermal element is not sitting at its limit in normal service. Where the local wiring rules set a different factor for the circuit type, use theirs.</p>
+      <p><strong>Formula:</strong> IEC 60364-4-43 (and BS 7671) requires I<sub>b</sub> &le; I<sub>n</sub> &le; I<sub>z</sub> and I<sub>2</sub> &le; 1.45 I<sub>z</sub>, where I<sub>2</sub> is the current that ensures the breaker trips within the conventional time. For an IEC 60898-1 MCB, I<sub>2</sub> = 1.45 I<sub>n</sub>, so the second condition is met automatically once I<sub>n</sub> &le; I<sub>z</sub>. IEC practice does not add a fixed 25%: the rating only has to reach the design current. The 1.25 factor comes from North American practice for continuous loads (a standard breaker may carry only 80% of its rating continuously) and is also a common planning margin elsewhere &mdash; the calculator lets you choose the basis. Whatever the basis, the cable must be rated for the MCB rating actually fitted.</p>
 
       <p><strong>Two elements, one device.</strong> The thermal element handles sustained overload and takes seconds to minutes; the magnetic element handles short circuits and operates in milliseconds. The <em>rating</em> sets the thermal behaviour, the <em>curve</em> sets the current at which the magnetic element takes over. That is why a 16 A Type B and a 16 A Type C carry the same load identically but behave completely differently the moment a motor starts.</p>
 
       <p><strong>Standard ratings.</strong> The result is rounded up to the preferred series &mdash; 6, 10, 16, 20, 25, 32, 40, 50, 63 A and above &mdash; so a calculated 15 A becomes a 16 A device, and the cable must be rated for that 16 A, not for the 15 A that was calculated.</p>
 
+
+      <p><strong>Breaking capacity.</strong> IEC 60898-1 MCBs are marked with a rated short-circuit capacity I<sub>cn</sub> &mdash; commonly 4.5, 6 or 10 kA &mdash; which must be at least the prospective fault current at the board, unless a tested back-up device upstream covers the difference.</p>
+
+      <p><strong>Disconnection time.</strong> For fault protection the magnetic element must operate on an earth fault, which means the fault current must reach the <em>top</em> of the curve band: 5 &times; I<sub>n</sub> for Type B, 10 &times; for Type C and 20 &times; for Type D. With a 0.95 voltage factor this gives the familiar maximum loop impedance Z<sub>s</sub> &le; 0.95 &times; U<sub>0</sub> &divide; (k &times; I<sub>n</sub>) &mdash; for example 1.37 &Omega; for a 32 A Type B on a 230 V system, and 0.68 &Omega; for a 32 A Type C. This is why moving to a higher curve on a long circuit can quietly break the disconnection requirement.</p>
 
       <p><strong>Worked example:</strong> a small motor circuit drawing 12 A. Rating = 12 &times; 1.25 = 15 A &rarr; <strong>16 A</strong>. On a Type C curve that gives an instantaneous band of 80&ndash;160 A, which rides through the starting surge but still clears a short circuit in milliseconds.</p>
 
@@ -868,6 +928,7 @@
       <p><strong>5. Exceeding the cable&rsquo;s current-carrying capacity.</strong> The MCB protects the cable; a rating above the cable&rsquo;s ampacity protects nothing.</p>
       <p><strong>6. Checking the current rating but not the breaking capacity.</strong> A correct rating says nothing about whether the device can safely interrupt the fault current available at that board.</p>
       <p><strong>7. Not separating thermal from magnetic nuisance tripping.</strong> A trip after minutes of running points at the rating or the load; a trip at the instant of switching points at the curve or a genuine fault. They have opposite fixes.</p>
+      <p><strong>8. Changing curve without re-checking loop impedance.</strong> Going from Type B to Type C halves the maximum Zs for the same rating; a long radial that passed on Type B can fail the disconnection requirement on Type C.</p>
     </div>
   </div>
 </section>
@@ -886,7 +947,7 @@
         What is the formula for MCB sizing?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">MCB Rating = Full Load Current × 1.25, rounded up to the next rating available. A 12 A load gives 15 A, which becomes a 16 A device. Where the local wiring rules set a different factor for that circuit type, use theirs.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Choose the smallest standard rating In that satisfies Ib ≤ In ≤ Iz — at least the design current Ib and no more than the cable capacity Iz. Many designers apply In ≥ 1.25 × Ib for continuous loads (North American practice) or as a planning margin: a 12 A load gives 15 A, which becomes a 16 A device. IEC 60364 itself only requires In ≥ Ib. Where the local wiring rules set a different factor, use theirs.</p>
     </details>
 
     <details class="py-5">
@@ -911,6 +972,22 @@
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">It stops nuisance trips and weakens protection at the same time. A higher curve raises the current needed for an instantaneous trip, so on a long circuit the magnetic element may not operate during an earth fault at all, leaving disconnection to the much slower thermal element. Re-check the earth fault loop impedance against the disconnection time your wiring rules require.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What is the maximum earth fault loop impedance for an MCB?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For the magnetic element to disconnect an earth fault, the fault current must reach the top of the curve band: 5 × In for Type B, 10 × In for Type C, 20 × In for Type D. With a 0.95 voltage factor, Zs max = 0.95 × U0 ÷ (k × In). On a 230 V system that gives 1.37 Ω for a 32 A Type B and 0.68 Ω for a 32 A Type C, matching the tables in BS 7671. Enter the measured Zs in the calculator to check it.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What breaking capacity should an MCB have?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">At least the prospective fault current at the board where it is installed. IEC 60898-1 MCBs are marked with a rated short-circuit capacity Icn — commonly 6 kA for domestic and 10 kA for commercial and industrial boards. Near a large transformer the fault level can exceed this, and then an MCCB or a tested back-up combination is needed.</p>
     </details>
 
     <details class="py-5">
@@ -1019,63 +1096,118 @@
              note:'All four conductors are switched. Used where the neutral must be isolated, for example on some generator changeover and TT arrangements.' }
     };
 
+    const STD_MCB = [6,10,16,20,25,32,40,50,63,80,100,125];
+    const ICN_STEPS = [3, 4.5, 6, 10, 15, 20, 25];
+
+    function numOrNull(id){ const r = document.getElementById(id).value; return r === '' ? null : parseFloat(r); }
+
     function calculateMCBSize(){
     const flc = parseFloat(document.getElementById('flc').value);
     const loadType = document.getElementById('loadType').value;
+    const basisPct = parseFloat(document.getElementById('basis').value);
+    const iz = numOrNull('iz');
+    const pfc = numOrNull('pfc');
+    const zs = numOrNull('zs');
+    const u0 = parseFloat(document.getElementById('u0').value);
 
     const validationBox = document.getElementById('validationBox');
     const errors = [];
-    if(isNaN(flc) || flc <= 0){ errors.push('Enter a valid full load current greater than 0.'); }
+    if(!Number.isFinite(flc) || flc < 0.1 || flc > 125){ errors.push('Enter a design current between 0.1 A and 125 A.'); }
+    if(iz !== null && (!Number.isFinite(iz) || iz <= 0 || iz > 1000)){ errors.push('Cable capacity Iz must be between 0.1 and 1000 A, or left blank.'); }
+    if(pfc !== null && (!Number.isFinite(pfc) || pfc <= 0 || pfc > 100)){ errors.push('Fault level must be between 0.1 and 100 kA, or left blank.'); }
+    if(zs !== null && (!Number.isFinite(zs) || zs <= 0 || zs > 50)){ errors.push('Zs must be between 0.01 and 50 Ω, or left blank.'); }
+    if(!Number.isFinite(u0) || u0 < 50 || u0 > 400){ errors.push('U0 must be between 50 V and 400 V.'); }
 
     if(errors.length){
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
-      document.getElementById('rResult').textContent = '\u2014';
-      document.getElementById('rCurve').textContent = '\u2014';
-      document.getElementById('rTripRange').textContent = '\u2014';
-      document.getElementById('rPoles').textContent = '\u2014';
-      document.getElementById('rSwitched').textContent = '\u2014';
+      ['rResult','rCurve','rTripRange','rPoles','rSwitched'].forEach(function(id){ document.getElementById(id).textContent = '\u2014'; });
       document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      document.getElementById('rChecks').innerHTML = '<p>Fix the input errors above to see the checks.</p>';
       return;
     }
     validationBox.classList.add('hidden');
     validationBox.innerHTML = '';
 
-    const calculatedRating = flc * 1.25;
-    const standardSizes = [6,10,16,20,25,32,40,50,63,80,100,125];
-    let stdSize = standardSizes.find(s => s >= calculatedRating);
-    if(!stdSize) stdSize = Math.ceil(calculatedRating / 25) * 25;
-
-    const range = TRIP_BANDS[loadType];
-    const tripLow = stdSize * range[0];
-    const tripHigh = stdSize * range[1];
-
+    const calculatedRating = flc * basisPct / 100;
+    const stdSize = STD_MCB.find(s => s >= calculatedRating - 1e-9);
     const poles = document.getElementById('poles').value;
     const poleInfo = POLE_INFO[poles];
+    const range = TRIP_BANDS[loadType];
+
+    if(!stdSize){
+      document.getElementById('rResult').textContent = 'Above 125 A';
+      document.getElementById('resultSub').textContent = 'Beyond the usual MCB range \u2014 use an MCCB';
+      document.getElementById('rCurve').textContent = 'Type ' + loadType;
+      document.getElementById('rTripRange').textContent = '\u2014';
+      document.getElementById('rPoles').textContent = poleInfo.short;
+      document.getElementById('rSwitched').textContent = poleInfo.switched;
+      document.getElementById('breakdownBox').innerHTML = '<table class="breakdown-table"><tbody><tr><td>Required rating</td><td>' + calculatedRating.toFixed(1) + ' A</td></tr><tr><td>Result</td><td>Above the 125 A MCB range \u2014 select an MCCB</td></tr></tbody></table>';
+      document.getElementById('rChecks').innerHTML = '<p>\u26a0\ufe0f ' + calculatedRating.toFixed(1) + ' A exceeds the common MCB range. Use an MCCB sized with the MCCB calculator.</p>';
+      return;
+    }
+
+    const tripLow = stdSize * range[0];
+    const tripHigh = stdSize * range[1];
+    const zsMax = 0.95 * u0 / (range[1] * stdSize);
 
     document.getElementById('rResult').textContent = stdSize + ' A';
-    document.getElementById('resultSub').textContent = 'FLC ' + flc + ' A, Type ' + loadType + ', ' + poleInfo.label;
+    document.getElementById('resultSub').textContent = 'Ib ' + flc + ' A' + (basisPct > 100 ? ' × 1.25' : '') + ', Type ' + loadType + ', ' + poleInfo.label;
     document.getElementById('rCurve').textContent = 'Type ' + loadType;
     document.getElementById('rTripRange').textContent = tripLow + '-' + tripHigh + ' A';
     document.getElementById('rPoles').textContent = poleInfo.short;
     document.getElementById('rSwitched').textContent = poleInfo.switched;
 
-    document.getElementById('breakdownBox').innerHTML = `
-        <table class="breakdown-table">
-            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
-            <tbody>
-                <tr><td>Full Load Current</td><td>${flc} A</td></tr>
-                <tr><td>Calculated (×1.25)</td><td>${calculatedRating.toFixed(2)} A</td></tr>
-                <tr><td><strong>Standard MCB Rating</strong></td><td><strong>${stdSize} A</strong></td></tr>
-                <tr><td>Curve Type</td><td>Type ${loadType}</td></tr>
-                <tr><td>Instantaneous Trip Band</td><td>${tripLow}-${tripHigh} A (${range[0]}-${range[1]}×)</td></tr>
-                <tr><td>Curve Standard</td><td>${BAND_STANDARD[loadType]}</td></tr>
-                <tr><td>Pole Configuration</td><td>${poleInfo.short} — ${poleInfo.label}</td></tr>
-                <tr><td>Conductors Switched</td><td>${poleInfo.switched}</td></tr>
-            </tbody>
-        </table>
-    `;
+    const rows = [
+      ['Design Current Ib', flc + ' A'],
+      ['Sizing basis', basisPct > 100 ? 'In ≥ 1.25 × Ib' : 'In ≥ Ib (IEC 60364)'],
+      ['Calculated minimum', calculatedRating.toFixed(2) + ' A'],
+      ['<strong>Standard MCB Rating In</strong>', '<strong>' + stdSize + ' A</strong>'],
+      ['Curve Type', 'Type ' + loadType + ' (' + BAND_STANDARD[loadType] + ')'],
+      ['Instantaneous Trip Band', tripLow + '-' + tripHigh + ' A (' + range[0] + '-' + range[1] + '×)'],
+      ['Max Zs for magnetic disconnection', zsMax.toFixed(2) + ' Ω (0.95 × ' + u0 + ' ÷ ' + (range[1] * stdSize) + ')'],
+      ['Pole Configuration', poleInfo.short + ' — ' + poleInfo.label],
+      ['Conductors Switched', poleInfo.switched]
+    ];
+    if (iz !== null) rows.splice(4, 0, ['Cable capacity Iz', iz + ' A']);
+    document.getElementById('breakdownBox').innerHTML = '<table class="breakdown-table"><thead><tr><th>Quantity</th><th>Value</th></tr></thead><tbody>' +
+      rows.map(function(r){ return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>'; }).join('') + '</tbody></table>';
+
+    const checks = [];
+    if (iz !== null){
+      if (stdSize <= iz){
+        checks.push('\u2705 Ib (' + flc + ' A) \u2264 In (' + stdSize + ' A) \u2264 Iz (' + iz + ' A). For an IEC 60898-1 MCB, I2 = 1.45 In, so I2 \u2264 1.45 Iz is also met.');
+      } else {
+        const iecSize = STD_MCB.find(s => s >= flc - 1e-9);
+        checks.push('\u26a0\ufe0f In (' + stdSize + ' A) exceeds the cable capacity Iz (' + iz + ' A) \u2014 the cable is not protected against overload. Use a larger cable' + (basisPct > 100 && iecSize && iecSize <= iz ? ', or on the IEC basis (In \u2265 Ib) a ' + iecSize + ' A MCB would satisfy Ib \u2264 In \u2264 Iz' : '') + '.');
+      }
+    } else {
+      checks.push('\u2139\ufe0f Cable not checked \u2014 the cable\u2019s derated capacity Iz must be at least ' + stdSize + ' A. Enter Iz to check Ib \u2264 In \u2264 Iz.');
+    }
+    if (pfc !== null){
+      const icn = ICN_STEPS.find(function(x){ return x >= pfc - 1e-9; });
+      checks.push((pfc > 10 ? '\u26a0\ufe0f ' : '\u2139\ufe0f ') + 'Breaking capacity: Icn \u2265 ' + pfc + ' kA \u2014 ' + (icn ? 'e.g. a ' + icn + ' kA MCB' : 'beyond usual MCB ratings') + (pfc > 10 ? '. Above 10 kA, check availability or use an MCCB / tested back-up combination.' : '.'));
+    }
+    if (zs !== null){
+      checks.push((zs <= zsMax ? '\u2705 ' : '\u26a0\ufe0f ') + 'Zs ' + zs + ' \u03a9 vs max ' + zsMax.toFixed(2) + ' \u03a9 for a ' + stdSize + ' A Type ' + loadType + ': ' + (zs <= zsMax
+        ? 'fault current \u2248 ' + (0.95 * u0 / zs).toFixed(0) + ' A reaches the ' + (range[1] * stdSize) + ' A top of the magnetic band.'
+        : 'fault current \u2248 ' + (0.95 * u0 / zs).toFixed(0) + ' A is below the ' + (range[1] * stdSize) + ' A needed for instantaneous tripping. Reduce Zs (larger cable), use a lower curve, or add RCD protection.'));
+    } else {
+      checks.push('\u2139\ufe0f Disconnection: measured Zs at the far end must not exceed ' + zsMax.toFixed(2) + ' \u03a9 for this rating and curve (0.95 \u00d7 U0 \u00f7 ' + range[1] + ' In).');
+    }
+    if (loadType === 'B' && flc > 0) checks.push('\u2139\ufe0f Type B suits resistive loads; motors, transformers and large LED driver banks usually need Type C or D to avoid tripping on inrush.');
+    document.getElementById('rChecks').innerHTML = checks.map(function(c){ return '<p>' + c + '</p>'; }).join('');
   }
+
+  ['flc','iz','pfc','zs','u0'].forEach(function(id){
+    const el = document.getElementById(id);
+    el.addEventListener('input', calculateMCBSize);
+    el.addEventListener('change', calculateMCBSize);
+    el.addEventListener('keydown', function(ev){
+      if (ev.key === 'Enter'){ ev.preventDefault(); const b = document.querySelector('#calculator button[onclick^="calculate"]'); if (b) b.click(); }
+    });
+  });
+  ['loadType','poles','basis'].forEach(function(id){ document.getElementById(id).addEventListener('change', calculateMCBSize); });
 
   calculateMCBSize();
 </script>

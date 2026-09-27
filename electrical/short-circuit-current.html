@@ -85,47 +85,90 @@
     {
       "@type": "Question",
       "name": "What is the formula for short circuit current at a transformer's secondary?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Isc = Full Load Current × (100 ÷ %Impedance). First calculate the transformer's rated full load current from its kVA and secondary voltage, then divide by the transformer's percentage impedance (expressed as a decimal fraction of 100) to get the estimated symmetrical fault current." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Isc = Full Load Current × (100 ÷ %Impedance). First calculate the transformer's rated full load current from its kVA and secondary voltage, then divide by the transformer's percentage impedance (expressed as a decimal fraction of 100) to get the estimated symmetrical fault current."
+      }
     },
     {
       "@type": "Question",
       "name": "Why does lower transformer impedance mean higher fault current?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Impedance is what limits current during a fault — a transformer with lower %Z offers less opposition to current flow when its secondary terminals are short-circuited, allowing a higher fault current to flow. This is why %Z is such an important nameplate parameter for protection coordination, not just for normal voltage regulation under load." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Impedance is what limits current during a fault — a transformer with lower %Z offers less opposition to current flow when its secondary terminals are short-circuited, allowing a higher fault current to flow. This is why %Z is such an important nameplate parameter for protection coordination, not just for normal voltage regulation under load."
+      }
     },
     {
       "@type": "Question",
       "name": "What is a typical impedance percentage for a distribution transformer?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Most distribution transformers in the 100 kVA to a few MVA range have impedance in the 4-6.25% range, with %Z generally trending higher for larger transformer ratings (partly to help limit fault current to a manageable level for downstream switchgear). Always use the exact nameplate %Z value for your specific transformer rather than an assumed typical figure for any real fault current calculation." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most distribution transformers in the 100 kVA to a few MVA range have impedance in the 4-6.25% range, with %Z generally trending higher for larger transformer ratings (partly to help limit fault current to a manageable level for downstream switchgear). Always use the exact nameplate %Z value for your specific transformer rather than an assumed typical figure for any real fault current calculation."
+      }
     },
     {
       "@type": "Question",
       "name": "Why does this calculation assume an infinite source?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Treating the upstream utility supply as having zero impedance (infinite fault capacity) gives the highest possible fault current the transformer alone could deliver, which is a standard conservative assumption for a first-pass check — it ensures selected switchgear and breakers have adequate fault rating even in the worst case, since real (finite) upstream source impedance can only reduce actual fault current below this estimate, never increase it." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "With default settings it does, because treating the upstream supply as having zero impedance gives the highest current the transformer alone can deliver — a conservative first-pass figure for switchgear ratings. You can enter the upstream fault level to include the source impedance, which lowers the result. Note that the simple figure is not an absolute upper bound: a supply running above nominal voltage (the IEC 60909 voltage factor c = 1.05 or 1.10) and motor contribution can both raise the actual current above it."
+      }
     },
     {
       "@type": "Question",
       "name": "What is short circuit MVA and how does it relate to fault current?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Short circuit MVA (or fault level) is another common way to express the same fault severity: MVA_sc = √3 × V × Isc ÷ 10⁶, or equivalently MVA_sc = Transformer kVA ÷ (%Z ÷ 100) ÷ 1000. Both the fault current (in amps) and fault MVA describe the same underlying event, and different equipment specifications may reference either figure." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Short circuit MVA (or fault level) is another common way to express the same fault severity: MVA_sc = √3 × V × Isc ÷ 10⁶, or equivalently MVA_sc = Transformer kVA ÷ (%Z ÷ 100) ÷ 1000. Both the fault current (in amps) and fault MVA describe the same underlying event, and different equipment specifications may reference either figure."
+      }
     },
     {
       "@type": "Question",
       "name": "Does this calculator give symmetrical or asymmetrical fault current?",
-      "acceptedAnswer": { "@type": "Answer", "text": "This gives symmetrical (steady-state AC) fault current. The actual first-cycle (asymmetrical) fault current, which includes a DC offset component from the moment the fault initiates, can be meaningfully higher — commonly estimated by multiplying the symmetrical value by a factor around 1.6-2.7 depending on the system X/R ratio. Breaker interrupting ratings typically account for this separately; check your specific breaker's rated making and breaking capacity against both figures." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The headline result is the symmetrical (RMS AC) fault current. The calculator also gives the peak current ip = κ × √2 × Ik from IEC 60909, with κ ≈ 1.02 + 0.98e^(−3R/X) calculated from the X/R ratio at the fault point — typically about 2.0–2.5 × Ik at LV, with a theoretical maximum of 2.83 × Ik. Check breaking capacity (Icu/Ics) against Ik and making capacity (Icm) against ip."
+      }
     },
     {
       "@type": "Question",
       "name": "How does upstream source impedance change the actual fault current?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Real utility supplies have finite fault capacity (not truly infinite), and any impedance between the source and the transformer (overhead lines, cables) adds to the total fault-limiting impedance — including this upstream impedance in a full calculation always reduces the calculated fault current below the transformer-only estimate this calculator provides, since additional impedance in series always further limits fault current." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Real utility supplies have finite fault capacity (not truly infinite), and any impedance between the source and the transformer (overhead lines, cables) adds to the total fault-limiting impedance — including this upstream impedance in a full calculation always reduces the calculated fault current below the transformer-only estimate this calculator provides, since additional impedance in series always further limits fault current."
+      }
     },
     {
       "@type": "Question",
       "name": "Why do downstream cables and busbars also reduce fault current further from the transformer?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Every additional length of cable or busbar between the transformer and a downstream fault point adds its own impedance to the fault current path — which is why fault current is highest immediately at the transformer secondary and progressively decreases at points further downstream, an important consideration when selecting appropriately (and not excessively) rated breakers throughout a distribution system rather than using the transformer-secondary fault rating everywhere." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Every additional length of cable or busbar between the transformer and a downstream fault point adds its own impedance to the fault current path — which is why fault current is highest immediately at the transformer secondary and progressively decreases at points further downstream, an important consideration when selecting appropriately (and not excessively) rated breakers throughout a distribution system rather than using the transformer-secondary fault rating everywhere."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I calculate the fault current at the end of a cable?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Add the cable impedance to the transformer (and source) impedance and divide the phase voltage by the total: Ik = c × V ÷ (√3 × |Z_total|). Cable resistance is per kilometre from the conductor data (at 20°C for maximum fault current), reactance about 0.08 Ω/km for typical multicore LV cable, divided by the number of parallel runs. Enter the length, size, material and runs in the calculator to get the fault level at a downstream board; resistance quickly dominates, so fault current drops sharply along small cables."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this the fault current I should use to check breaker tripping at the far end of a circuit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. This calculator gives the maximum prospective fault current, used for breaking and making capacity and withstand ratings. Whether a device trips fast enough on a fault at the far end depends on the minimum fault current — lower voltage factor, conductors at their end-of-fault temperature, and for earth faults the protective conductor path — which is calculated separately, for example from the earth fault loop impedance."
+      }
     },
     {
       "@type": "Question",
       "name": "Why is knowing short circuit current important for switchgear and cable selection?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Breakers, fuses, busbars, and cables must be rated to safely withstand (or interrupt) the maximum fault current they could experience without catastrophic failure — undersizing a breaker's interrupting rating below the actual available fault current risks the breaker failing to safely clear a fault, potentially with explosive results, which is why fault current calculation is a mandatory part of any electrical protection design, not an optional check." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Breakers, fuses, busbars, and cables must be rated to safely withstand (or interrupt) the maximum fault current they could experience without catastrophic failure — undersizing a breaker's interrupting rating below the actual available fault current risks the breaker failing to safely clear a fault, potentially with explosive results, which is why fault current calculation is a mandatory part of any electrical protection design, not an optional check."
+      }
     }
   ]
 }
@@ -464,19 +507,65 @@
       <div class="space-y-4 mb-5">
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="transformerKVA">Transformer Rating (kVA)</label>
-          <input id="transformerKVA" type="number" value="1000" step="10" min="0" placeholder="e.g. 1000" class="input-field mt-2">
+          <input id="transformerKVA" type="number" value="1000" step="any" min="1" max="100000" placeholder="e.g. 1000" class="input-field mt-2">
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="secondaryVoltage">Secondary Voltage, Line-to-Line (V)</label>
-          <input id="secondaryVoltage" type="number" value="415" step="1" min="0" placeholder="e.g. 415" class="input-field mt-2">
+          <input id="secondaryVoltage" type="number" value="415" step="1" min="100" max="1000" placeholder="e.g. 415" class="input-field mt-2">
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="impedancePercent">Transformer Impedance, %Z</label>
-          <input id="impedancePercent" type="number" value="5" step="0.1" min="0.1" placeholder="e.g. 5" class="input-field mt-2">
+          <input id="impedancePercent" type="number" value="5" step="0.1" min="0.5" max="25" placeholder="e.g. 5" class="input-field mt-2">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="trXR">Transformer X/R Ratio</label>
+            <input id="trXR" type="number" value="6" step="0.5" min="1" max="30" placeholder="e.g. 6" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="cFactor">Voltage Factor c</label>
+            <select id="cFactor" class="input-field mt-2">
+              <option value="1" selected>1.00 &mdash; simple method</option>
+              <option value="1.05">1.05 &mdash; IEC 60909 max, LV (+6% tolerance)</option>
+              <option value="1.1">1.10 &mdash; IEC 60909 max, LV (+10% tolerance)</option>
+            </select>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500">X/R from the transformer test report where available (commonly about 3&ndash;10 for LV distribution transformers, rising with size). It sets the peak current, not the symmetrical value.</p>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="srcMVA">Upstream Source Fault Level (MVA) &mdash; optional</label>
+          <input id="srcMVA" type="number" value="" step="any" min="1" max="100000" placeholder="blank = infinite source" class="input-field mt-2">
         </div>
       </div>
 
-      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+      <div class="mb-5 pt-5 border-t border-gray-100">
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Cable to Fault Point (optional)</span>
+        <p class="text-xs text-gray-500 mt-1 mb-4">Leave length at 0 for a fault at the transformer LV terminals.</p>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="cabLen">Length (m)</label>
+            <input id="cabLen" type="number" value="0" step="any" min="0" max="5000" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="cabRuns">Parallel Runs per Phase</label>
+            <input id="cabRuns" type="number" value="1" step="1" min="1" max="20" class="input-field mt-2">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="cabSize">Conductor Size (mm&sup2;)</label>
+            <select id="cabSize" class="input-field mt-2"></select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="cabMat">Material</label>
+            <select id="cabMat" class="input-field mt-2">
+              <option value="cu" selected>Copper</option>
+              <option value="al">Aluminium</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculateShortCircuit()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate
@@ -484,14 +573,16 @@
 
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
         <span class="formula-chip">Isc = I_FL × (100 ÷ %Z)</span>
+        <span class="formula-chip">Ik = c × V ÷ (√3 × |Z_source + Z_T + Z_cable|)</span>
+        <span class="formula-chip">ip = κ × √2 × Ik, κ = 1.02 + 0.98e^(−3R/X)</span>
       </div>
     </div>
 
     <!-- RESULT PANEL -->
-    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4" role="status" aria-live="polite">
             <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
-        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Short Circuit Current</span>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Prospective 3-Phase Fault Current, Ik (symmetrical)</span>
         <div id="rResult" class="font-display font-bold text-3xl mt-1">—</div>
         <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter values and hit calculate</p>
 
@@ -505,11 +596,26 @@
             <span id="rMVA" class="font-display font-semibold text-lg">—</span>
           </div>
         </div>
+        <div class="mt-3 pt-3 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Peak Current, ip</span>
+            <span id="rPeak" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">X/R at Fault Point</span>
+            <span id="rXR" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
         <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500 mb-2 block">Device Rating &amp; Limitation Checks</span>
+        <div id="rChecks" class="text-sm text-gray-600 leading-relaxed space-y-2"><p>Enter values and hit calculate.</p></div>
       </div>
 
     </div>
@@ -580,7 +686,7 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Standards referenced: Standard transformer-impedance fault current method (infinite source assumption)</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Method: transformer-impedance method, extended with optional source impedance, cable impedance, voltage factor c and peak factor &kappa; following IEC 60909-0 concepts; not a full IEC 60909 study</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How Short Circuit Current Is Estimated from Transformer Impedance</h2>
@@ -595,13 +701,17 @@
 
       <p><strong>Why %Z is such a powerful lever on fault current:</strong> because Isc is inversely proportional to %Z, a transformer with half the impedance percentage of another (otherwise identical) transformer would deliver roughly double the fault current. This is precisely why larger transformers are often deliberately specified with somewhat higher %Z than smaller ones &mdash; partly to keep resulting fault currents within a range that standard, economical switchgear can handle, rather than requiring unusually expensive, extra-high fault-rated equipment throughout the downstream distribution system.</p>
 
-      <p><strong>Symmetrical vs asymmetrical fault current:</strong> the moment a short circuit begins, the fault current waveform typically includes a DC offset component in addition to the steady-state AC (symmetrical) current this calculator produces &mdash; the actual first-cycle current can be substantially higher than the symmetrical value alone, with the exact multiplier depending on the system's X/R ratio (higher X/R ratio systems, common in larger transformers and higher-voltage systems, have a larger asymmetry multiplier, sometimes approaching 2.7&times; the symmetrical value for very high X/R systems, more commonly in the 1.6-2.0&times; range for typical distribution transformers). Breaker specifications distinguish between rated breaking capacity (checked against symmetrical current, since the DC component has typically decayed by the time the breaker actually interrupts) and rated making capacity (checked against the higher asymmetrical peak, since the breaker must be able to safely close onto a fault at that first-cycle peak current without damage).</p>
+      <p><strong>Symmetrical vs asymmetrical fault current:</strong> the moment a short circuit begins, the fault current waveform typically includes a DC offset component in addition to the steady-state AC (symmetrical) current this calculator produces &mdash; the actual first-cycle current can be substantially higher than the symmetrical value alone, with the exact multiplier depending on the system's X/R ratio. IEC 60909 expresses the first peak as i<sub>p</sub> = &kappa; &times; &radic;2 &times; I<sub>k</sub>, with &kappa; &asymp; 1.02 + 0.98 e<sup>&minus;3R/X</sup>: for X/R = 6 that is &kappa; &asymp; 1.62, so the peak is about 2.3&times; the RMS symmetrical current, and the theoretical upper limit is 2&radic;2 &asymp; 2.83&times;. Adding cable resistance lowers X/R and therefore the peak factor, which is why the calculator reports X/R at the fault point. Breaker specifications distinguish between rated breaking capacity (checked against symmetrical current, since the DC component has typically decayed by the time the breaker actually interrupts) and rated making capacity (checked against the higher asymmetrical peak, since the breaker must be able to safely close onto a fault at that first-cycle peak current without damage).</p>
 
       <p><strong>Motor contribution to fault current:</strong> running induction motors act briefly like generators immediately after a fault occurs, since their rotating magnetic field and stored mechanical energy continue driving current into the fault for a few cycles as the motor decelerates. For facilities with substantial motor load, this contribution can meaningfully add to total fault current beyond what the transformer alone supplies &mdash; a rule of thumb sometimes used for a rough estimate treats total connected motor horsepower as contributing roughly 4-6 times its own full-load current to the fault for the first few cycles, though a precise calculation requires knowing the specific motors' locked-rotor characteristics.</p>
 
       <p><strong>How %Z is actually measured:</strong> a transformer's percentage impedance is determined by a standard factory test &mdash; the secondary winding is short-circuited, and the manufacturer applies just enough voltage to the primary winding to circulate the transformer's full rated current through this short circuit. That applied voltage, expressed as a percentage of the transformer's rated voltage, is the %Z value stamped on the nameplate. A 5% impedance transformer, for example, only needs 5% of its rated voltage applied to drive full rated current through a shorted secondary &mdash; which directly explains why, at full rated voltage during an actual fault, current can rise to roughly 100&divide;5 = 20 times the rated full load current.</p>
 
       <p><strong>Where this fault current figure gets used:</strong> the calculated fault current (or fault MVA) is the key input for selecting breaker and switchgear interrupting ratings, verifying busbar and cable short-circuit withstand ratings (thermal and mechanical, since fault currents create significant electromagnetic forces as well as heating), checking protective relay coordination (making sure upstream and downstream protective devices trip in the correct sequence), and confirming arc-flash incident energy calculations, which depend directly on available fault current at each point in the system.</p>
+
+      <p><strong>What the extended inputs do.</strong> The transformer-only figure assumes an infinite upstream source, nominal voltage and a fault directly at the LV terminals. The calculator can refine each assumption. An <em>upstream fault level</em> in MVA adds the source impedance, Z<sub>Q</sub> = V&sup2; &divide; S<sub>Q</sub>, referred to the LV side, with X/R &asymp; 10 as IEC 60909 suggests when the actual value is unknown. A <em>cable length, size and material</em> adds the conductor impedance at 20&deg;C (the IEC 60909 basis for maximum fault current) plus a typical reactance of 0.08 &Omega;/km, divided by the number of parallel runs. The <em>voltage factor c</em> of IEC 60909 (1.05 or 1.10 for LV systems, depending on the permitted voltage tolerance) raises the result to cover a supply running above nominal. All impedances are added as complex values: I<sub>k</sub> = c &times; V &divide; (&radic;3 &times; |R + jX|).</p>
+
+      <p><strong>Maximum vs minimum fault current.</strong> The maximum prospective current decides breaking capacity (Icu/Ics), making capacity (against the peak i<sub>p</sub>) and busbar withstand. The <em>minimum</em> fault current &mdash; at the far end of the longest cable, with c = 0.95 and conductors at their end-of-fault temperature &mdash; decides whether a breaker&rsquo;s magnetic trip or a fuse operates fast enough for automatic disconnection. A calculation aimed at one does not answer the other, and a single-phase earth-fault current, which depends on the earth-return path, is different again.</p>
 
       <p><strong>Summary:</strong> use Isc = I_FL &times; (100 &divide; %Z) with the transformer's actual nameplate impedance for a conservative first-pass fault current estimate at its secondary terminals, remember that additional cable and busbar impedance reduces fault current further downstream, and always have a complete fault study (including upstream source impedance and motor contribution) performed before finalizing protective device selection on any real installation.</p>
 
@@ -616,7 +726,7 @@
       <p class="text-sm text-gray-600 leading-relaxed">1000 kVA transformer, 415 V, 5% impedance: I_FL = (1000&times;1000) &divide; (&radic;3&times;415) &asymp; 1391 A. Isc = 1391 &times; (100&divide;5) = <strong>27.8 kA</strong>.</p>
     </div>
 
-    <p class="text-xs text-gray-400 mt-6">This calculator estimates fault current assuming an infinite (zero-impedance) upstream source feeding the transformer, using only the transformer's own impedance — this gives the maximum possible fault current at the transformer secondary and is a standard, conservative first-pass check for breaker and switchgear rating selection. A complete fault study for final protective device coordination should also include upstream utility source impedance, cable/busbar impedance between the transformer and the fault point, and motor contribution, which together typically reduce the actual fault current below this simplified estimate — have a full short circuit study performed by a qualified electrical engineer before finalizing protective device selection on any real installation.</p>
+    <p class="text-xs text-gray-400 mt-6">With default settings this calculator gives the classic transformer-only figure: infinite upstream source, nominal voltage (c = 1.0) and a fault at the LV terminals &mdash; the maximum the transformer alone can deliver. The optional inputs add source impedance, cable impedance, the IEC 60909 voltage factor and the peak current. It still omits motor contribution, generator sources, parallel transformers, arc resistance and earth-fault paths, so it is a screening tool: have a full short circuit study performed by a qualified electrical engineer before finalizing protective device selection on any real installation.</p>
   </div>
 </section>
 
@@ -653,7 +763,8 @@
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Short Circuit Current</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
             <p><strong>1. Using an assumed or typical %Z instead of the actual transformer nameplate value.</strong> %Z varies by manufacturer and design even for transformers of identical kVA rating &mdash; always use the certified nameplate value for any real fault current calculation, not a general reference figure.</p>
-      <p><strong>2. Treating the transformer-secondary fault current as valid throughout the entire downstream distribution system.</strong> Fault current decreases with additional cable and busbar impedance further from the transformer &mdash; using the transformer-secondary figure to select breakers deep in the distribution system, far from the transformer, significantly overstates the actual fault current those breakers will ever see (over-specifying, though not unsafe, adds unnecessary cost).</p>
+      <p><strong>2. Treating the transformer-secondary fault current as valid throughout the entire downstream distribution system.</strong> Fault current decreases with additional cable and busbar impedance further from the transformer &mdash; using the transformer-secondary figure to select breakers deep in the distribution system, far from the transformer, significantly overstates the actual fault current those breakers will ever see (over-specifying, though not unsafe, adds unnecessary cost). Use the cable inputs to estimate the fault level at a downstream board.</p>
+      <p><strong>9. Using the maximum fault current to check protection sensitivity.</strong> Whether a breaker or fuse clears a fault fast enough at the end of a long circuit depends on the <em>minimum</em> fault current there, which can be many times smaller than the value at the transformer. Check disconnection with a minimum-fault or earth-fault loop impedance calculation, not with the maximum prospective current.</p>
       <p><strong>3. Ignoring upstream source impedance entirely in a final design.</strong> This calculator's infinite-source assumption is a valid conservative first-pass check, but a complete protection study should include actual utility source impedance for accurate, final protective device coordination, not just for headline fault rating selection.</p>
       <p><strong>4. Confusing symmetrical and asymmetrical (first-cycle) fault current.</strong> This calculator gives symmetrical fault current &mdash; the actual first-cycle asymmetrical current (relevant for breaker making capacity, distinct from breaking capacity) can be substantially higher due to a DC offset component, and needs its own separate check against the breaker's rated making capacity.</p>
       <p><strong>5. Not accounting for motor contribution to fault current.</strong> Large motors running at the time of a fault continue to feed current into the fault briefly (acting like a generator during their coast-down), adding to the total fault current beyond what the transformer alone supplies &mdash; facilities with large motor loads may need this contribution included for an accurate total fault current figure.</p>
@@ -702,7 +813,7 @@
         Why does this calculation assume an infinite source?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Treating the upstream utility supply as having zero impedance (infinite fault capacity) gives the highest possible fault current the transformer alone could deliver, which is a standard conservative assumption for a first-pass check — it ensures selected switchgear and breakers have adequate fault rating even in the worst case, since real (finite) upstream source impedance can only reduce actual fault current below this estimate, never increase it.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">With default settings it does, because treating the upstream supply as having zero impedance gives the highest current the transformer alone can deliver — a conservative first-pass figure for switchgear ratings. You can enter the upstream fault level to include the source impedance, which lowers the result. Note that the simple figure is not an absolute upper bound: a supply running above nominal voltage (the IEC 60909 voltage factor c = 1.05 or 1.10) and motor contribution can both raise the actual current above it.</p>
     </details>
 
     <details class="py-5">
@@ -718,7 +829,7 @@
         Does this calculator give symmetrical or asymmetrical fault current?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This gives symmetrical (steady-state AC) fault current. The actual first-cycle (asymmetrical) fault current, which includes a DC offset component from the moment the fault initiates, can be meaningfully higher — commonly estimated by multiplying the symmetrical value by a factor around 1.6-2.7 depending on the system X/R ratio. Breaker interrupting ratings typically account for this separately; check your specific breaker's rated making and breaking capacity against both figures.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The headline result is the symmetrical (RMS AC) fault current. The calculator also gives the peak current ip = κ × √2 × Ik from IEC 60909, with κ ≈ 1.02 + 0.98e^(−3R/X) calculated from the X/R ratio at the fault point — typically about 2.0–2.5 × Ik at LV, with a theoretical maximum of 2.83 × Ik. Check breaking capacity (Icu/Ics) against Ik and making capacity (Icm) against ip.</p>
     </details>
 
     <details class="py-5">
@@ -735,6 +846,22 @@
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">Every additional length of cable or busbar between the transformer and a downstream fault point adds its own impedance to the fault current path — which is why fault current is highest immediately at the transformer secondary and progressively decreases at points further downstream, an important consideration when selecting appropriately (and not excessively) rated breakers throughout a distribution system rather than using the transformer-secondary fault rating everywhere.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I calculate the fault current at the end of a cable?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Add the cable impedance to the transformer (and source) impedance and divide the phase voltage by the total: Ik = c × V ÷ (√3 × |Z_total|). Cable resistance is per kilometre from the conductor data (at 20°C for maximum fault current), reactance about 0.08 Ω/km for typical multicore LV cable, divided by the number of parallel runs. Enter the length, size, material and runs in the calculator to get the fault level at a downstream board; resistance quickly dominates, so fault current drops sharply along small cables.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is this the fault current I should use to check breaker tripping at the far end of a circuit?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No. This calculator gives the maximum prospective fault current, used for breaking and making capacity and withstand ratings. Whether a device trips fast enough on a fault at the far end depends on the minimum fault current — lower voltage factor, conductors at their end-of-fault temperature, and for earth faults the protective conductor path — which is calculated separately, for example from the earth fault loop impedance.</p>
     </details>
 
     <details class="py-5">
@@ -764,53 +891,133 @@
       document.getElementById('fbNo').classList.toggle('active-dislike', val === 'no');
     }
 
+    // ===== Short circuit logic (transformer + optional source and cable) =====
+    const CAB_SIZES = [1.5, 2.5, 4, 6, 10, 16, 25, 35, 50, 70, 95, 120, 150, 185, 240, 300, 400];
+    const CAB_R20 = {
+      cu: [12.1,7.41,4.61,3.08,1.83,1.15,0.727,0.524,0.387,0.268,0.193,0.153,0.124,0.0991,0.0754,0.0601,0.047],
+      al: [19.5,12.1,7.41,5.09,3.08,1.91,1.20,0.868,0.641,0.443,0.320,0.253,0.206,0.164,0.125,0.100,0.0778]
+    };
+    const CAB_X = 0.08;          // Ω/km, typical multicore LV cable
+    const SRC_R_OVER_X = 0.1;    // IEC 60909 default when source R/X is unknown
+    (function(){
+      const sel = document.getElementById('cabSize');
+      CAB_SIZES.forEach(function(sz){
+        const o = document.createElement('option'); o.value = sz; o.textContent = sz + ' mm²';
+        if (sz === 240) o.selected = true;
+        sel.appendChild(o);
+      });
+    })();
+
+    function fmtOhm(x){ return (x * 1000).toFixed(3) + ' mΩ'; }
+
     function calculateShortCircuit(){
     const kva = parseFloat(document.getElementById('transformerKVA').value);
     const voltage = parseFloat(document.getElementById('secondaryVoltage').value);
     const impedancePercent = parseFloat(document.getElementById('impedancePercent').value);
+    const xr = parseFloat(document.getElementById('trXR').value);
+    const c = parseFloat(document.getElementById('cFactor').value);
+    const rawSrc = document.getElementById('srcMVA').value;
+    const srcMVA = rawSrc === '' ? null : parseFloat(rawSrc);
+    const cabLen = parseFloat(document.getElementById('cabLen').value);
+    const cabRuns = parseFloat(document.getElementById('cabRuns').value);
+    const cabIdx = CAB_SIZES.indexOf(parseFloat(document.getElementById('cabSize').value));
+    const cabMat = document.getElementById('cabMat').value;
 
     const validationBox = document.getElementById('validationBox');
     const errors = [];
-    if(isNaN(kva) || kva <= 0){ errors.push('Enter a valid transformer rating greater than 0.'); }
-    if(isNaN(voltage) || voltage <= 0){ errors.push('Enter a valid secondary voltage greater than 0.'); }
-    if(isNaN(impedancePercent) || impedancePercent <= 0){ errors.push('Enter a valid impedance percentage greater than 0.'); }
+    if(!Number.isFinite(kva) || kva < 1 || kva > 100000){ errors.push('Enter a transformer rating between 1 and 100,000 kVA.'); }
+    if(!Number.isFinite(voltage) || voltage < 100 || voltage > 1000){ errors.push('Enter a secondary voltage between 100 V and 1000 V.'); }
+    if(!Number.isFinite(impedancePercent) || impedancePercent < 0.5 || impedancePercent > 25){ errors.push('Enter a transformer impedance between 0.5% and 25%.'); }
+    if(!Number.isFinite(xr) || xr < 1 || xr > 30){ errors.push('Enter an X/R ratio between 1 and 30.'); }
+    if(srcMVA !== null && (!Number.isFinite(srcMVA) || srcMVA < 1 || srcMVA > 100000)){ errors.push('Upstream fault level must be between 1 and 100,000 MVA, or left blank.'); }
+    if(!Number.isFinite(cabLen) || cabLen < 0 || cabLen > 5000){ errors.push('Cable length must be between 0 and 5000 m.'); }
+    if(!Number.isFinite(cabRuns) || cabRuns < 1 || cabRuns > 20 || !Number.isInteger(cabRuns)){ errors.push('Parallel runs must be a whole number from 1 to 20.'); }
 
     if(errors.length){
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '\u2022 ' + e).join('<br>');
-      document.getElementById('rResult').textContent = '\u2014';
-      document.getElementById('rFLC').textContent = '\u2014';
-      document.getElementById('rMVA').textContent = '\u2014';
+      ['rResult','rFLC','rMVA','rPeak','rXR'].forEach(function(id){ document.getElementById(id).textContent = '\u2014'; });
       document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
+      document.getElementById('rChecks').innerHTML = '<p>Fix the input errors above to see the checks.</p>';
       return;
     }
     validationBox.classList.add('hidden');
     validationBox.innerHTML = '';
 
-    const fullLoadCurrent = (kva * 1000) / (Math.sqrt(3) * voltage);
-    const shortCircuitCurrent = fullLoadCurrent * (100 / impedancePercent);
-    const scMVA = (Math.sqrt(3) * voltage * shortCircuitCurrent) / 1e6;
-    const scKA = shortCircuitCurrent / 1000;
+    const V = voltage;
+    const fullLoadCurrent = (kva * 1000) / (Math.sqrt(3) * V);
+    const simpleIsc = fullLoadCurrent * (100 / impedancePercent);   // classic infinite-bus figure
 
-    document.getElementById('rResult').textContent = scKA.toLocaleString('en-US', {maximumFractionDigits:2}) + ' kA';
-    document.getElementById('resultSub').textContent = kva + ' kVA, ' + voltage + 'V, ' + impedancePercent + '% Z';
+    // Transformer impedance referred to LV (Ω)
+    const zBase = V * V / (kva * 1000);
+    const zT = impedancePercent / 100 * zBase;
+    const rT = zT / Math.sqrt(1 + xr * xr);
+    const xT = rT * xr;
+    // Source
+    let rQ = 0, xQ = 0;
+    if (srcMVA !== null){
+      const zQ = V * V / (srcMVA * 1e6);
+      xQ = zQ / Math.sqrt(1 + SRC_R_OVER_X * SRC_R_OVER_X);
+      rQ = xQ * SRC_R_OVER_X;
+    }
+    // Cable (20 °C, max fault basis)
+    const rC = cabLen > 0 ? CAB_R20[cabMat][cabIdx] * cabLen / 1000 / cabRuns : 0;
+    const xC = cabLen > 0 ? CAB_X * cabLen / 1000 / cabRuns : 0;
+
+    function ik(r, x){ return c * V / (Math.sqrt(3) * Math.sqrt(r * r + x * x)); }
+    function kappa(r, x){ return 1.02 + 0.98 * Math.exp(-3 * r / x); }
+
+    const R = rQ + rT + rC, X = xQ + xT + xC;
+    const ikFault = ik(R, X);
+    const ikTerm = ik(rQ + rT, xQ + xT);
+    const k = kappa(R, X);
+    const ip = k * Math.sqrt(2) * ikFault;
+    const scMVA = Math.sqrt(3) * V * ikFault / 1e6;
+    const atTerminals = cabLen === 0;
+
+    document.getElementById('rResult').textContent = (ikFault / 1000).toLocaleString('en-US', {maximumFractionDigits:2}) + ' kA';
+    document.getElementById('resultSub').textContent = kva + ' kVA, ' + V + ' V, ' + impedancePercent + '% Z' + (srcMVA !== null ? ', source ' + srcMVA + ' MVA' : ', infinite source') + (atTerminals ? ', at LV terminals' : ', ' + cabLen + ' m of ' + (cabRuns > 1 ? cabRuns + ' × ' : '') + CAB_SIZES[cabIdx] + ' mm² ' + (cabMat === 'cu' ? 'Cu' : 'Al')) + (c !== 1 ? ', c = ' + c : '');
     document.getElementById('rFLC').textContent = fullLoadCurrent.toFixed(1) + ' A';
     document.getElementById('rMVA').textContent = scMVA.toFixed(1) + ' MVA';
+    document.getElementById('rPeak').textContent = (ip / 1000).toFixed(1) + ' kA';
+    document.getElementById('rXR').textContent = (X / R).toFixed(1) + ' (κ ' + k.toFixed(2) + ')';
 
-    document.getElementById('breakdownBox').innerHTML = `
-        <table class="breakdown-table">
-            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
-            <tbody>
-                <tr><td>Transformer Rating</td><td>${kva.toLocaleString('en-US')} kVA</td></tr>
-                <tr><td>Secondary Voltage</td><td>${voltage} V</td></tr>
-                <tr><td>Impedance (%Z)</td><td>${impedancePercent}%</td></tr>
-                <tr><td>Full Load Current</td><td>${fullLoadCurrent.toFixed(1)} A</td></tr>
-                <tr><td><strong>Short Circuit Current (Symmetrical)</strong></td><td><strong>${shortCircuitCurrent.toLocaleString('en-US', {maximumFractionDigits:0})} A (${scKA.toFixed(2)} kA)</strong></td></tr>
-                <tr><td>Short Circuit MVA</td><td>${scMVA.toFixed(1)} MVA</td></tr>
-            </tbody>
-        </table>
-    `;
+    const rows = [
+      ['Transformer Rating', kva.toLocaleString('en-US') + ' kVA'],
+      ['Secondary Voltage', V + ' V'],
+      ['Full Load Current', fullLoadCurrent.toFixed(1) + ' A'],
+      ['Simple method Isc = I_FL × 100 ÷ %Z', (simpleIsc / 1000).toFixed(2) + ' kA'],
+      ['Transformer R / X (LV side)', fmtOhm(rT) + ' / ' + fmtOhm(xT)]
+    ];
+    if (srcMVA !== null) rows.push(['Source R / X (' + srcMVA + ' MVA)', fmtOhm(rQ) + ' / ' + fmtOhm(xQ)]);
+    if (!atTerminals) rows.push(['Cable R / X (20 °C)', fmtOhm(rC) + ' / ' + fmtOhm(xC)]);
+    rows.push(['Voltage factor c', c.toFixed(2)]);
+    rows.push(['Ik at transformer terminals', (ikTerm / 1000).toFixed(2) + ' kA']);
+    if (!atTerminals) rows.push(['<strong>Ik at fault point</strong>', '<strong>' + (ikFault / 1000).toFixed(2) + ' kA</strong>']);
+    else rows[rows.length - 1] = ['<strong>Ik at transformer terminals</strong>', '<strong>' + (ikTerm / 1000).toFixed(2) + ' kA</strong>'];
+    rows.push(['X/R at fault point, κ', (X / R).toFixed(2) + ', ' + k.toFixed(3)]);
+    rows.push(['Peak ip = κ × √2 × Ik', (ip / 1000).toFixed(2) + ' kA']);
+    rows.push(['Short Circuit MVA at fault point', scMVA.toFixed(1) + ' MVA']);
+    document.getElementById('breakdownBox').innerHTML = '<table class="breakdown-table"><thead><tr><th>Quantity</th><th>Value</th></tr></thead><tbody>' +
+      rows.map(function(r){ return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>'; }).join('') + '</tbody></table>';
+
+    const checks = [];
+    checks.push('\u2139\ufe0f Protective devices at this point need breaking capacity Icu (and Ics where they must stay serviceable) \u2265 ' + (ikFault / 1000).toFixed(1) + ' kA at ' + V + ' V, and making capacity Icm \u2265 ' + (ip / 1000).toFixed(1) + ' kA peak.');
+    if (srcMVA === null) checks.push('\u2139\ufe0f Infinite source assumed \u2014 a conservative figure for device ratings. Enter the upstream fault level from the utility to refine it.');
+    if (c === 1) checks.push('\u2139\ufe0f Voltage factor 1.00 (simple method). IEC 60909 uses c = 1.05 or 1.10 for maximum LV fault current, giving ' + (ikFault * 1.05 / 1000).toFixed(1) + '\u2013' + (ikFault * 1.10 / 1000).toFixed(1) + ' kA here.');
+    checks.push('\u2139\ufe0f Not included: motor contribution (running motors feed the fault for the first cycles and raise the peak), parallel transformers or generators, and single-phase earth-fault current. For breaker trip checks at the far end of a circuit, use the minimum fault current, not this maximum.');
+    document.getElementById('rChecks').innerHTML = checks.map(function(t){ return '<p>' + t + '</p>'; }).join('');
   }
+
+  ['transformerKVA','secondaryVoltage','impedancePercent','trXR','srcMVA','cabLen','cabRuns'].forEach(function(id){
+    const el = document.getElementById(id);
+    el.addEventListener('input', calculateShortCircuit);
+    el.addEventListener('change', calculateShortCircuit);
+    el.addEventListener('keydown', function(ev){
+      if (ev.key === 'Enter'){ ev.preventDefault(); const b = document.querySelector('#calculator button[onclick^="calculate"]'); if (b) b.click(); }
+    });
+  });
+  ['cFactor','cabSize','cabMat'].forEach(function(id){ document.getElementById(id).addEventListener('change', calculateShortCircuit); });
 
   calculateShortCircuit();
 </script>

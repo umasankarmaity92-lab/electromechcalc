@@ -205,6 +205,14 @@
     },
     {
       "@type": "Question",
+      "name": "What current do the six motor cables of a star-delta starter carry?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In delta running, each of the six cables between the starter and the motor carries the winding current, I ÷ √3 — about 58% of the line full-load current. Each cable is therefore sized for that current after derating, but grouping of six loaded cores and the voltage drop over both cable sets must be checked. The incoming supply cable to the starter carries the full line current."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "What making and breaking capacity do these contactors need?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -801,6 +809,25 @@
 
       </div>
 
+      <div class="mb-5 pt-5 border-t border-gray-100">
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Starting Torque &amp; Timer Check (optional)</span>
+        <div class="grid grid-cols-3 gap-4 mt-3">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="lrtPct">DOL Start Torque (% FLT)</label>
+            <input id="lrtPct" type="number" value="200" step="5" min="50" max="400" class="input-field mt-2" oninput="calcStarDelta()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="loadTorque">Load Breakaway (% FLT)</label>
+            <input id="loadTorque" type="number" value="" step="5" min="0" max="300" placeholder="blank = skip" class="input-field mt-2" oninput="calcStarDelta()">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="starTime">Star Time (s)</label>
+            <input id="starTime" type="number" value="" step="any" min="1" max="120" placeholder="blank = skip" class="input-field mt-2" oninput="calcStarDelta()">
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-2">In star, torque at every speed is about one third of the DOL value. The load must accelerate close to full speed on that torque before the timer changes over to delta.</p>
+      </div>
+
       <div id="validationBox" role="alert" aria-live="polite" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calcAndScroll()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
@@ -818,7 +845,7 @@
     </div>
 
     <!-- RESULT PANEL -->
-    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4" role="status" aria-live="polite">
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400" id="resultLabel">Motor Full Load Current</span>
@@ -853,6 +880,11 @@
       <div class="bg-white rounded-xl border border-gray-100 p-4">
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
         <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a step-by-step breakdown.</p></div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500 mb-2 block">Line / Phase Current &amp; Starting Checks</span>
+        <div id="rChecks" class="text-sm text-gray-600 leading-relaxed space-y-2"><p>Enter motor data to see the checks.</p></div>
       </div>
 
     </div>
@@ -1567,6 +1599,14 @@ Setting = 1.00 × I<sub>FLC</sub>&nbsp;&nbsp;(relay in the incoming line)</div>
         <p class="text-sm text-gray-500 mt-3 leading-relaxed">The starter reconfigures the windings, so both ends of each winding must be accessible at the terminal box: U1-U2, V1-V2 and W1-W2. A motor with its links bridged internally, offering only three terminals, cannot be started star-delta.</p>
       </details>
 
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What current do the six motor cables of a star-delta starter carry?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">In delta running, each of the six cables between the starter and the motor carries the winding current, I ÷ √3 — about 58% of the line full-load current. Each cable is therefore sized for that current after derating, but grouping of six loaded cores and the voltage drop over both cable sets must be checked. The incoming supply cable to the starter carries the full line current.</p>
+    </details>
+
       <details class="py-5">
         <summary class="font-semibold text-brandDark flex justify-between items-center">
           What making and breaking capacity do these contactors need?
@@ -1676,24 +1716,32 @@ Setting = 1.00 × I<sub>FLC</sub>&nbsp;&nbsp;(relay in the incoming line)</div>
       V = val('voltage');
       eff = val('effPct');
       pf = val('pf');
-      if(isNaN(P) || P <= 0) errors.push('Enter a motor rating greater than 0.');
-      if(isNaN(V) || V <= 0) errors.push('Enter a supply voltage greater than 0 V.');
-      if(isNaN(eff) || eff <= 0 || eff > 100) errors.push('Efficiency must be between 1 and 100%.');
-      if(isNaN(pf) || pf < 0.1 || pf > 1) errors.push('Power factor must be between 0.1 and 1.');
+      if(!isFinite(P) || P <= 0) errors.push('Enter a motor rating greater than 0.');
+      if(!isFinite(V) || V <= 0 || V > 1000) errors.push('Enter a supply voltage between 1 V and 1000 V.');
+      if(!isFinite(eff) || eff <= 0 || eff > 100) errors.push('Efficiency must be between 1 and 100%.');
+      if(!isFinite(pf) || pf < 0.1 || pf > 1) errors.push('Power factor must be between 0.1 and 1.');
       if(!errors.length){
         flc = P / (Math.sqrt(3) * V * (eff/100) * pf);
         srcTxt = fmt(P/1000,2) + ' kW at ' + fmt(V,0) + ' V, \u03b7 ' + fmt(eff,1) + '%, pf ' + fmt(pf,2);
       }
     } else {
       flc = val('flc');
-      if(isNaN(flc) || flc <= 0) errors.push('Enter a full load current greater than 0 A.');
+      if(!isFinite(flc) || flc <= 0) errors.push('Enter a full load current greater than 0 A.');
       srcTxt = 'nameplate current';
     }
 
     var dolMult = val('dolMult');
-    if(isNaN(dolMult) || dolMult < 3 || dolMult > 12) errors.push('DOL starting current must be between 3 and 12 \u00d7 FLC.');
+    if(!isFinite(dolMult) || dolMult < 3 || dolMult > 12) errors.push('DOL starting current must be between 3 and 12 \u00d7 FLC.');
+    var lrtPct = val('lrtPct');
+    if(!isFinite(lrtPct) || lrtPct < 50 || lrtPct > 400) errors.push('DOL starting torque must be between 50% and 400% of full-load torque.');
+    var rawLoad = document.getElementById('loadTorque').value;
+    var loadTorque = rawLoad === '' ? null : parseFloat(rawLoad);
+    if(loadTorque !== null && (!isFinite(loadTorque) || loadTorque < 0 || loadTorque > 300)) errors.push('Load breakaway torque must be between 0% and 300%, or left blank.');
+    var rawStar = document.getElementById('starTime').value;
+    var starTime = rawStar === '' ? null : parseFloat(rawStar);
+    if(starTime !== null && (!isFinite(starTime) || starTime < 1 || starTime > 120)) errors.push('Star time must be between 1 s and 120 s, or left blank.');
     var margin = val('marginPct');
-    if(isNaN(margin) || margin < 0 || margin > 50) errors.push('Sizing margin must be between 0 and 50%.');
+    if(!isFinite(margin) || margin < 0 || margin > 50) errors.push('Sizing margin must be between 0 and 50%.');
 
     if(errors.length){
       box.classList.remove('hidden');
@@ -1702,6 +1750,7 @@ Setting = 1.00 × I<sub>FLC</sub>&nbsp;&nbsp;(relay in the incoming line)</div>
       txt('resultSub','Fix the input errors to see a result');
       document.getElementById('stdBox').innerHTML = '<p class="text-xs text-gray-400">Fix the input errors above.</p>';
       document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid breakdown.</p>';
+      document.getElementById('rChecks').innerHTML = '<p>Fix the input errors above to see the checks.</p>';
       return;
     }
     box.classList.add('hidden'); box.innerHTML = '';
@@ -1769,6 +1818,29 @@ Setting = 1.00 × I<sub>FLC</sub>&nbsp;&nbsp;(relay in the incoming line)</div>
           : '<tr><td>Short-circuit protection</td><td>per local code</td><td>select from code + manufacturer coordination table</td></tr>') +
         '<tr><td>Motor current reference</td><td>\u2248 10 \u00d7 I</td><td>' + fmt(making,0) + ' A \u2014 order-of-magnitude reference for the motor, not a contactor making capacity or a breaker interrupting rating</td></tr>' +
       '</tbody></table>';
+
+    // ---- Line/phase current and starting checks ----
+    var wind = flc / Math.sqrt(3);
+    var starTorque = lrtPct / 3;
+    var checks = [];
+    checks.push('\u2139\ufe0f Line current ' + fmt(flc,1) + ' A; each winding (and each of the six motor cables) carries I \u00f7 \u221a3 = ' + fmt(wind,1) + ' A in delta running. In star, line and winding current are equal and start at about ' + fmt(starStartA,0) + ' A (\u2153 of the ' + fmt(dolA,0) + ' A DOL value).');
+    if (inputMode === 'rating') checks.push('\u2139\ufe0f FLC here is calculated from the rating. Set the overload relay from the motor <strong>nameplate</strong> current (\u00d7 0.58 in the winding position), not from this estimate.');
+    if (loadTorque !== null){
+      if (starTorque < loadTorque){
+        checks.push('\u26a0\ufe0f Star torque \u2248 ' + fmt(starTorque,0) + '% FLT (\u2153 of ' + fmt(lrtPct,0) + '%) is below the ' + fmt(loadTorque,0) + '% load breakaway \u2014 the motor will not start in star. Unload the machine for starting or use a soft starter, VFD or DOL.');
+      } else if (starTorque < loadTorque * 1.3){
+        checks.push('\u26a0\ufe0f Star torque \u2248 ' + fmt(starTorque,0) + '% FLT vs ' + fmt(loadTorque,0) + '% load \u2014 the motor may only reach part speed in star, so the changeover to delta draws a current close to DOL. Check the speed reached before changeover.');
+      } else {
+        checks.push('\u2705 Star torque \u2248 ' + fmt(starTorque,0) + '% FLT vs ' + fmt(loadTorque,0) + '% load breakaway \u2014 reasonable margin for acceleration in star.');
+      }
+    } else {
+      checks.push('\u2139\ufe0f Star torque \u2248 ' + fmt(starTorque,0) + '% of full-load torque (\u2153 of the DOL value). Enter the load breakaway torque to check it.');
+    }
+    if (starTime !== null){
+      checks.push((starTime > 15 ? '\u26a0\ufe0f ' : '\u2139\ufe0f ') + 'Star time ' + fmt(starTime,0) + ' s: set the timer so changeover happens as the motor approaches full speed (current falls back towards running level).' + (starTime > 15 ? ' Long star times need a star contactor and overload relay rated for the extended starting current \u2014 check the manufacturer\u2019s table for heavy starting.' : ''));
+    }
+    checks.push('\u2139\ufe0f Open transition: a brief current and torque spike at changeover is normal; if it is large, the motor is changing over too early or the load is too heavy for star-delta.');
+    document.getElementById('rChecks').innerHTML = checks.map(function(c){ return '<p>' + c + '</p>'; }).join('');
   }
 
   // Pressing Calculate should land the user on the answer. The result panel sits

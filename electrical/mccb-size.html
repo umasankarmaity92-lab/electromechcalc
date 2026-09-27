@@ -193,6 +193,22 @@
         "@type": "Answer",
         "text": "Ir is the long-time pickup, the overload threshold, and it should be set to the circuit's actual design current rather than left at the breaker's maximum. A 250 A breaker protecting a 160 A circuit at full setting gives that circuit no meaningful overload protection. Electronic trip units add Isd and tsd for short-time response, Ii for instantaneous, and often Ig for earth fault."
       }
+    },
+    {
+      "@type": "Question",
+      "name": "How do In, Ir, Isd and Ii relate to each other on an MCCB?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In is the frame or trip-unit rating and the reference for every setting. Ir is the long-time (overload) pickup, adjustable as a fraction of In — about 0.7–1.0 on thermal-magnetic units and 0.4–1.0 on electronic ones — and it is Ir, not In, that must be at least the design current and no more than the cable capacity. Isd is the short-time pickup, a multiple of Ir with a deliberate delay for selectivity; Ii is the instantaneous pickup, a multiple of In. The calculator gives In and the Ir dial; Isd and Ii come from a coordination study."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I check Icu or Ics against the fault current?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Icu is the ultimate breaking capacity: the breaker clears the fault but may not be fit for service afterwards. Ics is the service breaking capacity, stated as a percentage of Icu (for example 50%, 75% or 100%), after which the breaker remains serviceable. Where the circuit must go back into service after a fault without replacing the breaker — main incomers, critical feeders — check Ics ≥ the prospective fault current, not just Icu."
+      }
     }
   ]
 }
@@ -733,6 +749,31 @@
           <input id="faultCurrent" type="number" value="25" step="0.5" min="0.01" max="1000" placeholder="e.g. 25" class="input-field mt-2">
           <p class="field-hint">Don’t know it? Work it out with the <a href="/electrical/short-circuit-current" class="text-sky-600 underline">Short Circuit Current Calculator</a>.</p>
         </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="tripUnit">Trip Unit</label>
+              <select id="tripUnit" class="input-field mt-2">
+                <option value="tm" selected>Thermal-magnetic (Ir &asymp; 0.7&ndash;1.0 &times; In)</option>
+                <option value="elec">Electronic (Ir &asymp; 0.4&ndash;1.0 &times; In)</option>
+                <option value="fixed">Fixed thermal (Ir = In)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="icsNeed">After a Fault</label>
+              <select id="icsNeed" class="input-field mt-2">
+                <option value="icu" selected>Replace if needed (Icu basis)</option>
+                <option value="ics">Must stay in service (Ics basis)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="iz">Cable Capacity Iz (A) &mdash; optional</label>
+            <input id="iz" type="number" value="" step="any" min="1" max="100000" placeholder="blank = skip" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="frameIn">Use a Specific Frame / Trip In (A) &mdash; optional</label>
+            <input id="frameIn" type="number" value="" step="any" min="10" max="6300" placeholder="blank = smallest standard rating" class="input-field mt-2">
+          </div>
       </div>
 
       <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
@@ -743,8 +784,9 @@
 
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
         <span class="formula-chip" id="formulaChip">I = P ÷ (√3 × V × PF)</span>
-        <span class="formula-chip">MCCB ≥ FLC × duty factor</span>
-        <span class="formula-chip">Breaking capacity ≥ Isc</span>
+        <span class="formula-chip">In ≥ FLC × duty factor</span>
+        <span class="formula-chip">Ir = setting ≥ design current, Ir ≤ Iz</span>
+        <span class="formula-chip">Icu (or Ics) ≥ Isc at the location</span>
       </div>
     </div>
 
@@ -766,6 +808,16 @@
             <span id="rFrame" class="font-display font-semibold text-lg">—</span>
           </div>
         </div>
+        <div class="mt-3 pt-3 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Long-Time Setting Ir</span>
+            <span id="rIr" class="font-display font-semibold text-lg">—</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Ir Dial (&times; In)</span>
+            <span id="rIrDial" class="font-display font-semibold text-lg">—</span>
+          </div>
+        </div>
       </div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
@@ -778,6 +830,11 @@
       <div class="bg-white rounded-xl border border-gray-100 p-4">
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Breakdown</span>
         <div id="breakdownBox" class="breakdown-wrap"><p class="text-xs text-gray-400 p-3">Enter values above to see a breakdown.</p></div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500 mb-2 block">In / Ir / Isd / Icu&ndash;Ics Checks</span>
+        <div id="rChecks" class="text-sm text-gray-600 leading-relaxed space-y-2"><p>Enter values and hit calculate.</p></div>
       </div>
 
     </div>
@@ -1382,6 +1439,22 @@
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">I<sub>r</sub> is the long-time pickup, the overload threshold, and it should be set to the circuit's actual design current rather than left at the breaker's maximum. A 250 A breaker protecting a 160 A circuit at full setting gives that circuit no meaningful overload protection. Electronic trip units add I<sub>sd</sub> and t<sub>sd</sub> for short-time response, I<sub>i</sub> for instantaneous, and often I<sub>g</sub> for earth fault.</p>
     </details>
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do In, Ir, Isd and Ii relate to each other on an MCCB?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">In is the frame or trip-unit rating and the reference for every setting. Ir is the long-time (overload) pickup, adjustable as a fraction of In — about 0.7–1.0 on thermal-magnetic units and 0.4–1.0 on electronic ones — and it is Ir, not In, that must be at least the design current and no more than the cable capacity. Isd is the short-time pickup, a multiple of Ir with a deliberate delay for selectivity; Ii is the instantaneous pickup, a multiple of In. The calculator gives In and the Ir dial; Isd and Ii come from a coordination study.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Should I check Icu or Ics against the fault current?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Icu is the ultimate breaking capacity: the breaker clears the fault but may not be fit for service afterwards. Ics is the service breaking capacity, stated as a percentage of Icu (for example 50%, 75% or 100%), after which the breaker remains serviceable. Where the circuit must go back into service after a fault without replacing the breaker — main incomers, critical feeders — check Ics ≥ the prospective fault current, not just Icu.</p>
+    </details>
+
   </div>
 </section>
 
@@ -1494,6 +1567,12 @@
 
   function calculateMCCBSize(){
     const faultCurrent = parseFloat(document.getElementById('faultCurrent').value);
+    const tripUnit = document.getElementById('tripUnit').value;
+    const icsNeed = document.getElementById('icsNeed').value;
+    const rawIz = document.getElementById('iz').value;
+    const iz = rawIz === '' ? null : parseFloat(rawIz);
+    const rawFrame = document.getElementById('frameIn').value;
+    const frameIn = rawFrame === '' ? null : parseFloat(rawFrame);
     const allowance    = parseFloat(document.getElementById('allowance').value);
     const dutyFactor   = parseFloat(document.getElementById('dutyFactor').value);
     const validationBox = document.getElementById('validationBox');
@@ -1512,6 +1591,9 @@
     } else if(faultCurrent > 1000){
       errors.push('Available fault current must be 1000 kA or less.');
     }
+
+    if(frameIn !== null && (!Number.isFinite(frameIn) || frameIn < 10 || frameIn > 6300)){ errors.push('Frame / trip In must be between 10 A and 6300 A, or left blank.'); }
+    if(iz !== null && (!Number.isFinite(iz) || iz <= 0 || iz > 100000)){ errors.push('Cable capacity Iz must be greater than 0, or left blank.'); }
 
     let flc = NaN, basis = '', power = NaN, voltage = NaN, pf = NaN, unit = '', vRef = 'll';
 
@@ -1560,6 +1642,9 @@
       document.getElementById('rResult').textContent = '\u2014';
       document.getElementById('rBreaking').textContent = '\u2014';
       document.getElementById('rFrame').textContent = '\u2014';
+      document.getElementById('rIr').textContent = '\u2014';
+      document.getElementById('rIrDial').textContent = '\u2014';
+      document.getElementById('rChecks').innerHTML = '<p>Fix the input errors above to see the checks.</p>';
       document.getElementById('resultSub').textContent = 'Fix the input errors to see a result';
       document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
       return;
@@ -1570,19 +1655,36 @@
     const designCurrent = flc * (1 + allowance / 100);
     const calculatedRating = designCurrent * dutyFactor;
 
-    let stdSize = STD_MCCB.find(function(x){ return x >= calculatedRating; });
+    const frameTooSmall = frameIn !== null && frameIn < calculatedRating - 1e-9;
+    const stdSize = (frameIn !== null && !frameTooSmall) ? frameIn : STD_MCCB.find(function(x){ return x >= calculatedRating - 1e-9; });
     const aboveRange = !stdSize;
-    if(aboveRange) stdSize = Math.ceil(calculatedRating / 200) * 200;
 
     const frameInfo = FRAMES.find(function(f){ return stdSize <= f.max; }) || FRAMES[FRAMES.length - 1];
 
-    let minBreaking = BREAKING_CAPS.find(function(b){ return b >= faultCurrent; });
+    const minBreaking = BREAKING_CAPS.find(function(b){ return b >= faultCurrent - 1e-9; });
     const breakingAbove = !minBreaking;
-    if(breakingAbove) minBreaking = Math.ceil(faultCurrent / 25) * 25;
 
-    document.getElementById('rResult').textContent = stdSize + ' A';
+    const topStd = STD_MCCB[STD_MCCB.length - 1];
+    const topCap = BREAKING_CAPS[BREAKING_CAPS.length - 1];
+    // ---- Long-time setting Ir ----
+    const IR_MIN = { tm:0.7, elec:0.4, fixed:1.0 }[tripUnit];
+    let irDial = null, irA = null, irNote = '';
+    if(!aboveRange){
+      if(tripUnit === 'fixed'){ irDial = 1; }
+      else {
+        const ratio = calculatedRating / stdSize;
+        const step = tripUnit === 'elec' ? 0.02 : 0.05;
+        irDial = Math.max(IR_MIN, Math.ceil(ratio / step - 1e-9) * step);
+        irDial = Math.min(1, irDial);
+        if(ratio < IR_MIN) irNote = 'lowest setting';
+      }
+      irA = irDial * stdSize;
+    }
+    document.getElementById('rResult').textContent = aboveRange ? 'Above ' + topStd + ' A' : stdSize + ' A';
     document.getElementById('resultSub').textContent = basis + ', fault ' + faultCurrent + ' kA';
-    document.getElementById('rBreaking').textContent = minBreaking + ' kA';
+    document.getElementById('rBreaking').textContent = breakingAbove ? 'Above ' + topCap + ' kA' : minBreaking + ' kA' + (icsNeed === 'ics' ? ' (Ics)' : '');
+    document.getElementById('rIr').textContent = irA !== null ? irA.toFixed(0) + ' A' : '\u2014';
+    document.getElementById('rIrDial').textContent = irDial !== null ? irDial.toFixed(2) + (irNote ? ' (' + irNote + ')' : '') : '\u2014';
     document.getElementById('rFrame').textContent = aboveRange ? 'Above common range' : frameInfo.frame;
 
     const powerRow = inputMode === 'power'
@@ -1601,18 +1703,35 @@
           '<tr><td>Full Load Current</td><td>' + flc.toFixed(1) + ' A</td></tr>' +
           allowRow +
           '<tr><td>Calculated (&times;' + dutyFactor + ')</td><td>' + calculatedRating.toFixed(1) + ' A</td></tr>' +
-          '<tr><td><strong>Preliminary MCCB Trip Rating</strong></td><td><strong>' + stdSize + ' A</strong></td></tr>' +
+          '<tr><td><strong>Preliminary MCCB Rating In</strong></td><td><strong>' + (aboveRange ? 'Above ' + topStd + ' A \u2014 ACB or parallel feeders; confirm with the manufacturer' : stdSize + ' A') + '</strong></td></tr>' +
+          (irA !== null ? '<tr><td>Long-time setting Ir</td><td>' + irDial.toFixed(2) + ' \u00d7 In = ' + irA.toFixed(0) + ' A</td></tr>' : '') +
           '<tr><td>Typical Frame Class (manufacturer-dependent)</td><td>' + (aboveRange ? 'Above the common range \u2014 confirm with the manufacturer' : frameInfo.frame) + '</td></tr>' +
           '<tr><td>Available Fault Current</td><td>' + faultCurrent + ' kA</td></tr>' +
-          '<tr><td><strong>Minimum Required Icu</strong></td><td><strong>' + minBreaking + ' kA</strong>' +
-            (breakingAbove ? ' (above the standard list \u2014 confirm availability)' : '') + '</td></tr>' +
+          '<tr><td><strong>Minimum Required ' + (icsNeed === 'ics' ? 'Ics' : 'Icu') + '</strong></td><td><strong>' + (breakingAbove ? 'Above ' + topCap + ' kA \u2014 confirm availability or use a current-limiting back-up' : minBreaking + ' kA') + '</strong></td></tr>' +
         '</tbody>' +
       '</table>';
+
+    const checks = [];
+    if(frameTooSmall) checks.push('\u26a0\ufe0f The chosen In of ' + frameIn + ' A is below the required ' + calculatedRating.toFixed(1) + ' A \u2014 ignored; the smallest adequate standard rating is shown instead.');
+    if(aboveRange){
+      checks.push('\u26a0\ufe0f ' + calculatedRating.toFixed(0) + ' A is above the ' + topStd + ' A MCCB range listed here \u2014 an air circuit breaker (ACB) or parallel feeders are normally used.');
+    } else {
+      checks.push('\u2139\ufe0f In = ' + stdSize + ' A frame/trip rating; set the long-time pickup Ir to ' + irDial.toFixed(2) + ' \u00d7 In = ' + irA.toFixed(0) + ' A (required ' + calculatedRating.toFixed(1) + ' A).' + (irNote ? ' The required value is below the lowest dial setting, so the breaker is larger than the circuit needs \u2014 acceptable only if the cable is rated for ' + irA.toFixed(0) + ' A.' : ''));
+      if(iz !== null){
+        checks.push((irA <= iz ? '\u2705 ' : '\u26a0\ufe0f ') + 'Cable: Ir ' + irA.toFixed(0) + ' A ' + (irA <= iz ? '\u2264' : '>') + ' Iz ' + iz + ' A' + (irA <= iz ? ' \u2014 overload protection of the cable is met on the setting actually used.' : ' \u2014 the cable is not protected. Use a larger cable or a lower Ir (if the load allows).'));
+      } else {
+        checks.push('\u2139\ufe0f Enter the cable capacity Iz to check Ir \u2264 Iz. With an adjustable trip, protection depends on the setting, so record the Ir dial on the drawings and the breaker.');
+      }
+    }
+    checks.push('\u2139\ufe0f Breaking capacity: ' + (icsNeed === 'ics' ? 'Ics' : 'Icu') + ' \u2265 ' + faultCurrent + ' kA at the operating voltage' + (icsNeed === 'ics' ? ' (Ics is stated as a % of Icu \u2014 a 100% Ics breaker is needed for the Ics value to equal Icu).' : '; check Ics too where the circuit must return to service after a fault.'));
+    checks.push('\u2139\ufe0f Isd / Ii: set the short-time pickup and delay for selectivity with downstream devices and below the minimum fault current at the far end of the protected circuit; this needs the manufacturers\u2019 time-current curves, not a single-device calculation.');
+    document.getElementById('rChecks').innerHTML = checks.map(function(c){ return '<p>' + c + '</p>'; }).join('');
   }
 
   // ===== Live recalculation =====
   // Without these, editing a field left the previous result on screen.
-  ['loadPower','voltage','pf','flc','allowance','dutyFactor','faultCurrent'].forEach(function(id){
+  ['tripUnit','icsNeed'].forEach(function(id){ document.getElementById(id).addEventListener('change', calculateMCCBSize); });
+  ['loadPower','voltage','pf','flc','allowance','dutyFactor','faultCurrent','iz','frameIn'].forEach(function(id){
     const el = document.getElementById(id);
     if(!el) return;
     el.addEventListener('input', calculateMCCBSize);

@@ -97,10 +97,26 @@
     },
     {
       "@type": "Question",
+      "name": "Why does a UPS need both a kVA and a kW rating check?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Because a UPS has two separate limits. Its inverter current limits the kVA it can deliver, and its power stage limits the kW, equal to kVA × the UPS output power factor rating (often 0.8, 0.9 or 1.0). Modern IT loads run at a power factor near 0.95–0.99, so they usually reach the kW limit first: 8 kW of servers needs at least a 10 kVA UPS if its output power factor is 0.8, even though the load is only about 8.1 kVA. This calculator sizes on whichever limit is reached first."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a bigger battery let a UPS carry more load?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. The UPS kVA and kW ratings set the load the inverter can carry; the battery only sets how long it can carry it. Adding battery capacity increases runtime, not load capacity. Size the UPS for the load with this calculator, then size the battery bank for the required backup time separately."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "How much headroom should I add over the calculated kVA?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "There is no universal figure, but a planning margin of roughly 10-25% is a common starting point, adjusted for future load additions and the gradual capacity loss that comes with battery ageing. Rounding up to the next standard UPS size often lands you in this range, but that rounding margin is incidental, not a specifically engineered allowance for motor or switch-mode inrush — check the UPS's actual rated inrush/peak-load tolerance against your equipment for anything with significant switch-on surge. The actual margin you choose should follow the UPS manufacturer's loading guidance, your future expansion plans, and site conditions rather than this range alone."
+        "text": "There is no universal figure, but a planning margin of roughly 10–25% is a common starting point, adjusted for future load additions and the gradual capacity loss that comes with battery ageing. Rounding up to the next standard UPS size often lands you in this range, but that rounding margin is incidental, not a specifically engineered allowance for motor or switch-mode inrush — check the UPS's actual rated inrush/peak-load tolerance against your equipment for anything with significant switch-on surge. The actual margin you choose should follow the UPS manufacturer's loading guidance, your future expansion plans, and site conditions rather than this range alone."
       }
     },
     {
@@ -122,32 +138,50 @@
     {
       "@type": "Question",
       "name": "What's the difference between online and line-interactive UPS for sizing purposes?",
-      "acceptedAnswer": { "@type": "Answer", "text": "The kVA sizing calculation is identical for both — topology affects power quality and switchover time, not the fundamental kW/PF/kVA relationship. Choose topology based on how sensitive your load is to brief power interruptions and unconditioned mains, then size whichever topology you choose using this same calculator." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The kVA sizing calculation is identical for both — topology affects power quality and switchover time, not the fundamental kW/PF/kVA relationship. Choose topology based on how sensitive your load is to brief power interruptions and unconditioned mains, then size whichever topology you choose using this same calculator."
+      }
     },
     {
       "@type": "Question",
       "name": "Does the UPS's own battery charging load need separate sizing?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Battery charging draws additional input power from the mains supply beyond what's delivered to the protected load, but this is typically accounted for in the UPS's own input current specification rather than in the output kVA sizing calculated here — check the specific UPS model's input current rating when sizing the upstream breaker and cable, especially for larger units with fast-charge capability." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Battery charging draws additional input power from the mains supply beyond what's delivered to the protected load, but this is typically accounted for in the UPS's own input current specification rather than in the output kVA sizing calculated here — check the specific UPS model's input current rating when sizing the upstream breaker and cable, especially for larger units with fast-charge capability."
+      }
     },
     {
       "@type": "Question",
       "name": "What does N+1 redundancy mean for UPS sizing?",
-      "acceptedAnswer": { "@type": "Answer", "text": "N+1 redundancy means adding one extra UPS module beyond the minimum number (\"N\") needed to carry the load, so that if one module fails, the remaining N modules still cover the full load without interruption. Each individual module is NOT sized for the full load — it's sized for load divided by N, with the +1 extra module matching that same per-module size. For example, a 100 kW load split across N=2 modules needs each module rated for roughly 50 kW; adding one more 50 kW module for N+1 gives 3 modules (150 kW total installed capacity), so any single module can fail while the remaining two still carry the full 100 kW. Use this calculator to find the total kVA/kW the load needs, then divide by N to size each individual module." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "N+1 redundancy means adding one extra UPS module beyond the minimum number (\"N\") needed to carry the load, so that if one module fails, the remaining N modules still cover the full load without interruption. Each individual module is not sized for the full load — it's sized for load divided by N, with the +1 extra module matching that same per-module size. For example, a 100 kW load split across N=2 modules needs each module rated for roughly 50 kW; adding one more 50 kW module for N+1 gives 3 modules (150 kW total installed capacity), so any single module can fail while the remaining two still carry the full 100 kW. Use this calculator to find the total kVA/kW the load needs, then divide by N to size each individual module."
+      }
     },
     {
       "@type": "Question",
       "name": "How much spare capacity should I target when rounding up to a standard size?",
-      "acceptedAnswer": { "@type": "Answer", "text": "A common rule of thumb is 10-25% spare capacity above the calculated kVA demand for modest future load growth and battery ageing, without paying for capacity that will sit unused for the UPS's service life. This calculator shows the exact spare-capacity percentage the reference standard size gives you — treat that figure as a planning margin rather than a specific guarantee of inrush coverage, which should be checked separately against equipment specs." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A common rule of thumb is 10-25% spare capacity above the calculated kVA demand for modest future load growth and battery ageing, without paying for capacity that will sit unused for the UPS's service life. This calculator shows the exact spare-capacity percentage the reference standard size gives you — treat that figure as a planning margin rather than a specific guarantee of inrush coverage, which should be checked separately against equipment specs."
+      }
     },
     {
       "@type": "Question",
       "name": "What are the standard UPS kVA sizes/ranges?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Common standard UPS sizes in kVA include 1, 2, 3, 5, 7.5, 10, 15, 20, 30, 40, 50, 60, 80, 100, 120, 160, 200, 250, 300, 400, 500, 600, 800, and 1000 kVA — see the standard UPS kVA ranges chart above for the full reference list this calculator uses. Actual available sizes and step increments still vary by manufacturer, and very large installations often reach the required total capacity by paralleling multiple standard-size modules rather than sourcing one oversized custom unit." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Common standard UPS sizes in kVA include 1, 2, 3, 5, 7.5, 10, 15, 20, 30, 40, 50, 60, 80, 100, 120, 160, 200, 250, 300, 400, 500, 600, 800, and 1000 kVA — see the standard UPS kVA ranges chart above for the full reference list this calculator uses. Actual available sizes and step increments still vary by manufacturer, and very large installations often reach the required total capacity by paralleling multiple standard-size modules rather than sourcing one oversized custom unit."
+      }
     },
     {
       "@type": "Question",
       "name": "Is UPS capacity the same as UPS rating or UPS size?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes — \"UPS capacity,\" \"UPS rating,\" and \"UPS size\" are generally used interchangeably to mean the unit's rated output in kVA (apparent power). Some datasheets also separately quote a kW rating alongside kVA, which reflects an assumed output power factor (commonly 0.8 or 0.9 for many UPS models) — when comparing capacity between two UPS units, confirm both figures are quoted in the same unit (kVA vs kW) and, where relevant, the same assumed output power factor before treating them as directly comparable." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes — \"UPS capacity,\" \"UPS rating,\" and \"UPS size\" are generally used interchangeably to mean the unit's rated output in kVA (apparent power). Some datasheets also separately quote a kW rating alongside kVA, which reflects an assumed output power factor (commonly 0.8 or 0.9 for many UPS models) — when comparing capacity between two UPS units, confirm both figures are quoted in the same unit (kVA vs kW) and, where relevant, the same assumed output power factor before treating them as directly comparable."
+      }
     }
   ]
 }
@@ -495,7 +529,7 @@
         <div class="flex justify-end">
             <span class="info-icon" tabindex="0" role="button" aria-label="More info">
               i
-              <span class="info-tooltip">Sets a typical starting voltage for the selected phase — you can still override it manually below or with the quick-voltage buttons. Note: changing the region or phase again will reset the voltage back to that selection's typical value, replacing any custom voltage you entered.</span>
+              <span class="info-tooltip">Sets a typical starting voltage for the selected phase — you can still override it manually below or with the quick-voltage buttons. Note: choosing a region resets the voltage to that region's typical value. Switching phase only replaces the voltage if you have not typed or picked one yourself.</span>
             </span>
           </div>
         <p id="regionHint" class="text-[11px] text-amber-600 mt-1.5 hidden"></p>
@@ -520,15 +554,21 @@
         </div>
         <div>
           <label id="loadLabel" class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Load Value (kW)</label>
-          <input id="loadValue" type="number" value="8" step="0.1" class="input-field mt-2">
+          <input id="loadValue" type="number" value="8" step="any" min="0.01" max="100000" class="input-field mt-2">
         </div>
       </div>
-      <p id="hpWarning" class="text-[11px] text-amber-600 -mt-3 mb-5 hidden">For motor nameplate HP, actual electrical input may be higher after accounting for motor efficiency, which this calculator does not separately model. Use measured/input kW where available for a more accurate result.</p>
+      <div id="hpWarning" class="grid grid-cols-2 gap-4 -mt-1 mb-5 hidden">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="motorEff">Motor Efficiency (%)</label>
+          <input id="motorEff" type="number" value="90" step="1" min="1" max="100" class="input-field mt-2">
+        </div>
+        <p class="text-[11px] text-amber-600 mt-6">Nameplate HP is shaft output; electrical input = HP &times; 0.746 &divide; efficiency. Motors on a UPS also need a starting-current check.</p>
+      </div>
 
       <div class="grid grid-cols-2 gap-4 mb-5">
         <div>
           <label id="voltageLabel" class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="voltage">Three-Phase Voltage (V, line-to-line)</label>
-          <input id="voltage" type="number" value="415" step="1" min="1" class="input-field mt-2" oninput="syncQuickVoltageActive()">
+          <input id="voltage" type="number" value="415" step="1" min="1" max="1000" class="input-field mt-2" oninput="voltageTouched = true; syncQuickVoltageActive()">
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="pf">Power Factor</label>
@@ -563,14 +603,35 @@
           </div>
       </div>
 
-      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="upsPF">UPS Output Power Factor Rating</label>
+          <select id="upsPF" class="input-field mt-2">
+            <option value="0.8">0.8 (kW = 0.8 &times; kVA, older units)</option>
+            <option value="0.9" selected>0.9 (kW = 0.9 &times; kVA)</option>
+            <option value="1">1.0 (kW = kVA)</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="loadLimit">Planned Maximum Loading</label>
+          <select id="loadLimit" class="input-field mt-2">
+            <option value="1" selected>100% &mdash; size to present load only</option>
+            <option value="0.9">90% of rating</option>
+            <option value="0.8">80% of rating (common design practice)</option>
+            <option value="0.7">70% of rating</option>
+          </select>
+        </div>
+      </div>
+      <p class="text-xs text-gray-500 mb-5">A UPS has two limits: its kVA rating and its kW rating (kVA &times; output PF). The load must fit within both. Check the data sheet for your model&rsquo;s output power factor.</p>
+
+      <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculateUPSSize()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate UPS Size
       </button>
 
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
-        <span class="formula-chip">kVA = kW ÷ PF</span>
+        <span class="formula-chip">Required kVA = max(kW ÷ PF, kW ÷ UPS PF) ÷ loading</span>
         <span class="formula-chip">3Φ: I = (1000×kW) ÷ (√3×V×PF)</span>
         <span class="formula-chip">1Φ: I = (1000×kW) ÷ (V×PF)</span>
         <span class="formula-chip">UPS Size = next standard rating ≥ kVA</span>
@@ -578,7 +639,7 @@
     </div>
 
     <!-- RESULT PANEL -->
-    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4" role="status" aria-live="polite">
 
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full sun-badge opacity-20"></div>
@@ -609,6 +670,11 @@
       <div class="bg-white rounded-xl border border-gray-100 p-4">
         <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500">Sizing Notes</span>
         <p id="rNotes" class="text-sm text-gray-600 mt-1.5 leading-relaxed">Enter your load and hit calculate to see the recommended UPS rating and how much headroom it gives you.</p>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500">kVA / kW &amp; Application Checks</span>
+        <div id="rChecks" class="text-sm text-gray-600 mt-1.5 leading-relaxed space-y-2"><p>Enter your load and hit calculate.</p></div>
       </div>
 
       <!-- related calculators — placed here in results column so it's visible without competing with the input form -->
@@ -684,16 +750,20 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Engineering references: this calculator uses common electrical power and UPS sizing relationships; applicable IEC, IEEE, BIS, NEC, and local requirements should be checked for the specific installation.</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Calculation method: the UPS must satisfy both its kVA rating and its kW rating (kVA × output PF); performance classification of UPS topologies per IEC 62040-3. Engineering references: this calculator uses common electrical power and UPS sizing relationships; applicable IEC, IEEE, BIS, NEC, and local requirements should be checked for the specific installation.</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding UPS Sizing</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
       <p>Choosing the right UPS rating is a balancing act that trips up a lot of first-time buyers, and even a few experienced panel builders when the load list changes late in a project. A UPS that is undersized will trip on inrush current the moment a compressor or a large monitor bank switches on, and a UPS that is grossly oversized wastes capital, takes up more floor space, and often runs less efficiently at light load than a correctly matched unit would. This calculator follows the same sizing logic used by electrical contractors and data-centre facilities teams: convert whatever load figure you have on hand into real power, translate that into the apparent power the UPS itself is rated in, and then round up to a standard, commercially available size.</p>
 
-      <p>The starting point is always the connected load in kilowatts, because kW is the unit almost every piece of equipment is ultimately rated in, even when the nameplate shows something else. If your load is already known in kW, the calculator uses that figure directly. If instead you have a motor or pump rated in horsepower, the tool converts HP to a kW-equivalent figure using the standard factor <strong>1 HP = 0.746 kW</strong> — this is a direct unit conversion of the mechanical shaft rating, not a true shaft-to-electrical-input conversion, since it doesn't separately model motor efficiency; for motor nameplate HP where efficiency matters to the actual electrical demand, use a measured/input kW figure instead where possible. And if all you have is a current reading from a clamp meter or an existing panel ammeter, the calculator works backward from the supply voltage, the phase configuration, and the load's power factor. For a single-phase circuit, real power is <strong>kW = (V × I × PF) ÷ 1000</strong>; for a three-phase circuit, the same relationship picks up a √3 term to account for the phase geometry, giving <strong>kW = (√3 × V × I × PF) ÷ 1000</strong>. Whichever path you start from, the load ends up expressed in the same common unit, which is what makes UPS sizing consistent regardless of how the equipment happens to be labelled.</p>
+      <p>The starting point is always the connected load in kilowatts, because kW is the unit almost every piece of equipment is ultimately rated in, even when the nameplate shows something else. If your load is already known in kW, the calculator uses that figure directly. If instead you have a motor or pump rated in horsepower, the tool converts the nameplate shaft rating to electrical input with <strong>kW = HP × 0.746 ÷ motor efficiency</strong>, since the UPS supplies the motor&rsquo;s input power, not its shaft output; use a measured input kW figure instead where available. And if all you have is a current reading from a clamp meter or an existing panel ammeter, the calculator works backward from the supply voltage, the phase configuration, and the load's power factor. For a single-phase circuit, real power is <strong>kW = (V × I × PF) ÷ 1000</strong>; for a three-phase circuit, the same relationship picks up a √3 term to account for the phase geometry, giving <strong>kW = (√3 × V × I × PF) ÷ 1000</strong>. Whichever path you start from, the load ends up expressed in the same common unit, which is what makes UPS sizing consistent regardless of how the equipment happens to be labelled.</p>
 
-      <p>Once the load is known in kW, sizing the UPS itself comes down to a single, deliberately simple relationship: <strong>kVA = kW ÷ Power Factor</strong>. A UPS is rated in apparent power (kVA), not real power (kW), because its internal components — the inverter stage, the battery charger, the wiring — all have to be sized to handle the full current the load draws, regardless of how much of that current is doing useful work versus how much is reactive. A load with a poor power factor therefore demands a proportionally larger UPS even though the real power it consumes hasn't changed; this is exactly why data-centre and server-room loads, which often run at PF 0.9 or lower, need noticeably bigger UPS units than their kW rating alone would suggest.</p>
+      <p>Once the load is known in kW, sizing the UPS itself comes down to a single, deliberately simple relationship: <strong>kVA = kW ÷ Power Factor</strong>. A UPS is rated in apparent power (kVA), not real power (kW), because its internal components — the inverter stage, the battery charger, the wiring — all have to be sized to handle the full current the load draws, regardless of how much of that current is doing useful work versus how much is reactive. A load with a poor power factor therefore demands a proportionally larger UPS even though the real power it consumes hasn't changed; loads with a low power factor therefore need a noticeably bigger UPS than their kW alone would suggest.</p>
+
+      <p><strong>The kW limit matters just as much.</strong> A UPS is also rated in kW, equal to its kVA rating multiplied by its output power factor rating &mdash; commonly 0.8 on older units, 0.9 on many current models and 1.0 on some. Modern IT equipment with power-factor-corrected power supplies runs at about 0.95&ndash;0.99, so for server loads it is usually the <em>kW</em> rating that runs out first: a 10 kVA UPS with 0.8 output PF can carry only 8 kW, even though 8 kW at PF 0.99 is only 8.1 kVA. This calculator therefore sizes on the larger of load kVA and load kW &divide; UPS output PF, and then applies any planned maximum loading you choose. Many designers keep a UPS at or below about 80% of its rating to leave room for load growth and inrush and to allow for battery ageing, though the right figure depends on the manufacturer&rsquo;s guidance and the site&rsquo;s redundancy plan.</p>
+      <p><strong>UPS size is not battery size.</strong> The kVA/kW rating sets how much load the inverter can carry; the backup time depends on the battery bank&rsquo;s energy and the load in kW. A correctly sized UPS can still have too little runtime, and adding batteries does not raise the load a UPS can carry. Size the battery separately for the required runtime.</p>
+      <p><strong>Motors and inrush.</strong> A UPS inverter has a limited overload capability, typically a few seconds to minutes at a modest overload, stated on the data sheet. Motors, compressors and transformers draw several times their running current when switched on; a UPS feeding them must either be sized for the starting kVA or rely on its static bypass during the start, which removes the protection the UPS was installed to give.</p>
 
       <p>The calculated kVA figure is rarely a number you can buy off the shelf, so the final step rounds it up to the nearest standard UPS rating — units are manufactured in fixed steps such as 1, 2, 3, 5, 7.5, 10, 15, 20, 30, 50, and on up into the hundreds of kVA, rather than to arbitrary custom values. Rounding up rather than down is intentional: it avoids buying a unit that's already at its calculated limit before any load growth or battery ageing is considered. This rounding incidentally provides some headroom above the bare calculated demand, but that headroom is a byproduct of standard step sizes — it is not a substitute for checking the UPS's actual rated inrush or peak-load tolerance against your connected equipment's specifications, particularly for large motors, compressors, or simultaneous multi-device power-up. As a rule of thumb, many engineers plan for the standard size that gives somewhere between 10% and 25% of spare capacity over calculated demand — enough margin to be reasonable, without paying for capacity you'll never realistically use.</p>
 
@@ -805,6 +875,22 @@
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does a UPS need both a kVA and a kW rating check?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Because a UPS has two separate limits. Its inverter current limits the kVA it can deliver, and its power stage limits the kW, equal to kVA × the UPS output power factor rating (often 0.8, 0.9 or 1.0). Modern IT loads run at a power factor near 0.95–0.99, so they usually reach the kW limit first: 8 kW of servers needs at least a 10 kVA UPS if its output power factor is 0.8, even though the load is only about 8.1 kVA. This calculator sizes on whichever limit is reached first.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Does a bigger battery let a UPS carry more load?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No. The UPS kVA and kW ratings set the load the inverter can carry; the battery only sets how long it can carry it. Adding battery capacity increases runtime, not load capacity. Size the UPS for the load with this calculator, then size the battery bank for the required backup time separately.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
         How much headroom should I add over the calculated kVA?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
@@ -896,6 +982,7 @@
 
   // ===== UPS Size Calculator Logic =====
   let currentPhase = '3';
+  let voltageTouched = false;
 
   // Typical single/three-phase low-voltage figures by region — starting
   // points only, since actual supply voltage varies by facility/utility;
@@ -928,6 +1015,7 @@
   };
 
   function applyRegion(){
+    voltageTouched = false; // an explicit region choice resets the voltage to its typical value
     setPhase(currentPhase); // re-applies the voltage for the now-selected region
     const region = document.getElementById('region').value;
     const hint = document.getElementById('regionHint');
@@ -948,11 +1036,14 @@
     const regionEl = document.getElementById('region');
     const region = regionEl ? regionEl.value : 'custom';
     const rv = regionVoltages[region];
-    document.getElementById('voltage').value = rv ? (p==='3' ? rv.three : rv.single) : (p==='3' ? 415 : 230);
+    if (!voltageTouched){
+      document.getElementById('voltage').value = rv ? (p==='3' ? rv.three : rv.single) : (p==='3' ? 415 : 230);
+    }
     document.getElementById('qvSingle').classList.toggle('hidden', p!=='1');
     document.getElementById('qvThree').classList.toggle('hidden', p!=='3');
     syncQuickVoltageActive();
     updateVoltageLabel();
+    calculateUPSSize();
   }
 
   function updateVoltageLabel(){
@@ -964,7 +1055,9 @@
 
   function setQuickVoltage(v){
     document.getElementById('voltage').value = v;
+    voltageTouched = true;
     syncQuickVoltageActive();
+    calculateUPSSize();
   }
 
   function syncQuickVoltageActive(){
@@ -992,6 +1085,7 @@
       input.placeholder = 'e.g. 8';
       hpWarning.classList.add('hidden');
     }
+    calculateUPSSize();
   }
 
   function getRecommendedUPS(kva){
@@ -1005,71 +1099,101 @@
   function calculateUPSSize(){
     const loadType = document.getElementById('loadType').value;
     const loadValue = parseFloat(document.getElementById('loadValue').value);
-    let pf = parseFloat(document.getElementById('pf').value);
+    const pf = parseFloat(document.getElementById('pf').value);
     const voltage = parseFloat(document.getElementById('voltage').value);
+    const motorEff = parseFloat(document.getElementById('motorEff').value);
+    const upsPF = parseFloat(document.getElementById('upsPF').value);
+    const loadLimit = parseFloat(document.getElementById('loadLimit').value);
 
     const errors = [];
-    if (isNaN(loadValue) || loadValue <= 0){ errors.push('Load Value must be greater than 0.'); }
-    if (isNaN(pf) || pf <= 0 || pf > 1){ errors.push('Power Factor must be greater than 0 and no more than 1.00.'); }
-    if (isNaN(voltage) || voltage <= 0){ errors.push('Voltage must be greater than 0.'); }
+    if (!Number.isFinite(loadValue) || loadValue <= 0 || loadValue > 100000){ errors.push('Load Value must be greater than 0 and up to 100,000.'); }
+    if (!Number.isFinite(pf) || pf < 0.01 || pf > 1){ errors.push('Power Factor must be between 0.01 and 1.00.'); }
+    if (!Number.isFinite(voltage) || voltage < 1 || voltage > 1000){ errors.push('Voltage must be between 1 V and 1000 V.'); }
+    if (loadType === 'hp' && (!Number.isFinite(motorEff) || motorEff < 1 || motorEff > 100)){ errors.push('Motor Efficiency must be between 1% and 100%.'); }
 
     const validationBox = document.getElementById('validationBox');
     if (errors.length){
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
-      if (isNaN(loadValue) || loadValue <= 0 || isNaN(voltage) || voltage <= 0 || isNaN(pf) || pf <= 0 || pf > 1){
-        document.getElementById('rUpsKVA').textContent = '— kVA';
-        document.getElementById('rCalcKVA').textContent = '— kVA';
-        document.getElementById('rCurrent').textContent = '— A';
-        document.getElementById('rLoadKW').textContent = '— kW';
-        document.getElementById('rLoadHP').textContent = '— HP';
-        document.getElementById('rNotes').textContent = 'Fix the input errors above to see a valid result.';
-        return;
-      }
-    } else {
-      validationBox.classList.add('hidden');
-      validationBox.innerHTML = '';
+      document.getElementById('rUpsKVA').textContent = '— kVA';
+      document.getElementById('rCalcKVA').textContent = '— kVA';
+      document.getElementById('rCurrent').textContent = '— A';
+      document.getElementById('rLoadKW').textContent = '— kW';
+      document.getElementById('rLoadHP').textContent = '— HP';
+      document.getElementById('rNotes').textContent = 'Fix the input errors above to see a valid result.';
+      document.getElementById('rChecks').innerHTML = '<p>Fix the input errors above to see the checks.</p>';
+      return;
     }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
 
+    const k = currentPhase === '3' ? Math.sqrt(3) : 1;
     let kw, current;
     if (loadType === 'hp'){
-      kw = loadValue * 0.746;
-      current = (currentPhase === '3')
-        ? (1000 * kw) / (Math.sqrt(3) * voltage * pf)
-        : (1000 * kw) / (voltage * pf);
+      kw = loadValue * 0.746 / (motorEff / 100);
+      current = (1000 * kw) / (k * voltage * pf);
     } else if (loadType === 'amp'){
       current = loadValue;
-      kw = (currentPhase === '3')
-        ? (Math.sqrt(3) * voltage * current * pf) / 1000
-        : (voltage * current * pf) / 1000;
+      kw = (k * voltage * current * pf) / 1000;
     } else {
       kw = loadValue;
-      current = (currentPhase === '3')
-        ? (1000 * kw) / (Math.sqrt(3) * voltage * pf)
-        : (1000 * kw) / (voltage * pf);
+      current = (1000 * kw) / (k * voltage * pf);
     }
 
-    const kva = kw / pf;
-    const recommended = getRecommendedUPS(kva);
+    const kva = kw / pf;                          // load apparent power
+    const kvaForKw = kw / upsPF;                  // UPS kVA needed to meet its kW limit
+    const kwGoverns = kvaForKw > kva + 1e-9;
+    const baseKva = Math.max(kva, kvaForKw);
+    const sizingKva = baseKva / loadLimit;
+    if (![kw, current, kva, sizingKva].every(Number.isFinite)){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = '• The entered values produce a result outside the range this calculator can display.';
+      return;
+    }
+    const recommended = getRecommendedUPS(sizingKva);
 
     document.getElementById('rCalcKVA').textContent = kva.toFixed(2) + ' kVA';
     document.getElementById('rCurrent').textContent = current.toFixed(2) + ' A';
     document.getElementById('rLoadKW').textContent = kw.toFixed(2) + ' kW';
     document.getElementById('rLoadHP').textContent = (kw/0.746).toFixed(2) + ' HP';
 
+    const checks = [];
+    checks.push((kwGoverns ? 'ℹ️ kW limit governs: ' : 'ℹ️ kVA limit governs: ') + 'load ' + kw.toFixed(2) + ' kW / ' + kva.toFixed(2) + ' kVA at PF ' + pf + '; with UPS output PF ' + upsPF + ', the UPS needs at least ' + baseKva.toFixed(2) + ' kVA' + (kwGoverns ? ' to supply ' + kw.toFixed(2) + ' kW.' : '.') +
+      (loadLimit < 1 ? ' At ' + Math.round(loadLimit * 100) + '% maximum loading: ' + sizingKva.toFixed(2) + ' kVA.' : ''));
+
     if (recommended === null){
       document.getElementById('rUpsKVA').textContent = 'Above 1000 kVA';
       document.getElementById('rNotes').textContent =
-        `The calculated demand (${kva.toFixed(2)} kVA) is above this calculator's reference series (up to 1000 kVA). UPS systems this large are typically custom-configured or built from paralleled modules — get a specification from a UPS manufacturer or systems integrator rather than reading a size off a standard table.`;
-      return;
+        `The sizing basis (${sizingKva.toFixed(2)} kVA) is above this calculator's reference series (up to 1000 kVA). UPS systems this large are typically custom-configured or built from paralleled modules — get a specification from a UPS manufacturer or systems integrator rather than reading a size off a standard table.`;
+    } else {
+      const upsKw = recommended * upsPF;
+      const kvaLoadPct = 100 * kva / recommended;
+      const kwLoadPct = 100 * kw / upsKw;
+      document.getElementById('rUpsKVA').textContent = recommended + ' kVA';
+      document.getElementById('rNotes').textContent =
+        `A ${currentPhase === '3' ? 'three' : 'single'}-phase load of ${kw.toFixed(2)} kW at PF ${pf.toFixed(2)} is ${kva.toFixed(2)} kVA. A ${recommended} kVA UPS with output PF ${upsPF} is rated ${upsKw.toFixed(1)} kW, so it runs at about ${kvaLoadPct.toFixed(0)}% of its kVA and ${kwLoadPct.toFixed(0)}% of its kW rating. Load current at ${voltage} V is about ${current.toFixed(1)} A — the UPS's own input current is higher (efficiency, battery charging) and comes from its data sheet.`;
+      checks.push((Math.max(kvaLoadPct, kwLoadPct) > 90 ? '⚠️ ' : '✅ ') + 'Loading of the ' + recommended + ' kVA / ' + upsKw.toFixed(1) + ' kW reference unit: ' + kvaLoadPct.toFixed(0) + '% kVA, ' + kwLoadPct.toFixed(0) + '% kW' +
+        (Math.max(kvaLoadPct, kwLoadPct) > 90 ? ' — little room for growth or inrush; consider a planned maximum loading below 100%.' : '.'));
     }
-
-    const headroomPct = ((recommended - kva) / kva) * 100;
-    document.getElementById('rUpsKVA').textContent = recommended + ' kVA';
-
-    document.getElementById('rNotes').textContent =
-      `A ${currentPhase === '3' ? 'three' : 'single'}-phase load of ${kw.toFixed(2)} kW at PF ${pf.toFixed(2)} needs about ${kva.toFixed(2)} kVA. The nearest reference UPS size above this is ${recommended} kVA, giving roughly ${headroomPct.toFixed(0)}% headroom over the calculated demand — this is a byproduct of step-size rounding, not a specifically engineered inrush margin. Input current at ${voltage}V works out to about ${current.toFixed(1)} A.`;
+    if (loadType === 'hp'){
+      checks.push('⚠️ Motor load: starting current is typically several times running current and can exceed the UPS inverter overload rating. Check the model’s overload capability, or size for the starting kVA.');
+    }
+    if (currentPhase === '3'){
+      checks.push('ℹ️ Three-phase UPS feeding single-phase loads: each phase has its own limit (about one third of the rating). Balance the loads across phases or check per-phase capacity.');
+    }
+    checks.push('ℹ️ Backup time is set by the battery, not by the UPS rating — size the battery bank separately for the required runtime at ' + kw.toFixed(2) + ' kW.');
+    document.getElementById('rChecks').innerHTML = checks.map(function(c){ return '<p>' + c + '</p>'; }).join('');
   }
+
+  ['loadValue','pf','voltage','motorEff'].forEach(function(id){
+    const el = document.getElementById(id);
+    el.addEventListener('input', calculateUPSSize);
+    el.addEventListener('change', calculateUPSSize);
+    el.addEventListener('keydown', function(ev){
+      if (ev.key === 'Enter'){ ev.preventDefault(); const b = document.querySelector('#calculator button[onclick^="calculate"]'); if (b) b.click(); }
+    });
+  });
+  ['upsPF','loadLimit'].forEach(function(id){ document.getElementById(id).addEventListener('change', calculateUPSSize); });
 
   // run once on load with default values
   setLoadType();

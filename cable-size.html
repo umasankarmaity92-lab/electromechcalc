@@ -57,7 +57,7 @@ if(themeColorMeta) themeColorMeta.setAttribute('content', t === 'dark-theme' ? '
       "name": "How do I calculate cable size for a 3 phase load?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Select Three Phase, enter the line-to-line voltage (e.g. 400 V or 415 V), load in kW, HP or A, power factor and cable length. The calculator uses I = (kW × 1000) ÷ (√3 × V × PF), picks a base size from its screening capacity table and checks voltage drop with Vd = (√3 × I × L × R) ÷ 1000."
+        "text": "Select Three Phase, enter the line-to-line voltage (e.g. 400 V or 415 V), load in kW, HP or A, power factor and cable length. The calculator uses I = (kW × 1000) ÷ (√3 × V × PF), picks the smallest size whose reference capacity × derating factor covers the design current, then checks voltage drop with Vd = √3 × I × L × (R cosφ + X sinφ) ÷ 1000 at the selected conductor temperature and steps up if needed."
       }
     },
     {
@@ -65,7 +65,7 @@ if(themeColorMeta) themeColorMeta.setAttribute('content', t === 'dark-theme' ? '
       "name": "What size cable do I need for a 10 kW three-phase load?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "At 415 V and PF 0.85, a 10 kW load draws about 16.4 A. In this calculator's screening model, that gives 4 mm² copper for a 30 m run with about 0.9% voltage drop. Longer runs, derating or a different installation method can require a larger size."
+        "text": "At 415 V and PF 0.85, a 10 kW load draws about 16.4 A. In this calculator's screening model, that gives 4 mm² copper for a 30 m run with about 1.0% voltage drop at a 70°C conductor temperature. Longer runs, derating or a different installation method can require a larger size."
       }
     },
     {
@@ -73,7 +73,23 @@ if(themeColorMeta) themeColorMeta.setAttribute('content', t === 'dark-theme' ? '
       "name": "Why does cable length change the recommended size?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Longer cables have more resistance, so voltage drop rises. For example, a 5 kW single-phase load at 230 V (PF 0.95) screens at 4 mm² copper for 25 m, but needs 10 mm² at 60 m to stay under the 3% screening target."
+        "text": "Longer cables have more resistance and reactance, so voltage drop rises in proportion to length. For example, a 5 kW single-phase load at 230 V (PF 0.95) screens at 4 mm² copper for 25 m, but needs 10 mm² at 60 m to stay under the 3% screening target (70°C conductor temperature)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which decides the cable size — current capacity or voltage drop?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both are checked and the larger resulting size wins. Current-carrying capacity (after derating) protects the insulation from overheating; voltage drop protects the equipment at the far end. On short runs the capacity check usually governs; on long runs voltage drop usually forces a larger size than capacity alone would need. The calculator shows which criterion governed in the comparison table."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does the voltage drop depend on conductor temperature and power factor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Copper resistance rises by about 20% between 20°C and 70°C, so a fully loaded cable drops more voltage than a cold-resistance calculation suggests. On AC circuits the drop also includes the cable reactance, weighted by the load power factor: Vd per unit length ∝ R cosφ + X sinφ. For small cables resistance dominates; for large cables at low power factor the reactance term becomes significant."
       }
     },
     {
@@ -250,8 +266,8 @@ document.body.classList.add(t);
       </div>
       <div class="grid sm:grid-cols-2 gap-4 mb-5">
         <div>
-          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="voltage" id="voltageLabel">
-            Supply Voltage &mdash; Line-to-Line (V)
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="voltage">
+            <span id="voltageLabel">Supply Voltage &mdash; Line-to-Line (V)</span>
             <span class="info-icon" tabindex="0" role="button" aria-label="Supply voltage range covered">
               i
               <span class="info-tooltip">This calculator covers low-voltage (LV) systems up to 1000 V. Use line-to-line voltage for three-phase, or line-to-neutral for single-phase, matching your actual supply.</span>
@@ -269,7 +285,7 @@ document.body.classList.add(t);
           </label>
           <input id="pf" type="number" value="0.85" step="0.01" min="0.1" max="1" placeholder="e.g. 0.85" class="input-field mt-2">
           <p id="pfMotorHint" class="text-[11px] text-gray-400 mt-1 hidden">For motor loads, use the motor nameplate power factor when available — the default shown is only a generic placeholder.</p>
-          <p id="pfAmpHint" class="text-[11px] text-gray-400 mt-1 hidden">Not needed when entering load current directly.</p>
+          <p id="pfAmpHint" class="text-[11px] text-gray-400 mt-1 hidden">With load current entered directly, power factor is used only for the voltage-drop check (R&middot;cos&phi; + X&middot;sin&phi;).</p>
         </div>
       </div>
       <div class="mb-5">
@@ -315,6 +331,47 @@ document.body.classList.add(t);
           </div>
         </div>
       </div>
+      <div class="grid sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="deratingFactor">
+            Total Derating Factor
+            <span class="info-icon" tabindex="0" role="button" aria-label="What the total derating factor is">
+              i
+              <span class="info-tooltip">Product of the correction factors for your installation (ambient Ca &times; grouping Cg &times; thermal insulation Ci &times; others). 1.0 = reference conditions. The cable&rsquo;s reference capacity is multiplied by this factor before the capacity check. Work it out with the Current Carrying Capacity Calculator if unsure.</span>
+            </span>
+          </label>
+          <input id="deratingFactor" type="number" value="1" step="0.01" min="0.3" max="1" placeholder="e.g. 0.8" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="vdLimit">
+            Voltage-Drop Limit
+            <span class="info-icon" tabindex="0" role="button" aria-label="Which voltage-drop limit to use">
+              i
+              <span class="info-tooltip">Screening target for this circuit. IEC 60364-5-52 and BS 7671 guidance for installations fed from a public LV supply: 3% lighting, 5% other uses. NEC informational notes suggest about 3% for a branch circuit and 5% for feeder plus branch. Use your project or local-code limit.</span>
+            </span>
+          </label>
+          <select id="vdLimit" class="input-field mt-2">
+            <option value="2.5">2.5%</option>
+            <option value="3" selected>3% (lighting / typical screening)</option>
+            <option value="4">4%</option>
+            <option value="5">5% (other uses)</option>
+          </select>
+        </div>
+      </div>
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="condTemp">
+          Conductor Temperature for Voltage Drop
+          <span class="info-icon" tabindex="0" role="button" aria-label="Why conductor temperature matters">
+            i
+            <span class="info-tooltip">Conductor resistance rises with temperature (about 20% from 20&deg;C to 70&deg;C for copper). Using the insulation&rsquo;s maximum operating temperature gives a conservative voltage drop for a fully loaded cable.</span>
+          </span>
+        </label>
+        <select id="condTemp" class="input-field mt-2">
+          <option value="20">20&deg;C (reference &mdash; lightly loaded)</option>
+          <option value="70" selected>70&deg;C (PVC at full load)</option>
+          <option value="90">90&deg;C (XLPE/EPR at full load)</option>
+        </select>
+      </div>
       <label class="flex items-start gap-2.5 mb-6 cursor-pointer select-none">
         <input id="marginToggle" type="checkbox" class="w-4 h-4 accent-brandBlue mt-0.5">
         <span>
@@ -335,10 +392,12 @@ document.body.classList.add(t);
         <span class="formula-chip">I = (kW × 1000) ÷ (V × PF) &nbsp;[1-phase, V = line-to-neutral]</span>
         <span class="formula-chip">I = (kW × 1000) ÷ (√3 × V × PF) &nbsp;[3-phase, V = line-to-line]</span>
         <span class="formula-chip">kW to HP = kW × 1.341</span>
-        <span class="formula-chip">Vd% = (2 × I × L × R ÷ 1000) ÷ V × 100 &nbsp;[1-phase]</span>
-        <span class="formula-chip">Vd% = (√3 × I × L × R ÷ 1000) ÷ V × 100 &nbsp;[3-phase]</span>
+        <span class="formula-chip">Vd = 2 × I × L × (R&#8348; cos&phi; + X sin&phi;) ÷ 1000 &nbsp;[1-phase]</span>
+        <span class="formula-chip">Vd = √3 × I × L × (R&#8348; cos&phi; + X sin&phi;) ÷ 1000 &nbsp;[3-phase]</span>
+        <span class="formula-chip">R&#8348; = R&#8322;&#8320; × [1 + &alpha;(T − 20)]</span>
+        <span class="formula-chip">Capacity check: Ib ≤ In ≤ Iref × Cf</span>
       </div>
-      <p class="text-[11px] text-gray-400 mt-3">Estimated resistive voltage-drop component at 20°C reference resistance — not a full AC impedance voltage-drop calculation; cable reactance and operating-temperature resistance effects are not included.</p>
+      <p class="text-[11px] text-gray-400 mt-3">Voltage drop uses conductor resistance corrected to the selected conductor temperature plus a typical multicore LV cable reactance of 0.08 &Omega;/km (R&middot;cos&phi; + X&middot;sin&phi;). Single-core cables laid apart, very large sizes and harmonic-rich loads can have a higher effective impedance &mdash; confirm with the manufacturer&rsquo;s mV/A/m data.</p>
     </div>
     <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
@@ -373,7 +432,7 @@ document.body.classList.add(t);
             <span id="rLength" class="font-display font-semibold text-lg text-white">— m</span>
           </div>
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Estimated Resistive Voltage Drop <span class="normal-case text-slate-400">(3% screening target)</span></span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Estimated Voltage Drop <span class="normal-case text-slate-400" id="rVdLimitLabel">(3% screening target)</span></span>
             <div class="flex items-baseline gap-2 mt-0.5">
               <span id="rVdrop" class="font-display font-semibold text-lg text-white">—%</span>
               <span id="rVdropNote" class="text-[11px] text-slate-300"></span>
@@ -512,12 +571,13 @@ document.body.classList.add(t);
           <span class="formula-chip block w-fit mt-1">3-phase: I = (kW × 1000) ÷ (√3 × V × PF)</span>
           For motors: kW = (HP × 0.746) ÷ efficiency.</li>
         <li><strong>Add a planning margin (optional).</strong> This calculator can add +20% for spare capacity. It is not a code demand or derating factor.</li>
-        <li><strong>Choose a base size from current-carrying capacity.</strong> Pick the smallest mm² size whose capacity ≥ design current, separately for copper or aluminium.</li>
-        <li><strong>Apply derating (final design).</strong> Correct the tabulated capacity for ambient temperature, grouping and installation method — see <a href="#cs-derating" class="text-sky-600 underline">derating</a>.</li>
+        <li><strong>Choose a base size from current-carrying capacity.</strong> Pick the smallest mm² size whose capacity, multiplied by the total derating factor, is at least the design current &mdash; separately for copper or aluminium.</li>
+        <li><strong>Apply derating.</strong> Correct the tabulated capacity for ambient temperature, grouping and installation method — see <a href="#cs-derating" class="text-sky-600 underline">derating</a>. The calculator applies the single total factor you enter; the final design must use the factors from your governing table.</li>
         <li><strong>Check voltage drop.</strong>
-          <span class="formula-chip block w-fit mt-1">1-phase: Vd = (2 × I × L × R) ÷ 1000</span>
-          <span class="formula-chip block w-fit mt-1">3-phase: Vd = (√3 × I × L × R) ÷ 1000</span>
-          If Vd% exceeds the 3% screening target, step up one size and re-check.</li>
+          <span class="formula-chip block w-fit mt-1">1-phase: Vd = 2 × I × L × (R&#8348; cos&phi; + X sin&phi;) ÷ 1000</span>
+          <span class="formula-chip block w-fit mt-1">3-phase: Vd = √3 × I × L × (R&#8348; cos&phi; + X sin&phi;) ÷ 1000</span>
+          R&#8348; is the conductor resistance at operating temperature and X the cable reactance (Ω/km). If Vd% exceeds the chosen limit, step up one size and re-check.</li>
+        <li><strong>Take the larger of the two.</strong> The final screening size is whichever is larger: the size set by current-carrying capacity or the size set by voltage drop. Short, heavily loaded runs are usually capacity-governed; long runs are usually voltage-drop-governed.</li>
         <li><strong>Select protection, neutral and earth.</strong> Protective device: Ib ≤ In ≤ cable capacity. Neutral = phase size by default. Earth/CPC by rule of thumb (verify with an adiabatic check).</li>
       </ol>
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Worked Example: 20 kW, 3-Phase, 415 V, 60 m, Copper</h3>
@@ -525,7 +585,8 @@ document.body.classList.add(t);
         <li>Load current = (20 × 1000) ÷ (1.732 × 415 × 0.85) ≈ <strong>32.7 A</strong>.</li>
         <li>With +20% planning margin → sizing current ≈ <strong>39.3 A</strong>.</li>
         <li>Smallest size with screening capacity ≥ 39.3 A → <strong>10 mm²</strong> (40 A).</li>
-        <li>Voltage drop at 60 m = √3 × 39.3 × 60 × 1.83 ÷ 1000 ≈ 7.5 V ≈ <strong>1.8%</strong> → passes 3%.</li>
+        <li>Resistance at 70°C = 1.83 × [1 + 0.00393 × (70 − 20)] ≈ 2.19 Ω/km; with cos&phi; 0.85 and X 0.08 Ω/km, R cos&phi; + X sin&phi; ≈ 1.86 + 0.04 = 1.90 Ω/km.</li>
+        <li>Voltage drop at 60 m = √3 × 39.3 × 60 × 1.90 ÷ 1000 ≈ 7.8 V ≈ <strong>1.9%</strong> → passes 3%. The size is capacity-governed here.</li>
         <li>Result: <strong>10 mm² copper</strong>, indicative protective device <strong>40 A</strong> (39.3 ≤ 40 ≤ 40).</li>
       </ol>
       <p class="text-xs text-gray-500">Screening result only — confirm with the applicable current-rating table for your installation method and derating.</p>
@@ -589,7 +650,7 @@ document.body.classList.add(t);
         </tbody>
       </table>
       </div>
-      <p class="text-xs text-gray-400">Resistance values are illustrative ~20°C reference figures used for the resistive voltage-drop estimate. Aluminium 1.5 mm² is not included.</p>
+      <p class="text-xs text-gray-400">Resistance values are illustrative ~20°C reference figures; the calculator corrects them to the selected conductor temperature and adds cable reactance for the voltage-drop estimate. Aluminium 1.5 mm² is not included.</p>
       <p class="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mt-3"><strong>Important:</strong> final cable selection must use the applicable current-rating table (e.g. BS 7671 Appendix 4, IEC 60364-5-52, IS 3961, AS/NZS 3008.1) and the cable manufacturer's data.</p>
     </div>
   </div>
@@ -606,7 +667,7 @@ document.body.classList.add(t);
       <li><strong>Buried cables:</strong> soil thermal resistivity and depth also apply.</li>
     </ul>
     <span class="formula-chip block w-fit">Required tabulated capacity: It ≥ In ÷ (Ca × Cg × Ci)</span>
-    <p>This size calculator does <strong>not</strong> apply these factors. Our <a href="/electrical/cable-ampacity" class="text-sky-600 underline">current carrying capacity calculator</a> does — it takes installation method (air, conduit, tray or buried), PVC 70°C / XLPE 90°C insulation, ambient temperature, grouping, thermal insulation, harmonic neutral loading and parallel runs, and returns the derated ampacity. Also read <a href="/cable-derating-tips" class="text-sky-600 underline">Cable Derating Tips</a> for corrected capacity.</p>
+    <p>This size calculator applies <strong>one total correction factor</strong> that you enter &mdash; the product of the factors above. Our <a href="/electrical/cable-ampacity" class="text-sky-600 underline">current carrying capacity calculator</a> works that factor out for you — it takes installation method (air, conduit, tray or buried), PVC 70°C / XLPE 90°C insulation, ambient temperature, grouping, thermal insulation, harmonic neutral loading and parallel runs, and returns the derated ampacity. Also read <a href="/cable-derating-tips" class="text-sky-600 underline">Cable Derating Tips</a> for corrected capacity.</p>
   </div>
   <div class="not-prose overflow-x-auto my-4">
     <p class="text-xs font-semibold text-amber-600 mb-2">Illustrative ambient-temperature factors — not a complete IEC/IS table.</p>
@@ -635,10 +696,11 @@ document.body.classList.add(t);
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Voltage Drop Check in Cable Sizing</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
       <ul class="list-disc pl-5 space-y-1">
-        <li><strong>Formula:</strong> Vd% = Vd ÷ V × 100, with Vd from the 1-phase (2 × I × L × R) or 3-phase (√3 × I × L × R) formula ÷ 1000.</li>
+        <li><strong>Formula:</strong> Vd% = Vd ÷ V × 100, with Vd = k × I × L × (R&#8348; cos&phi; + X sin&phi;) ÷ 1000, where k = 2 for single-phase and √3 for three-phase.</li>
         <li><strong>L</strong> = one-way length (m), <strong>R</strong> = conductor resistance (Ω/km), <strong>I</strong> = design current (A).</li>
-        <li><strong>Screening target:</strong> 3%. Codes set their own limits — e.g. BS 7671 guidance commonly cites 3% for lighting and 5% for other uses on a public supply.</li>
-        <li><strong>Limitation:</strong> resistive only (no reactance) at ~20°C. Real drop at operating temperature is higher.</li>
+        <li><strong>Screening target:</strong> selectable, 3% by default. Codes set their own limits — e.g. IEC 60364-5-52 and BS 7671 guidance cite 3% for lighting and 5% for other uses on a public LV supply (6% and 8% from a private supply), and NEC informational notes suggest about 3% branch / 5% total.</li>
+        <li><strong>Temperature and reactance:</strong> resistance is corrected from 20°C to the selected conductor temperature (&alpha; = 0.00393/°C copper, 0.00403/°C aluminium), and a typical multicore reactance of 0.08 Ω/km is added. Reactance matters most on large sizes at low power factor; single-core cables laid apart have higher reactance.</li>
+        <li><strong>Motor starting:</strong> the check is steady-state. A motor&rsquo;s starting current can briefly cause a much larger drop &mdash; check it separately for large DOL motors.</li>
         <li>For an R·cosφ + X·sinφ calculation, use the <a href="/electrical/voltage-drop" class="text-sky-600 underline">Voltage Drop Calculator</a>.</li>
       </ul>
     </div>
@@ -823,22 +885,38 @@ document.body.classList.add(t);
         How do I calculate cable size for a 3 phase load?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Select Three Phase, enter the line-to-line voltage (e.g. 400 V or 415 V), load in kW, HP or A, power factor and cable length. The calculator uses I = (kW × 1000) ÷ (√3 × V × PF), picks a base size from its screening capacity table and checks voltage drop with Vd = (√3 × I × L × R) ÷ 1000.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Select Three Phase, enter the line-to-line voltage (e.g. 400 V or 415 V), load in kW, HP or A, power factor and cable length. The calculator uses I = (kW × 1000) ÷ (√3 × V × PF), picks the smallest size whose reference capacity × derating factor covers the design current, then checks voltage drop with Vd = √3 × I × L × (R cosφ + X sinφ) ÷ 1000 at the selected conductor temperature and steps up if needed.</p>
     </details>
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
         What size cable do I need for a 10 kW three-phase load?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">At 415 V and PF 0.85, a 10 kW load draws about 16.4 A. In this calculator's screening model, that gives 4 mm² copper for a 30 m run with about 0.9% voltage drop. Longer runs, derating or a different installation method can require a larger size.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">At 415 V and PF 0.85, a 10 kW load draws about 16.4 A. In this calculator's screening model, that gives 4 mm² copper for a 30 m run with about 1.0% voltage drop at a 70°C conductor temperature. Longer runs, derating or a different installation method can require a larger size.</p>
     </details>
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
         Why does cable length change the recommended size?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Longer cables have more resistance, so voltage drop rises. For example, a 5 kW single-phase load at 230 V (PF 0.95) screens at 4 mm² copper for 25 m, but needs 10 mm² at 60 m to stay under the 3% screening target.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Longer cables have more resistance and reactance, so voltage drop rises in proportion to length. For example, a 5 kW single-phase load at 230 V (PF 0.95) screens at 4 mm² copper for 25 m, but needs 10 mm² at 60 m to stay under the 3% screening target (70°C conductor temperature).</p>
     </details>
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Which decides the cable size — current capacity or voltage drop?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Both are checked and the larger resulting size wins. Current-carrying capacity (after derating) protects the insulation from overheating; voltage drop protects the equipment at the far end. On short runs the capacity check usually governs; on long runs voltage drop usually forces a larger size than capacity alone would need. The calculator shows which criterion governed in the comparison table.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does the voltage drop depend on conductor temperature and power factor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Copper resistance rises by about 20% between 20°C and 70°C, so a fully loaded cable drops more voltage than a cold-resistance calculation suggests. On AC circuits the drop also includes the cable reactance, weighted by the load power factor: Vd per unit length ∝ R cosφ + X sinφ. For small cables resistance dominates; for large cables at low power factor the reactance term becomes significant.</p>
+    </details>
+
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
         What is current-carrying capacity (ampacity)?
@@ -913,11 +991,13 @@ document.getElementById('voltage').value = type === 'three' ? 415 : 230;
 }
 document.getElementById('voltageLabel').textContent = type === 'three' ? 'Supply Voltage — Line-to-Line (V)' : 'Supply Voltage — Line-to-Neutral (V)';
 syncQuickVoltageActive();
+calculateCable();
 }
 function setQuickVoltage(v){
 document.getElementById('voltage').value = v;
 voltageTouched = true;
 syncQuickVoltageActive();
+calculateCable();
 }
 function syncQuickVoltageActive(){
 const current = parseFloat(document.getElementById('voltage').value);
@@ -931,6 +1011,7 @@ document.getElementById('materialCopper').classList.toggle('active', type === 'c
 document.getElementById('materialCopper').setAttribute('aria-pressed', type === 'copper');
 document.getElementById('materialAluminium').classList.toggle('active', type === 'aluminium');
 document.getElementById('materialAluminium').setAttribute('aria-pressed', type === 'aluminium');
+calculateCable();
 }
 function toggleLoadInput(){
 const type = document.getElementById('inputType').value;
@@ -952,7 +1033,7 @@ label.textContent = 'Load Value (Amp)';
 input.placeholder = 'Enter value in Amp';
 effRow.classList.add('hidden');
 pfHint.classList.add('hidden');
-pfInput.disabled = true;
+pfInput.disabled = false;
 pfAmpHint.classList.remove('hidden');
 } else {
 label.textContent = 'Load Value (kW)';
@@ -980,9 +1061,17 @@ const aluminiumRating = [null,10,16,25,32,40,63,80,100,125,160,200,250,315,355,4
 const copperR    = [12.1,7.41,4.61,3.08,1.83,1.15,0.727,0.524,0.387,0.268,0.193,0.153,0.124,0.0991,0.0754,0.0601,0.047];
 const aluminiumR = [19.5,12.1,7.41,5.09,3.08,1.91,1.20,0.868,0.641,0.443,0.320,0.253,0.206,0.164,0.125,0.100,0.0778];
 const deviceRatingSizes = [2,4,6,10,13,16,20,25,32,40,50,63,80,100,125,160,200,250,315,400,500,630];
-function voltageDropPct(current, lengthM, resistanceOhmPerKm, voltage, isThree){
+// Voltage drop with resistance corrected to conductor temperature and a typical
+// multicore LV cable reactance: Vd = k × I × L × (R_T·cosφ + X·sinφ) / 1000
+const CABLE_X_OHM_PER_KM = 0.08;
+const ALPHA = { copper: 0.00393, aluminium: 0.00403 };
+function resistanceAt(r20, tempC, mat){ return r20 * (1 + ALPHA[mat] * (tempC - 20)); }
+function voltageDropPct(current, lengthM, r20OhmPerKm, voltage, isThree, pf, tempC, mat){
 const factor = isThree ? Math.sqrt(3) : 2;
-const dropVolts = (factor * current * lengthM * resistanceOhmPerKm) / 1000;
+const cosPhi = Math.min(Math.max(pf, 0), 1);
+const sinPhi = Math.sqrt(1 - cosPhi * cosPhi);
+const rT = resistanceAt(r20OhmPerKm, tempC, mat);
+const dropVolts = (factor * current * lengthM * (rT * cosPhi + CABLE_X_OHM_PER_KM * sinPhi)) / 1000;
 return (dropVolts / voltage) * 100;
 }
 function calculateCable(){
@@ -993,13 +1082,17 @@ const pf = parseFloat(document.getElementById('pf').value);
 const length = parseFloat(document.getElementById('length').value);
 const marginOn = document.getElementById('marginToggle').checked;
 const motorEff = parseFloat(document.getElementById('motorEff').value);
+const derate = parseFloat(document.getElementById('deratingFactor').value);
+const VD_LIMIT = parseFloat(document.getElementById('vdLimit').value);
+const condTemp = parseFloat(document.getElementById('condTemp').value);
 const validationBox = document.getElementById('validationBox');
 const errors = [];
-if(isNaN(voltage) || voltage < 1 || voltage > 1000){ errors.push('Enter a valid supply voltage between 1 V and 1000 V.'); }
-if(isNaN(loadValue) || loadValue < 0.01 || loadValue > 100000){ errors.push('Enter a valid Load Value greater than 0 and up to 100000.'); }
-if(inputType !== 'amp' && (isNaN(pf) || pf < 0.1 || pf > 1)){ errors.push('Enter a valid power factor between 0.1 and 1.'); }
-if(isNaN(length) || length < 0.1 || length > 10000){ errors.push('Enter a valid cable length between 0.1 m and 10000 m.'); }
-if(inputType === 'hp' && (isNaN(motorEff) || motorEff < 1 || motorEff > 100)){ errors.push('Enter a valid motor efficiency between 1 and 100%.'); }
+if(!Number.isFinite(voltage) || voltage < 1 || voltage > 1000){ errors.push('Enter a valid supply voltage between 1 V and 1000 V.'); }
+if(!Number.isFinite(loadValue) || loadValue < 0.01 || loadValue > 100000){ errors.push('Enter a valid Load Value greater than 0 and up to 100000.'); }
+if(!Number.isFinite(pf) || pf < 0.1 || pf > 1){ errors.push('Enter a valid power factor between 0.1 and 1.'); }
+if(!Number.isFinite(derate) || derate < 0.3 || derate > 1){ errors.push('Enter a total derating factor between 0.3 and 1.0.'); }
+if(!Number.isFinite(length) || length < 0.1 || length > 10000){ errors.push('Enter a valid cable length between 0.1 m and 10000 m.'); }
+if(inputType === 'hp' && (!Number.isFinite(motorEff) || motorEff < 1 || motorEff > 100)){ errors.push('Enter a valid motor efficiency between 1 and 100%.'); }
 if(errors.length){
 validationBox.classList.remove('hidden');
 validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
@@ -1071,34 +1164,34 @@ const resTable = (material === 'copper') ? copperR : aluminiumR;
 let baseIndex = ratingTable.length - 1;
 for(let i = 0; i < ratingTable.length; i++){
 const rating = ratingTable[i];
-if(rating !== null && sizingCurrent <= rating){ baseIndex = i; break; }
+if(rating !== null && sizingCurrent <= rating * derate){ baseIndex = i; break; }
 }
-const VD_LIMIT = 3;
 let recIndex = baseIndex;
 while(recIndex < cableSizes.length - 1){
 const rating = ratingTable[recIndex];
-if(rating === null || sizingCurrent > rating){ recIndex++; continue; }
-const vd = voltageDropPct(sizingCurrent, length, resTable[recIndex], voltage, isThree);
+if(rating === null || sizingCurrent > rating * derate){ recIndex++; continue; }
+const vd = voltageDropPct(sizingCurrent, length, resTable[recIndex], voltage, isThree, pf, condTemp, material);
 if(vd <= VD_LIMIT) break;
 recIndex++;
 }
 const baseSize = cableSizes[baseIndex];
 const recSize = cableSizes[recIndex];
 const recRating = ratingTable[recIndex];
-const recVdrop = voltageDropPct(sizingCurrent, length, resTable[recIndex], voltage, isThree);
-const ampacityOk = (recRating !== null && sizingCurrent <= recRating);
+const recVdrop = voltageDropPct(sizingCurrent, length, resTable[recIndex], voltage, isThree, pf, condTemp, material);
+const recCapacity = recRating !== null ? recRating * derate : null;
+const ampacityOk = (recCapacity !== null && sizingCurrent <= recCapacity);
 const vdropOk = (recVdrop <= VD_LIMIT);
 let protectiveDeviceRating = null;
-if(recRating !== null){
+if(recCapacity !== null){
 for(let i = 0; i < deviceRatingSizes.length; i++){
-if(sizingCurrent <= deviceRatingSizes[i] && deviceRatingSizes[i] <= recRating){ protectiveDeviceRating = deviceRatingSizes[i]; break; }
+if(sizingCurrent <= deviceRatingSizes[i] && deviceRatingSizes[i] <= recCapacity + 1e-9){ protectiveDeviceRating = deviceRatingSizes[i]; break; }
 }
 }
 const deviceOutOfRange = (protectiveDeviceRating === null);
-const deviceUncoordinated = (deviceOutOfRange && recRating !== null && sizingCurrent <= recRating);
+const deviceUncoordinated = (deviceOutOfRange && recCapacity !== null && sizingCurrent <= recCapacity);
 if(!ampacityOk){
 document.getElementById('resultLabel').textContent = 'No Listed Cable Satisfies the Sizing Current';
-document.getElementById('resultSub').textContent = `The design current (${sizingCurrent.toFixed(1)} A) exceeds the reference capacity of the largest listed size (${recSize} sq.mm). Consider a larger/parallel conductor arrangement or a detailed engineering review.`;
+document.getElementById('resultSub').textContent = `The design current (${sizingCurrent.toFixed(1)} A) exceeds the derated reference capacity of the largest listed size (${recSize} sq.mm). Consider a larger/parallel conductor arrangement or a detailed engineering review.`;
 } else if(!vdropOk){
 document.getElementById('resultLabel').textContent = 'Largest Standard Size — Voltage-Drop Screening Target Not Met';
 document.getElementById('resultSub').textContent = `No listed size meets the ${VD_LIMIT}% voltage-drop preliminary screening target at ${length} m. Consider a larger/parallel conductor, higher distribution voltage, a shorter run, or a detailed engineering review.`;
@@ -1116,7 +1209,8 @@ document.getElementById('rResult').textContent = !ampacityOk
 : recSize + ' sq.mm ' + (material === 'copper' ? 'Copper' : 'Aluminium'));
 document.getElementById('rCurrent').textContent = current.toFixed(2) + ' A';
 document.getElementById('rDesignCurrent').textContent = sizingCurrent.toFixed(2) + ' A' + (marginOn ? ' (+20%)' : '');
-document.getElementById('rCableRating').textContent = (recRating !== null ? recRating : '—') + ' A';
+document.getElementById('rCableRating').textContent = recCapacity !== null ? (derate < 1 ? recCapacity.toFixed(1) + ' A (' + recRating + ' × ' + derate + ')' : recRating + ' A') : '— A';
+document.getElementById('rVdLimitLabel').textContent = '(' + VD_LIMIT + '% screening target, ' + condTemp + '°C)';
 document.getElementById('rLength').textContent = length + ' m';
 document.getElementById('rProtectiveDevice').textContent = deviceUncoordinated ? 'None fits' : (deviceOutOfRange ? 'Above range' : (protectiveDeviceRating + ' A indicative'));
 document.getElementById('rProtectiveDeviceNote').textContent = deviceUncoordinated
@@ -1155,18 +1249,18 @@ const rows = [];
 for(let i = startIdx; i <= endIdx; i++){
 const rating = ratingTable[i];
 if(rating === null) continue;
-const vd = voltageDropPct(sizingCurrent, length, resTable[i], voltage, isThree);
-const ampacityPass = sizingCurrent <= rating;
+const vd = voltageDropPct(sizingCurrent, length, resTable[i], voltage, isThree, pf, condTemp, material);
+const ampacityPass = sizingCurrent <= rating * derate;
 const vdropPass = vd <= VD_LIMIT;
 let status;
-if(i === recIndex) status = { label: '✓ Recommended', cls: 'text-emerald-600 font-semibold' };
+if(i === recIndex) status = { label: '✓ Selected' + (recIndex !== baseIndex ? ' (voltage-drop governed)' : ' (capacity governed)'), cls: 'text-emerald-600 font-semibold' };
 else if(i > recIndex && ampacityPass && vdropPass) status = { label: '✓ Pass — larger than selected', cls: 'text-gray-400' };
 else if(!ampacityPass && !vdropPass) status = { label: '✕ Capacity + Vdrop fail', cls: 'text-amber-500' };
 else if(!ampacityPass) status = { label: '✕ Reference capacity insufficient', cls: 'text-amber-500' };
 else status = { label: '✕ Voltage drop high', cls: 'text-amber-500' };
 rows.push({
 size: cableSizes[i],
-rating: rating,
+rating: rating * derate,
 vdrop: vd,
 status: status,
 isRecommended: (i === recIndex)
@@ -1175,7 +1269,7 @@ isRecommended: (i === recIndex)
 const tableRows = rows.map(r => `
 <tr${r.isRecommended ? ' class="breakdown-row-highlight"' : ''}>
 <td>${r.size} sq.mm${r.isRecommended ? ' ★' : ''}</td>
-<td>${r.rating} A</td>
+<td>${parseFloat(r.rating.toFixed(1))} A</td>
 <td>${sizingCurrent.toFixed(1)} A</td>
 <td>${r.vdrop.toFixed(2)}%</td>
 <td class="${r.status.cls}">${r.status.label}</td>
@@ -1186,7 +1280,7 @@ document.getElementById('breakdownBox').innerHTML = `
 <thead>
 <tr>
 <th>Size</th>
-<th>Reference Capacity</th>
+<th>Capacity × Cf</th>
 <th>Sizing Current</th>
 <th>Voltage Drop</th>
 <th>Result</th>
@@ -1198,6 +1292,7 @@ ${tableRows}
 </table>
 `;
 }
+['vdLimit','condTemp','marginToggle'].forEach(function(id){ document.getElementById(id).addEventListener('change', calculateCable); });
 toggleLoadInput();
 calculateCable();
 </script>

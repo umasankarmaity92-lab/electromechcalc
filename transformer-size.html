@@ -125,7 +125,7 @@
       "name": "Can this calculator be used for a transformer serving multiple loads?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes — add up the connected kW of all loads on the transformer first (applying a diversity factor if not all loads run simultaneously), then enter that combined figure along with the overall system power factor. For loads with very different power factors, it's more accurate to sum the individual kVA and kVAR values separately before combining them."
+        "text": "Yes — add up the connected kW of all loads on the transformer first, enter that total, and use the Demand Factor field to convert it to the expected maximum demand (leave it at 1.0 if your figure is already a maximum demand). For loads with very different power factors, it's more accurate to sum the individual kW and kVAR values separately, then find the combined kVA as √(kW² + kVAR²) and the overall power factor as kW ÷ kVA."
       }
     },
     {
@@ -149,7 +149,23 @@
       "name": "Do I need a diversity factor when adding up multiple loads?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes, for a realistic estimate. Simply summing the full-load rating of every connected device usually overstates actual demand, since not everything runs at full load simultaneously — applying a diversity factor (commonly 0.7-0.9 for mixed commercial/industrial loads) to the summed connected load gives a more realistic input for this calculator than the raw nameplate total."
+        "text": "You need to convert connected load to maximum demand, but the factor used for that is the demand factor (maximum demand ÷ connected load, 1.0 or less), which this calculator applies directly. A diversity factor is defined the other way round — the sum of individual maximum demands ÷ the group's maximum demand, 1.0 or more — so it is divided into the sum of peaks, not multiplied. Appropriate values vary by facility type and local practice; use project or utility data where available."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does motor starting affect transformer size?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A large motor starting direct-on-line draws several times its running current for a few seconds, and the resulting voltage dip depends on the transformer's impedance as much as its kVA. A quick screening estimate is dip % ≈ 100 × Sstart ÷ (Sstart + Str × 100 ÷ %Z). Dips up to about 10% at the transformer bus are commonly tolerated, while about 15% or more often disturbs other equipment. If the dip is too large, options include reduced-voltage starting (star-delta, soft starter or VFD), a lower-impedance transformer, or a larger rating — confirmed by a proper voltage-drop study."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When does a transformer need derating for ambient temperature, altitude or harmonics?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Standard ratings assume IEC 60076-1 normal service conditions: cooling air not above 40 °C, a hottest-month average not above 30 °C, a yearly average not above 20 °C, altitude not above 1000 m, and near-sinusoidal load current. Beyond those limits, or where drives, UPS systems and rectifiers make up a large share of the load, the transformer needs derating or a design specified for those conditions — under IEC 60076-2 or IEC 60076-11 for temperature and altitude, and methods such as IEEE C57.110 for harmonics. Confirm with the manufacturer rather than applying a generic percentage."
       }
     }
   ]
@@ -622,6 +638,19 @@
         </div>
       </div>
 
+      <div id="demandWrap" class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="demandFactor">
+            Demand Factor
+            <button type="button" class="info-icon" aria-label="What demand factor means" aria-expanded="false">
+              i
+              <span class="info-tooltip">Maximum demand &divide; connected load (0.1&ndash;1.0). Leave at 1.0 if the entered load is already the maximum demand. Not used in Amp mode, since a measured current is already a demand figure.</span>
+            </button>
+          </label>
+          <input id="demandFactor" type="number" value="1" step="0.01" min="0.1" max="1" class="input-field mt-2">
+        </div>
+      </div>
+
 
       <div class="grid grid-cols-2 gap-4 mb-5">
         <div>
@@ -680,6 +709,57 @@
         </div>
       </div>
 
+      <div class="mb-6 pt-5 border-t border-gray-100">
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Starting &amp; Site Checks (optional screening)</span>
+        <p class="text-xs text-gray-500 mt-1 mb-4">These do not change the kVA rating above &mdash; they flag conditions that can make a steady-state rating inadequate.</p>
+        <div class="grid grid-cols-2 gap-4 mb-5">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="bigMotorKW">Largest Motor (kW)</label>
+            <input id="bigMotorKW" type="number" value="" step="any" min="0" max="100000" placeholder="blank = skip" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="motorStartMult">
+              Starting Current (&times; FLC)
+              <button type="button" class="info-icon" aria-label="Starting current guidance" aria-expanded="false">
+                i
+                <span class="info-tooltip">Line starting current as a multiple of motor full-load current: DOL commonly about 6&ndash;8&times;, star-delta about one third of the DOL value, soft starter its current-limit setting. Use the motor data sheet where available.</span>
+              </button>
+            </label>
+            <input id="motorStartMult" type="number" value="6" step="any" min="1" max="12" class="input-field mt-2">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 mb-5">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide inline-flex items-center gap-1.5" for="pctZ">
+              Transformer Impedance (%Z)
+              <button type="button" class="info-icon" aria-label="Transformer impedance guidance" aria-expanded="false">
+                i
+                <span class="info-tooltip">Leave blank to use typical values for the reference rating (4% up to 630 kVA, 5% up to 1250 kVA, 6% up to 2500 kVA &mdash; the IEC 60076-5 minimum values). Enter the nameplate or tender value when known.</span>
+              </button>
+            </label>
+            <input id="pctZ" type="number" value="" step="any" min="1" max="20" placeholder="blank = typical" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="nonLinear">Non-linear Load Share</label>
+            <select id="nonLinear" class="input-field mt-2">
+              <option value="low" selected>Low (mostly motors, resistive)</option>
+              <option value="some">Moderate (some VFDs, UPS, LED)</option>
+              <option value="high">High (VFD/UPS/rectifier dominated)</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="ambientMax">Max Ambient (&deg;C)</label>
+            <input id="ambientMax" type="number" value="40" step="any" min="-50" max="70" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="altitude">Site Altitude (m)</label>
+            <input id="altitude" type="number" value="0" step="any" min="0" max="6000" class="input-field mt-2">
+          </div>
+        </div>
+      </div>
+
       <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculateTransformer()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
@@ -691,6 +771,8 @@
         <span class="formula-chip">Amp (1φ) = (kW × 1000) ÷ (V × PF)</span>
         <span class="formula-chip">Amp (3φ) = (kW × 1000) ÷ (√3 × V × PF)</span>
         <span class="formula-chip">Motor: kW = (HP × 0.746) ÷ Efficiency</span>
+        <span class="formula-chip">Design kW = Connected kW × Demand Factor</span>
+        <span class="formula-chip">Start dip ≈ Sstart ÷ (Sstart + Str × 100 ÷ %Z)</span>
       </div>
     </div>
 
@@ -710,7 +792,7 @@
           <div id="rCalcKVA" class="font-display font-bold text-xl text-brandDark mt-1">— kVA</div>
         </div>
         <div class="bg-white rounded-xl border border-gray-100 p-4">
-          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Load</span>
+          <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600">Design Load</span>
           <div id="rLoadKW" class="font-display font-bold text-xl text-brandDark mt-1">— kW</div>
         </div>
         <div class="bg-white rounded-xl border border-gray-100 p-4">
@@ -734,6 +816,11 @@
       <div class="bg-white rounded-xl border border-gray-100 p-4">
         <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500">Sizing Summary</span>
         <p id="rSuggest" class="text-sm text-gray-600 mt-1.5 leading-relaxed">Enter your values and hit calculate to see the nearest reference transformer rating and a short explanation.</p>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500">Starting &amp; Site Checks</span>
+        <div id="rChecks" class="text-sm text-gray-600 mt-1.5 leading-relaxed space-y-2"><p>Enter your values and hit calculate.</p></div>
       </div>
 
     </div>
@@ -811,7 +898,7 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Calculation method: kVA = kW ÷ PF, with line current from the standard single-phase and three-phase relations</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Calculation method: kVA = (connected kW × demand factor) ÷ PF, with line current from the standard single-phase and three-phase relations; motor-starting dip is a screening estimate from transformer %Z; normal service conditions per IEC 60076-1</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding Transformer Sizing</h2>
@@ -824,7 +911,7 @@
 
       <p>Alongside the headline kVA figure, the calculator also reports the reactive power component in kVAR, found from <strong>kVAR = √(kVA² − kW²)</strong>. This is the portion of apparent power that does no real work but still has to be supplied and carried by the transformer windings and the upstream cabling — it's the same quantity that power factor correction capacitors are sized to offset. A large gap between kVA and kW usually signals a poor power factor that is worth correcting with an APFC panel, since it frees up transformer and cable capacity without adding a single extra kilowatt of real load.</p>
 
-      <p>An optional margin — selectable at 10%, 15%, 20%, 25% or a custom value — can be added on top of the calculated kVA demand as a simplified planning allowance for future load growth — a common practice among field engineers when the connected load is expected to expand over the transformer's service life. This margin does not account for motor-starting voltage dip, inrush current, harmonics, ambient temperature, altitude, or ageing derating; those require separate engineering checks, since a steady-state kVA margin doesn't by itself prevent a large motor's starting inrush from causing a voltage dip. After the margin is applied, the result is rounded up to the nearest rating from a reference series: 5, 10, 15, 25, 50, 63, 75, 100, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600, 2000, and 2500 kVA — illustrative reference sizes, since actual standard availability varies by country, utility, voltage class, and manufacturer. The calculator also shows the rating headroom this rounding gives you as a percentage, so you know how much unused capacity is built into the reference rating.</p>
+      <p>An optional margin — selectable at 10%, 15%, 20%, 25% or a custom value — can be added on top of the calculated kVA demand as a simplified planning allowance for future load growth — a common practice among field engineers when the connected load is expected to expand over the transformer's service life. This margin does not account for motor-starting voltage dip, inrush current, harmonics, ambient temperature, altitude, or ageing derating; those require separate engineering checks, since a steady-state kVA margin doesn't by itself prevent a large motor's starting inrush from causing a voltage dip. The optional Starting &amp; Site Checks screen the most common of these &mdash; described below &mdash; without changing the kVA rating itself. After the margin is applied, the result is rounded up to the nearest rating from a reference series: 5, 10, 15, 25, 50, 63, 75, 100, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600, 2000, and 2500 kVA — illustrative reference sizes, since actual standard availability varies by country, utility, voltage class, and manufacturer. The calculator also shows the rating headroom this rounding gives you as a percentage, so you know how much unused capacity is built into the reference rating.</p>
 
       <p>As always with sizing calculators, treat the output as an engineering starting point rather than a final purchase order. Harmonic loads, ambient temperature, altitude derating, duty cycle, and inrush current from large motors starting direct-on-line can all shift the practical requirement by a meaningful margin. Always get your final transformer selection reviewed by a licensed electrical engineer or your utility before purchase and installation, especially for grid-connected industrial supplies that must meet local sanctioned-load and metering requirements.</p>
 
@@ -834,20 +921,31 @@
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Why Transformers Are Most Efficient Between 50–80% Load</h3>
       <p>A transformer has two main loss components: no-load (core/iron) losses, which are roughly constant regardless of load and occur simply because the transformer is energised, and load (copper) losses, which increase with the square of the current and therefore the square of the load. At very light load, the fixed core losses dominate the total loss as a percentage of power delivered, so efficiency is poor. At very heavy load, copper losses rise sharply and again reduce efficiency, while also generating more heat that shortens insulation life. Transformer efficiency is often high over a broad mid-load range — commonly cited as roughly 50–80% of rated capacity for many standard distribution transformers — but the exact optimum loading point depends on the specific transformer's design and loss characteristics. This is one of the practical reasons oversizing a transformer well beyond the actual load, "just to be safe," isn't free: it often means running permanently in a less efficient, higher-core-loss region.</p>
 
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Connected Load, Demand Factor and Diversity Factor</h3>
+      <p>Connected load is the sum of the nameplate ratings of everything the transformer feeds. Maximum demand is the highest load actually drawn over a demand interval. The ratio between them is the <strong>demand factor</strong>: maximum demand &divide; connected load, always 1.0 or less. <strong>Diversity factor</strong> is a different quantity: the sum of the individual maximum demands of several loads &divide; the maximum demand of the group, always 1.0 or more, because the individual peaks do not coincide. Its reciprocal, the coincidence factor, is the multiplier that turns a sum of individual peaks into a group peak. In this calculator, enter the combined figure that converts your entered load into the expected maximum demand as the Demand Factor. Leave it at 1.0 if the entered load is already a metered maximum demand, and it is not applied in Amp mode, because a measured current is already a demand value. Typical factors vary widely by facility type and are set by local practice or utility rules &mdash; use project data rather than a generic figure where possible.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Motor Starting, Harmonics, Ambient and Altitude</h3>
+      <p><strong>Motor starting voltage dip.</strong> A transformer that carries its steady-state load comfortably can still sag badly when a large motor starts direct-on-line. The calculator screens this with the common approximation dip % &asymp; 100 &times; S<sub>start</sub> &divide; (S<sub>start</sub> + S<sub>tr</sub> &times; 100 &divide; %Z), where S<sub>start</sub> is the motor starting kVA and S<sub>tr</sub> &times; 100 &divide; %Z is the transformer&rsquo;s short-circuit kVA. Motor starting kVA is estimated as motor kW &divide; 0.8 (a typical efficiency &times; power factor product) &times; the starting-current multiple. The formula assumes a stiff upstream supply and ignores the cable to the motor, so real dips are larger. Dips up to about 10% at the transformer bus are commonly tolerated by other loads, while around 15% or more often disturbs contactors, drives and lighting &mdash; project and utility criteria govern. When %Z is left blank the calculator uses 4%, 5% or 6% for ratings up to 630, 1250 and 2500 kVA, the minimum values tabulated in IEC 60076-5; a transformer&rsquo;s actual impedance is often higher, so enter the nameplate value when known.</p>
+      <p><strong>Harmonics.</strong> Drives, UPS systems, rectifiers and LED drivers draw non-sinusoidal current that raises eddy-current and stray losses in the windings. A transformer carrying a large share of such load may need derating or a harmonic-rated (K-factor) design; IEEE C57.110 gives a method for liquid-filled and dry-type units. The calculator only flags this &mdash; derating depends on the measured harmonic spectrum and the manufacturer&rsquo;s loss data.</p>
+      <p><strong>Ambient temperature and altitude.</strong> Ratings assume the normal service conditions of IEC 60076-1: cooling air not above 40 &deg;C, a hottest-month average not above 30 &deg;C, a yearly average not above 20 &deg;C, and an altitude not above 1000 m. Hotter sites or higher altitudes need a reduced temperature-rise design or derating under IEC 60076-2 (liquid-immersed) or IEC 60076-11 (dry-type); North American equipment follows the corresponding IEEE C57 standards. The calculator flags these conditions rather than applying a fixed derating percentage, because the correction depends on cooling type and manufacturer.</p>
+
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">How to Use This Transformer Size Calculator</h3>
       <ol class="list-decimal pl-5 space-y-1">
         <li><strong>Select the phase type</strong> — single phase for smaller loads, three phase for most commercial and industrial installations.</li>
         <li><strong>Choose the input type</strong> that matches how your load data is available: kW (from a load schedule or energy audit), HP (from a motor nameplate), or Amp (from a clamp meter or panel reading).</li>
         <li><strong>Enter the load value, supply voltage, and power factor.</strong> Use your metered power factor where available; 0.8–0.85 is a reasonable estimate for a typical mixed motor and lighting load if unknown.</li>
-        <li><strong>Optionally enable the safety margin</strong> as a planning allowance for future load growth, then click <em>Calculate</em> to see the required kVA, reactive power (kVAR), line current, and the nearest reference transformer rating.</li>
+        <li><strong>Apply a demand factor</strong> if the entered kW or HP is a connected-load total rather than a maximum demand.</li>
+        <li><strong>Optionally enable the planning margin</strong> for future load growth, then click <em>Calculate</em> to see the required kVA, reactive power (kVAR), line current, and the nearest reference transformer rating.</li>
+        <li><strong>Fill in the Starting &amp; Site Checks</strong> &mdash; largest motor, its starting current, transformer %Z, non-linear load share, ambient and altitude &mdash; to screen for motor-start voltage dip and derating conditions.</li>
       </ol>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Common Mistakes When Sizing a Transformer</h3>
       <ul class="list-disc pl-5 space-y-1">
         <li><strong>Sizing purely on kW instead of kVA.</strong> This is the single most common error and understates the true transformer requirement for any load with a power factor below 1.0.</li>
-        <li><strong>Ignoring diversity factor for multiple loads.</strong> Simply adding the full-load kW of every connected device usually overstates demand, since not everything runs simultaneously at full load — a diversity factor (often 0.7–0.9 for mixed commercial loads) gives a more realistic figure.</li>
+        <li><strong>Sizing on connected load, or confusing demand and diversity factors.</strong> Simply adding the full-load kW of every connected device usually overstates demand, since not everything runs simultaneously at full load. A demand factor (maximum demand ÷ connected load, 1.0 or less) scales the total down; a diversity factor (1.0 or more) is its group-level counterpart and is divided into the sum of individual peaks, not multiplied.</li>
         <li><strong>Skipping the safety margin entirely.</strong> A transformer sized exactly to today's calculated demand leaves no room for expansion and can force an early, costly upgrade.</li>
-        <li><strong>Not accounting for motor starting inrush.</strong> Large motors starting direct-on-line can momentarily demand several times their running kVA — a transformer sized only for steady-state load may sag badly during motor starts.</li>
+        <li><strong>Not accounting for motor starting inrush.</strong> Large motors starting direct-on-line can momentarily demand several times their running kVA — a transformer sized only for steady-state load may sag badly during motor starts. Check the starting dip against the transformer impedance, not just the kVA rating.</li>
+        <li><strong>Assuming nameplate kVA holds on every site.</strong> Ratings assume IEC 60076-1 normal service conditions (40 °C maximum ambient, 1000 m altitude) and near-sinusoidal load current. Hot plant rooms, high-altitude sites and drive-heavy loads need derating or a suitably specified design.</li>
         <li><strong>Assuming one universal standard-size series.</strong> Distribution transformers are manufactured in a limited series, but the exact ratings available vary by country, utility, and manufacturer — specifying an odd intermediate value typically costs more and takes longer to procure than rounding up to the nearest size your local supplier actually stocks.</li>
       </ul>
 
@@ -951,7 +1049,7 @@
         Can this calculator be used for a transformer serving multiple loads?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — add up the connected kW of all loads on the transformer first (applying a diversity factor if not all loads run simultaneously), then enter that combined figure along with the overall system power factor. For loads with very different power factors, it's more accurate to sum the individual kVA and kVAR values separately before combining them.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes — add up the connected kW of all loads on the transformer first, enter that total, and use the Demand Factor field to convert it to the expected maximum demand (leave it at 1.0 if your figure is already a maximum demand). For loads with very different power factors, it's more accurate to sum the individual kW and kVAR values separately, then find the combined kVA as √(kW² + kVAR²) and the overall power factor as kW ÷ kVA.</p>
     </details>
 
     <details class="py-5">
@@ -975,8 +1073,24 @@
         Do I need a diversity factor when adding up multiple loads?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, for a realistic estimate. Simply summing the full-load rating of every connected device usually overstates actual demand, since not everything runs at full load simultaneously — applying a diversity factor (commonly 0.7-0.9 for mixed commercial/industrial loads) to the summed connected load gives a more realistic input for this calculator than the raw nameplate total.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">You need to convert connected load to maximum demand, but the factor used for that is the demand factor (maximum demand ÷ connected load, 1.0 or less), which this calculator applies directly. A diversity factor is defined the other way round — the sum of individual maximum demands ÷ the group's maximum demand, 1.0 or more — so it is divided into the sum of peaks, not multiplied. Appropriate values vary by facility type and local practice; use project or utility data where available.</p>
     </details>
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How does motor starting affect transformer size?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A large motor starting direct-on-line draws several times its running current for a few seconds, and the resulting voltage dip depends on the transformer's impedance as much as its kVA. A quick screening estimate is dip % ≈ 100 × Sstart ÷ (Sstart + Str × 100 ÷ %Z). Dips up to about 10% at the transformer bus are commonly tolerated, while about 15% or more often disturbs other equipment. If the dip is too large, options include reduced-voltage starting (star-delta, soft starter or VFD), a lower-impedance transformer, or a larger rating — confirmed by a proper voltage-drop study.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        When does a transformer need derating for ambient temperature, altitude or harmonics?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Standard ratings assume IEC 60076-1 normal service conditions: cooling air not above 40 °C, a hottest-month average not above 30 °C, a yearly average not above 20 °C, altitude not above 1000 m, and near-sinusoidal load current. Beyond those limits, or where drives, UPS systems and rectifiers make up a large share of the load, the transformer needs derating or a design specified for those conditions — under IEC 60076-2 or IEC 60076-11 for temperature and altitude, and methods such as IEEE C57.110 for harmonics. Confirm with the manufacturer rather than applying a generic percentage.</p>
+    </details>
+
   </div>
 </section>
 
@@ -1005,6 +1119,8 @@
   const MAX_REF_KVA = REF_KVA_SIZES[REF_KVA_SIZES.length - 1];
   const PHASE_DEFAULT_VOLTAGE = { single: 230, three: 415 };
   const BLANK = { rKVA:'— kVA', rCalcKVA:'— kVA', rLoadKW:'— kW', rHP:'— HP', rAmp:'— A', rKVAR:'— kVAR', rSpare:'— %' };
+  const MOTOR_ETA_PF = 0.8;                     // typical motor efficiency × power factor, for starting-kVA estimate
+  function typicalPctZ(kva){ return kva <= 630 ? 4 : (kva <= 1250 ? 5 : 6); } // IEC 60076-5 minimum values
 
   let currentPhase = 'three';
   // Last voltage this page filled in by itself. The phase toggle only
@@ -1017,6 +1133,7 @@
       document.getElementById(id).textContent = BLANK[id];
     });
     document.getElementById('rSuggest').textContent = msg;
+    document.getElementById('rChecks').innerHTML = '<p>' + msg + '</p>';
   }
 
   function setPhase(p){
@@ -1066,6 +1183,7 @@
       label.textContent = 'Load Value (HP)';
       input.placeholder = 'Enter value in HP';
       effField.classList.remove('hidden');
+      document.getElementById('demandWrap').classList.remove('hidden');
       // In HP mode the figure shown back is the nameplate shaft rating that
       // was entered — not the electrical input power, which is higher.
       hpLabel.textContent = 'Nameplate HP (shaft)';
@@ -1074,10 +1192,12 @@
       input.placeholder = 'Enter value in Amp';
       effField.classList.add('hidden');
       hpLabel.textContent = 'Equivalent HP (direct kW conversion)';
+      document.getElementById('demandWrap').classList.add('hidden');
     } else {
       label.textContent = 'Load Value (kW)';
       input.placeholder = 'Enter value in kW';
       effField.classList.add('hidden');
+      document.getElementById('demandWrap').classList.remove('hidden');
       hpLabel.textContent = 'Equivalent HP (direct kW conversion)';
     }
     calculateTransformer();
@@ -1109,6 +1229,15 @@
     const motorEffPct = parseFloat(document.getElementById('motorEff').value);
     const marginSel   = document.getElementById('marginPct').value;
     const marginPct   = getMarginPct();
+    const demandFactor = parseFloat(document.getElementById('demandFactor').value);
+    const rawMotorKW  = document.getElementById('bigMotorKW').value;
+    const bigMotorKW  = rawMotorKW === '' ? null : parseFloat(rawMotorKW);
+    const startMult   = parseFloat(document.getElementById('motorStartMult').value);
+    const rawZ        = document.getElementById('pctZ').value;
+    const pctZIn      = rawZ === '' ? null : parseFloat(rawZ);
+    const ambientMax  = parseFloat(document.getElementById('ambientMax').value);
+    const altitude    = parseFloat(document.getElementById('altitude').value);
+    const nonLinear   = document.getElementById('nonLinear').value;
 
     // ---- Input validation (Number.isFinite, so Infinity/NaN from extreme
     //      entries like 1e999 are rejected instead of propagating) ----
@@ -1131,6 +1260,24 @@
     }
     if (marginSel === 'custom' && (!Number.isFinite(marginPct) || marginPct < 0 || marginPct > 100)){
       errors.push('Custom margin must be between 0% and 100%.');
+    }
+    if (inputType !== 'amp' && (!Number.isFinite(demandFactor) || demandFactor < 0.1 || demandFactor > 1)){
+      errors.push('Demand Factor must be between 0.1 and 1.0.');
+    }
+    if (bigMotorKW !== null && (!Number.isFinite(bigMotorKW) || bigMotorKW < 0 || bigMotorKW > 100000)){
+      errors.push('Largest Motor must be between 0 and 100,000 kW, or left blank.');
+    }
+    if (!Number.isFinite(startMult) || startMult < 1 || startMult > 12){
+      errors.push('Starting Current must be between 1 and 12 × FLC.');
+    }
+    if (pctZIn !== null && (!Number.isFinite(pctZIn) || pctZIn < 1 || pctZIn > 20)){
+      errors.push('Transformer Impedance must be between 1% and 20%, or left blank.');
+    }
+    if (!Number.isFinite(ambientMax) || ambientMax < -50 || ambientMax > 70){
+      errors.push('Max Ambient must be between -50 °C and 70 °C.');
+    }
+    if (!Number.isFinite(altitude) || altitude < 0 || altitude > 6000){
+      errors.push('Site Altitude must be between 0 and 6000 m.');
     }
 
     const validationBox = document.getElementById('validationBox');
@@ -1166,6 +1313,17 @@
       hp  = kw / HP_TO_KW;
     }
 
+    // ---- Demand factor (connected -> maximum demand); not applied to measured Amps ----
+    const df = inputType === 'amp' ? 1 : demandFactor;
+    const kwConnected = kw;
+    kw  = kw * df;
+    if (inputType === 'kw') hp = kw / HP_TO_KW;
+    if (inputType !== 'amp'){
+      amp = currentPhase === 'single'
+          ? (kw * 1000) / (voltage * pf)
+          : (kw * 1000) / (SQRT3 * voltage * pf);
+    }
+
     // ---- kVA, kVAR, margin, reference size ----
     const calcKVA = kw / pf;
     const kvar = Math.sqrt(Math.max(calcKVA * calcKVA - kw * kw, 0));
@@ -1192,6 +1350,7 @@
       document.getElementById('rSuggest').textContent =
         'The sizing basis (' + sizingKVA.toFixed(0) + ' kVA) is above the ' + MAX_REF_KVA +
         ' kVA reference series used by this calculator. Transformers this large are typically custom or utility-specific — engineering review with your manufacturer or utility is required rather than reading off a standard table.';
+      renderChecks(null, { bigMotorKW, startMult, pctZIn, ambientMax, altitude, nonLinear });
       return;
     }
 
@@ -1208,24 +1367,61 @@
 
     const phaseLabel = currentPhase === 'three' ? 'three-phase' : 'single-phase';
     document.getElementById('rSuggest').textContent =
-      'For a ' + phaseLabel + ' load of ' + kw.toFixed(2) + ' kW at ' + voltage + ' V and ' + pf.toFixed(2) +
+      'For a ' + phaseLabel + ' design load of ' + kw.toFixed(2) + ' kW' + (df < 1 ? ' (' + kwConnected.toFixed(2) + ' kW connected × ' + df + ' demand factor)' : '') + ' at ' + voltage + ' V and ' + pf.toFixed(2) +
       ' PF, the calculated demand is ' + calcKVA.toFixed(2) + ' kVA' + marginNote +
       '. Rounding up to the nearest reference rating gives ' + recommended + ' kVA, with about ' + sparePct.toFixed(0) +
       '% headroom above that sizing basis' + (marginPct > 0 ? ' (the margin itself is additional headroom over the present load)' : '') +
       '. Confirm the final rating and standard availability with your electrical engineer and local manufacturer/utility before purchase.';
+    renderChecks(recommended, { bigMotorKW, startMult, pctZIn, ambientMax, altitude, nonLinear });
+  }
+
+  // ===== Starting & site screening checks (do not change the kVA result) =====
+  function renderChecks(ratingKVA, o){
+    const out = [];
+    if (o.bigMotorKW === null || o.bigMotorKW === 0){
+      out.push('\u2139\ufe0f Motor starting dip not checked \u2014 enter the largest motor kW to screen it.');
+    } else if (ratingKVA === null){
+      out.push('\u2139\ufe0f Motor starting dip not screened \u2014 the load is above the reference series, so use the actual transformer rating and impedance in a voltage-drop study.');
+    } else {
+      const z = o.pctZIn !== null ? o.pctZIn : typicalPctZ(ratingKVA);
+      const sStart = (o.bigMotorKW / MOTOR_ETA_PF) * o.startMult;
+      const sSC = ratingKVA * 100 / z;
+      const dip = 100 * sStart / (sStart + sSC);
+      const zNote = o.pctZIn !== null ? z + '% (entered)' : z + '% (typical for ' + ratingKVA + ' kVA \u2014 enter nameplate %Z)';
+      let verdict;
+      if (dip <= 10) verdict = '\u2705 Estimated motor-start dip \u2248 ' + dip.toFixed(1) + '% at the transformer bus \u2014 within the ~10% commonly tolerated by other loads.';
+      else if (dip <= 15) verdict = '\u26a0\ufe0f Estimated motor-start dip \u2248 ' + dip.toFixed(1) + '% \u2014 may disturb contactors, drives or lighting on the same bus. Check against project/utility limits.';
+      else verdict = '\u26a0\ufe0f Estimated motor-start dip \u2248 ' + dip.toFixed(1) + '% \u2014 likely excessive. Consider reduced-voltage starting, a lower-impedance or larger transformer, and confirm with a voltage-drop study.';
+      out.push(verdict + ' Basis: ' + o.bigMotorKW + ' kW motor, starting kVA \u2248 ' + sStart.toFixed(0) + ' kVA, %Z ' + zNote + '. Ignores upstream supply and cable impedance, so the real dip is larger.');
+    }
+    if (o.nonLinear === 'high'){
+      out.push('\u26a0\ufe0f High non-linear load share: harmonic currents raise winding losses. A K-factor/harmonic-rated design or derating per IEEE C57.110 is likely needed \u2014 base it on the measured harmonic spectrum and manufacturer loss data.');
+    } else if (o.nonLinear === 'some'){
+      out.push('\u2139\ufe0f Moderate non-linear load: check the expected current distortion; a harmonic derating check (e.g. IEEE C57.110) may be needed if drives or UPS loads grow.');
+    }
+    if (o.ambientMax > 40){
+      out.push('\u26a0\ufe0f Max ambient ' + o.ambientMax + ' \u00b0C exceeds the 40 \u00b0C IEC 60076-1 normal service limit \u2014 specify a reduced temperature-rise design or apply the manufacturer\u2019s derating (IEC 60076-2 liquid-immersed, IEC 60076-11 dry-type).');
+    } else {
+      out.push('\u2139\ufe0f Rating assumes IEC 60076-1 ambient limits: 40 \u00b0C maximum, 30 \u00b0C hottest-month average and 20 \u00b0C yearly average. Check the averages too, not only the peak.');
+    }
+    if (o.altitude > 1000){
+      out.push('\u26a0\ufe0f Altitude ' + o.altitude + ' m is above the 1000 m normal service limit \u2014 thinner air reduces cooling and dielectric strength. A temperature-rise correction or derating from the manufacturer is required.');
+    }
+    document.getElementById('rChecks').innerHTML = out.map(function(t){ return '<p>' + t + '</p>'; }).join('');
   }
 
   // ===== Live recalculation =====
   // Without these, editing a field left the previous result sitting on screen,
   // and the shared number-input clamp net (which re-fires "input" after
   // correcting a value) had nothing listening to it.
-  ['loadValue','voltage','pf','motorEff','marginCustom'].forEach(function(id){
+  ['loadValue','voltage','pf','motorEff','marginCustom','demandFactor','bigMotorKW','motorStartMult','pctZ','ambientMax','altitude'].forEach(function(id){
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener('input', calculateTransformer);
     el.addEventListener('change', calculateTransformer);
   });
   document.getElementById('marginPct').addEventListener('change', toggleMarginCustom);
+  document.getElementById('nonLinear').addEventListener('change', calculateTransformer);
 
   // Enter anywhere in the calculator triggers the page's own Calculate button.
   document.querySelectorAll('#calculator input[type="number"]').forEach(function(el){

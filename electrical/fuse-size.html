@@ -144,6 +144,22 @@
     },
     {
       "@type": "Question",
+      "name": "How do I make sure two fuses in series are selective?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The downstream fuse must clear the fault before the upstream fuse begins to melt, which is checked by comparing their I²t values. As a quick guide, gG fuses of the same make are commonly selective at a rating ratio of about 1.6:1 (for example 100 A upstream of 63 A), and many UL current-limiting fuse classes at about 2:1. Mixed makes, mixed classes and very high fault levels need the manufacturer’s selectivity tables. Enter the upstream rating in the calculator for the ratio check."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can a motor circuit fuse be larger than the cable ampacity?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Under the NEC, yes — the motor branch-circuit short-circuit fuse may be sized up to the 430.52 percentages even if that exceeds the conductor ampacity, because the motor overload relay protects the conductor against overload. The conductor must still be rated at least 125% of the motor full-load current. Under IEC practice the fuse, contactor and overload relay are chosen as a tested coordination combination from the manufacturer’s table, and the cable must withstand the let-through energy of that fuse."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "Can I use a higher-multiplier motor fuse rating for a non-motor load to avoid nuisance blowing?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -736,6 +752,10 @@
             <option value="195">4/0 AWG (~107 mm&sup2;; 95 mm&sup2; nearest metric) &mdash; 195 A</option>
           </select>
         </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="upFuse">Upstream Fuse Rating for Selectivity Check (A) &mdash; optional</label>
+          <input id="upFuse" type="number" value="" step="any" min="1" max="10000" placeholder="blank = skip" class="input-field mt-2">
+        </div>
       </div>
 
       <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
@@ -780,6 +800,7 @@
       <div id="codeWarn" class="warn-box hidden-field"></div>
       <div id="dcWarn" class="warn-box hidden-field"></div>
       <div id="conductorWarn" class="warn-box hidden-field"></div>
+      <div id="coordWarn" class="warn-box hidden-field"></div>
 
       <div class="bg-white rounded-xl border border-gray-100 p-4">
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Scope of this result</span>
@@ -1076,6 +1097,22 @@
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I make sure two fuses in series are selective?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The downstream fuse must clear the fault before the upstream fuse begins to melt, which is checked by comparing their I²t values. As a quick guide, gG fuses of the same make are commonly selective at a rating ratio of about 1.6:1 (for example 100 A upstream of 63 A), and many UL current-limiting fuse classes at about 2:1. Mixed makes, mixed classes and very high fault levels need the manufacturer’s selectivity tables. Enter the upstream rating in the calculator for the ratio check.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can a motor circuit fuse be larger than the cable ampacity?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Under the NEC, yes — the motor branch-circuit short-circuit fuse may be sized up to the 430.52 percentages even if that exceeds the conductor ampacity, because the motor overload relay protects the conductor against overload. The conductor must still be rated at least 125% of the motor full-load current. Under IEC practice the fuse, contactor and overload relay are chosen as a tested coordination combination from the manufacturer’s table, and the cable must withstand the let-through energy of that fuse.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
         Can I use a higher-multiplier motor fuse rating for a non-motor load to avoid nuisance blowing?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
@@ -1331,6 +1368,7 @@
       document.getElementById('conductorWarn').classList.add('hidden-field');
       document.getElementById('dcWarn').classList.add('hidden-field');
       document.getElementById('codeWarn').classList.add('hidden-field');
+      document.getElementById('coordWarn').classList.add('hidden-field');
       document.getElementById('breakdownBox').innerHTML = '<p class="text-xs text-gray-400 p-3">Fix the input errors above to see a valid result.</p>';
       return;
     }
@@ -1409,7 +1447,11 @@
     // Conductor check: a fuse above the conductor's ampacity protects the load
     // but not the cable.
     const warnEl = document.getElementById('conductorWarn');
-    if(Number.isFinite(conductorAmp) && conductorAmp > 0 && !aboveRange){
+    if(Number.isFinite(conductorAmp) && conductorAmp > 0 && !aboveRange && fuseCircuitType === 'motor'){
+      warnEl.classList.remove('hidden-field');
+      const need125 = current * 1.25;
+      warnEl.innerHTML = '<strong>Conductor check (motor circuit):</strong> in an NEC motor branch circuit the short-circuit fuse may exceed the conductor ampacity (430.52), because the separate overload relay protects the conductor against overload. The conductor itself must be rated at least 125% of the motor FLC (430.22): ' + need125.toFixed(1) + ' A needed vs ' + conductorAmp + ' A reference \u2014 ' + (conductorAmp >= need125 ? 'met.' : '<strong>not met \u2014 increase the conductor size.</strong>') + ' Under IEC practice, use the manufacturer\u2019s coordination table for the fuse, contactor and overload combination.';
+    } else if(Number.isFinite(conductorAmp) && conductorAmp > 0 && !aboveRange){
       if(stdSize > conductorAmp){
         warnEl.classList.remove('hidden-field');
         warnEl.innerHTML = '<strong>Conductor check:</strong> the ' + stdSize + ' A fuse exceeds the ' +
@@ -1421,6 +1463,22 @@
       }
     } else {
       warnEl.classList.add('hidden-field');
+    }
+
+    // Selectivity (discrimination) screening against an upstream fuse
+    const upRaw = document.getElementById('upFuse').value;
+    const upFuse = upRaw === '' ? null : parseFloat(upRaw);
+    const coordEl = document.getElementById('coordWarn');
+    if(upFuse !== null && Number.isFinite(upFuse) && upFuse > 0 && !aboveRange){
+      const ratio = upFuse / stdSize;
+      const target = seriesKey === 'nec' ? 2 : 1.6;
+      coordEl.classList.remove('hidden-field');
+      coordEl.innerHTML = '<strong>Selectivity check:</strong> upstream ' + upFuse + ' A \u00f7 this ' + stdSize + ' A = ' + ratio.toFixed(2) + ':1. ' +
+        (ratio >= target
+          ? 'This meets the commonly quoted ' + target + ':1 ratio for ' + (seriesKey === 'nec' ? 'same-class current-limiting (UL) fuses' : 'gG-to-gG fuses of the same make') + ', so the downstream fuse should clear a fault alone. Confirm with the manufacturer\u2019s selectivity table (I\u00b2t comparison).'
+          : 'Below the commonly quoted ' + target + ':1 ratio \u2014 both fuses may operate on a heavy fault. Increase the upstream rating or check the manufacturer\u2019s I\u00b2t selectivity table for these exact fuses.');
+    } else {
+      coordEl.classList.add('hidden-field');
     }
 
     const powerRow = inputMode === 'power'
@@ -1450,7 +1508,7 @@
   }
 
   // ===== Live recalculation =====
-  ['flc','loadPower','voltage','pf','derate'].forEach(function(id){
+  ['flc','loadPower','voltage','pf','derate','upFuse'].forEach(function(id){
     const el = document.getElementById(id);
     if(!el) return;
     el.addEventListener('input', calculateFuseSize);

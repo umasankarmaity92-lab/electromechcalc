@@ -90,6 +90,22 @@
     },
     {
       "@type": "Question",
+      "name": "What if my load power factor is higher than 0.8?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The set still needs at least kW ÷ 0.8 in kVA. Generator engines are normally matched to the alternator kVA at 0.8 power factor, so at a higher load PF the engine kW limit is reached before the alternator kVA limit. That is why this calculator sizes on kW ÷ min(PF, 0.8): a 100 kW unity-PF load needs a 125 kVA set. A leading power factor is a different issue and should be checked with the manufacturer."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I check whether a generator can start a large motor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Estimate the motor starting kVA (roughly motor kW ÷ 0.8 × the starting-current multiple) and compare it with the generator's capability. A quick screen is dip % ≈ 100 × Sstart ÷ (Sstart + Sgen ÷ X″d), using the alternator subtransient reactance X″d from its data sheet. Dips up to about 15% are commonly tolerated. If the dip is larger, use reduced-voltage starting, sequence the loads, or choose a larger alternator — and confirm against the manufacturer's motor-starting kVA curves."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "How much safety margin should I add?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -125,7 +141,7 @@
       "name": "Should I size a DG set for standby or prime power use?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Standby-rated generators are sized for occasional backup use during grid outages and typically run at a lower average load factor, while prime-rated generators are designed for continuous or regular daily operation at a sustained load with a smaller overload allowance. Prime power applications generally need a larger safety margin and a genset explicitly rated for continuous duty by the manufacturer."
+        "text": "It depends on how the set will run. ISO 8528-1 defines emergency standby power (ESP) for use during utility outages, with limited running hours per year, and prime power (PRP) for an unlimited number of hours at variable load, where the average load over 24 hours should not exceed 70% of the prime rating unless the manufacturer agrees otherwise. The same physical set carries a lower prime rating than standby rating, so a set for regular daily running must be chosen on its prime rating."
       }
     },
     {
@@ -477,8 +493,8 @@
       <div class="mb-5">
         <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="tgLabel1_dg_size">Phase Type</span>
         <div class="flex gap-2 bg-gray-100 rounded-lg p-1.5 mt-2" role="group" aria-labelledby="tgLabel1_dg_size">
-          <div id="phase1" class="toggle-btn" onclick="setPhase('single')">Single Phase</div>
-          <div id="phase3" class="toggle-btn active" onclick="setPhase('three')">Three Phase</div>
+          <button type="button" id="phase1" class="toggle-btn" aria-pressed="false" onclick="setPhase('single')">Single Phase</button>
+          <button type="button" id="phase3" class="toggle-btn active" aria-pressed="true" onclick="setPhase('three')">Three Phase</button>
         </div>
       </div>
 
@@ -493,7 +509,7 @@
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" id="loadValueLabel" for="loadValue">Load Value (kW)</label>
-          <input id="loadValue" type="number" value="80" step="0.1" class="input-field mt-2">
+          <input id="loadValue" type="number" value="80" step="any" min="0.01" max="100000" class="input-field mt-2">
         </div>
       </div>
 
@@ -517,7 +533,7 @@
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="voltage">Voltage (V)</label>
-          <input id="voltage" type="number" value="415" step="1" min="1" class="input-field mt-2" oninput="syncQuickVoltageActive()">
+          <input id="voltage" type="number" value="415" step="1" min="1" max="1000" class="input-field mt-2" oninput="voltageTouched = true; syncQuickVoltageActive()">
         </div>
       </div>
 
@@ -548,27 +564,77 @@
           </div>
       </div>
 
-      <div class="mb-5">
-        <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="margin">Safety Margin (%)</label>
-        <input id="margin" type="number" value="20" step="1" min="0" max="100" class="input-field mt-2">
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="margin">Planning Margin (%)</label>
+          <input id="margin" type="number" value="20" step="1" min="0" max="100" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="dutyType">Duty</label>
+          <select id="dutyType" class="input-field mt-2">
+            <option value="standby" selected>Standby (backup during outages)</option>
+            <option value="prime">Prime (regular / continuous running)</option>
+          </select>
+        </div>
       </div>
 
-      <div id="validationBox" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
+      <div class="mb-5 pt-5 border-t border-gray-100">
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Motor Starting &amp; Site Checks (optional screening)</span>
+        <p class="text-xs text-gray-500 mt-1 mb-4">These checks do not change the kVA rating &mdash; they flag conditions that can make a steady-state rating inadequate.</p>
+        <div class="grid grid-cols-2 gap-4 mb-5">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="bigMotorKW">Largest Motor (kW)</label>
+            <input id="bigMotorKW" type="number" value="" step="any" min="0" max="100000" placeholder="blank = skip" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="motorStartMult">Starting Current (&times; FLC)</label>
+            <input id="motorStartMult" type="number" value="6" step="any" min="1" max="12" class="input-field mt-2">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 mb-5">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="xdPrime">Alternator X&Prime;d, subtransient (pu)</label>
+            <input id="xdPrime" type="number" value="0.15" step="0.01" min="0.05" max="0.6" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="nonLinear">Non-linear Load Share</label>
+            <select id="nonLinear" class="input-field mt-2">
+              <option value="low" selected>Low (mostly motors, resistive)</option>
+              <option value="some">Moderate (some VFDs, UPS, LED)</option>
+              <option value="high">High (UPS/VFD/rectifier dominated)</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="ambientMax">Max Ambient (&deg;C)</label>
+            <input id="ambientMax" type="number" value="40" step="any" min="-40" max="60" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="altitude">Site Altitude (m)</label>
+            <input id="altitude" type="number" value="0" step="any" min="0" max="5000" class="input-field mt-2">
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-3">Starting current: DOL commonly about 6&ndash;8&times; FLC, star-delta about one third of that, soft starter its current-limit setting, VFD about 1&ndash;1.5&times;. X&Prime;d is the alternator subtransient reactance from its data sheet (commonly around 0.1&ndash;0.2 pu).</p>
+      </div>
+
+      <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculate()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
         Calculate DG Size
       </button>
 
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
-        <span class="formula-chip">kVA = kW ÷ PF</span>
+        <span class="formula-chip">kVA = kW ÷ min(PF, 0.8)</span>
         <span class="formula-chip">I = (kVA × 1000) / (√3 × V)</span>
+        <span class="formula-chip">Start dip ≈ Sstart ÷ (Sstart + kVA ÷ X″d)</span>
         <span class="formula-chip">Motor: kW = (HP × 0.746) ÷ Efficiency</span>
-        <span class="formula-chip">Fuel = Load kW × 0.27 L/kWh</span>
+        <span class="formula-chip">Fuel ≈ Load kW × 0.27 L/kWh (near full load)</span>
       </div>
     </div>
 
     <!-- RESULT PANEL -->
-    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4" role="status" aria-live="polite">
 
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full volt-badge opacity-20"></div>
@@ -576,7 +642,7 @@
         <div id="rResult" class="font-display font-bold text-3xl mt-1 text-white">— kVA</div>
         <p class="text-xs text-slate-300 mt-1" id="resultSub">Nearest reference DG set size — actual standard availability varies by manufacturer and region</p>
         <div class="mt-3 pt-3 border-t border-white/10">
-          <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Full-Load Current (DG Output)</span>
+          <span class="font-mono text-[10px] uppercase tracking-wider text-slate-300 block">Load Current / Rated Current of Set</span>
           <span id="rCurrent" class="font-display font-semibold text-lg text-white">— A</span>
         </div>
       </div>
@@ -589,6 +655,11 @@
       <div class="bg-white rounded-xl border border-gray-100 p-4">
         <span class="font-mono text-[10px] uppercase tracking-wider text-sky-600 mb-2 block">Formula Used</span>
         <div id="formulaBox" class="text-sm text-gray-600 leading-relaxed font-mono whitespace-pre-line">Enter values and hit calculate to see the worked formula.</div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500 mb-2 block">Starting &amp; Site Checks</span>
+        <div id="rChecks" class="text-sm text-gray-600 leading-relaxed space-y-2"><p>Enter your values and hit calculate.</p></div>
       </div>
 
 
@@ -671,24 +742,33 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial maintenance experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Technical references: IEC / IEEE / BIS / NEC and manufacturer guidance</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Calculation method: sizing kVA = kW ÷ min(load PF, 0.8 rated PF) plus planning margin; motor-start dip screened from alternator X&Prime;d; duty classes per ISO 8528-1 &nbsp;|&nbsp; Technical references: ISO 8528, IEC 60034-1 and manufacturer guidance</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding DG Size Calculation</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
       <p><strong>DG set sizing rule of thumb:</strong> kVA = kW ÷ 0.8, then add a planning margin for future load growth and normal operating variation — for example, a steady 80 kW load needs roughly a 100–125 kVA generator, not the bare 100 kVA calculated figure. Motor starting performance is a separate consideration from this margin and needs its own starting-kVA or voltage-drop assessment, especially for large motors starting direct-on-line — see the section below. Sizing a diesel generator (DG set) correctly is a balance between reliability and cost: an undersized generator will stall, overheat, or trip under motor-starting surges and peak demand, while an oversized one runs inefficiently at light load, wastes fuel, and costs more upfront. This calculator estimates the right DG set capacity for a given electrical load by converting the real power demand (kW) into the apparent power (kVA) a generator must be rated for, then matching that figure against a reference series of commonly available DG set sizes. It also estimates the full-load current the DG set will supply and the approximate diesel fuel consumption per hour, both useful figures when planning fuel storage and the outgoing cable or breaker from the generator.</p>
 
-      <p>The required DG capacity is found from <strong>DG Size (kVA) = Load (kW) ÷ PF</strong>, since a generator's nameplate is always rated in kVA while the actual connected load is usually expressed in kW; dividing by the power factor accounts for the reactive power the generator must also supply. A safety margin is then added on top of this calculated value, since real installations rarely run at a perfectly steady, ideal load — motor starting surges, future load additions, and day-to-day demand fluctuations all call for some spare capacity.</p>
+      <p>The required DG capacity is found from <strong>DG Size (kVA) = Load (kW) ÷ PF</strong> — or Load (kW) ÷ 0.8 when the load power factor is higher than 0.8, as explained below — since a generator's nameplate is always rated in kVA while the actual connected load is usually expressed in kW; dividing by the power factor accounts for the reactive power the generator must also supply. A safety margin is then added on top of this calculated value, since real installations rarely run at a perfectly steady, ideal load — motor starting surges, future load additions, and day-to-day demand fluctuations all call for some spare capacity.</p>
 
       <p>The resulting current draw is calculated using <strong>I = (kVA × 1000) ÷ (√3 × V)</strong> for a three-phase supply, or <strong>I = (kVA × 1000) ÷ V</strong> for single-phase, which determines the cable and breaker sizing on the generator's output. Fuel consumption is approximated using a commonly used diesel-generator rule of thumb of roughly 0.27 litres per hour for every kW of load, though actual consumption varies by engine efficiency and load factor.</p>
 
-      <p><strong>Worked example:</strong> A facility has a three-phase connected load of 80 kW at a power factor of 0.8, supplied at 415 V, with a 20% safety margin. The base DG capacity is kVA = 80 ÷ 0.8 = 100 kVA. Adding the 20% margin: 100 × 1.20 = 120 kVA, which would typically be rounded up to the nearest standard DG size of 125 kVA. The full-load current at 415 V is I = (120 × 1000) ÷ (1.732 × 415) ≈ 167.0 A, and estimated fuel consumption is roughly 80 × 0.27 ≈ 21.6 L/hr.</p>
-      <p><strong>125 kVA DG load calculation (reverse direction):</strong> if you already have a 125 kVA DG set and want to check how much load it can safely carry, work backward using the same convention: recommended continuous load &asymp; DG capacity &times; PF &divide; (1 + margin%). At PF 0.8 and a 20% margin, that's 125 &times; 0.8 &divide; 1.20 &asymp; 83.3 kW &mdash; treat this as a planning estimate, not the generator's actual prime/standby rating, which is set by the manufacturer's datasheet.</p>
+      <p><strong>Worked example:</strong> A facility has a three-phase connected load of 80 kW at a power factor of 0.8, supplied at 415 V, with a 20% safety margin. The base DG capacity is kVA = 80 ÷ 0.8 = 100 kVA. Adding the 20% margin: 100 × 1.20 = 120 kVA, which would typically be rounded up to the nearest standard DG size of 125 kVA. The load current at 415 V is I = (100 × 1000) ÷ (1.732 × 415) ≈ 139.1 A, the rated current of the 125 kVA set is (125 × 1000) ÷ (1.732 × 415) ≈ 173.9 A &mdash; the figure used for the generator output cable and breaker &mdash; and estimated fuel consumption is roughly 80 × 0.27 ≈ 21.6 L/hr near full load.</p>
+      <p><strong>125 kVA DG load calculation (reverse direction):</strong> if you already have a 125 kVA DG set and want to check how much load it can safely carry, work backward using the same convention: recommended continuous load &asymp; DG capacity &times; min(load PF, 0.8) &divide; (1 + margin%). At PF 0.8 and a 20% margin, that's 125 &times; 0.8 &divide; 1.20 &asymp; 83.3 kW &mdash; treat this as a planning estimate, not the generator's actual prime/standby rating, which is set by the manufacturer's datasheet.</p>
 
       <p>This tool is especially useful for facility engineers and contractors selecting a backup or prime power DG set, sizing the generator's output cable and protection, or estimating fuel budget and tank capacity for continuous or standby operation.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">kW vs kVA: Why Generators Are Never Rated in kW Alone</h3>
-      <p>Real power (kW) is the power that actually does useful work — turning a motor shaft, lighting a bulb, heating an element. Apparent power (kVA) is the total power the generator's alternator and windings must be capable of delivering, including the reactive component absorbed and released by inductive loads such as motors, transformers, and fluorescent or induction lighting ballasts. The ratio between the two is the power factor: kW = kVA × PF. Because the generator's physical winding size and heat dissipation are governed by current (and therefore by kVA, not kW), manufacturers always publish a kVA nameplate rating. A DG set rated 100 kVA at 0.8 PF can deliver 80 kW of real power — trying to draw 100 kW of real load from it, even momentarily, will overload the alternator regardless of the kVA figure on the nameplate.</p>
+      <p>Real power (kW) is the power that actually does useful work — turning a motor shaft, lighting a bulb, heating an element. Apparent power (kVA) is the total power the generator's alternator and windings must be capable of delivering, including the reactive component absorbed and released by inductive loads such as motors, transformers, and fluorescent or induction lighting ballasts. The ratio between the two is the power factor: kW = kVA × PF. Because the generator's physical winding size and heat dissipation are governed by current (and therefore by kVA, not kW), manufacturers always publish a kVA nameplate rating. A DG set rated 100 kVA at 0.8 PF can deliver 80 kW of real power — trying to draw 100 kW of real load from it overloads the engine, whose kW output is matched to kVA × 0.8, regardless of the kVA figure on the nameplate.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Engine kW vs Alternator kVA: Why a Load PF Above 0.8 Does Not Shrink the Set</h3>
+      <p>A generator set has two limits. The alternator is limited by current, so it is rated in kVA. The engine is limited by mechanical power, and most sets are built with an engine sized for the alternator&rsquo;s kVA at 0.8 power factor &mdash; the usual rating basis in ISO 8528 and manufacturer data. If the load power factor is lower than 0.8, the alternator&rsquo;s kVA runs out first, so kVA = kW &divide; PF governs. If the load power factor is higher than 0.8 &mdash; resistive heating, corrected loads, many modern drives &mdash; the engine&rsquo;s kW runs out first, and the set must still be at least kW &divide; 0.8 in kVA. This calculator therefore sizes on kVA = kW &divide; min(PF, 0.8). A 100 kW load at unity power factor needs a 125 kVA set, not a 100 kVA one. A <em>leading</em> power factor from lightly loaded capacitor banks or some UPS input filters is a separate problem: it can destabilise the alternator&rsquo;s voltage regulator and should be reviewed with the manufacturer.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Checking Motor Starting and Transient Load</h3>
+      <p>When a large motor starts, the generator sees a sudden block of low-power-factor kVA. Unlike a utility transformer, the alternator&rsquo;s internal reactance is high, so the voltage dip is larger for the same starting kVA. The calculator screens it with dip % &asymp; 100 &times; S<sub>start</sub> &divide; (S<sub>start</sub> + S<sub>gen</sub> &divide; X&Prime;d), where S<sub>start</sub> &asymp; motor kW &divide; 0.8 &times; starting-current multiple and X&Prime;d is the alternator subtransient reactance in per unit, which sets the initial dip before the voltage regulator responds. It ignores the voltage regulator&rsquo;s recovery, the load already connected and the engine&rsquo;s speed dip, so treat it as a screen. Dips up to about 15% are commonly tolerated; ISO 8528-5 performance classes allow roughly 15&ndash;20% transient voltage deviation on load application for the general-purpose classes, and contactors can drop out beyond about 25&ndash;30%. The engine also has a load-acceptance limit &mdash; a turbocharged diesel may accept only part of its rating in one step &mdash; so large loads should be sequenced. Where the dip is too large, reduced-voltage starting (star-delta, soft starter or VFD), load sequencing or a larger alternator (sometimes on the same engine) is the usual answer, confirmed against the manufacturer&rsquo;s motor-starting kVA data.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Non-linear Loads, Duty and Site Conditions</h3>
+      <p><strong>Non-linear loads.</strong> UPS systems, VFDs and rectifiers draw distorted current that heats the alternator and, through its source impedance, distorts the voltage. Sets supplying mainly such loads usually need an oversized alternator or a low-reactance design; UPS and drive manufacturers publish generator-sizing ratios for their equipment. <strong>Duty.</strong> ISO 8528-1 distinguishes emergency standby power (ESP), for outages only with a limited number of hours per year, from prime power (PRP), for an unlimited number of hours at variable load, where the average load over 24 hours should not exceed 70% of the prime rating unless the manufacturer agrees otherwise. A set&rsquo;s prime rating is lower than its standby rating, so compare like with like. <strong>Site conditions.</strong> Engine output falls with altitude and high air temperature, and each data sheet states the conditions its rating applies to; above them, apply the manufacturer&rsquo;s derating chart.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Why Motor Starting Loads Need Extra Margin</h3>
       <p>Induction motors, pumps, compressors, and air-conditioning compressors typically draw 5 to 7 times their full-load current for a fraction of a second at start-up (direct-on-line starting). A generator sized only for the steady-state running load can experience a large, sudden voltage dip or stall entirely when such a motor starts, especially if the starting motor represents a large fraction of the total connected load. This is one reason a planning margin is commonly applied on top of the calculated running kVA, and why installations with large single motors — borewell pumps, chillers, or big compressors — often need either a larger safety margin, a soft starter/VFD on the motor, or a generator explicitly sized for the starting kVA rather than just the running kVA.</p>
@@ -697,8 +777,9 @@
       <ol class="list-decimal pl-5 space-y-1">
         <li><strong>Select the phase type</strong> — single phase for smaller domestic or shop loads, three phase for industrial and commercial installations.</li>
         <li><strong>Enter the connected load in kW</strong> and the expected power factor (typically 0.8 for a mixed motor and lighting load; check your electricity bill or panel meter for a more accurate figure).</li>
-        <li><strong>Enter the supply voltage</strong> (commonly 230V single-phase or 400/415V three-phase, or use the quick presets for your region) and a safety margin percentage as a planning allowance — the appropriate value depends on your motor starting loads and expected expansion.</li>
-        <li>Click <em>Calculate DG Size</em> to see the recommended standard DG capacity in kVA, the full-load output current, and the estimated diesel consumption per hour.</li>
+        <li><strong>Enter the supply voltage</strong> (commonly 230V single-phase or 400/415V three-phase, or use the quick presets for your region), a planning margin for future load growth, and whether the set is for standby or prime duty.</li>
+        <li><strong>Fill in the motor starting &amp; site checks</strong> &mdash; largest motor, its starting current, the alternator X&Prime;d, non-linear load share, ambient and altitude &mdash; to screen the starting voltage dip and derating conditions.</li>
+        <li>Click <em>Calculate DG Size</em> to see the reference DG capacity in kVA, the load and rated output current, the estimated diesel consumption and the screening checks.</li>
       </ol>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Common Mistakes When Sizing a Generator</h3>
@@ -706,7 +787,7 @@
         <li><strong>Sizing purely on kW without converting to kVA.</strong> Buying a "100 kW" generator when the actual requirement is 100 kVA at 0.8 PF (i.e. only 80 kW usable) is a frequent and costly sizing error.</li>
         <li><strong>Ignoring motor starting surges.</strong> A generator that comfortably handles the running load can still stall or trip when a large motor starts, if no allowance is made for inrush current.</li>
         <li><strong>Skipping the safety margin.</strong> Sizing exactly to the calculated load leaves no headroom for future expansion, seasonal peak loads, or day-to-day demand variation.</li>
-        <li><strong>Using an unrealistic power factor.</strong> Assuming PF = 1 for a load that is actually 0.75–0.85 (typical for motor-heavy loads) will undersize the generator; use your actual metered power factor where possible.</li>
+        <li><strong>Using an unrealistic power factor.</strong> Assuming PF = 1 for a load that is actually 0.75–0.85 (typical for motor-heavy loads) understates the kVA; use your actual metered power factor where possible. And a genuinely high load PF does not allow a set smaller than kW ÷ 0.8, because the engine is rated for kVA × 0.8.</li>
         <li><strong>Confusing standby and prime power ratings.</strong> A generator rated for occasional standby duty is not necessarily suitable for continuous, daily prime power operation at the same load — check the manufacturer's duty rating.</li>
       </ul>
 
@@ -783,7 +864,7 @@
   <div class="text-center mb-10">
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">FAQ</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark">Frequently Asked Questions</h2>
-    <p class="text-xs text-gray-400 mt-2">Content last reviewed: July 2026</p>
+    <p class="text-xs text-gray-400 mt-2">Content last reviewed: September 2026</p>
   </div>
 
   <div class="divide-y divide-gray-200">
@@ -793,6 +874,22 @@
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">A generator must be able to supply both the real power (kW) that does useful work and the reactive power drawn by inductive loads like motors. kVA represents this total apparent power the generator's windings and alternator must handle, so nameplates are always rated in kVA rather than kW.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        What if my load power factor is higher than 0.8?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The set still needs at least kW ÷ 0.8 in kVA. Generator engines are normally matched to the alternator kVA at 0.8 power factor, so at a higher load PF the engine kW limit is reached before the alternator kVA limit. That is why this calculator sizes on kW ÷ min(PF, 0.8): a 100 kW unity-PF load needs a 125 kVA set. A leading power factor is a different issue and should be checked with the manufacturer.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I check whether a generator can start a large motor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Estimate the motor starting kVA (roughly motor kW ÷ 0.8 × the starting-current multiple) and compare it with the generator's capability. A quick screen is dip % ≈ 100 × Sstart ÷ (Sstart + Sgen ÷ X″d), using the alternator subtransient reactance X″d from its data sheet. Dips up to about 15% are commonly tolerated. If the dip is larger, use reduced-voltage starting, sequence the loads, or choose a larger alternator — and confirm against the manufacturer's motor-starting kVA curves.</p>
     </details>
 
     <details class="py-5">
@@ -832,7 +929,7 @@
         Should I size a DG set for standby or prime power use?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Standby-rated generators are sized for occasional backup use during grid outages and typically run at a lower average load factor, while prime-rated generators are designed for continuous or regular daily operation at a sustained load with a smaller overload allowance. Prime power applications generally need a larger safety margin and a genset explicitly rated for continuous duty by the manufacturer.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">It depends on how the set will run. ISO 8528-1 defines emergency standby power (ESP) for use during utility outages, with limited running hours per year, and prime power (PRP) for an unlimited number of hours at variable load, where the average load over 24 hours should not exceed 70% of the prime rating unless the manufacturer agrees otherwise. The same physical set carries a lower prime rating than standby rating, so a set for regular daily running must be chosen on its prime rating.</p>
     </details>
 
     <details class="py-5">
@@ -888,7 +985,12 @@
 
   // ===== DG Size Calculator Logic =====
   let currentPhase = 'three';
-  const root3 = 1.732;
+  const root3 = Math.sqrt(3);
+  const RATED_PF = 0.8;          // usual generator rating basis: engine kW = kVA × 0.8
+  const MOTOR_ETA_PF = 0.8;      // typical motor efficiency × PF for starting-kVA estimate
+  const FUEL_L_PER_KWH = 0.27;   // near-full-load rule of thumb
+  const PHASE_DEFAULT_V = { single: 230, three: 415 };
+  let voltageTouched = false;
 
   const dgSizes = [
     5,7.5,10,15,20,25,30,40,50,62.5,75,82.5,100,125,160,
@@ -898,9 +1000,12 @@
 
   function setPhase(p){
     currentPhase = p;
-    document.getElementById('phase1').classList.toggle('active', p === 'single');
-    document.getElementById('phase3').classList.toggle('active', p === 'three');
-    document.getElementById('voltage').value = p === 'three' ? 415 : 230;
+    ['phase1','phase3'].forEach(function(id){
+      const on = (id === 'phase1') === (p === 'single');
+      document.getElementById(id).classList.toggle('active', on);
+      document.getElementById(id).setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    if (!voltageTouched) document.getElementById('voltage').value = PHASE_DEFAULT_V[p];
     document.getElementById('qvSingle').classList.toggle('hidden', p!=='single');
     document.getElementById('qvThree').classList.toggle('hidden', p!=='three');
     syncQuickVoltageActive();
@@ -909,6 +1014,7 @@
 
   function setQuickVoltage(v){
     document.getElementById('voltage').value = v;
+    voltageTouched = true;
     syncQuickVoltageActive();
     calculate();
   }
@@ -941,139 +1047,187 @@
     calculate();
   }
 
+  function numOrNull(id){
+    const raw = document.getElementById(id).value;
+    return raw === '' ? null : parseFloat(raw);
+  }
+
+  function blank(msg){
+    document.getElementById('rResult').textContent = '— kVA';
+    document.getElementById('rCurrent').textContent = '— A';
+    document.getElementById('detailBox').textContent = msg;
+    document.getElementById('formulaBox').textContent = 'Fix the input errors above to see the worked formula.';
+    document.getElementById('rChecks').innerHTML = '<p>' + msg + '</p>';
+  }
+
   function calculate(){
     const inputType = document.getElementById('inputType').value;
     const loadValue = parseFloat(document.getElementById('loadValue').value);
     const pf = parseFloat(document.getElementById('pf').value);
     const voltage = parseFloat(document.getElementById('voltage').value);
-    let margin = parseFloat(document.getElementById('margin').value);
+    const margin = parseFloat(document.getElementById('margin').value);
     const motorEffPct = parseFloat(document.getElementById('motorEff').value);
+    const duty = document.getElementById('dutyType').value;
+    const bigMotorKW = numOrNull('bigMotorKW');
+    const startMult = parseFloat(document.getElementById('motorStartMult').value);
+    const xd = parseFloat(document.getElementById('xdPrime').value);
+    const nonLinear = document.getElementById('nonLinear').value;
+    const ambientMax = parseFloat(document.getElementById('ambientMax').value);
+    const altitude = parseFloat(document.getElementById('altitude').value);
 
     const validationBox = document.getElementById('validationBox');
     const errors = [];
-    if (isNaN(loadValue) || loadValue <= 0){ errors.push('Load Value must be greater than 0.'); }
-    if (isNaN(pf) || pf <= 0 || pf > 1){ errors.push('Power Factor must be between 0 and 1.'); }
-    if (isNaN(voltage) || voltage <= 0){ errors.push('Voltage must be greater than 0.'); }
-    if (isNaN(margin) || margin < 0){ margin = 0; }
-    if (margin > 100){ errors.push('Safety Margin should realistically be 100% or less — please double-check this value.'); }
-    const effInvalid = inputType === 'hp' && (isNaN(motorEffPct) || motorEffPct <= 0 || motorEffPct > 100);
-    if (effInvalid){ errors.push('Motor Efficiency must be between 1% and 100%.'); }
+    if (!Number.isFinite(loadValue) || loadValue <= 0 || loadValue > 100000){ errors.push('Load Value must be greater than 0 and up to 100,000.'); }
+    if (!Number.isFinite(pf) || pf < 0.01 || pf > 1){ errors.push('Power Factor must be between 0.01 and 1.'); }
+    if (!Number.isFinite(voltage) || voltage < 1 || voltage > 1000){ errors.push('Voltage must be between 1 V and 1000 V.'); }
+    if (!Number.isFinite(margin) || margin < 0 || margin > 100){ errors.push('Planning Margin must be between 0% and 100%.'); }
+    if (inputType === 'hp' && (!Number.isFinite(motorEffPct) || motorEffPct < 1 || motorEffPct > 100)){ errors.push('Motor Efficiency must be between 1% and 100%.'); }
+    if (bigMotorKW !== null && (!Number.isFinite(bigMotorKW) || bigMotorKW < 0 || bigMotorKW > 100000)){ errors.push('Largest Motor must be between 0 and 100,000 kW, or left blank.'); }
+    if (!Number.isFinite(startMult) || startMult < 1 || startMult > 12){ errors.push('Starting Current must be between 1 and 12 × FLC.'); }
+    if (!Number.isFinite(xd) || xd < 0.05 || xd > 0.6){ errors.push('Alternator X″d must be between 0.05 and 0.6 pu.'); }
+    if (!Number.isFinite(ambientMax) || ambientMax < -40 || ambientMax > 60){ errors.push('Max Ambient must be between -40 °C and 60 °C.'); }
+    if (!Number.isFinite(altitude) || altitude < 0 || altitude > 5000){ errors.push('Site Altitude must be between 0 and 5000 m.'); }
 
     if (errors.length){
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
-      document.getElementById('rResult').textContent = '— kVA';
-      document.getElementById('rCurrent').textContent = '— A';
-      document.getElementById('detailBox').textContent = 'Fix the input errors above to see a valid result.';
-      document.getElementById('formulaBox').textContent = 'Fix the input errors above to see the worked formula.';
+      blank('Fix the input errors above to see a valid result.');
       return;
-    } else {
-      validationBox.classList.add('hidden');
-      validationBox.innerHTML = '';
     }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
 
     const phaseLabel = currentPhase === 'single' ? 'Single-phase' : 'Three-phase';
+    const k = currentPhase === 'single' ? 1 : root3;
 
-    // ---- Load in kW, HP, Amp ----
-    let kw = 0, hp = 0, amp = 0;
-    let hpLabel = 'HP equivalent';
+    // ---- Load in kW / Amp ----
+    let kw, amp;
     if (inputType === 'kw'){
       kw  = loadValue;
-      hp  = kw * 1.341;
-      amp = currentPhase === 'single'
-          ? (kw * 1000) / (voltage * pf)
-          : (kw * 1000) / (root3 * voltage * pf);
+      amp = (kw * 1000) / (k * voltage * pf);
     } else if (inputType === 'hp'){
-      hp  = loadValue;
-      hpLabel = 'HP nameplate';
-      const eff = motorEffPct / 100;
-      kw  = (hp / 1.341) / eff;
-      amp = currentPhase === 'single'
-          ? (kw * 1000) / (voltage * pf)
-          : (kw * 1000) / (root3 * voltage * pf);
+      kw  = (loadValue * 0.746) / (motorEffPct / 100);
+      amp = (kw * 1000) / (k * voltage * pf);
     } else {
       amp = loadValue;
-      kw  = currentPhase === 'single'
-          ? (voltage * amp * pf) / 1000
-          : (root3 * voltage * amp * pf) / 1000;
-      hp  = kw * 1.341;
+      kw  = (k * voltage * amp * pf) / 1000;
     }
 
-    const baseKva = kw / pf;
+    const loadKva = kw / pf;
+    const pfBasis = Math.min(pf, RATED_PF);
+    const baseKva = kw / pfBasis;
+    const engineGoverns = pf > RATED_PF;
     const kva = baseKva * (1 + margin / 100);
+    const fuel = kw * FUEL_L_PER_KWH;
 
-    const current = currentPhase === 'single'
-      ? (kva * 1000) / voltage
-      : (kva * 1000) / (root3 * voltage);
-
-    const fuel = kw * 0.27;
+    if (![kw, amp, baseKva, kva, fuel].every(Number.isFinite)){
+      validationBox.classList.remove('hidden');
+      validationBox.innerHTML = '• The entered values produce a result outside the range this calculator can display.';
+      blank('Fix the input errors above to see a valid result.');
+      return;
+    }
 
     let recommended = null;
     for (let i = 0; i < dgSizes.length; i++){
-      if (kva <= dgSizes[i]){ recommended = dgSizes[i]; break; }
+      if (kva <= dgSizes[i] + 1e-9){ recommended = dgSizes[i]; break; }
     }
+    const ratedCurrent = recommended !== null ? (recommended * 1000) / (k * voltage) : null;
+
+    const basisLine = engineGoverns
+      ? `Load PF ${pf} is above the 0.8 rating basis, so engine kW governs: Base kVA = kW ÷ 0.8`
+      : `Load PF ${pf} is at or below 0.8, so alternator kVA governs: Base kVA = kW ÷ PF`;
+
+    const formula =
+`${basisLine}
+Base kVA = ${kw.toFixed(2)} ÷ ${pfBasis}
+Base kVA = ${baseKva.toFixed(2)} kVA
+
+kVA with Margin = Base kVA × (1 + Margin% ÷ 100)
+kVA with Margin = ${baseKva.toFixed(2)} × (1 + ${margin} ÷ 100)
+kVA with Margin = ${kva.toFixed(2)} kVA` +
+(recommended !== null ? `
+
+Rated current of ${recommended} kVA set = (${recommended} × 1000) ÷ (${currentPhase === 'single' ? '' : '1.732 × '}${voltage})
+= ${ratedCurrent.toFixed(1)} A` : '') + `
+
+Fuel (L/hr) ≈ Load kW × 0.27 L/kWh (near full load)
+Fuel (L/hr) ≈ ${kw.toFixed(2)} × 0.27 = ${fuel.toFixed(2)} L/hr`;
+
+    const detail =
+`Phase Type: ${phaseLabel}
+Load: ${kw.toFixed(2)} kW, ${loadKva.toFixed(2)} kVA at PF ${pf} (${amp.toFixed(2)} A)
+Sizing Basis: kW ÷ ${pfBasis}${engineGoverns ? ' (engine kW governs)' : ' (alternator kVA governs)'}
+Base DG Capacity (no margin): ${baseKva.toFixed(2)} kVA
+Planning Margin Applied: ${margin}%
+Required DG Capacity (with margin): ${kva.toFixed(2)} kVA
+Duty: ${duty === 'prime' ? 'Prime — select on the set\u2019s prime rating' : 'Standby — select on the set\u2019s standby rating'}
+` + (recommended !== null
+  ? `Reference DG Size: ${recommended} kVA (${(recommended * RATED_PF).toFixed(1)} kW at 0.8 PF)
+Rated Output Current: ${ratedCurrent.toFixed(1)} A
+Estimated Fuel Consumption: ${fuel.toFixed(2)} L/hr (near full load)`
+  : `Estimated Fuel Consumption: ${fuel.toFixed(2)} L/hr (near full load)
+
+The required capacity is above this calculator's reference series (up to ${dgSizes[dgSizes.length - 1]} kVA). Generators this large are typically custom-configured or paralleled sets — get an engineering review from your DG manufacturer or consultant rather than reading a size off a standard table.`);
 
     if (recommended === null){
       document.getElementById('rResult').textContent = 'Above ' + dgSizes[dgSizes.length - 1] + ' kVA';
-      document.getElementById('resultSub').textContent = 'Custom/utility-specific DG selection required — see note below';
-      document.getElementById('rCurrent').textContent = current.toFixed(2) + ' A';
-      document.getElementById('detailBox').textContent =
-`Phase Type: ${phaseLabel}
-Load: ${kw.toFixed(2)} kW (${amp.toFixed(2)} A)
-Base DG Capacity (no margin): ${baseKva.toFixed(2)} kVA
-Safety Margin Applied: ${margin}%
-Required DG Capacity (with margin): ${kva.toFixed(2)} kVA
-Calculated Current: ${current.toFixed(2)} A
-Estimated Fuel Consumption: ${fuel.toFixed(2)} L/hr
-
-The required capacity is above this calculator's reference series (up to ${dgSizes[dgSizes.length - 1]} kVA). Generators this large are typically custom-configured or paralleled sets — get an engineering review from your DG manufacturer or consultant rather than reading a size off a standard table.`;
-      document.getElementById('formulaBox').textContent =
-`Base kVA = kW ÷ PF
-Base kVA = ${kw.toFixed(2)} ÷ ${pf}
-Base kVA = ${baseKva.toFixed(2)} kVA
-
-kVA with Margin = Base kVA × (1 + Margin% ÷ 100)
-kVA with Margin = ${baseKva.toFixed(2)} × (1 + ${margin} ÷ 100)
-kVA with Margin = ${kva.toFixed(2)} kVA
-
-Above the ${dgSizes[dgSizes.length - 1]} kVA reference series — engineering review required.`;
-      return;
+      document.getElementById('resultSub').textContent = 'Custom/paralleled DG selection required — see note below';
+      document.getElementById('rCurrent').textContent = amp.toFixed(1) + ' A (load)';
+    } else {
+      document.getElementById('rResult').textContent = recommended + ' kVA';
+      document.getElementById('resultSub').textContent = `${phaseLabel}, ${kw.toFixed(2)} kW at PF ${pf}` + (engineGoverns ? ' — sized on kW ÷ 0.8' : '');
+      document.getElementById('rCurrent').textContent = amp.toFixed(1) + ' A / ' + ratedCurrent.toFixed(1) + ' A';
     }
+    document.getElementById('detailBox').textContent = detail;
+    document.getElementById('formulaBox').textContent = formula;
 
-    document.getElementById('rResult').textContent = recommended + ' kVA';
-    document.getElementById('resultSub').textContent = `${phaseLabel}, for a ${kw.toFixed(2)} kW load at PF ${pf}`;
-    document.getElementById('rCurrent').textContent = current.toFixed(2) + ' A';
-
-    document.getElementById('detailBox').textContent =
-`Phase Type: ${phaseLabel}
-Load: ${kw.toFixed(2)} kW (${amp.toFixed(2)} A)
-Base DG Capacity (no margin): ${baseKva.toFixed(2)} kVA
-Safety Margin Applied: ${margin}%
-Required DG Capacity (with margin): ${kva.toFixed(2)} kVA
-Calculated Current: ${current.toFixed(2)} A
-Reference DG Size: ${recommended} kVA
-Estimated Fuel Consumption: ${fuel.toFixed(2)} L/hr`;
-
-    const currentFormulaText = currentPhase === 'single'
-      ? `I = (kVA × 1000) ÷ V\nI = (${kva.toFixed(2)} × 1000) ÷ ${voltage}`
-      : `I = (kVA × 1000) ÷ (√3 × V)\nI = (${kva.toFixed(2)} × 1000) ÷ (1.732 × ${voltage})`;
-
-    document.getElementById('formulaBox').textContent =
-`Base kVA = kW ÷ PF
-Base kVA = ${kw.toFixed(2)} ÷ ${pf}
-Base kVA = ${baseKva.toFixed(2)} kVA
-
-kVA with Margin = Base kVA × (1 + Margin% ÷ 100)
-kVA with Margin = ${baseKva.toFixed(2)} × (1 + ${margin} ÷ 100)
-kVA with Margin = ${kva.toFixed(2)} kVA
-
-${currentFormulaText}
-I = ${current.toFixed(2)} A
-
-Fuel (L/hr) = Load kW × 0.27 L/kWh
-Fuel (L/hr) = ${kw.toFixed(2)} × 0.27
-Fuel (L/hr) = ${fuel.toFixed(2)} L/hr`;
+    // ---- Screening checks ----
+    const checks = [];
+    if (engineGoverns){
+      checks.push('\u2139\ufe0f Load PF above 0.8: the set is sized on engine kW (kW \u00f7 0.8), not on load kVA. A leading PF (capacitor banks, some UPS inputs at light load) needs a separate check with the manufacturer.');
+    }
+    if (bigMotorKW === null || bigMotorKW === 0){
+      checks.push('\u2139\ufe0f Motor starting not checked \u2014 enter the largest motor kW to screen the starting voltage dip.');
+    } else if (recommended === null){
+      checks.push('\u2139\ufe0f Motor starting not screened \u2014 above the reference series; use the actual set\u2019s motor-starting data.');
+    } else {
+      const sStart = (bigMotorKW / MOTOR_ETA_PF) * startMult;
+      const dip = 100 * sStart / (sStart + recommended / xd);
+      let v;
+      if (dip <= 15) v = '\u2705 Estimated motor-start dip \u2248 ' + dip.toFixed(1) + '% \u2014 within the ~15% commonly tolerated.';
+      else if (dip <= 25) v = '\u26a0\ufe0f Estimated motor-start dip \u2248 ' + dip.toFixed(1) + '% \u2014 beyond the ~15% commonly tolerated; lights, drives and contactors may be affected. Check the manufacturer\u2019s motor-starting kVA data.';
+      else v = '\u26a0\ufe0f Estimated motor-start dip \u2248 ' + dip.toFixed(1) + '% \u2014 likely to stall the start or drop contactors. Use reduced-voltage starting, sequence loads or choose a larger alternator.';
+      checks.push(v + ' Basis: ' + bigMotorKW + ' kW motor, starting kVA \u2248 ' + sStart.toFixed(0) + ' kVA vs ' + recommended + ' kVA set, X\u2033d ' + xd + ' pu. Ignores regulator recovery and existing load.');
+      if (sStart > recommended){
+        checks.push('\u26a0\ufe0f Starting kVA exceeds the set rating \u2014 also check the engine\u2019s single-step load acceptance; sequence large loads.');
+      }
+    }
+    if (nonLinear === 'high'){
+      checks.push('\u26a0\ufe0f High non-linear load share: an oversized or low-reactance alternator is usually needed \u2014 use the UPS/VFD manufacturer\u2019s generator-sizing guidance.');
+    } else if (nonLinear === 'some'){
+      checks.push('\u2139\ufe0f Moderate non-linear load: check voltage distortion and the UPS/VFD manufacturer\u2019s generator compatibility guidance.');
+    }
+    if (duty === 'prime'){
+      const avgPct = recommended ? 100 * kw / (recommended * RATED_PF) : null;
+      checks.push((avgPct !== null && avgPct > 70 ? '\u26a0\ufe0f ' : '\u2139\ufe0f ') + 'Prime duty: choose on the set\u2019s prime (PRP) rating, which is lower than its standby rating. ISO 8528-1 limits the 24-hour average load to 70% of PRP unless the manufacturer agrees otherwise \u2014 this load is \u2248 ' + (avgPct !== null ? avgPct.toFixed(0) + '% of the reference set\u2019s kW' + (avgPct > 70 ? ', so if it runs continuously a larger set (or the manufacturer\u2019s agreement) is needed.' : '.') : 'above the reference series.'));
+    }
+    if (ambientMax > 40 || altitude > 1000){
+      checks.push('\u26a0\ufe0f Site ' + (ambientMax > 40 ? ambientMax + ' \u00b0C' : '') + (ambientMax > 40 && altitude > 1000 ? ' and ' : '') + (altitude > 1000 ? altitude + ' m' : '') + ' \u2014 engine output is likely derated. Apply the manufacturer\u2019s altitude/temperature derating chart before selecting.');
+    } else {
+      checks.push('\u2139\ufe0f Confirm the site ambient and altitude are within the conditions stated on the set\u2019s data sheet; derating can start below 40 \u00b0C or 1000 m on some models.');
+    }
+    document.getElementById('rChecks').innerHTML = checks.map(function(c){ return '<p>' + c + '</p>'; }).join('');
   }
+
+  ['loadValue','pf','voltage','margin','motorEff','bigMotorKW','motorStartMult','xdPrime','ambientMax','altitude'].forEach(function(id){
+    const el = document.getElementById(id);
+    el.addEventListener('input', calculate);
+    el.addEventListener('change', calculate);
+    el.addEventListener('keydown', function(ev){
+      if (ev.key === 'Enter'){ ev.preventDefault(); const b = document.querySelector('#calculator button[onclick^="calculate"]'); if (b) b.click(); }
+    });
+  });
+  ['dutyType','nonLinear'].forEach(function(id){ document.getElementById(id).addEventListener('change', calculate); });
 
   // run once on load with default values
   toggleLoadInput();

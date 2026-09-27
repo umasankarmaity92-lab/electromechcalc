@@ -105,6 +105,14 @@
     },
     {
       "@type": "Question",
+      "name": "Why is the capacitor bank size larger than the calculated kVAr?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Because capacitor kVAr is rated at the capacitor’s own rated voltage and falls with the square of the applied voltage. A 440 V-rated capacitor on a 415 V supply gives only about 89% of its nameplate kVAr, so to deliver 55.3 kVAr you need about 62.2 kVAr of nameplate capacity — the next common size being 75 kVAr. Higher-rated capacitors last longer under overvoltage and harmonics, which is why they are commonly used despite the lower output."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "Can I overcorrect and get a \"leading\" power factor?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -140,7 +148,15 @@
       "name": "Do I need detuned reactors with my capacitor bank?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "If your facility has significant harmonic-generating loads — VFDs, UPS systems, LED lighting drivers, or arc/induction furnaces — yes. Plain capacitors can resonate with these harmonics and fail prematurely or overheat; detuned reactors (typically tuned to 189 Hz / 7% or 134 Hz / 14%) block this resonance and protect the capacitor bank."
+        "text": "If your facility has significant harmonic-generating loads — VFDs, UPS systems, LED lighting drivers, or arc/induction furnaces — usually yes. Plain capacitors form a resonant circuit with the supply transformer, and if that resonance falls near a harmonic the load produces, harmonic currents are amplified and capacitors overheat. Detuned reactors (typically 7%, tuned to 189 Hz, or 14%, tuned to 134 Hz, on 50 Hz systems) move the resonance below the 5th or 3rd harmonic. They raise the capacitor voltage to V ÷ (1 − p), so detuned banks need higher-voltage capacitors, and they change the delivered kVAr — which this calculator accounts for."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I know if my capacitor bank could cause resonance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Estimate the resonant harmonic order as h ≈ √(Ssc ÷ Q), with Ssc the short-circuit power at the bus (about transformer kVA × 100 ÷ %Z) and Q the connected capacitor kVAr. As steps switch in, h falls; if it passes near the 5th, 7th, 11th or 13th harmonic while drives or UPS systems are running, resonance is likely. This calculator shows that range when you enter the transformer data. Confirm with a harmonic measurement before finalizing plain (non-detuned) capacitors."
       }
     },
     {
@@ -490,7 +506,7 @@
 
       <div class="mb-5">
         <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="kw">Load (kW)</label>
-        <input id="kw" type="number" value="100" step="1" placeholder="e.g. 100" class="input-field mt-2">
+        <input id="kw" type="number" value="100" step="any" min="0.01" max="100000" placeholder="e.g. 100" class="input-field mt-2">
       </div>
 
       <div class="grid sm:grid-cols-2 gap-4 mb-5">
@@ -504,6 +520,57 @@
         </div>
       </div>
 
+      <div class="grid sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="sysV">System Voltage, Line-to-Line (V)</label>
+          <input id="sysV" type="number" value="415" step="1" min="100" max="1000" class="input-field mt-2">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="capV">Capacitor Rated Voltage (V)</label>
+          <input id="capV" type="number" value="440" step="1" min="100" max="1200" class="input-field mt-2">
+        </div>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="detune">Series Reactor (Detuning)</label>
+          <select id="detune" class="input-field mt-2">
+            <option value="0" selected>None (plain capacitors)</option>
+            <option value="0.07">7% detuned</option>
+            <option value="0.14">14% detuned</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="freq">Supply Frequency</label>
+          <select id="freq" class="input-field mt-2">
+            <option value="50" selected>50 Hz</option>
+            <option value="60">60 Hz</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-5 pt-5 border-t border-gray-100">
+        <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Resonance &amp; Harmonic Screening (optional)</span>
+        <p class="text-xs text-gray-500 mt-1 mb-4">Enter the supply transformer to estimate where the capacitor bank resonates with the network.</p>
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="trKVA">Transformer (kVA)</label>
+            <input id="trKVA" type="number" value="" step="any" min="0" max="100000" placeholder="blank = skip" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="trZ">Transformer %Z</label>
+            <input id="trZ" type="number" value="5" step="0.1" min="1" max="20" class="input-field mt-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide" for="nonLinear">Non-linear Load</label>
+            <select id="nonLinear" class="input-field mt-2">
+              <option value="low" selected>Low</option>
+              <option value="some">Moderate</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <div id="validationBox" role="alert" class="hidden bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-4 py-3 mb-5"></div>
 
       <button onclick="calculateAPFC()" class="w-full bg-brandBlue hover:bg-sky-600 text-white font-semibold text-sm py-3.5 rounded-lg shadow transition">
@@ -513,20 +580,22 @@
       <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-2">
         <span class="formula-chip">kVAr = kW × (tanφ₁ − tanφ₂)</span>
         <span class="formula-chip">φ = cos⁻¹(PF)</span>
+        <span class="formula-chip">Q_rated = Q × (Vn ÷ V)² × (1 − p)</span>
+        <span class="formula-chip">h_res ≈ √(S_sc ÷ Q)</span>
       </div>
     </div>
 
     <!-- RESULT PANEL -->
-    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4">
+    <div id="resultPanel" class="lg:col-span-2 flex flex-col gap-4" role="status" aria-live="polite">
       <div class="result-tile rounded-2xl p-6 text-white relative overflow-hidden">
         <div class="absolute -right-6 -top-6 w-28 h-28 rounded-full fund-badge opacity-20"></div>
-        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400">Required Capacitor</span>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-sky-400">Required Correction at System Voltage</span>
         <div id="rResult" class="font-display font-bold text-3xl mt-1" aria-live="polite">— kVAr</div>
         <p class="text-xs text-gray-400 mt-1" id="resultSub">Enter your details and hit calculate</p>
 
         <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-3">
           <div>
-            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Next Common Bank Size</span>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Next Common Bank (Nameplate)</span>
             <span id="rStandard" class="font-display font-semibold text-lg" aria-live="polite">— kVAr</span>
           </div>
           <div>
@@ -541,6 +610,21 @@
             <span id="rKvaCompare" class="font-display font-semibold text-lg">— → —</span>
           </div>
         </div>
+        <div class="mt-3 pt-3 border-t border-white/10 grid grid-cols-2 gap-3">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Nameplate kVAr Needed</span>
+            <span id="rNameplate" class="font-display font-semibold text-lg">— kVAr</span>
+          </div>
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-gray-500 block">Bank Current at System V</span>
+            <span id="rBankI" class="font-display font-semibold text-lg">— A</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 p-4">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500 mb-2 block">Voltage, Resonance &amp; Overcorrection Checks</span>
+        <div id="rChecks" class="text-sm text-gray-600 leading-relaxed space-y-2"><p>Enter your values and hit calculate.</p></div>
       </div>
 
     </div>
@@ -610,7 +694,7 @@
     <div class="not-prose author-box bg-white rounded-xl p-4 md:p-5 mb-6 text-sm text-gray-600 space-y-1">
       <p>Created by <a href="/about" class="text-sky-600 underline">Umasankar Maity</a> — B.Tech in Electrical Engineering, with 11+ years of industrial experience.</p>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: August 2026 &nbsp;|&nbsp; Engineering terminology and calculations follow commonly used power-factor correction methods; final equipment selection should be checked against applicable IEC, IEEE, NEC, BIS, or other local requirements.</p>
+      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Capacitor ratings per IEC 60831-1 concepts (rated voltage, 1.3× overcurrent allowance); detuning and resonance screening use the standard p-factor and short-circuit-power relations. Engineering terminology and calculations follow commonly used power-factor correction methods; final equipment selection should be checked against applicable IEC, IEEE, NEC, BIS, or other local requirements.</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Understanding APFC Capacitor Sizing</h2>
@@ -648,8 +732,15 @@ tanφ₂ = tangent of the target power-factor angle</div>
       <p><strong>Step 1 — Find the angles.</strong> φ₁ = cos⁻¹(0.75) ≈ 41.41°, and φ₂ = cos⁻¹(0.95) ≈ 18.19°.</p>
       <p><strong>Step 2 — Find the tangents.</strong> tanφ₁ ≈ 0.882, and tanφ₂ ≈ 0.329.</p>
       <p><strong>Step 3 — Apply the formula.</strong> Capacitor kVAr = 100 × (0.882 − 0.329) ≈ 55.3 kVAr.</p>
-      <p><strong>Step 4 — Round to the nearest standard size.</strong> Since APFC capacitor banks are supplied in fixed steps (5, 10, 15, 20, 25, 30, 40, 50, 60, 75, 100 kVAr and larger), the nearest standard size at or above 55.3 kVAr is a <strong>60 kVAr</strong> capacitor bank.</p>
-      <p><strong>Step 5 — Check the kVA reduction.</strong> Before correction, kVA = 100 ÷ 0.75 ≈ 133.3 kVA. After correction, kVA = 100 ÷ 0.95 ≈ 105.3 kVA. That's a reduction of roughly 28 kVA for the same 100 kW of real load — capacity that's now freed up on the transformer and incoming cables without adding a single extra kW of actual work.</p>
+      <p><strong>Step 4 — Convert to the capacitor nameplate rating.</strong> A capacitor&rsquo;s kVAr is stated at its rated voltage and falls with the square of the applied voltage. A unit rated 440 V on a 415 V system delivers only (415 ÷ 440)² ≈ 0.89 of its nameplate kVAr, so the nameplate rating needed is 55.3 × (440 ÷ 415)² ≈ <strong>62.2 kVAr</strong>. (With 415 V-rated capacitors it would stay 55.3 kVAr.)</p>
+      <p><strong>Step 5 — Round to a common bank size.</strong> Since APFC capacitor banks are supplied in fixed steps (5, 10, 15, 20, 25, 30, 40, 50, 60, 75, 100 kVAr and larger), the next common size at or above 62.2 kVAr nameplate is a <strong>75 kVAr, 440 V</strong> bank &mdash; a 60 kVAr, 440 V bank would deliver only about 53.4 kVAr at 415 V and fall short. A 60 kVAr bank would suffice only if it were rated at 415 V.</p>
+      <p><strong>Step 6 — Check the kVA reduction.</strong> Before correction, kVA = 100 ÷ 0.75 ≈ 133.3 kVA. After correction, kVA = 100 ÷ 0.95 ≈ 105.3 kVA. That's a reduction of roughly 28 kVA for the same 100 kW of real load — capacity that's now freed up on the transformer and incoming cables without adding a single extra kW of actual work.</p>
+
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Capacitor Rated Voltage, Detuning Reactors and Resonance</h3>
+      <p><strong>Rated voltage.</strong> Capacitor output is Q = V² &divide; X<sub>C</sub>, so it scales with the square of the applied voltage. Capacitors are usually rated above the nominal system voltage &mdash; for example 440 V, 480 V or 525 V units on a 400&ndash;415 V system &mdash; to give margin for supply overvoltage and harmonic voltage, which extends their life. The price is lower output: the nameplate kVAr must be scaled up by (V<sub>n</sub> &divide; V)² to deliver the required correction. This calculator shows both the correction needed at system voltage and the nameplate kVAr to order.</p>
+      <p><strong>Detuned reactors.</strong> A reactor in series with each step, sized as a fraction p of the capacitor reactance, tunes the combination below the lowest significant harmonic: f<sub>tune</sub> = f &divide; &radic;p, which is 189 Hz for 7% and 134 Hz for 14% on a 50 Hz system. The reactor raises the voltage across the capacitor to V &divide; (1 &minus; p) &mdash; about 7.5% higher for 7% detuning &mdash; which is why detuned banks use capacitors rated 480&ndash;525 V on 400&ndash;415 V systems. It also changes the delivered output: Q<sub>delivered</sub> = Q<sub>rated</sub> &times; (V &divide; V<sub>n</sub>)² &divide; (1 &minus; p). The calculator applies both effects. 7% detuning is the common choice where the 5th harmonic dominates (six-pulse drives); 14% is used where significant 3rd harmonic is present, typically from single-phase non-linear loads.</p>
+      <p><strong>Parallel resonance.</strong> Without reactors, the capacitor bank and the supply transformer form a parallel resonant circuit at roughly h &asymp; &radic;(S<sub>sc</sub> &divide; Q), where S<sub>sc</sub> is the short-circuit power at the bus (about transformer kVA &times; 100 &divide; %Z) and Q the connected capacitor kVAr. As APFC steps switch in, h sweeps downward; if it passes near a harmonic that the load produces &mdash; typically the 5th, 7th, 11th or 13th &mdash; harmonic currents are amplified, capacitors overheat and fuses blow. The calculator estimates this range from the first step to the full bank and flags it when drive or UPS load is present. It is a screening estimate: a harmonic measurement or study is needed for the final design.</p>
+      <p><strong>Overcorrection and voltage rise.</strong> Switching a large bank onto a lightly loaded transformer raises the bus voltage by roughly Q &divide; S<sub>sc</sub> &times; 100 percent, and a bank that stays connected when load falls pushes the power factor leading. Automatic step control, a target below unity, and not leaving fixed capacitance larger than the no-load reactive demand prevent both.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Why Power Factor Correction Matters</h3>
       <p>Many commercial and industrial electricity tariffs use power factor, apparent-power demand, or reactive-energy charges to influence the cost of a poor power factor, though the exact mechanism and threshold vary by utility and jurisdiction. Beyond tariff considerations, a poor power factor also means higher current for the same real power, which increases I²R losses in cables and transformer windings, causes larger voltage drops, and can force premature upgrades of transformers, cables, and switchgear that would otherwise have had sufficient headroom.</p>
@@ -662,6 +753,7 @@ tanφ₂ = tangent of the target power-factor angle</div>
         <li><strong>Enter your connected load in kW</strong> — this should be the real, active power drawn by the load or facility, typically available from an energy meter or electricity bill.</li>
         <li><strong>Enter your current power factor</strong> — also usually available from the energy meter, electricity bill, or a power quality analyzer reading. It will be a decimal value less than 1, such as 0.75 or 0.80.</li>
         <li><strong>Enter your target power factor</strong> — the power factor you want to achieve; 0.95 or higher is a commonly used target, though the exact threshold that avoids tariff-related charges depends on your utility and contract. Click <em>Calculate Capacitor kVAr</em> to get the required kVAr, the nearest standard capacitor bank size, and the resulting kVA reduction.</li>
+        <li><strong>Enter the system and capacitor rated voltages and any detuning reactor</strong> so the nameplate kVAr to order is corrected for voltage and reactor effects, and optionally the supply transformer kVA and %Z to screen for resonance and voltage rise.</li>
       </ol>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Common Mistakes When Sizing APFC Capacitors</h3>
@@ -669,7 +761,7 @@ tanφ₂ = tangent of the target power-factor angle</div>
         <li><strong>Using nameplate kW instead of actual metered kW.</strong> A motor's nameplate rating is its maximum design output, not what it's actually drawing on average — always size correction around real, metered load data where possible.</li>
         <li><strong>Correcting to unity power factor (1.0).</strong> Overcorrection risks pushing the power factor leading rather than lagging during light-load periods, which some tariffs or grid requirements also charge for or limit, and which can cause voltage rise on the bus — most designs target 0.95 to 0.98, not 1.0.</li>
         <li><strong>Ignoring load variation.</strong> A fixed capacitor bank sized for full load will overcorrect during low-load periods; this is why real APFC panels use automatic step switching (hence "Automatic" in APFC) rather than a single fixed capacitor.</li>
-        <li><strong>Skipping harmonic assessment.</strong> Facilities with variable-frequency drives, UPS systems, or other non-linear loads generating harmonics need detuned reactors in series with the capacitors to avoid resonance — this calculator does not account for harmonic filtering.</li>
+        <li><strong>Skipping harmonic assessment.</strong> Facilities with variable-frequency drives, UPS systems, or other non-linear loads generating harmonics need detuned reactors in series with the capacitors to avoid resonance — this calculator screens the resonance range and applies the reactor&rsquo;s effect on kVAr, but does not design harmonic filters.</li>
       </ul>
     </div>
 
@@ -699,7 +791,7 @@ tanφ₂ = tangent of the target power-factor angle</div>
 
 Where: tanφ₁ = tangent of current PF angle, tanφ₂ = tangent of target PF angle</div>
 
-      <p><span class="font-semibold text-amber-600">Example:</span> Load = 100 kW, current PF = 0.75, target PF = 0.95. φ₁ = cos⁻¹(0.75) ≈ 41.41°, φ₂ = cos⁻¹(0.95) ≈ 18.19°. tanφ₁ ≈ 0.882, tanφ₂ ≈ 0.329. kVAr = 100 × (0.882 − 0.329) ≈ <strong>55.3 kVAr</strong>. Select the nearest standard size → <strong>60 kVAr</strong> capacitor bank, which also drops the apparent power from about 133 kVA down to roughly 105 kVA for the same 100 kW real load.</p>
+      <p><span class="font-semibold text-amber-600">Example:</span> Load = 100 kW, current PF = 0.75, target PF = 0.95. φ₁ = cos⁻¹(0.75) ≈ 41.41°, φ₂ = cos⁻¹(0.95) ≈ 18.19°. tanφ₁ ≈ 0.882, tanφ₂ ≈ 0.329. kVAr = 100 × (0.882 − 0.329) ≈ <strong>55.3 kVAr</strong>. At 415 V this needs about 62.2 kVAr of 440 V-rated nameplate capacity, so the next common bank is <strong>75 kVAr (440 V)</strong>, or 60 kVAr if 415 V-rated units are used; the correction which also drops the apparent power from about 133 kVA down to roughly 105 kVA for the same 100 kW real load.</p>
     </div>
 
     <p class="text-xs text-gray-400 mt-6">Reference: The power-triangle relationship used here is the standard method taught across electrical engineering courses and applied in industrial power factor correction panel design. This calculator is for preliminary, educational sizing only and does not replace a detailed harmonic and resonance study for the final APFC panel design.</p>
@@ -726,7 +818,7 @@ Where: tanφ₁ = tangent of current PF angle, tanφ₂ = tangent of target PF a
         </tbody>
       </table>
     </div>
-    <p class="text-xs text-gray-400 mb-6">Rated current shown is for a 415 V three-phase capacitor bank. These are indicative values only; final contactor, fuse, cable, and protection selection must follow the capacitor manufacturer's data and applicable standards — including the standard capacitor inrush current multiplier (commonly 1.3–1.5× rated current for a plain contactor, or use dedicated capacitor-duty contactors) and any series detuned reactor.</p>
+    <p class="text-xs text-gray-400 mb-6">Rated current shown is for a 415 V three-phase capacitor bank. These are indicative values only; final contactor, fuse, cable, and protection selection must follow the capacitor manufacturer's data and applicable standards — including a current allowance of about 1.3–1.5× rated current for fuses, switching devices and cables (IEC 60831-1 permits capacitors to carry 1.3× rated current continuously, to cover harmonics and overvoltage, plus capacitance tolerance), and capacitor-duty contactors with damping resistors to limit the very high switching inrush of back-to-back steps. Rated current also depends on the capacitor&rsquo;s rated voltage and any series detuned reactor.</p>
     <p class="prose prose-sm max-w-none text-gray-600 leading-relaxed">For example, a panel needing to correct up to 130 kVAr total might be built from a fixed 50 kVAr base capacitor plus four 20 kVAr switched steps, giving fine control between 50 and 130 kVAr in 20 kVAr increments — rather than one oversized fixed 130 kVAr bank that cannot track a varying load without risking overcorrection during light-load hours.</p>
   </div>
 </section>
@@ -792,6 +884,14 @@ Where: tanφ₁ = tangent of current PF angle, tanφ₂ = tangent of target PF a
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why is the capacitor bank size larger than the calculated kVAr?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Because capacitor kVAr is rated at the capacitor’s own rated voltage and falls with the square of the applied voltage. A 440 V-rated capacitor on a 415 V supply gives only about 89% of its nameplate kVAr, so to deliver 55.3 kVAr you need about 62.2 kVAr of nameplate capacity — the next common size being 75 kVAr. Higher-rated capacitors last longer under overvoltage and harmonics, which is why they are commonly used despite the lower output.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
         Can I overcorrect and get a "leading" power factor?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
@@ -827,7 +927,15 @@ Where: tanφ₁ = tangent of current PF angle, tanφ₂ = tangent of target PF a
         Do I need detuned reactors with my capacitor bank?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">If your facility has significant harmonic-generating loads — VFDs, UPS systems, LED lighting drivers, or arc/induction furnaces — yes. Plain capacitors can resonate with these harmonics and fail prematurely or overheat; detuned reactors (typically tuned to 189 Hz / 7% or 134 Hz / 14%) block this resonance and protect the capacitor bank.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">If your facility has significant harmonic-generating loads — VFDs, UPS systems, LED lighting drivers, or arc/induction furnaces — usually yes. Plain capacitors form a resonant circuit with the supply transformer, and if that resonance falls near a harmonic the load produces, harmonic currents are amplified and capacitors overheat. Detuned reactors (typically 7%, tuned to 189 Hz, or 14%, tuned to 134 Hz, on 50 Hz systems) move the resonance below the 5th or 3rd harmonic. They raise the capacitor voltage to V ÷ (1 − p), so detuned banks need higher-voltage capacitors, and they change the delivered kVAr — which this calculator accounts for.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        How do I know if my capacitor bank could cause resonance?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Estimate the resonant harmonic order as h ≈ √(Ssc ÷ Q), with Ssc the short-circuit power at the bus (about transformer kVA × 100 ÷ %Z) and Q the connected capacitor kVAr. As steps switch in, h falls; if it passes near the 5th, 7th, 11th or 13th harmonic while drives or UPS systems are running, resonance is likely. This calculator shows that range when you enter the transformer data. Confirm with a harmonic measurement before finalizing plain (non-detuned) capacitors.</p>
     </details>
 
     <details class="py-5">
@@ -860,59 +968,132 @@ Where: tanφ₁ = tangent of current PF angle, tanφ₂ = tangent of target PF a
 
   // ===== APFC Capacitor Calculator Logic =====
   const standardSizes = [5,10,15,20,25,30,40,50,60,75,100,125,150,200];
+  const FIRST_STEP_FRACTION = 0.2;   // resonance sweep evaluated from ~first step to full bank
+
+  function numOrNull(id){ const r = document.getElementById(id).value; return r === '' ? null : parseFloat(r); }
+
+  function blankAPFC(){
+    document.getElementById('rResult').textContent = '— kVAr';
+    document.getElementById('rStandard').textContent = '— kVAr';
+    document.getElementById('rKvaSaving').textContent = '— kVA';
+    document.getElementById('rKvaCompare').textContent = '— → —';
+    document.getElementById('rNameplate').textContent = '— kVAr';
+    document.getElementById('rBankI').textContent = '— A';
+    document.getElementById('rChecks').innerHTML = '<p>Fix the input errors above to see the checks.</p>';
+  }
 
   function calculateAPFC(){
     const kw  = parseFloat(document.getElementById('kw').value);
     const pf1 = parseFloat(document.getElementById('pf1').value);
     const pf2 = parseFloat(document.getElementById('pf2').value);
+    const V   = parseFloat(document.getElementById('sysV').value);
+    const Vn  = parseFloat(document.getElementById('capV').value);
+    const p   = parseFloat(document.getElementById('detune').value);
+    const f   = parseFloat(document.getElementById('freq').value);
+    const trKVA = numOrNull('trKVA');
+    const trZ = parseFloat(document.getElementById('trZ').value);
+    const nonLinear = document.getElementById('nonLinear').value;
 
     const validationBox = document.getElementById('validationBox');
     const errors = [];
-
-    if(isNaN(kw) || kw <= 0){ errors.push('Enter a valid load greater than 0 kW.'); }
-    if(isNaN(pf1) || pf1 < 0.1 || pf1 > 0.99){ errors.push('Enter a valid current power factor between 0.1 and 0.99.'); }
-    if(isNaN(pf2) || pf2 < 0.1 || pf2 > 0.999){ errors.push('Enter a valid target power factor between 0.1 and 0.999.'); }
+    if(!Number.isFinite(kw) || kw <= 0 || kw > 100000){ errors.push('Enter a valid load greater than 0 and up to 100,000 kW.'); }
+    if(!Number.isFinite(pf1) || pf1 < 0.1 || pf1 > 0.99){ errors.push('Enter a valid current power factor between 0.1 and 0.99.'); }
+    if(!Number.isFinite(pf2) || pf2 < 0.1 || pf2 > 0.999){ errors.push('Enter a valid target power factor between 0.1 and 0.999.'); }
     if(!errors.length && pf2 <= pf1){ errors.push('Target power factor must be greater than the current power factor.'); }
+    if(!Number.isFinite(V) || V < 100 || V > 1000){ errors.push('System voltage must be between 100 V and 1000 V.'); }
+    if(!Number.isFinite(Vn) || Vn < 100 || Vn > 1200){ errors.push('Capacitor rated voltage must be between 100 V and 1200 V.'); }
+    if(trKVA !== null && (!Number.isFinite(trKVA) || trKVA < 0 || trKVA > 100000)){ errors.push('Transformer kVA must be between 0 and 100,000, or left blank.'); }
+    if(!Number.isFinite(trZ) || trZ < 1 || trZ > 20){ errors.push('Transformer %Z must be between 1% and 20%.'); }
 
     if(errors.length){
       validationBox.classList.remove('hidden');
       validationBox.innerHTML = errors.map(e => '• ' + e).join('<br>');
-      document.getElementById('rResult').textContent = '— kVAr';
-      document.getElementById('rStandard').textContent = '— kVAr';
-      document.getElementById('rKvaSaving').textContent = '— kVA';
-      document.getElementById('rKvaCompare').textContent = '— → —';
+      blankAPFC();
       return;
-    } else {
-      validationBox.classList.add('hidden');
-      validationBox.innerHTML = '';
     }
+    validationBox.classList.add('hidden');
+    validationBox.innerHTML = '';
 
     const phi1 = Math.acos(pf1);
     const phi2 = Math.acos(pf2);
-    const kvar = kw * (Math.tan(phi1) - Math.tan(phi2));
+    const kvar = kw * (Math.tan(phi1) - Math.tan(phi2));          // needed at system voltage
+    // Nameplate kVAr at capacitor rated voltage, including series reactor effect
+    const nameplate = kvar * Math.pow(Vn / V, 2) * (1 - p);
+    const bankI = kvar * 1000 / (Math.sqrt(3) * V);
 
     const maxStandard = standardSizes[standardSizes.length - 1];
-    const recommended = standardSizes.find(size => size >= kvar);
+    const recommended = standardSizes.find(size => size >= nameplate - 1e-9);
 
     const kvaOriginal = kw / pf1;
     const kvaCorrected = kw / pf2;
     const kvaSaving = kvaOriginal - kvaCorrected;
 
     document.getElementById('rResult').textContent = kvar.toFixed(2) + ' kVAr';
-    document.getElementById('resultSub').textContent = `Correcting from PF ${pf1} to PF ${pf2}`;
+    document.getElementById('resultSub').textContent = `Correcting from PF ${pf1} to PF ${pf2} at ${V} V`;
+    document.getElementById('rNameplate').textContent = nameplate.toFixed(1) + ' kVAr @ ' + Vn + ' V';
+    document.getElementById('rBankI').textContent = bankI.toFixed(1) + ' A';
     document.getElementById('rStandard').textContent = recommended
-      ? recommended + ' kVAr'
+      ? recommended + ' kVAr @ ' + Vn + ' V'
       : `Above ${maxStandard} kVAr — multiple banks/steps required`;
     document.getElementById('rKvaSaving').textContent = kvaSaving.toFixed(2) + ' kVA';
     document.getElementById('rKvaCompare').textContent = kvaOriginal.toFixed(1) + ' → ' + kvaCorrected.toFixed(1) + ' kVA';
+
+    // ---- Checks ----
+    const checks = [];
+    const vfac = Math.pow(V / Vn, 2);
+    if (Math.abs(Vn - V) > 1e-9 || p > 0){
+      checks.push('ℹ️ Nameplate conversion: ' + kvar.toFixed(1) + ' kVAr × (' + Vn + ' ÷ ' + V + ')²' + (p > 0 ? ' × (1 − ' + p + ')' : '') + ' = ' + nameplate.toFixed(1) + ' kVAr. ' +
+        (recommended ? 'A ' + recommended + ' kVAr, ' + Vn + ' V bank delivers about ' + (recommended * vfac / (1 - p)).toFixed(1) + ' kVAr at ' + V + ' V.' : ''));
+    }
+    const vCap = V / (1 - p);
+    if (Vn < vCap - 1e-9){
+      checks.push('⚠️ Capacitor rated voltage (' + Vn + ' V) is below the steady voltage across it (' + vCap.toFixed(0) + ' V' + (p > 0 ? ', raised by the reactor' : '') + '). Choose a higher-voltage capacitor.');
+    } else if (Vn < 1.1 * vCap){
+      checks.push('ℹ️ Capacitor voltage margin is ' + ((Vn / vCap - 1) * 100).toFixed(1) + '% over the steady ' + vCap.toFixed(0) + ' V across it. Detuned and harmonic-rich installations commonly use more margin (e.g. 480–525 V units on 400–415 V systems).');
+    }
+    if (p > 0){
+      const ft = f / Math.sqrt(p);
+      checks.push('ℹ️ ' + (p * 100).toFixed(0) + '% detuning tunes each step to about ' + ft.toFixed(0) + ' Hz (' + (ft / f).toFixed(2) + ' × fundamental)' +
+        (p < 0.1 ? ' — below the 5th harmonic; if significant 3rd harmonic is present (single-phase non-linear loads), consider 14%.' : ' — below the 3rd harmonic.'));
+    }
+    if (trKVA !== null && trKVA > 0){
+      const ssc = trKVA * 100 / trZ;
+      const vRise = 100 * kvar / ssc;
+      if (p === 0){
+        const hFull = Math.sqrt(ssc / kvar);
+        const hFirst = Math.sqrt(ssc / (kvar * FIRST_STEP_FRACTION));
+        const hits = [5,7,11,13].filter(function(n){ return hFull <= n * 1.1 && hFirst >= n * 0.9; });
+        const base = 'Estimated parallel resonance sweeps from about h ≈ ' + hFirst.toFixed(1) + ' (first ~20% step) down to h ≈ ' + hFull.toFixed(1) + ' (full bank), with S_sc ≈ ' + (ssc / 1000).toFixed(1) + ' MVA.';
+        if (hits.length && nonLinear !== 'low'){
+          checks.push('⚠️ ' + base + ' This passes near the ' + hits.map(function(n){ return n + 'th'; }).join(', ') + ' harmonic with non-linear load present — resonance risk. Use detuned reactors or confirm with a harmonic study.');
+        } else if (hits.length){
+          checks.push('ℹ️ ' + base + ' It passes near the ' + hits.map(function(n){ return n + 'th'; }).join(', ') + ' harmonic; acceptable only while harmonic sources stay small — reassess if drives or UPS load are added.');
+        } else {
+          checks.push((nonLinear === 'high' ? 'ℹ️ ' : '✅ ') + base + ' No 5th/7th/11th/13th crossing in this range' + (nonLinear === 'high' ? ', but with high non-linear load a harmonic study is still advisable.' : '.'));
+        }
+      }
+      checks.push((vRise > 3 ? '⚠️ ' : 'ℹ️ ') + 'Switching the full bank onto a lightly loaded ' + trKVA + ' kVA transformer raises the bus voltage by about ' + vRise.toFixed(1) + '%' + (vRise > 3 ? ' — use smaller steps and avoid large fixed capacitance.' : '.'));
+    } else if (p === 0 && nonLinear !== 'low'){
+      checks.push('⚠️ Non-linear load with plain capacitors: enter the transformer kVA and %Z to screen for resonance, or consider detuned reactors.');
+    } else {
+      checks.push('ℹ️ Resonance not screened — enter the supply transformer kVA and %Z.');
+    }
+    if (pf2 >= 0.99){
+      checks.push('⚠️ Target PF ' + pf2 + ' leaves almost no margin: at light load the power factor can go leading. Most designs target 0.95–0.98 with automatic step switching.');
+    }
+    checks.push('ℹ️ Size fuses, contactors and cables for about 1.3–1.5 × the bank current (≈ ' + (bankI * 1.3).toFixed(0) + '–' + (bankI * 1.5).toFixed(0) + ' A at full output) and use capacitor-duty contactors for switched steps.');
+    document.getElementById('rChecks').innerHTML = checks.map(function(c){ return '<p>' + c + '</p>'; }).join('');
   }
 
   // run once on load with default values
   calculateAPFC();
 
   // Live auto-recalculate as the user types, in addition to the Calculate button.
-  ['kw','pf1','pf2'].forEach(function(id){
+  ['kw','pf1','pf2','sysV','capV','trKVA','trZ'].forEach(function(id){
     document.getElementById(id).addEventListener('input', calculateAPFC);
+  });
+  ['detune','freq','nonLinear'].forEach(function(id){
+    document.getElementById(id).addEventListener('change', calculateAPFC);
   });
 </script>
 

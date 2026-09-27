@@ -110,6 +110,14 @@
     },
     {
       "@type": "Question",
+      "name": "Is the HP-based capacitor size an exact value for my motor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. It is an estimate from typical ranges for common single-phase motor designs. The correct capacitance is set by the design of the motor’s auxiliary winding, so the value on the nameplate, the original capacitor or the equipment wiring diagram always governs. Use the estimate only to get an unmarked motor running, then check running current and capacitor temperature and fit the specified value as soon as it is known."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "What is the difference between a start capacitor and a run capacitor?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -169,7 +177,15 @@
       "name": "Is a motor capacitor the same as a power factor correction capacitor?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. A motor start or run capacitor is part of a single-phase motor's own starting and running circuit and is sized in µF for that winding. Power factor correction capacitors are connected across the supply to offset the reactive power of inductive loads and are sized in kVAr — use the APFC calculator for that."
+        "text": "No. A motor start or run capacitor is part of a single-phase motor’s own starting and running circuit and is sized in µF for that winding. Power factor correction capacitors are connected across the supply to offset the reactive power of inductive loads and are sized in kVAr — use the APFC calculator for that. Where correction capacitors are connected directly at a three-phase motor’s terminals, their kVAr must stay below the motor’s no-load magnetising kVAr (often expressed as a capacitor current of no more than about 90% of no-load current) to avoid self-excitation after switch-off."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I size a capacitor to run a three-phase motor on single-phase power?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Not with this calculator. A capacitor phase-shifting arrangement (a Steinmetz connection) can run a small three-phase motor from single-phase supply, but only at a substantially reduced output and with unbalanced winding currents, and the capacitor value depends on the motor’s impedance and load. A purpose-built phase converter or a single-phase-input VFD is usually the better choice."
       }
     }
   ]
@@ -775,6 +791,15 @@
         <p class="text-xs text-gray-500 text-center mt-2">CSCR wiring: the run capacitor stays in series with the auxiliary winding at all times; the start capacitor adds extra capacitance in parallel for starting and is switched out by the centrifugal switch (or a start relay on many compressors) as the motor nears full speed. Simplified conceptual schematic &mdash; overload protection and terminal markings are omitted, and actual motor terminal connections vary by manufacturer and motor design.</p>
       </div>
 
+      <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Assumptions and Limitations of the Size-by-HP Estimate</h3>
+      <p>The Size by HP result is an <strong>estimate from typical ranges, not a sizing calculation</strong>. There is no universal formula that gives a single-phase motor&rsquo;s capacitor from its horsepower: the correct value is set by the turns, wire size and resistance of that motor&rsquo;s auxiliary winding, which the calculator cannot know. The estimate assumes:</p>
+      <ul class="list-disc pl-5 space-y-1">
+        <li>a conventional single-phase induction motor of the selected type (CSCR, PSC or capacitor-start), within the 1/8&ndash;5 HP table range;</li>
+        <li>typical ranges compiled for 208&ndash;240 V, 60 Hz designs, scaled by illustrative factors for 110&ndash;120 V and for 50 Hz &mdash; the factors are screening adjustments, not design rules;</li>
+        <li>standard capacitor markings as commonly stocked, so the start result is the nearest marked range rather than a computed value.</li>
+      </ul>
+      <p>Do not rely on the estimate for: hermetic compressors and HVAC equipment (use the equipment data plate or wiring diagram), special-purpose or high-efficiency motors, two-value designs with unusual windings, three-phase motors of any kind, or any motor whose original capacitor marking can still be read. If the estimate is used to get a motor running, check the running current against the nameplate full-load current and the capacitor temperature after a period of operation, and replace the capacitor with the specified value as soon as it is known.</p>
+
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Start Capacitor vs Run Capacitor</h3>
       <div class="not-prose mc-table-wrap my-4">
         <table class="mc-table">
@@ -818,7 +843,7 @@
   <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Sizing Chart &amp; Replacement</span>
   <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Typical Motor Capacitor Ranges by HP, and How to Replace One</h2>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-    <p>The chart below uses the same data and adjustments as the calculator, for 208&ndash;240 V motors at both 60 Hz and 50 Hz. Run values are typical ranges; start values are the nearest standard start-capacitor marking. Motors for 110&ndash;120 V use larger values &mdash; select that voltage in the calculator to see them.</p>
+    <p><strong>Estimated values only &mdash; not a sizing standard.</strong> The chart below uses the same data and adjustments as the calculator, for 208&ndash;240 V motors at both 60 Hz and 50 Hz. Run values are typical ranges; start values are the nearest standard start-capacitor marking. Motors for 110&ndash;120 V use larger values &mdash; select that voltage in the calculator to see them.</p>
     <div class="not-prose mc-table-wrap my-4">
       <table class="mc-table">
         <thead><tr><th>Motor HP</th><th>Run µF (60 Hz)</th><th>Run µF (50 Hz)</th><th>Start µF (60 Hz)</th><th>Start µF (50 Hz)</th></tr></thead>
@@ -845,6 +870,10 @@
     <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Dual Run Capacitors (C, HERM, FAN)</h3>
     <p>Air-conditioner and heat-pump outdoor units often use a dual run capacitor: two capacitors in one can, sharing a common terminal. <strong>C</strong> is the common, <strong>HERM</strong> feeds the hermetic compressor, and <strong>FAN</strong> feeds the condenser fan motor. It is marked with two values, such as 35/5 µF &mdash; the first for the compressor, the second for the fan. A replacement must match both values; a higher voltage rating is generally acceptable. Where the equipment manufacturer or a qualified technician permits substitution, separate correctly rated capacitors can be used to reproduce the required C&ndash;HERM and C&ndash;FAN values &mdash; follow the equipment wiring diagram and the manufacturer's requirements.</p>
 
+    <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Three-Phase Motors: What This Calculator Does Not Cover</h3>
+    <p><strong>Power factor correction at a three-phase motor.</strong> Capacitors connected at the terminals of a three-phase induction motor are sized in kVAr, not from a µF-per-HP chart. The limiting factor is self-excitation: if the capacitor kVAr exceeds the motor&rsquo;s no-load magnetising kVAr, the motor can act as an induction generator after it is switched off, producing overvoltage and a damaging out-of-phase condition on a quick restart. Common practice keeps terminal-connected correction below the no-load magnetising requirement &mdash; often expressed as a capacitor current of no more than about 90% of the motor&rsquo;s no-load current &mdash; and follows the motor manufacturer&rsquo;s maximum kVAr where one is published. Motors that are reversed, plugged, jogged, restarted rapidly or driven by a VFD should not have terminal capacitors at all; central or group correction is used instead, as covered by the APFC calculator.</p>
+    <p><strong>Running a three-phase motor on a single-phase supply.</strong> A static phase-converter arrangement using a capacitor across one winding (often called a Steinmetz connection) can run a small three-phase motor from a single-phase supply, but at a substantially reduced output and with unbalanced winding currents. Capacitor values for that arrangement depend on the motor&rsquo;s impedance and load and are not produced by this calculator; a purpose-built phase converter or a single-phase-input VFD is usually the better route.</p>
+
     <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Replacing a Failed Motor Capacitor Safely</h3>
     <ol class="mc-steps">
       <li><strong>Isolate and lock off the supply.</strong> Switching the motor off at a local control is not enough &mdash; open the isolator and prove the circuit dead.</li>
@@ -867,10 +896,10 @@
       <p><strong>2. Using a start capacitor in a run position, or the reverse.</strong> Electrolytic start capacitors are built for a few seconds of use per start and overheat if left in circuit. Film run capacitors are too small in µF to start a capacitor-start motor. Match the type as well as the value.</p>
       <p><strong>3. Fitting a lower voltage rating than the original.</strong> Equal or higher is fine; lower is not. Remember that the voltage across a run capacitor on a running motor is often higher than the supply voltage.</p>
       <p><strong>4. "Upsizing" a run capacitor for more torque.</strong> Extra run capacitance raises auxiliary-winding current and heating. The motor may seem to start better but run hotter, shortening winding life.</p>
-      <p><strong>5. Using a 60 Hz chart for a 50 Hz motor (or the reverse).</strong> Capacitive reactance depends on frequency, so 50 Hz designs typically need about 20% more capacitance than 60 Hz designs. Many published charts are for 60 Hz only.</p>
+      <p><strong>5. Using a 60 Hz chart for a 50 Hz motor (or the reverse).</strong> Capacitive reactance depends on frequency, so a 50 Hz design is often estimated to need roughly 20% more capacitance than a comparable 60 Hz design &mdash; a screening ratio, since the actual value depends on how the winding was designed for its frequency. Many published charts are for 60 Hz only.</p>
       <p><strong>6. Handling a capacitor without discharging it.</strong> Motor capacitors can hold a charge after the supply is off. Discharge through a resistor and verify with a meter before touching the terminals.</p>
       <p><strong>7. Replacing a start capacitor without checking the start switch or relay.</strong> A switch that sticks closed is a common reason start capacitors fail. Replacing only the capacitor leads to a repeat failure.</p>
-      <p><strong>8. Confusing motor capacitors with power factor correction capacitors.</strong> Motor capacitors are part of the motor's own starting and running circuit and are sized in µF for its winding. Power factor correction capacitors are connected across the supply and sized in kVAr &mdash; a different job entirely.</p>
+      <p><strong>8. Confusing motor capacitors with power factor correction capacitors.</strong> Motor capacitors are part of the motor's own starting and running circuit and are sized in µF for its winding. Power factor correction capacitors are connected across the supply and sized in kVAr &mdash; a different job entirely. On a three-phase motor, terminal-connected correction must also stay below the motor&rsquo;s no-load magnetising kVAr to avoid self-excitation after switch-off.</p>
     </div>
   </div>
 </section>
@@ -912,6 +941,14 @@
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
       <p class="text-sm text-gray-500 mt-3 leading-relaxed">The exact value depends on the design of the motor's auxiliary winding, so it can only be calculated from the manufacturer's design data — which is why the nameplate value is the reference. Without it, estimate from a typical range by HP, supply voltage and frequency, as this calculator does. To find the actual µF of a capacitor already fitted, use C (µF) = I × 10⁶ ÷ (2π × f × V) with the measured capacitor current and voltage.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Is the HP-based capacitor size an exact value for my motor?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No. It is an estimate from typical ranges for common single-phase motor designs. The correct capacitance is set by the design of the motor&rsquo;s auxiliary winding, so the value on the nameplate, the original capacitor or the equipment wiring diagram always governs. Use the estimate only to get an unmarked motor running, then check running current and capacitor temperature and fit the specified value as soon as it is known.</p>
     </details>
 
     <details class="py-5">
@@ -975,8 +1012,16 @@
         Is a motor capacitor the same as a power factor correction capacitor?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No. A motor start or run capacitor is part of a single-phase motor's own starting and running circuit and is sized in µF for that winding. Power factor correction capacitors are connected across the supply to offset the reactive power of inductive loads and are sized in kVAr — use the <a href="/apfc" class="text-sky-600 underline">APFC calculator</a> for that.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">No. A motor start or run capacitor is part of a single-phase motor&rsquo;s own starting and running circuit and is sized in µF for that winding. Power factor correction capacitors are connected across the supply to offset the reactive power of inductive loads and are sized in kVAr &mdash; use the <a href="/apfc" class="text-sky-600 underline">APFC calculator</a> for that. Where correction capacitors are connected directly at a three-phase motor&rsquo;s terminals, their kVAr must stay below the motor&rsquo;s no-load magnetising kVAr (often expressed as a capacitor current of no more than about 90% of no-load current) to avoid self-excitation after switch-off.</p>
     </details>
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can I size a capacitor to run a three-phase motor on single-phase power?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Not with this calculator. A capacitor phase-shifting arrangement (a Steinmetz connection) can run a small three-phase motor from single-phase supply, but only at a substantially reduced output and with unbalanced winding currents, and the capacitor value depends on the motor&rsquo;s impedance and load. A purpose-built phase converter or a single-phase-input VFD is usually the better choice.</p>
+    </details>
+
   </div>
 </section>
 
