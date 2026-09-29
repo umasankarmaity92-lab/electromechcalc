@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderer: "svg",
         loop: true,
         autoplay: !prefersReducedMotion,
-        path: "/assets/electromechcalc-hero.json"
+        path: "/assets/electromechcalc-hero.json?v=2"
       });
 
       // Pause the looping animation whenever nobody can see it — hero
