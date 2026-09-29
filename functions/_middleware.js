@@ -638,23 +638,22 @@ function withCacheStatus(response, status) {
   return out;
 }
 
-export async function onRequest(context) {
-  const url = new URL(context.request.url);
-  const buildId = (context.env && context.env.CF_PAGES_COMMIT_SHA) || "";
-  const assetVersion = buildId.slice(0, 8);
-  const edgeCache = typeof caches !== "undefined" && caches.default ? caches.default : null;
-  const canUseHtmlCache = !!(edgeCache && buildId && context.request.method === "GET");
+// ---------------------------------------------------------------------
+// Per-isolate memo of everything that is identical for every page of
+// one deploy: header (with nav links already spliced in), footer,
+// search index and nav order. Without this, every HTML cache MISS
+// re-fetched 4 files, re-parsed ~125 index entries and rebuilt 6 nav
+// lists, pushing some requests past the free plan's 10 ms CPU limit
+// (error 1102 = 5xx). Keyed by build id so a new deploy never reuses
+// old data; re-validated every SHARED_MEMO_TTL_MS as a safety net.
+// Only a fully successful load is memoised.
+// ---------------------------------------------------------------------
+const SHARED_MEMO_TTL_MS = 300000; // 5 minutes
+let SHARED_MEMO = null;
 
-  if (canUseHtmlCache) {
-    const hit = await edgeCache.match(htmlCacheKey(url, buildId));
-    if (hit) return withCacheStatus(hit, "HIT");
-  }
-
-  const response = await context.next();
-
-  const contentType = response.headers.get("content-type") || "";
-  if (!contentType.includes("text/html")) {
-    return response;
+async function loadSharedParts(context, url, buildId) {
+  if (buildId && SHARED_MEMO && SHARED_MEMO.buildId === buildId && Date.now() - SHARED_MEMO.at < SHARED_MEMO_TTL_MS) {
+    return SHARED_MEMO;
   }
 
   const [headerRes, footerRes, searchIndexRes, navOrderRes] = await Promise.all([
@@ -713,6 +712,35 @@ export async function onRequest(context) {
       headerHTML = headerHTML.replace(`id="${id}"></div>`, `id="${id}">${html}</div>`);
     }
   }
+  const parts = { buildId, at: Date.now(), headerHTML, footerHTML, searchIndex, navOrder };
+  if (buildId && headerHTML && footerHTML && searchIndex.length) SHARED_MEMO = parts;
+  return parts;
+}
+
+export async function onRequest(context) {
+  // Fail open: if anything below throws, Cloudflare serves the plain
+  // static page instead of a 5xx error.
+  context.passThroughOnException();
+
+  const url = new URL(context.request.url);
+  const buildId = (context.env && context.env.CF_PAGES_COMMIT_SHA) || "";
+  const assetVersion = buildId.slice(0, 8);
+  const edgeCache = typeof caches !== "undefined" && caches.default ? caches.default : null;
+  const canUseHtmlCache = !!(edgeCache && buildId && context.request.method === "GET");
+
+  if (canUseHtmlCache) {
+    const hit = await edgeCache.match(htmlCacheKey(url, buildId));
+    if (hit) return withCacheStatus(hit, "HIT");
+  }
+
+  const response = await context.next();
+
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("text/html")) {
+    return response;
+  }
+
+  const { headerHTML, footerHTML, searchIndex, navOrder } = await loadSharedParts(context, url, buildId);
 
   const relatedHTML = buildRelatedCalculatorsHTML(url.pathname, searchIndex);
   const exploreMoreHTML = buildExploreMoreHTML(url.pathname, searchIndex);
