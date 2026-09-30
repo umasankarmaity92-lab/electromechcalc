@@ -39,6 +39,9 @@
 <meta property="og:url" content="https://www.electromechcalc.com/gear-ratio">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
 <meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="en_AU">
+<meta property="og:locale:alternate" content="en_CA">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
@@ -1022,7 +1025,7 @@ Output Torque = Input Torque × Gear Ratio × Efficiency</div>
 Gear Ratio = Driven Pitch Radius ÷ Driver Pitch Radius
 Gear Ratio = Input Speed ÷ Output Speed
 Ideal Torque Ratio = Output Torque ÷ Input Torque   (equals the gear ratio only with no losses)</div>
-      <p><strong>Measure pitch diameter,</strong> not tip diameter. Tips add about one module, which skews small gears most.</p>
+      <p><strong>Measure pitch diameter,</strong> not tip (outside) diameter. On a standard gear the tip diameter is about two modules larger than the pitch diameter (one addendum on each side), which skews small gears most.</p>
 
       <h3 class="text-lg font-display font-semibold text-brandDark mt-8 mb-2">Four Ways to Write a Gear Ratio</h3>
       <p>The 20T → 60T pair can be written as:</p>
@@ -2212,6 +2215,7 @@ Tire Diameter (mm) = 2 × Width × Aspect Ratio ÷ 100 + Rim Diameter (in) × 25
       var warn = '';
       if (s === 'dia' && (base.dia < 0.2 || base.dia > 2)) warn = ' ⚠️ Calculated tire diameter is outside a typical road-vehicle range. Check your inputs and units.';
       if (s === 'rpm' && base.rpm > 20000) warn = ' ⚠️ Calculated engine speed is unusually high. Check your inputs and units.';
+      if (s === 'speed' && base.speed > 139) warn = ' ⚠️ Calculated vehicle speed is unusually high (above about 500 km/h). Check your inputs and units.';
       if (s === 'ratio' && (base.ratio < 0.5 || base.ratio > 60)) warn = ' ⚠️ Calculated overall ratio is outside a typical road-vehicle range. Check your inputs and units.';
       var sub = (s === 'ratio' ? 'Engine turns ' + fmt(base.ratio) + ' times per wheel turn' : 'Using an overall ratio of ' + fmtRatio(base.ratio) + ' : 1') +
         ', assuming no clutch or tire slip.' + warn;
@@ -2497,7 +2501,17 @@ Tire Diameter (mm) = 2 × Width × Aspect Ratio ÷ 100 + Rim Diameter (in) × 25
     var s = document.createElement('script');
     s.src = '/assets/share-modal.js';
     s.onload = function(){ __shareModalLoading = false; openShareModal(); };
-    s.onerror = function(){ __shareModalLoading = false; };
+    s.onerror = function(){
+      __shareModalLoading = false;
+      var url = location.href;
+      if (navigator.share){
+        navigator.share({ title: document.title, url: url }).catch(function(){});
+      } else if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(url).then(function(){ alert('Link copied to clipboard.'); }, function(){ alert(url); });
+      } else {
+        alert(url);
+      }
+    };
     document.head.appendChild(s);
   }
 </script>
