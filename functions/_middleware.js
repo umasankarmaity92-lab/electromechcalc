@@ -333,8 +333,8 @@ function buildRelatedCalculatorsHTML(pathname, index) {
 }
 
 // ---------------------------------------------------------------------
-// "Explore More Categories" — 3 category-hub cards (Electrical /
-// Mechanical / Blog & Guides). Previously hand-duplicated
+// "Explore More Categories" — 4 category-hub cards (Electrical /
+// Mechanical / Financial / Blog & Guides). Previously hand-duplicated
 // into every individual calculator/blog HTML file (as
 // <section id="explore-more">...</section> or, on some blog pages,
 // id="exploreCategoriesSection") — which is exactly how it drifted
@@ -375,7 +375,7 @@ function buildExploreMoreHTML(pathname, index) {
   return `
 <section id="explore-more" class="max-w-6xl mx-auto px-4 pb-16">
   <h2 class="font-display font-semibold text-brandDark text-xl mb-5">Explore More Categories</h2>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
     <a href="/electrical-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
       <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#e0f2fe">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
@@ -392,6 +392,14 @@ function buildExploreMoreHTML(pathname, index) {
       <p class="text-sm text-gray-500">Belt length, bearing life, cooling tower efficiency &amp; more.</p>
       <span class="text-sky-600 text-sm font-medium mt-auto">Browse all &rarr;</span>
     </a>
+    <a href="/financial-calculators" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
+      <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:#dcfce7">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3 class="font-display font-semibold text-brandDark">Financial Calculators</h3>
+      <p class="text-sm text-gray-500">EPF, PPF, SIP, gratuity, income tax, CAGR &amp; more.</p>
+      <span class="text-sky-600 text-sm font-medium mt-auto">Browse all &rarr;</span>
+    </a>
     <a href="/blog-guides" class="calc-card border border-gray-200 rounded-2xl bg-white p-6 flex flex-col items-start gap-2.5">
       <div class="w-11 h-11 rounded-lg flex items-center justify-center" style="background:rgba(167,139,250,0.15)">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -403,22 +411,6 @@ function buildExploreMoreHTML(pathname, index) {
   </div>
 </section>`;
 }
-
-// Breadcrumb link targets. Category hubs must be the REAL hub pages
-// (bare /electrical, /mechanical URLs do not exist). Financial has no
-// hub page, so its crumb renders as plain text.
-const BREADCRUMB_CATEGORY_HUBS = {
-  Electrical: "/electrical-calculators",
-  Mechanical: "/mechanical-calculators",
-  Blog: "/blog-guides",
-};
-
-// Sub-level crumbs, keyed by a search-index.json entry's "subcategory".
-// Add a new key here (and the matching section id on the hub page)
-// before tagging pages with it.
-const BREADCRUMB_SUBCATEGORY_LINKS = {
-  Instrumentation: { label: "Instrumentation", href: "/electrical-calculators#instrumentation" },
-};
 
 // Builds the breadcrumb HTML block for the current page from the
 // same /search-index.json used by search and Related Calculators.
@@ -439,28 +431,10 @@ function buildBreadcrumbHTML(pathname, index) {
 
   // "General" pages (About, Contact, Privacy, etc.) skip the category
   // segment since it isn't a real nav dropdown — go straight to the
-  // page title. The category crumb links to its real hub page when one
-  // exists (bare /electrical etc. are 404s, so never link those).
+  // page title.
   if (current.category && current.category !== "General") {
-    const hub = BREADCRUMB_CATEGORY_HUBS[current.category];
-    const label = escapeHTML(current.category);
     crumbs.push(
-      hub
-        ? `<span class="breadcrumb-sep">&rarr;</span><a href="${hub}" class="breadcrumb-category breadcrumb-link">${label}</a>`
-        : `<span class="breadcrumb-sep">&rarr;</span><span class="breadcrumb-category">${label}</span>`
-    );
-  }
-
-  // Optional sub-level from the index entry's "subcategory" field, e.g.
-  // RTD / thermocouple pages carry "subcategory": "Instrumentation" and
-  // get Home → Electrical → Instrumentation → Page, where
-  // "Instrumentation" jumps to that section of the Electrical hub. Only
-  // subcategories listed in BREADCRUMB_SUBCATEGORY_LINKS are rendered,
-  // so a typo in search-index.json can never produce a broken link.
-  const sub = current.subcategory && BREADCRUMB_SUBCATEGORY_LINKS[current.subcategory];
-  if (sub) {
-    crumbs.push(
-      `<span class="breadcrumb-sep">&rarr;</span><a href="${sub.href}" class="breadcrumb-category breadcrumb-link">${escapeHTML(sub.label)}</a>`
+      `<span class="breadcrumb-sep">&rarr;</span><span class="breadcrumb-category">${escapeHTML(current.category)}</span>`
     );
   }
 
@@ -468,7 +442,7 @@ function buildBreadcrumbHTML(pathname, index) {
     `<span class="breadcrumb-sep">&rarr;</span><span class="breadcrumb-current">${escapeHTML(current.title)}</span>`
   );
 
-  return `<!-- BREADCRUMB_BUILD_v3 --><nav class="breadcrumb-nav" aria-label="Breadcrumb">${crumbs.join("")}</nav>`;
+  return `<!-- BREADCRUMB_BUILD_v2 --><nav class="breadcrumb-nav" aria-label="Breadcrumb">${crumbs.join("")}</nav>`;
 }
 
 // ---------------------------------------------------------------------
@@ -495,6 +469,7 @@ const PRO_STAR_SVG = `<svg class="pro-star-icon" width="13" height="13" viewBox=
 const CATEGORY_HUB_URLS = {
   Electrical: "/electrical-calculators",
   Mechanical: "/mechanical-calculators",
+  Financial: "/financial-calculators",
 };
 
 function orderedEntriesForCategory(categoryName, index, navOrder) {
@@ -638,22 +613,23 @@ function withCacheStatus(response, status) {
   return out;
 }
 
-// ---------------------------------------------------------------------
-// Per-isolate memo of everything that is identical for every page of
-// one deploy: header (with nav links already spliced in), footer,
-// search index and nav order. Without this, every HTML cache MISS
-// re-fetched 4 files, re-parsed ~125 index entries and rebuilt 6 nav
-// lists, pushing some requests past the free plan's 10 ms CPU limit
-// (error 1102 = 5xx). Keyed by build id so a new deploy never reuses
-// old data; re-validated every SHARED_MEMO_TTL_MS as a safety net.
-// Only a fully successful load is memoised.
-// ---------------------------------------------------------------------
-const SHARED_MEMO_TTL_MS = 300000; // 5 minutes
-let SHARED_MEMO = null;
+export async function onRequest(context) {
+  const url = new URL(context.request.url);
+  const buildId = (context.env && context.env.CF_PAGES_COMMIT_SHA) || "";
+  const assetVersion = buildId.slice(0, 8);
+  const edgeCache = typeof caches !== "undefined" && caches.default ? caches.default : null;
+  const canUseHtmlCache = !!(edgeCache && buildId && context.request.method === "GET");
 
-async function loadSharedParts(context, url, buildId) {
-  if (buildId && SHARED_MEMO && SHARED_MEMO.buildId === buildId && Date.now() - SHARED_MEMO.at < SHARED_MEMO_TTL_MS) {
-    return SHARED_MEMO;
+  if (canUseHtmlCache) {
+    const hit = await edgeCache.match(htmlCacheKey(url, buildId));
+    if (hit) return withCacheStatus(hit, "HIT");
+  }
+
+  const response = await context.next();
+
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("text/html")) {
+    return response;
   }
 
   const [headerRes, footerRes, searchIndexRes, navOrderRes] = await Promise.all([
@@ -712,35 +688,6 @@ async function loadSharedParts(context, url, buildId) {
       headerHTML = headerHTML.replace(`id="${id}"></div>`, `id="${id}">${html}</div>`);
     }
   }
-  const parts = { buildId, at: Date.now(), headerHTML, footerHTML, searchIndex, navOrder };
-  if (buildId && headerHTML && footerHTML && searchIndex.length) SHARED_MEMO = parts;
-  return parts;
-}
-
-export async function onRequest(context) {
-  // Fail open: if anything below throws, Cloudflare serves the plain
-  // static page instead of a 5xx error.
-  context.passThroughOnException();
-
-  const url = new URL(context.request.url);
-  const buildId = (context.env && context.env.CF_PAGES_COMMIT_SHA) || "";
-  const assetVersion = buildId.slice(0, 8);
-  const edgeCache = typeof caches !== "undefined" && caches.default ? caches.default : null;
-  const canUseHtmlCache = !!(edgeCache && buildId && context.request.method === "GET");
-
-  if (canUseHtmlCache) {
-    const hit = await edgeCache.match(htmlCacheKey(url, buildId));
-    if (hit) return withCacheStatus(hit, "HIT");
-  }
-
-  const response = await context.next();
-
-  const contentType = response.headers.get("content-type") || "";
-  if (!contentType.includes("text/html")) {
-    return response;
-  }
-
-  const { headerHTML, footerHTML, searchIndex, navOrder } = await loadSharedParts(context, url, buildId);
 
   const relatedHTML = buildRelatedCalculatorsHTML(url.pathname, searchIndex);
   const exploreMoreHTML = buildExploreMoreHTML(url.pathname, searchIndex);
