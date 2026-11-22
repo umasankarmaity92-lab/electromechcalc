@@ -39,7 +39,7 @@
      crossorigin="anonymous"></script>
 
 <!-- ===================== [PER-PAGE] SEO META ===================== -->
-<meta name="description" content="Free IDMT relay setting calculator — get pickup (plug) setting and TMS (time multiplier setting) from CT ratio, load and fault current, using the IEC formula.">
+<meta name="description" content="Free IDMT relay setting calculator — get pickup (plug) setting % and TMS from CT ratio, load current, fault current and target time (IEC Standard Inverse).">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.electromechcalc.com/electrical/relay-setting">
 <link rel="icon" href="/favicon.png" type="image/png">
@@ -51,6 +51,7 @@
 <meta property="og:description" content="Free IDMT relay setting calculator — enter CT ratio, load and fault current to get pickup setting and TMS instantly.">
 <meta property="og:url" content="https://www.electromechcalc.com/electrical/relay-setting">
 <meta property="og:image" content="https://www.electromechcalc.com/og-image.png">
+<meta property="og:image:alt" content="IDMT Relay Setting Calculator by ElectroMechCalc">
 <meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
@@ -58,6 +59,7 @@
 <meta name="twitter:title" content="IDMT Relay Setting Calculator">
 <meta name="twitter:description" content="Free IDMT relay setting calculator — enter CT ratio, load and fault current to get pickup setting and TMS instantly.">
 <meta name="twitter:image" content="https://www.electromechcalc.com/og-image.png">
+<meta name="twitter:image:alt" content="IDMT Relay Setting Calculator by ElectroMechCalc">
 
 <!-- ===================== [PER-PAGE] STRUCTURED DATA ===================== -->
 <script type="application/ld+json">
@@ -69,10 +71,10 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "description": "Free IDMT relay setting calculator \u2014 get pickup (plug) setting and TMS (time multiplier setting) from CT ratio, load and fault current, using the IEC formula.",
+  "description": "Free IDMT relay setting calculator \u2014 get pickup (plug) setting % and TMS from CT ratio, load current, fault current and target time (IEC Standard Inverse).",
   "publisher": { "@type": "Organization", "name": "ElectroMechCalc", "url": "https://www.electromechcalc.com/" },
   "author": { "@type": "Person", "name": "Umasankar Maity", "url": "https://www.electromechcalc.com/about" },
-  "dateModified": "2026-09-06"
+  "dateModified": "2026-11-22"
 }
 </script>
 
@@ -96,52 +98,90 @@
     {
       "@type": "Question",
       "name": "What is a plug (pickup) setting on an overcurrent relay?",
-      "acceptedAnswer": { "@type": "Answer", "text": "The plug setting (PS) determines the minimum current, as a percentage of the relay's rated current (typically the CT secondary current), at which the relay begins to respond and eventually trip — it must be set above the maximum expected normal load current (with margin) so the relay doesn't trip on normal operation, but below the minimum fault current the relay is meant to detect." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The minimum current, as a percentage of the relay's rated current (usually the CT secondary), at which the relay starts to operate. Set it above maximum load current (with margin) and below the minimum fault current to be detected."
+      }
     },
     {
       "@type": "Question",
-      "name": "What is Plug Setting Multiplier (PSM) and why does it matter?",
-      "acceptedAnswer": { "@type": "Answer", "text": "PSM = Actual Fault Current ÷ Pickup Current Setting — it expresses how many times above its pickup threshold the relay is actually seeing during a fault, and is the key input into the IDMT time-current curve formula, since a relay operates faster (shorter time) the further above its pickup setting the actual fault current is." }
+      "name": "How do I convert a pickup current into a plug setting percentage and relay amps?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Plug Setting (%) = (Pickup Current ÷ CT Primary) × 100. Relay-side amps = plug setting % × relay rated current (1 A or 5 A). Example: 375 A on a 400/5 A CT = 93.75% = about 4.69 A. Then round to a setting the relay offers."
+      }
     },
     {
       "@type": "Question",
-      "name": "What is the IEC standard inverse (SI) curve formula?",
-      "acceptedAnswer": { "@type": "Answer", "text": "t = TMS × [0.14 ÷ (PSM^0.02 − 1)], where t is operating time in seconds, TMS is the Time Multiplier Setting, and PSM is the Plug Setting Multiplier. This formula describes how operating time decreases as fault current (and therefore PSM) increases, giving the characteristic inverse-time curve shape." }
-    },
-    {
-      "@type": "Question",
-      "name": "Why use an inverse-time characteristic instead of a fixed time delay?",
-      "acceptedAnswer": { "@type": "Answer", "text": "An inverse-time relay naturally operates faster for more severe (higher current) faults and slower for marginal overloads just above pickup — this behavior is exactly what's needed for good protection coordination, since it lets relays further from a fault (seeing lower fault current due to added impedance) naturally have more time margin over relays closer to the fault, supporting selective coordination without needing every relay to have an identical fixed delay." }
+      "name": "What is Plug Setting Multiplier (PSM) and why does it matter for relay settings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "PSM = Fault Current ÷ Pickup Current. It sets the operating point on the curve used to calculate TMS. Use the actual selected pickup, not the theoretical one. For equations and trip times, use the TOC/IDMT Trip Time Calculator."
+      }
     },
     {
       "@type": "Question",
       "name": "How do I choose the right pickup current margin above normal load?",
-      "acceptedAnswer": { "@type": "Answer", "text": "A commonly used starting margin is roughly 1.25-1.3 times the maximum expected normal load current, giving enough headroom to avoid nuisance tripping during normal load variation and any brief legitimate overload, while still being sensitive enough to detect a genuine sustained overload or fault condition promptly. This is a simplified preliminary margin for a quick calculation, not a universal protection-setting rule \u2014 the actual margin for a real installation can depend on load characteristics, motor starting/inrush, transformer energization, and relay/CT accuracy, and should be confirmed against the specific application." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "1.25-1.3 × maximum load is a common starting margin for a quick estimate, not a universal rule. The real margin depends on motor starting/inrush, transformer energization, permitted overload, relay/CT accuracy and coordination, so confirm it for the application."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does the calculator select the next higher plug tap instead of the nearest one?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A lower tap shrinks the margin over maximum load and risks nuisance tripping. This calculator uses the next higher tap as a simplified method. A higher tap also lowers PSM and sensitivity, so check minimum fault current and the taps your relay actually offers."
+      }
     },
     {
       "@type": "Question",
       "name": "What does Time Multiplier Setting (TMS) actually control?",
-      "acceptedAnswer": { "@type": "Answer", "text": "TMS scales the entire time-current curve up or down &mdash; a higher TMS means longer operating time at every PSM value (a slower-acting relay overall), while a lower TMS means faster operation throughout the curve. TMS is the primary tool used to coordinate multiple relays in series along a system, giving each relay a different, deliberately staggered operating time for the same fault current." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TMS scales the whole time-current curve: a higher TMS gives a longer operating time at every PSM, a lower TMS gives a faster one. It is the main tool for staggering relays in series."
+      }
     },
     {
       "@type": "Question",
-      "name": "What other IDMT curve types exist besides Standard Inverse?",
-      "acceptedAnswer": { "@type": "Answer", "text": "IEC 60255 defines several standard curve shapes beyond Standard Inverse (SI), including Very Inverse (VI) and Extremely Inverse (EI), each with different constants in the time-current formula, producing steeper or shallower inverse characteristics — the right curve type depends on the specific protection coordination requirements and the characteristics of the loads and faults being protected against." }
+      "name": "How is the required TMS calculated for a desired operating time?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For IEC Standard Inverse, TMS = Desired Operating Time ÷ [0.14 ÷ (PSM^0.02 − 1)]. At PSM 10 the time at TMS 1.0 is 2.971 s, so a 0.5 s target needs TMS ≈ 0.168. Use the value recalculated at the actual tap."
+      }
     },
     {
       "@type": "Question",
-      "name": "Why is protection coordination between multiple relays more complex than setting one relay in isolation?",
-      "acceptedAnswer": { "@type": "Answer", "text": "A real power system has multiple protective devices (relays, fuses, breakers) at different points, and a fault should ideally trip only the device closest to it, not cascade further upstream — achieving this requires calculating and comparing operating times for every device at every point of interest for a range of possible fault currents, a significantly more involved exercise than sizing any single relay's pickup and TMS in isolation, and this calculator addresses only that single-relay calculation." }
+      "name": "Which IDMT curve should I select when setting a relay?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SI is the general-purpose choice; VI typically suits feeders where fault current falls sharply with distance; EI suits fuse coordination and inrush or cold-load pickup. Match the curve configured in the relay, because TMS is not transferable between curves. Constants and comparison are in the TOC/IDMT Trip Time Calculator."
+      }
     },
     {
       "@type": "Question",
-      "name": "Do modern numerical/digital relays use the same IDMT formulas as older electromechanical relays?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes, largely — while numerical relays offer far more flexibility (multiple curve types, additional protection functions, communication capability, event logging), most still implement and reference the same standardized IEC (and ANSI/IEEE, for US-influenced systems) time-current curve formulas for their basic overcurrent inverse-time functions, maintaining compatibility with the well-established coordination principles developed for earlier electromechanical relay technology." }
+      "name": "Why is protection coordination between multiple relays more complex than setting one relay?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A fault should trip only the device closest to it. That needs operating times compared for every device across a range of fault currents, which is far more involved than one relay's setting. This calculator covers a single relay only."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can a numerical relay use the calculated pickup and TMS exactly?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Often much closer. Many numerical relays allow fine or continuous pickup and TMS (the Continuous option here), but ranges and steps vary by model, so check your relay's limits and configured curve."
+      }
     },
     {
       "@type": "Question",
       "name": "How can I check the actual trip time an already-configured relay setting will produce?",
-      "acceptedAnswer": { "@type": "Answer", "text": "This calculator solves backward from a desired operating time to the required TMS/pickup. To go the other direction — enter an already-configured pickup, TMS/TD, and fault current to find the actual trip time it produces, for the Standard Inverse curve or any other IEC/IEEE curve — use the dedicated TOC/IDMT Relay Trip Time Calculator." }
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This calculator works backward from a desired time to TMS and pickup. To enter an existing pickup, TMS/TD and fault current and get the trip time (any IEC/IEEE curve), use the TOC/IDMT Relay Trip Time Calculator."
+      }
     }
   ]
 }
@@ -475,7 +515,7 @@
         <h1 class="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-3">
           IDMT Relay Setting <span class="text-sky-400">Calculator</span>
         </h1>
-        <p class="text-amber-300 text-xs font-mono uppercase tracking-wide mb-3">IEC 60255 Standard Inverse (SI) curve — single-relay calculation, verify against a full coordination study</p>
+        <p class="text-amber-300 text-xs font-mono uppercase tracking-wide mb-3">IEC 60255-151 Standard Inverse (SI) curve — single-relay calculation, verify against a full coordination study</p>
     <div class="hero-typing-box">
       <p class="hero-typing text-[#d4af37] text-sm font-mono font-bold justify-center" aria-label="Calculate Smarter. Work Faster. Practical Calculators & Maintenance Guides.">
         <span id="heroTypingText">Calculate Smarter. Work Faster.</span><span class="hero-cursor" aria-hidden="true"></span>
@@ -599,7 +639,7 @@
             <span id="rTapPSM" class="font-display font-semibold text-lg">—</span>
           </div>
         </div>
-        <p class="text-xs text-gray-400 mt-2">Nearby steps for an illustrative 0.05 TMS increment (verify your relay's actual resolution) with the actual operating time each one produces &mdash; faster trip: <span id="rTapTMSLower" class="font-display font-semibold text-white">—</span>, more coordination margin: <span id="rTapTMSUpper" class="font-display font-semibold text-white">—</span>. Choose based on your coordination requirement.</p>
+        <p class="text-xs text-gray-400 mt-2">Nearby steps for an <strong>illustrative</strong> 0.05 TMS increment (not a real relay limit; check your relay's actual resolution and min/max range) with the actual operating time each one produces &mdash; faster trip: <span id="rTapTMSLower" class="font-display font-semibold text-white">—</span>, more coordination margin: <span id="rTapTMSUpper" class="font-display font-semibold text-white">—</span>. Choose based on your coordination requirement.</p>
 
         <div id="rSensitivityWarning" class="hidden text-[11px] font-semibold text-red-200 bg-red-900/40 border border-red-400/40 rounded px-2 py-1.5 mt-3"></div>
 
@@ -705,47 +745,89 @@
         <p style="margin:0;">Connect: <a href="https://www.linkedin.com/in/umasankar-maity-68ba7a176/" target="_blank" rel="noopener noreferrer me" class="text-sky-600 underline">Umasankar Maity on LinkedIn</a></p>
       </div>
       <p>Reviewed by the <a href="/editorial-policy" class="text-sky-600 underline">ElectroMechCalc editorial team</a>.</p>
-      <p>Last reviewed: September 2026 &nbsp;|&nbsp; Standards referenced: IEC 60255 standard inverse (SI) time-current curve</p>
+      <p>Last reviewed: November 2026 &nbsp;|&nbsp; Standards referenced: IEC 60255-151 standard inverse (SI) time-current curve</p>
     </div>
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">How it works</span>
-    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How IDMT Relay Pickup and Time Settings Are Calculated</h2>
+    <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">How to Determine IDMT Relay Pickup and TMS Settings</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-            <p>An IDMT (Inverse Definite Minimum Time) overcurrent relay is the workhorse of power system protection &mdash; it monitors current through a current transformer (CT), and trips a breaker when current exceeds a set threshold for long enough, with an operating time that automatically decreases as fault current increases. Correctly setting one requires two separate decisions: where the pickup (plug) threshold sits, and how the time-current curve is scaled via the Time Multiplier Setting (TMS).</p>
+      <p>How a relay <strong>setting</strong> is worked out: pickup current, plug setting and TMS. Already have a configured pickup and TMS and only need the trip time? Use the <a href="/electrical/idmt-trip-time-calculator" class="text-sky-600 underline">TOC/IDMT Trip Time Calculator</a>.</p>
 
-      <p><strong>Step 1 &mdash; pickup (plug) setting:</strong> Pickup Current (primary) = Maximum Load Current &times; Margin (typically 1.25-1.3). This must sit above normal maximum load (so the relay doesn't trip on legitimate load) and below the minimum fault current the relay needs to detect. Plug Setting % = (Pickup Current &divide; CT Primary Rating) &times; 100, giving the percentage tap setting on the relay (most electromechanical and many numerical relays offer discrete plug setting taps, commonly in steps like 50%, 75%, 100%, 125%, 150%, 175%, 200% of rated current). <strong>The 1.25-1.3&times; figure is a simplified, preliminary starting margin for a quick calculation, not a universal protection-setting rule</strong> &mdash; real margin selection can depend on load characteristics, motor starting/inrush, transformer energization, permissible overload, relay and CT accuracy, and downstream coordination requirements, and should be confirmed against the specific application and the governing standard or utility practice.</p>
+      <div class="not-prose overflow-x-auto my-4">
+        <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+          <thead class="bg-gray-50 text-gray-600">
+            <tr><th class="text-left px-4 py-2 font-semibold">Quantity</th><th class="text-left px-4 py-2 font-semibold">This calculator (setting design)</th><th class="text-left px-4 py-2 font-semibold">Trip Time Calculator</th></tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr><td class="px-4 py-2">Pickup current</td><td class="px-4 py-2">Calculated</td><td class="px-4 py-2">Input</td></tr>
+            <tr><td class="px-4 py-2">Plug setting (%)</td><td class="px-4 py-2">Calculated</td><td class="px-4 py-2">Not used</td></tr>
+            <tr><td class="px-4 py-2">PSM</td><td class="px-4 py-2">Calculated</td><td class="px-4 py-2">Calculated</td></tr>
+            <tr><td class="px-4 py-2">TMS</td><td class="px-4 py-2">Calculated (required value)</td><td class="px-4 py-2">Input</td></tr>
+            <tr><td class="px-4 py-2">Curve</td><td class="px-4 py-2">Selected for setting design (IEC Standard Inverse)</td><td class="px-4 py-2">Any IEC or IEEE curve</td></tr>
+            <tr><td class="px-4 py-2">Main output</td><td class="px-4 py-2">Recommended pickup tap and TMS</td><td class="px-4 py-2">Operating time</td></tr>
+          </tbody>
+        </table>
+      </div>
 
-      <p><strong>Step 2 &mdash; Plug Setting Multiplier (PSM):</strong> PSM = Actual Fault Current &divide; Pickup Current Setting. This tells you how many multiples above pickup the relay actually experiences during a specific fault, and is the direct input to the time-current curve formula.</p>
+      <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">1. Determine the Maximum Load Current</h3>
+      <p>The highest current the circuit carries continuously, on the CT primary side.</p>
+      <ul><li><strong>Feeder:</strong> maximum expected demand, including any permitted overload</li><li><strong>Transformer or motor circuit:</strong> usually based on the equipment rated current</li><li>Enter it as <em>Maximum Load Current</em></li></ul>
 
-      <p><strong>Step 3 &mdash; required TMS for a target operating time:</strong> using the IEC standard inverse (SI) curve, t = TMS &times; [0.14 &divide; (PSM^0.02 &minus; 1)], rearranged to solve for TMS: TMS = Desired Operating Time &divide; [0.14 &divide; (PSM^0.02 &minus; 1)].</p>
+      <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">2. Select the Relay Pickup Current</h3>
+      <p><strong>Formula:</strong> Pickup Current = Maximum Load Current &times; Design Margin</p>
+      <ul><li>Pickup must be <strong>above</strong> maximum load, so the relay ignores normal operation</li><li>Pickup must be <strong>below</strong> the minimum fault current the relay has to detect</li><li>A margin of <strong>1.25&ndash;1.3&times;</strong> is a common starting value for a quick estimate, not a universal rule</li><li>Final margin depends on motor starting/inrush, transformer energization, permitted overload, relay/CT tolerance and coordination</li><li>Optional <em>Minimum Fault Current</em> input: the calculator flags a pickup at or above it (preliminary check only)</li></ul>
 
-      <p><strong>Worked example:</strong> a 400/5 A CT protects a feeder with 300 A maximum normal load and 4000 A available fault current at the relay's location, with a desired 0.5 second operating time at that fault level. Theoretical Pickup Current = 300 &times; 1.25 = 375 A (Plug Setting = 375&divide;400 &times; 100 = 93.75%). PSM = 4000 &divide; 375 &asymp; 10.67. Using the SI formula: 0.14 &divide; (10.67^0.02 &minus; 1) &asymp; 0.14 &divide; (1.0485 &minus; 1) &asymp; 0.14 &divide; 0.0485 &asymp; 2.888 seconds at TMS=1.0, giving a theoretical TMS = 0.5 &divide; 2.888 &asymp; 0.173. Since 93.75% isn't an available tap, select the <strong>next higher available tap (100%, giving an actual pickup of 400 A)</strong> and recalculate: PSM = 4000&divide;400 = 10.00, time at TMS=1.0 &asymp; 2.971 s, so the recalculated TMS for the actual configured pickup is 0.5&divide;2.971 &asymp; <strong>0.168</strong> &mdash; this recalculated figure, not the theoretical 0.173, is the one that reflects what the relay will actually do once a real tap is selected.</p>
+      <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">3. Convert the Pickup to a Plug Setting (%)</h3>
+      <p><strong>Formula:</strong> Plug Setting (%) = (Pickup Current &divide; CT Primary Rating) &times; 100</p>
+      <p><strong>Example:</strong> 375 A on a 400/5 A CT &rarr; 93.75% &rarr; about 4.69 A at the relay.</p>
+      <ul><li>Relay rated current = CT secondary (1 A or 5 A)</li><li><strong>Discrete taps</strong> (for example 50&ndash;200%): the calculator selects the <strong>next higher tap</strong>, so margin over load is not lost. This is a simplified method, not a universal rule</li><li><strong>Numerical relays:</strong> choose <em>Continuous</em> if pickup can be set finely</li><li>Always confirm the settings your relay actually offers</li></ul>
 
-      <p><strong>Why the relay curve flattens at high PSM:</strong> notice that PSM^0.02 changes very little even for large changes in PSM, since raising a number to the 0.02 power is a very gentle function &mdash; this is intentional in the standard inverse curve design, giving relatively modest additional speed improvement for very high fault currents beyond a certain point, since a relay already operating in well under a second doesn't need to get dramatically faster still for an even larger fault; the meaningful speed variation the curve provides is concentrated in the region just above pickup, where distinguishing marginal overload from genuine fault matters most for coordination purposes.</p>
+      <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">4. Calculate the Plug Setting Multiplier (PSM)</h3>
+      <p><strong>Formula:</strong> PSM = Fault Current &divide; Pickup Current</p>
+      <ul><li>Shows how many times above pickup the relay sees the design fault</li><li>Sets the operating point on the selected curve</li><li><strong>Use the actual selected pickup</strong> (tap value), not the theoretical one</li><li>PSM theory and trip times: see the <a href="/electrical/idmt-trip-time-calculator" class="text-sky-600 underline">TOC/IDMT Trip Time Calculator</a></li></ul>
 
-      <p><strong>How TMS enables coordination between relays in series:</strong> consider two relays in series along a feeder, an upstream relay closer to the source and a downstream relay closer to the load, both seeing the same fault current for a fault beyond the downstream relay. If both relays used identical pickup and TMS settings, they'd operate at the same instant &mdash; a coordination failure, since the downstream relay should trip first, isolating only the affected downstream section. By giving the upstream relay a higher TMS (a scaled-up, slower curve) than the downstream relay, the upstream relay's operating time for the same fault current becomes deliberately longer, providing a time margin (a commonly cited illustrative range of 0.2-0.4 seconds, called the coordination time interval) for the downstream relay to operate and clear the fault first. Only if the downstream device fails to clear the fault does the upstream relay eventually operate as a backup, after its own longer delay has elapsed.</p>
+      <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">5. Select the IDMT Curve</h3>
+      <ul><li><strong>Standard Inverse (SI):</strong> general-purpose choice, and the curve this calculator solves for</li><li><strong>Very Inverse (VI) / Extremely Inverse (EI):</strong> steeper, for specific grading needs (see curve guide below)</li><li>The curve must match the one configured in the relay</li><li>The same target time needs a <strong>different TMS</strong> on each curve</li></ul>
 
-      <p><strong>Relationship between plug setting taps and the calculated percentage:</strong> most relays, especially traditional electromechanical and many numerical models, offer plug setting only in discrete steps rather than continuous adjustment &mdash; common tap steps include 50%, 75%, 100%, 125%, 150%, 175%, and 200% of the relay's rated current. A calculated pickup requirement that falls between two taps (as in the worked example's 93.75%, between the 75% and 100% taps) needs an available tap that still satisfies the protection requirement. For this calculator's illustrative discrete tap-selection method, the <strong>next higher available tap</strong> is selected rather than whichever tap is numerically nearest, so the calculated load margin isn't reduced by rounding down &mdash; but this is a simplified selection method, not a universal protection-setting rule. Actual relay tap selection should also weigh minimum fault sensitivity, relay/CT characteristics, and coordination requirements, and must be verified against the specific relay model.</p>
+      <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">6. Determine the Required TMS</h3>
+      <p><strong>Formula (IEC SI):</strong> TMS = Desired Operating Time &divide; [0.14 &divide; (PSM<sup>0.02</sup> &minus; 1)]</p>
+      <ul><li>Desired time comes from coordination: downstream clearing time plus the coordination time interval</li><li>TMS scales the delay without changing the curve shape</li><li>The calculator shows the theoretical TMS and the <strong>recalculated TMS at the actual tap</strong>; use the recalculated one</li></ul>
 
-      <p><strong>Numerical relay flexibility versus traditional tap-based settings:</strong> modern numerical (microprocessor-based) protection relays often allow much finer-grained, sometimes continuously adjustable, pickup and TMS settings compared to the discrete tap steps of older electromechanical relays, along with the ability to select from multiple curve types (and sometimes fully custom curves) within a single physical device. This flexibility doesn't change the underlying calculation principles covered here, but it does mean a numerical relay can often achieve a setting much closer to the theoretically calculated ideal value, rather than needing to round to a comparatively coarse traditional tap step.</p>
+      <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">7. Verify Practical Relay Settings</h3>
+      <ul><li>Check the relay&rsquo;s pickup and TMS increments</li><li>For discrete taps, recalculate PSM and TMS at the actual pickup</li><li>Nearby TMS steps (illustrative 0.05): the <strong>lower</strong> step trips faster, the <strong>higher</strong> step adds coordination margin</li><li>Numerical relays often allow finer or continuous settings; verify the resolution and configured curve</li></ul>
 
-      <p><strong>Summary:</strong> use Pickup Current = Max Load &times; Margin (typically 1.25-1.3, a starting point rather than a fixed rule) for the plug setting, PSM = Fault Current &divide; Pickup Current, and TMS = Desired Operating Time &divide; [0.14&divide;(PSM^0.02&minus;1)] for the Standard Inverse curve. Select the <strong>next higher available pickup tap</strong> so sensitivity margin isn't lost, then recalculate PSM and TMS at that actual pickup, and select an available TMS step according to your relay's own resolution and the coordination requirement (a lower nearby step trips faster, a higher one adds coordination margin) &mdash; then re-verify the operating time that step actually produces (see the recalculated figures in the result panel above). Verify the calculation against the actual curve type configured on the relay (Standard, Very, or Extremely Inverse each use different constants), and treat single-relay calculations like this one as one input into a broader, multi-device coordination study for a complete, safe protection design.</p>
+      <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">8. Check Protection Coordination</h3>
+      <ul><li>Two relays in series with identical settings would operate together</li><li>The upstream relay gets a longer operating time for the same fault, usually through a higher TMS</li><li>Keep a <strong>Coordination Time Interval (CTI)</strong> between adjacent devices (0.2&ndash;0.4 s is a commonly cited illustrative range)</li><li>CTI must cover breaker clearing time, relay overshoot and CT/relay tolerance</li><li>Work from the most remote downstream relay back toward the source</li><li>This calculator sets one relay only; multi-relay grading is a separate study</li></ul>
 
-      <p><strong>Where this calculation fits into a broader protection design workflow:</strong> a complete overcurrent protection study typically starts with a fault current analysis across the whole system (establishing maximum and minimum fault current at every relay location, for both close-in and remote faults), followed by pickup setting selection for every relay (ensuring adequate sensitivity margin above load, everywhere), then TMS coordination working from the most remote (downstream) relay backward toward the source, ensuring each successive upstream relay has adequate time margin over the one immediately downstream. This calculator addresses the pickup and TMS calculation for one relay at one operating point &mdash; the coordination sequencing across multiple relays is the additional, more involved step that a complete protection study performs.</p>
-
-      <p>This calculator gives you the tools to understand and independently sanity-check any single relay's setting within that larger process, whether you're reviewing an existing coordination study, learning the underlying principles, or performing a quick preliminary calculation before a full study is commissioned for a real installation.</p>
-
-      <p>Understanding why a relay is set the way it is &mdash; not just accepting a settings sheet at face value &mdash; is genuinely valuable for anyone responsible for a facility's protection system, since it enables meaningful review of settings inherited from a previous design, informed conversation with a protection engineer during a system upgrade, and faster diagnosis when an unexpected trip (or an unexpected failure to trip) occurs during a real fault event.</p>
+      <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">9. Validate the Final Settings</h3>
+      <ul><li>Check against the relay manufacturer&rsquo;s documentation</li><li>Check against the fault-current study, using both maximum and minimum fault current</li><li>A complete coordination study is needed before applying settings to an installation</li><li>To check the operating time at other fault currents or on VI/EI/IEEE curves, use the <a href="/electrical/idmt-trip-time-calculator" class="text-sky-600 underline">TOC/IDMT Trip Time Calculator</a></li></ul>
     </div>
 
-    <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
+        <!-- ===================== [PER-PAGE] EXAMPLE ===================== -->
     <div id="cs-example-box" class="mt-10 bg-sky-50/60 border border-sky-100 rounded-2xl p-6">
-            <p class="text-sm font-semibold text-brandDark mb-2">Worked Example</p>
-      <p class="text-sm text-gray-600 leading-relaxed">400/5A CT, max load 300A, fault 4000A, target 0.5s: theoretical Pickup = 300&times;1.25=375A (93.75% tap, PSM&asymp;10.67, theoretical TMS&asymp;<strong>0.173</strong>). Rounding to the <strong>next higher available tap (100%, 400A)</strong> &mdash; the setting actually used on real hardware &mdash; gives PSM=10.00 and a recalculated TMS &asymp; <strong>0.168</strong> for the same 0.5s target.</p>
+      <p class="text-sm font-semibold text-brandDark mb-2">Worked Example &mdash; Setting a 400/5 A Feeder Relay</p>
+      <p class="text-sm text-gray-600 leading-relaxed mb-4">400/5 A CT, 300 A maximum load, 4,000 A fault, 0.5 s target, IEC Standard Inverse, 1.25&times; margin. Before tap rounding: pickup 375 A, PSM &asymp; 10.67, TMS &asymp; <strong>0.173</strong>. The table uses the tap actually set on the relay.</p>
+      <div class="not-prose overflow-x-auto">
+        <table class="w-full text-xs border border-sky-200/60 rounded-lg overflow-hidden">
+          <thead class="bg-sky-100/60 text-brandDark">
+            <tr><th class="text-left px-3 py-2 font-semibold">Step</th><th class="text-left px-3 py-2 font-semibold">Calculation</th><th class="text-left px-3 py-2 font-semibold">Result</th></tr>
+          </thead>
+          <tbody class="divide-y divide-sky-200/40">
+            <tr><td class="px-3 py-2">1. Maximum load</td><td class="px-3 py-2">Given</td><td class="px-3 py-2">300 A</td></tr>
+            <tr><td class="px-3 py-2">2. Pickup</td><td class="px-3 py-2">300 &times; 1.25</td><td class="px-3 py-2">375 A</td></tr>
+            <tr><td class="px-3 py-2">3. Plug setting</td><td class="px-3 py-2">375 &divide; 400 &times; 100 = 93.75%, next higher tap</td><td class="px-3 py-2"><strong>100%</strong> (400 A, 5 A at relay)</td></tr>
+            <tr><td class="px-3 py-2">4. PSM at actual pickup</td><td class="px-3 py-2">4,000 &divide; 400</td><td class="px-3 py-2">10.00</td></tr>
+            <tr><td class="px-3 py-2">5. Curve</td><td class="px-3 py-2">IEC Standard Inverse</td><td class="px-3 py-2">k = 0.14, &alpha; = 0.02</td></tr>
+            <tr><td class="px-3 py-2">6. Required TMS</td><td class="px-3 py-2">Time at TMS 1.0 = 2.971 s; 0.5 &divide; 2.971</td><td class="px-3 py-2"><strong>0.168</strong></td></tr>
+            <tr><td class="px-3 py-2">7. Nearby 0.05 steps</td><td class="px-3 py-2">0.15 &times; 2.971; 0.20 &times; 2.971</td><td class="px-3 py-2">0.446 s (faster) / 0.594 s (more margin)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs text-gray-500 leading-relaxed mt-3">Use the recalculated <strong>0.168</strong>, not the theoretical 0.173. Pick the nearby step according to the coordination need.</p>
     </div>
 
     <div id="cs-not-calculated-box" class="mt-6 bg-amber-50/60 border border-amber-100 rounded-2xl p-6">
       <p class="text-sm font-semibold text-brandDark mb-2">What This Calculator Does Not Calculate</p>
-      <p class="text-sm text-gray-600 leading-relaxed mb-4">This tool computes single-relay pickup and TMS settings using the IEC Standard Inverse (SI) curve only, and includes an example rounding to a common discrete pickup tap set. It does not calculate: multi-relay coordination margins, settings for Very Inverse/Extremely Inverse or ANSI/IEEE curve types, minimum fault current sensitivity beyond a basic preliminary check, CT saturation or accuracy-class limitations, or the exact tap/TMS resolution of your specific relay model &mdash; and it does not confirm which curve type is actually configured on your physical relay. These all need separate verification, or a qualified protection engineer's review, before finalizing settings for a real installation.</p>
+      <p class="text-sm text-gray-600 leading-relaxed mb-4">This tool sets a single relay on the IEC Standard Inverse curve and includes example tap rounding. Anything marked below needs separate verification or a protection engineer&rsquo;s review.</p>
       <div class="not-prose overflow-x-auto">
         <table class="w-full text-xs border border-amber-200/60 rounded-lg overflow-hidden">
           <thead class="bg-amber-100/60 text-brandDark">
@@ -768,33 +850,32 @@
       </div>
     </div>
 
-    <p class="text-xs text-gray-400 mt-6">This calculator uses the IEC standard inverse (SI) curve formula for a single relay in isolation — real protection coordination involves multiple relays (or relays and fuses/breakers) at different points in a system, each needing settings coordinated with the others so faults are cleared selectively, closest device first. A complete protection coordination study, typically using dedicated software and reviewed by a protection engineer, is required for a final, safe settings design on any real power system. Confirm the actual curve type (SI, VI, or EI) configured on your specific relay matches the formula used for any manual calculation before applying calculated settings.</p>
+    <p class="text-xs text-gray-400 mt-6">Single-relay result only. Final settings need a full protection coordination study, and the relay&rsquo;s configured curve must match the one used here.</p>
   </div>
 </section>
 
 <!-- ===================== SECOND SECTION ===================== -->
 <section id="second" class="max-w-3xl mx-auto px-4 py-16">
   <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Reference</span>
-  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">IEC 60255 Standard IDMT Curve Types</h2>
-    <div class="not-prose overflow-x-auto my-4">
+  <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Choosing the IDMT Curve Type for Relay Settings</h2>
+  <div class="not-prose overflow-x-auto my-4">
     <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
       <thead class="bg-gray-50 text-gray-600">
         <tr>
           <th class="text-left px-4 py-2 font-semibold">Curve Type</th>
-          <th class="text-left px-4 py-2 font-semibold">Formula Constants</th>
-          <th class="text-left px-4 py-2 font-semibold">Characteristic</th>
+          <th class="text-left px-4 py-2 font-semibold">Typical use in setting design</th>
+          <th class="text-left px-4 py-2 font-semibold">Effect on the setting</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100">
-        <tr><td class="px-4 py-2">Standard Inverse (SI)</td><td class="px-4 py-2">k=0.14, &alpha;=0.02</td><td class="px-4 py-2">Most common general-purpose curve</td></tr>
-        <tr><td class="px-4 py-2">Very Inverse (VI)</td><td class="px-4 py-2">k=13.5, &alpha;=1.0</td><td class="px-4 py-2">Steeper — faster at high fault current</td></tr>
-        <tr><td class="px-4 py-2">Extremely Inverse (EI)</td><td class="px-4 py-2">k=80, &alpha;=2.0</td><td class="px-4 py-2">Steepest — good for coordinating with fuses</td></tr>
+        <tr><td class="px-4 py-2">Standard Inverse (SI)</td><td class="px-4 py-2">General-purpose feeder and transformer overcurrent protection; the curve this calculator solves for</td><td class="px-4 py-2">Moderate change of time with current, so TMS and pickup do most of the grading</td></tr>
+        <tr><td class="px-4 py-2">Very Inverse (VI)</td><td class="px-4 py-2">Feeders where fault current falls substantially with distance from the source, so successive relays see clearly different fault levels</td><td class="px-4 py-2">Time drops steeply as current rises, giving more grading margin between relays at different locations</td></tr>
+        <tr><td class="px-4 py-2">Extremely Inverse (EI)</td><td class="px-4 py-2">Coordinating with fuses, or on circuits with inrush or cold-load pickup</td><td class="px-4 py-2">Steepest of the three; very long times just above pickup and very short times at high current</td></tr>
       </tbody>
     </table>
   </div>
   <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-    <p>All three curve types use the same general form t = TMS &times; [k &divide; (PSM^&alpha; &minus; 1)], just with different k and &alpha; constants producing progressively steeper (more sharply decreasing time with increasing current) characteristics. Very Inverse and Extremely Inverse curves are often selected specifically to coordinate well with upstream fuses (whose own time-current characteristic is inherently steep) or in systems where fault current doesn't vary hugely with location.</p>
-      <p>ANSI/IEEE-influenced systems (common in North America and some other regions) reference a somewhat different, though conceptually similar, set of standard curves with their own naming and constants — always confirm which standard family (IEC or ANSI/IEEE) your specific relay, coordination study, and regional practice follows, since mixing formula families produces inconsistent results even when curve shapes look superficially similar.</p>
+    <ul><li>These are typical guidelines, not fixed rules; follow the coordination study and utility practice</li><li>Each curve has its own constants, so the same target time needs a different TMS on each</li><li>Never enter a TMS calculated for SI into a relay set to VI, EI or an IEEE curve</li><li>IEEE/ANSI relays use a <strong>Time Dial (TD)</strong>, not TMS, and the two are not interchangeable; follow the relay manual</li><li>Constants, equations, IEEE curves and a side-by-side comparison: <a href="/electrical/idmt-trip-time-calculator" class="text-sky-600 underline">TOC/IDMT Trip Time Calculator</a></li></ul>
   </div>
 </section>
 
@@ -804,33 +885,19 @@
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Distribution System Context</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">LV Release Setting vs HV/MV Relay Setting</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-      <p>The calculator above solves one specific case &mdash; an IEC Standard Inverse overcurrent relay on a single HV/MV circuit. In a real distribution system, that relay is only one link in a chain of protective devices running from the incoming HV/MV transformer down to the individual LV loads it feeds, and each link in that chain is set with a different philosophy depending on where it sits. The two ends of that chain &mdash; the LV release at an end-use load, and the HV/MV relay further upstream &mdash; are worth understanding separately, since neither is a smaller or simpler version of the other.</p>
+      <p>The calculator above sets one IEC Standard Inverse relay. In a real distribution system that relay is one link in a chain from the HV/MV incomer to the LV loads, and each link is set with a different philosophy.</p>
 
       <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">LV release setting for end equipment (motors, capacitor banks)</h3>
-      <p>An LV circuit breaker's release feeding a single, specific piece of equipment &mdash; a motor, a capacitor bank &mdash; sits at the very end of the distribution chain. There's no further downstream breaker or cable protection to coordinate with beyond that point, so its instantaneous (short-circuit) element may often be set to trip with minimal intentional delay, subject to the breaker manufacturer's own trip-unit limits, the equipment's actual starting/inrush characteristics, and any coordination requirements that still apply: any current that clearly exceeds the equipment's own starting/inrush behavior is generally treated as a genuine internal fault rather than a condition that benefits from a graded delay. This is different from a feeder breaker further up the chain that still has other breakers or cable runs downstream needing to clear first.</p>
-      <p>Two nameplate quantities drive this setting: <strong>FLA</strong> (Full Load Ampere &mdash; the motor's rated running current, used for the thermal/overload element) and <strong>LRA</strong> (Locked Rotor Ampere &mdash; the much higher current drawn momentarily while the motor accelerates from standstill, used to keep the instantaneous element from tripping on a normal start). The instantaneous pickup is typically coordinated above the expected starting/inrush current, with appropriate margin and manufacturer-specific tolerances, while remaining sensitive enough to clear a genuine fault quickly. A capacitor bank's own inrush during energizing plays the same role LRA does for a motor &mdash; both need the instantaneous element pushed above a brief, expected transient rather than above steady running current alone.</p>
-      <p>A <strong>&minus;ve tolerance</strong> allowance is also built into the practical setting: any breaker's own trip unit and any CT feeding it have a manufacturing tolerance band, and a release calculated exactly at the theoretical minimum can trip early if the real device happens to sit at the negative end of that tolerance. Adding a margin for this negative tolerance, on top of the LRA/inrush margin, is standard practice rather than an optional refinement.</p>
+      <ul><li>Sits at the end of the chain, with no downstream breaker to coordinate with, so the instantaneous element may trip with minimal intentional delay (subject to trip-unit limits, starting/inrush and coordination)</li><li><strong>FLA</strong> (Full Load Ampere): motor rated running current, used for the thermal/overload element</li><li><strong>LRA</strong> (Locked Rotor Ampere): the nameplate locked-rotor current, a starting reference but not the same as the actual starting current. Actual starting current, its asymmetrical (DC-offset) peak and acceleration time depend on the starter type, supply voltage and load. Set the instantaneous pickup above the expected starting current with margin, and verify it against the motor starting profile and the relay/trip-unit characteristic</li><li>Capacitor bank energizing inrush plays the same role as LRA</li><li><strong>&minus;ve tolerance:</strong> add margin for the breaker trip unit and CT tolerance, so the release does not trip early</li></ul>
 
       <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">LV release setting for a transformer's LV main (incomer)</h3>
-      <p>A transformer's LV main breaker is a different case entirely &mdash; it isn't feeding one piece of equipment, it's the single point every downstream LV feeder passes through, so it must never be the first device to trip for a fault that a downstream feeder should clear on its own. Instantaneous protection may need to be restrained or coordinated differently here so that downstream devices have an opportunity to clear their faults first; the actual setting depends on the breaker, system fault level, and selectivity requirements. The general aim is for the LV main's own time-current curve to sit above every downstream feeder's curve at any current level the main could realistically see, giving every downstream breaker a genuine chance to clear its own fault first.</p>
-      <p>Two approaches are used to size this setting, depending on how well the downstream loads are known at design time:</p>
-      <p><strong>Approach A &mdash; based on known, fixed downstream loads:</strong> when every feeder the LV main serves is already defined and no further loads are planned, the main's pickup can be based directly on the actual combined demand of those known feeders (their added FLAs, with margin), and its curve graded to sit above each feeder's own curve. This gives a tightly-matched setting, but it needs revisiting if a new feeder is added later.</p>
-      <p><strong>Approach B &mdash; based on the transformer's own rating:</strong> when the downstream load picture isn't fully fixed, or future feeders are expected, the LV main is instead sized against the transformer's own full-load current rating (with a design margin, commonly in the 1.25&ndash;1.5&times; range) rather than against today's actual connected load. This keeps the main's setting valid even as feeders are added or changed later, at the cost of being somewhat less tightly matched to present-day load than Approach A.</p>
-      <p><strong>Bus coupler consideration:</strong> where two transformer-fed LV buses can be tied together through a bus coupler (for standby/parallel operation), the coupler's own release is set with reference to whichever of the two buses carries the heavier load, since that's the worst-case current the coupler itself could be asked to carry, and its curve needs to be graded to sit between the individual feeder curves and the transformer LV main curves on both sides of the tie.</p>
-      <p><strong>Ground (earth) fault at LV:</strong> the same FLA/LRA-based thinking extends to the ground-fault element, but typically set more sensitively (a lower pickup than the phase-overcurrent element) since a ground fault path often carries less current than a bolted phase fault, yet still represents a genuine safety and equipment-damage risk that benefits from faster, more sensitive detection than the phase elements alone would provide.</p>
+      <ul><li>Every downstream feeder passes through it, so it must never trip first for a fault a downstream feeder should clear</li><li>Instantaneous protection may need restraint or different coordination; the setting depends on the breaker, fault level and selectivity needs</li><li>Aim: the main&rsquo;s curve sits above every downstream feeder curve at any realistic current</li><li><strong>Approach A &ndash; known fixed loads:</strong> base pickup on the combined demand of the known feeders (added FLAs plus margin). Tight match, but revisit when a feeder is added</li><li><strong>Approach B &ndash; transformer rating:</strong> a preliminary starting point: transformer full-load current with a design margin (1.25&ndash;1.5&times; is only an illustrative range, not a rule). Stays valid as feeders change, but is less tightly matched. Check permitted overload and thermal limits, energization inrush and downstream coordination before adopting any value</li><li><strong>Bus coupler:</strong> set with reference to the more heavily loaded bus, and grade its curve between the feeder curves and the transformer main curves</li><li><strong>Ground fault:</strong> set from the earthing arrangement, the available earth-fault level and the ground-fault sensing/CT arrangement. It is often more sensitive than the phase element, but there is no universal ratio, so verify it against the breaker trip-unit and coordination data</li></ul>
 
       <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">HV/MV relay setting concepts</h3>
-      <p>Moving further upstream, HV/MV protection is handled by a relay reading current through a CT rather than a breaker's own built-in release, and the relay issues the trip command to a separate breaker. Two broad time-current characteristic families are used: <strong>IDMT</strong> (Inverse Definite Minimum Time &mdash; the family this calculator's Standard Inverse curve belongs to, where operating time shortens automatically as fault current rises) and <strong>DMT</strong> (Definite Minimum Time &mdash; a fixed time delay applied once current exceeds pickup, independent of how far above pickup the actual fault current sits). DMT trades away the automatic speed-up of IDMT for a simpler, purely time-graded coordination scheme, which some coordination schemes prefer for predictability between successive relays.</p>
-      <p><strong>Instantaneous (element "50") protection for a motor at HV/MV:</strong> conceptually mirrors the LV motor release case &mdash; set above the motor's starting current with margin, but low enough to clear a genuine terminal or winding fault quickly, since a motor fault left to clear only on the slower IDMT curve risks more severe damage the longer it's allowed to persist.</p>
-      <p><strong>Instantaneous ("50") protection for a transformer:</strong> the connected-load-based versus rating-based split described above for the LV main is a useful conceptual starting point for scaling the setting, but it is not the whole picture &mdash; a transformer's actual instantaneous/high-set setting also has to account for inrush current on energization, the transformer's own impedance and through-fault withstand, CT characteristics, any differential protection already covering the transformer, downstream coordination, and breaker interrupting capability. Treat the two-approach split as a starting scale for the setting, not a complete determination of it.</p>
-      <p><strong>Through-fault current:</strong> this is the fault current that flows through a transformer for a fault occurring beyond it (typically on its LV side) rather than inside the transformer's own winding. A transformer's HV-side protection setting has to be checked against this figure specifically, since the transformer must be able to carry that current, undamaged, for however long it takes downstream/LV protection to clear the external fault, before the HV relay's own instantaneous element would otherwise operate unnecessarily for a fault that isn't even inside the transformer's own protected zone.</p>
-      <p><strong>Earth fault protection at HV/MV:</strong> typically senses the residual (zero-sequence) current directly, either through a dedicated core-balance CT or via the residual connection of three phase CTs, and is set well below the phase overcurrent pickup &mdash; earth faults at HV/MV are frequently lower in magnitude than a bolted three-phase fault, so a phase-current-only setting would be far too insensitive to reliably detect them.</p>
-      <p><strong>RMU (Ring Main Unit) relay setting:</strong> in ring-operated distribution arrangements such as an RMU, fault-current contribution can depend on the network's specific configuration and current operating state &mdash; current may arrive through the associated transformer from the LV side, along the HV ring itself, or both, depending on how the ring is normally run and switched. Protection settings for an RMU should be based on the relevant supply paths for that specific arrangement and operating state, rather than assuming a single fixed direction of fault current flow applies to every ring topology.</p>
-      <p><strong>Combining multiple transformers on a common HV bus:</strong> where several transformers feed a shared HV incomer protected by one upstream relay, two related but distinct ideas come into play. For the normal-load-based (overcurrent) pickup, the relevant current is the <em>sum</em> of every individual transformer's full-load current, since that's what actually flows through the common point under normal operation. For the instantaneous element, the relevant current is instead the <em>largest single transformer's own through-fault contribution</em>, added to the normal full-load current the remaining transformers continue to contribute &mdash; representing the realistic worst-case total the upstream relay would see for an internal fault on the biggest unit while the others keep serving their own load.</p>
+      <ul><li>The relay reads CT current and trips a separate breaker</li><li><strong>IDMT:</strong> operating time falls automatically as fault current rises (the family this calculator&rsquo;s curve belongs to)</li><li><strong>DMT:</strong> a fixed delay once current exceeds pickup, which gives simpler time-graded coordination</li><li><strong>Motor instantaneous (50):</strong> above starting current with margin, but low enough to clear a terminal or winding fault quickly</li><li><strong>Transformer instantaneous (50):</strong> the A/B split above is only a starting scale. Also account for energization inrush, transformer impedance and through-fault withstand, CT characteristics, differential protection, downstream coordination and breaker interrupting capability</li><li><strong>Through-fault current:</strong> fault current flowing through a transformer for an external fault (typically on the LV side). The transformer must withstand it until downstream protection clears the fault</li><li><strong>Earth fault:</strong> senses residual (zero-sequence) current via a core-balance CT or the residual connection of three phase CTs, and its setting depends on the neutral grounding method, the available earth-fault level, CT arrangement and standing unbalance. It is often more sensitive than the phase element, but there is no universal ratio</li><li><strong>RMU:</strong> fault current paths depend on the ring configuration and operating state. Base settings on the relevant supply paths, not on one assumed direction</li><li><strong>Several transformers on a common HV bus:</strong> there is no single generic formula. The current seen by each relay depends on the network configuration, fault location, relay location and operating state (for example, bus-coupler open or closed). Calculate the currents for each relevant fault case, then set and coordinate each relay with its own upstream and downstream devices</li></ul>
 
-      <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">Coordination discrimination — LV versus HV/MV</h3>
-      <p>The two ends of the chain are also graded differently. At LV, successive breakers are typically checked using manufacturer time-current curves and selectivity data together &mdash; not the curves in isolation &mdash; since real selectivity also depends on breaker tolerances, any instantaneous or short-time overrides, and manufacturer-published selectivity tables for specific breaker combinations; the underlying principle is still ensuring a genuine <em>current-axis</em> gap between one breaker's curve and the next at every relevant current level, not simply a fixed time step. At HV/MV, by contrast, both time and current discrimination matter together, and a deliberate minimum time step &mdash; the <strong>Coordination Time Interval (CTI)</strong> &mdash; is added between each pair of relays in the chain (commonly cited in the few-hundred-millisecond range, with IEEE 242, the "Buff Book," as a widely referenced source for how it's derived) to absorb real-world breaker interrupting time, relay overshoot, and CT/relay tolerance, so the downstream relay reliably finishes clearing the fault before the upstream relay's own delay elapses.</p>
-      <p>None of this changes the single-relay IDMT calculation this page performs &mdash; it's the broader context that calculation sits inside. A relay setting that's correct in isolation still needs to be checked against the LV and HV/MV coordination principles above, and against the actual settings of every adjacent device, before it's finalized for a real installation.</p>
+      <h3 class="font-display font-semibold text-brandDark text-lg mt-6 mb-2">Coordination discrimination: LV versus HV/MV</h3>
+      <ul><li><strong>LV:</strong> check manufacturer time-current curves together with selectivity data (tolerances, instantaneous/short-time overrides, published selectivity tables). Many LV devices are graded by comparing curves and tolerances rather than by a fixed time step, and where instantaneous or short-time elements overlap, the manufacturer&rsquo;s selectivity (discrimination) tables or tested data decide the outcome</li><li><strong>HV/MV:</strong> both time and current discrimination matter. A deliberate <strong>Coordination Time Interval (CTI)</strong>, commonly in the few-hundred-millisecond range (IEEE 242, the &ldquo;Buff Book&rdquo;, is a widely referenced source), absorbs breaker interrupting time, relay overshoot and CT/relay tolerance</li><li>None of this changes the single-relay calculation on this page; check the result against the actual settings of every adjacent device before finalizing</li></ul>
     </div>
   </div>
 </section>
@@ -841,14 +908,15 @@
     <span class="block font-mono text-xs uppercase tracking-wider text-sky-600 mb-1">Common Mistakes</span>
     <h2 class="text-2xl md:text-3xl font-display font-bold text-brandDark mb-6">Common Mistakes When Calculating Relay Settings</h2>
     <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed space-y-4">
-            <p><strong>1. Setting pickup current too close to normal maximum load.</strong> Without adequate margin (commonly 1.25-1.3&times; as a starting point, not a fixed rule), normal load fluctuation or a brief legitimate overload can cause nuisance tripping &mdash; but too much margin reduces sensitivity to genuine, moderate overload conditions, so this margin needs deliberate, informed selection based on the actual application, not an arbitrary large number.</p>
-      <p><strong>2. Confusing CT secondary current with CT primary current in the pickup calculation.</strong> Plug setting percentage is based on the relay's rated current (referenced to CT secondary, typically 1A or 5A), but load and fault currents are usually known in primary (actual system) amps &mdash; keep clear which side of the CT ratio you're working on at each step of the calculation.</p>
-      <p><strong>3. Calculating TMS using an inconsistent curve type from what the physical relay is actually set to.</strong> The k and &alpha; constants differ between Standard Inverse, Very Inverse, and Extremely Inverse curves &mdash; calculating a TMS value using Standard Inverse constants, then setting a relay actually configured for Very Inverse, gives a wrong and uncoordinated result.</p>
-      <p><strong>4. Setting a single relay's parameters without checking coordination with adjacent devices.</strong> A relay correctly calculated in isolation can still create a coordination problem if it doesn't operate with adequate time margin relative to devices upstream and downstream &mdash; a complete protection study checks operating times across the whole system for a range of fault locations and magnitudes, not just one relay's own settings.</p>
-      <p><strong>5. Using an unrealistic or unverified fault current figure.</strong> The PSM (and therefore the resulting TMS calculation) depends entirely on the fault current value used &mdash; using an outdated, assumed, or poorly-sourced fault current figure (rather than one confirmed via an actual fault current study) undermines the validity of the entire settings calculation.</p>
-      <p><strong>6. Assuming a calculated exact TMS value is directly settable, or always rounding to the nearest step without thinking about direction.</strong> Real relays offer TMS in discrete steps (commonly 0.05 or 0.1 increments, though numerical relays often allow finer resolution) &mdash; rounding down gives a faster trip, rounding up adds coordination margin, and which one is appropriate depends on the specific coordination requirement, not a fixed rule. Always verify the resulting actual operating time with whichever step you select, not just the theoretically calculated exact value.</p>
-      <p><strong>7. Mixing IEC and ANSI/IEEE curve formula families.</strong> These reference standards use different constants and sometimes different curve-shape conventions for nominally similar curve names &mdash; confirm which family your relay and coordination study actually use, and don't apply one family's formula to a relay configured for the other.</p>
-      <p><strong>8. Not providing adequate coordination time interval between successive relays.</strong> A coordinated pair of relays needs a real time margin (a commonly cited illustrative range of 0.2-0.4 seconds, though the appropriate value depends on breaker clearing time, relay overshoot, and CT/relay tolerances) between their operating times for the same fault, not just a marginally different TMS &mdash; too small a margin risks both relays operating together during real-world timing variation, defeating the purpose of coordination.</p>
+      <p><strong>1. Pickup too close to maximum load.</strong> Too little margin causes nuisance tripping; too much reduces sensitivity. 1.25&ndash;1.3&times; is a starting point, not a fixed rule.</p>
+      <p><strong>2. Mixing CT primary and secondary values.</strong> Load and fault currents are usually primary amps, while the plug setting refers to the relay&rsquo;s rated (secondary) current. Keep track of the side at every step.</p>
+      <p><strong>3. Using a TMS calculated for a different curve.</strong> A TMS worked out for SI is wrong on a relay set to VI, EI or an IEEE curve (which uses Time Dial). Confirm the configured curve first.</p>
+      <p><strong>4. Not checking coordination with adjacent devices.</strong> A relay that is correct in isolation can still fail to grade with the devices upstream and downstream.</p>
+      <p><strong>5. Using an unverified fault current.</strong> PSM and TMS depend entirely on it. Take it from a fault-current study, not an assumption.</p>
+      <p><strong>6. Assuming the exact TMS can be set.</strong> Real relays offer discrete steps. Rounding down trips faster, rounding up adds margin; re-verify the operating time of the step you choose.</p>
+      <p><strong>7. Rounding the pickup tap down without recalculating.</strong> It shrinks the margin over load, and any tap change alters PSM and TMS. Select the tap first, then recalculate.</p>
+      <p><strong>8. Checking only maximum fault current.</strong> A pickup that clears the load can still be too high for the weakest fault. Check minimum fault current, allowing for CT and relay tolerance.</p>
+      <p><strong>9. Leaving too little time interval between relays.</strong> A commonly cited illustrative CTI is 0.2&ndash;0.4 s; the real value depends on breaker clearing time, relay overshoot and tolerances.</p>
     </div>
   </div>
 </section>
@@ -861,36 +929,28 @@
   </div>
 
   <div class="divide-y divide-gray-200">
-        <details class="py-5" open>
+    <details class="py-5" open>
       <summary class="font-semibold text-brandDark flex justify-between items-center">
         What is a plug (pickup) setting on an overcurrent relay?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The plug setting (PS) determines the minimum current, as a percentage of the relay's rated current (typically the CT secondary current), at which the relay begins to respond and eventually trip — it must be set above the maximum expected normal load current (with margin) so the relay doesn't trip on normal operation, but below the minimum fault current the relay is meant to detect.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">The minimum current, as a percentage of the relay's rated current (usually the CT secondary), at which the relay starts to operate. Set it above maximum load current (with margin) and below the minimum fault current to be detected.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        What is Plug Setting Multiplier (PSM) and why does it matter?
+        How do I convert a pickup current into a plug setting percentage and relay amps?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">PSM = Actual Fault Current ÷ Pickup Current Setting — it expresses how many times above its pickup threshold the relay is actually seeing during a fault, and is the key input into the IDMT time-current curve formula, since a relay operates faster (shorter time) the further above its pickup setting the actual fault current is.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Plug Setting (%) = (Pickup Current ÷ CT Primary) × 100. Relay-side amps = plug setting % × relay rated current (1 A or 5 A). Example: 375 A on a 400/5 A CT = 93.75% = about 4.69 A. Then round to a setting the relay offers.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        What is the IEC standard inverse (SI) curve formula?
+        What is Plug Setting Multiplier (PSM) and why does it matter for relay settings?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">t = TMS × [0.14 ÷ (PSM^0.02 − 1)], where t is operating time in seconds, TMS is the Time Multiplier Setting, and PSM is the Plug Setting Multiplier. This formula describes how operating time decreases as fault current (and therefore PSM) increases, giving the characteristic inverse-time curve shape.</p>
-    </details>
-
-    <details class="py-5">
-      <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Why use an inverse-time characteristic instead of a fixed time delay?
-        <span class="plus text-sky-500 text-xl">+</span>
-      </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">An inverse-time relay naturally operates faster for more severe (higher current) faults and slower for marginal overloads just above pickup — this behavior is exactly what's needed for good protection coordination, since it lets relays further from a fault (seeing lower fault current due to added impedance) naturally have more time margin over relays closer to the fault, supporting selective coordination without needing every relay to have an identical fixed delay.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">PSM = Fault Current ÷ Pickup Current. It sets the operating point on the curve used to calculate TMS. Use the actual selected pickup, not the theoretical one. For equations and trip times, use the <a href="/electrical/idmt-trip-time-calculator" class="text-sky-600 underline">TOC/IDMT Trip Time Calculator</a>.</p>
     </details>
 
     <details class="py-5">
@@ -898,7 +958,15 @@
         How do I choose the right pickup current margin above normal load?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A commonly used starting margin is roughly 1.25-1.3 times the maximum expected normal load current, giving enough headroom to avoid nuisance tripping during normal load variation and any brief legitimate overload, while still being sensitive enough to detect a genuine sustained overload or fault condition promptly. This is a simplified preliminary margin for a quick calculation, not a universal protection-setting rule — the actual margin for a real installation can depend on load characteristics, motor starting/inrush, transformer energization, and relay/CT accuracy, and should be confirmed against the specific application.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">1.25-1.3 × maximum load is a common starting margin for a quick estimate, not a universal rule. The real margin depends on motor starting/inrush, transformer energization, permitted overload, relay/CT accuracy and coordination, so confirm it for the application.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Why does the calculator select the next higher plug tap instead of the nearest one?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A lower tap shrinks the margin over maximum load and risks nuisance tripping. This calculator uses the next higher tap as a simplified method. A higher tap also lowers PSM and sensitivity, so check minimum fault current and the taps your relay actually offers.</p>
     </details>
 
     <details class="py-5">
@@ -906,31 +974,39 @@
         What does Time Multiplier Setting (TMS) actually control?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">TMS scales the entire time-current curve up or down &mdash; a higher TMS means longer operating time at every PSM value (a slower-acting relay overall), while a lower TMS means faster operation throughout the curve. TMS is the primary tool used to coordinate multiple relays in series along a system, giving each relay a different, deliberately staggered operating time for the same fault current.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">TMS scales the whole time-current curve: a higher TMS gives a longer operating time at every PSM, a lower TMS gives a faster one. It is the main tool for staggering relays in series.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        What other IDMT curve types exist besides Standard Inverse?
+        How is the required TMS calculated for a desired operating time?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">IEC 60255 defines several standard curve shapes beyond Standard Inverse (SI), including Very Inverse (VI) and Extremely Inverse (EI), each with different constants in the time-current formula, producing steeper or shallower inverse characteristics — the right curve type depends on the specific protection coordination requirements and the characteristics of the loads and faults being protected against.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">For IEC Standard Inverse, TMS = Desired Operating Time ÷ [0.14 ÷ (PSM^0.02 − 1)]. At PSM 10 the time at TMS 1.0 is 2.971 s, so a 0.5 s target needs TMS ≈ 0.168. Use the value recalculated at the actual tap.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Why is protection coordination between multiple relays more complex than setting one relay in isolation?
+        Which IDMT curve should I select when setting a relay?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A real power system has multiple protective devices (relays, fuses, breakers) at different points, and a fault should ideally trip only the device closest to it, not cascade further upstream — achieving this requires calculating and comparing operating times for every device at every point of interest for a range of possible fault currents, a significantly more involved exercise than sizing any single relay's pickup and TMS in isolation, and this calculator addresses only that single-relay calculation.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">SI is the general-purpose choice; VI typically suits feeders where fault current falls sharply with distance; EI suits fuse coordination and inrush or cold-load pickup. Match the curve configured in the relay, because TMS is not transferable between curves. Constants and comparison are in the <a href="/electrical/idmt-trip-time-calculator" class="text-sky-600 underline">TOC/IDMT Trip Time Calculator</a>.</p>
     </details>
 
     <details class="py-5">
       <summary class="font-semibold text-brandDark flex justify-between items-center">
-        Do modern numerical/digital relays use the same IDMT formulas as older electromechanical relays?
+        Why is protection coordination between multiple relays more complex than setting one relay?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Yes, largely — while numerical relays offer far more flexibility (multiple curve types, additional protection functions, communication capability, event logging), most still implement and reference the same standardized IEC (and ANSI/IEEE, for US-influenced systems) time-current curve formulas for their basic overcurrent inverse-time functions, maintaining compatibility with the well-established coordination principles developed for earlier electromechanical relay technology.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">A fault should trip only the device closest to it. That needs operating times compared for every device across a range of fault currents, which is far more involved than one relay's setting. This calculator covers a single relay only.</p>
+    </details>
+
+    <details class="py-5">
+      <summary class="font-semibold text-brandDark flex justify-between items-center">
+        Can a numerical relay use the calculated pickup and TMS exactly?
+        <span class="plus text-sky-500 text-xl">+</span>
+      </summary>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">Often much closer. Many numerical relays allow fine or continuous pickup and TMS (the Continuous option here), but ranges and steps vary by model, so check your relay's limits and configured curve.</p>
     </details>
 
     <details class="py-5">
@@ -938,7 +1014,7 @@
         How can I check the actual trip time an already-configured relay setting will produce?
         <span class="plus text-sky-500 text-xl">+</span>
       </summary>
-      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This calculator solves backward from a desired operating time to the required TMS/pickup. To go the other direction — enter an already-configured pickup, TMS/TD, and fault current to find the actual trip time it produces, for the Standard Inverse curve or any other IEC/IEEE curve — use the dedicated <a href="/electrical/idmt-trip-time-calculator" class="text-sky-600 underline">TOC/IDMT Relay Trip Time Calculator</a>.</p>
+      <p class="text-sm text-gray-500 mt-3 leading-relaxed">This calculator works backward from a desired time to TMS and pickup. To enter an existing pickup, TMS/TD and fault current and get the trip time (any IEC/IEEE curve), use the <a href="/electrical/idmt-trip-time-calculator" class="text-sky-600 underline">TOC/IDMT Relay Trip Time Calculator</a>.</p>
     </details>
   </div>
 </section>
@@ -1170,7 +1246,8 @@
       const checkPickup = tapPickupCurrent !== null ? tapPickupCurrent : pickupCurrent;
       if(checkPickup >= minFaultCurrent){
         sensitivityBox.classList.remove('hidden');
-        sensitivityBox.textContent = 'Preliminary primary-side sensitivity check: the pickup current (' + checkPickup.toFixed(1) + ' A) is at or above the minimum fault current you need to detect (' + minFaultCurrent + ' A) \u2014 this relay may not reliably pick up for that fault. Consider reviewing the pickup margin, CT ratio, or tap set with a protection engineer/coordination study. This is only a preliminary check; it does not account for CT saturation, relay pickup tolerance, or fault-current calculation uncertainty.';
+        const pickupBasis = tapPickupCurrent !== null ? 'selected tap' : 'theoretical (no tap selected yet)';
+        sensitivityBox.textContent = 'Preliminary primary-side sensitivity check: the ' + pickupBasis + ' pickup current (' + checkPickup.toFixed(1) + ' A) is at or above the minimum fault current you need to detect (' + minFaultCurrent + ' A) \u2014 this relay may not reliably pick up for that fault. Consider reviewing the pickup margin, CT ratio, or tap set with a protection engineer/coordination study. This is only a preliminary check; it does not account for CT saturation, relay pickup tolerance, or fault-current calculation uncertainty.';
       } else {
         sensitivityBox.classList.add('hidden');
         sensitivityBox.textContent = '';
@@ -1225,9 +1302,24 @@
       navigator.clipboard.writeText(text).then(function(){
         btn.textContent = '✅ Copied';
         setTimeout(restore, 1800);
-      }).catch(function(){ btn.textContent = '⚠️ Copy failed'; setTimeout(restore, 1800); });
+      }).catch(function(){ legacyCopy(); });
     } else {
-      btn.textContent = '⚠️ Not supported';
+      legacyCopy();
+    }
+    function legacyCopy(){
+      var ok = false;
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '-1000px';
+        document.body.appendChild(ta);
+        ta.select();
+        ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch (e) { ok = false; }
+      btn.textContent = ok ? '✅ Copied' : '⚠️ Copy failed';
       setTimeout(restore, 1800);
     }
   }
